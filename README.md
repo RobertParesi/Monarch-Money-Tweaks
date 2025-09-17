@@ -143,9 +143,9 @@ Enjoy!
 **Monarch Tweaks Household Breakdown on Accounts**
 ![Settings](/images/MT_V3_13.png)
 
-## Contributions:
+## Discussions:
 
-This GitHub repository is currently not set up for contributions, but I welcome your ideas and feedback. Please feel free to reach out via private message or email to discuss any thoughts you may have.
+This GitHub repository is currently not set up for contributions, but I welcome your ideas and feedback. For help and support, please use the **Monach Money forum on Reddit** or the **Discussions** area of this Github.
 
 One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
 
