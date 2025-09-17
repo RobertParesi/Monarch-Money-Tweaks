@@ -92,8 +92,6 @@ Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Mo
 
 Enjoy!
 
-![Settings](/images/MM_SettingsDeveloper.png)
-
 ## 📈 Screenshots:
 
 **Monarch Tweaks Settings**
