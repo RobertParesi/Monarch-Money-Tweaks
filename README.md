@@ -86,29 +86,9 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 # 💻 Installing Monarch Money Tweaks:
 
-You can install the script by using the **Tampermonkey** app extension in Chrome, Microsoft Edge, Safari, Firefox and Opera Next.  For the iPad, use the **Safari </> Userscripts** app.
+Visit the Extensions area for your browser (Chrome, Safari, Firefox) to install 
 
-**STEP 1**
-
-**Non iPad users:** Install Tampermonkey for your browser by going to the following link:  
-https://www.tampermonkey.net/
-
-**iPad users:** Close your Safari browser, go to App Store and install the Userscripts program:
-Search App store for "User Script and Style Manager" by Justin Wasack
-
-
-**STEP 2**
-
-> [!IMPORTANT]
-> Chrome Users - In your Chrome browser, using the menu, click on **Extensions / Manage Extensions** and set **Developer mode** to **on** found in upper-right corner. A quick way to do this is enter "chrome://extensions/" on the URL line and press enter.
-
-[Click here to install MM Tweaks](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js)
-
-**STEP 3**
-
-Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure the Tweaks.
-
-[Please read the FAQ after installing](https://github.com/RobertParesi/MonarchMoneyTrendReport/blob/main/FAQ.md) 
+Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure Monarch Money Tweaks.
 
 Enjoy!
 
