@@ -1,3 +1,5 @@
-**Version 4.00 (beta) :**
+# Version History
 
-# September 20, 2025 - Initial Release
+* September 20, 2025 - Initial Release:
+
+  
