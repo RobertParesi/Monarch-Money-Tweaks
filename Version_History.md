@@ -1,4 +1,4 @@
-**Version 3.60 (beta) :**
+**Version 4.00 (beta) :**
 
 * NEW: Reports / Investments (Work in Progress)
 
