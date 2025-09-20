@@ -1,6 +1,6 @@
 # Monarch Money Tweaks - Latest Extension Releases
 
-🚀 Chrome (Google) Browser - V3.60
+🚀 Chrome (Google) Browser - V4.00
 
 🚀 Firefox (Mozilla) Browser - Unreleased
 
@@ -92,60 +92,16 @@ Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Mo
 
 Enjoy!
 
-## 📈 Screenshots:
+## Usage License and Restrictions
 
-**Monarch Tweaks Settings**
-![Settings](/images/MT_V3_01.png)
-
-**Monarch Tweaks - Set Groups that are Fixed vs Flexible**
-![Settings](/images/MTFixed.png)
-
-**Monarch Tweaks Spit Transaction 50/50**
-![Settings](/images/MT_V3_03.png)
-
-**Monarch Tweaks Reports - Simplified Budgeting by Trends**
-![Settings](/images/MTTrendInfo.png)
-
-**Monarch Tweaks Reports / Trends Compare**
-![Settings](/images/MT_V3_04.png)
-
-**Monarch Tweaks Reports / Trends Monthly Breakdown**
-![Settings](/images/MT_V3_05.png)
-
-**Monarch Tweaks Reports / Trends Yearly Breakdown**
-![Settings](/images/MT_V3_06.png)
-
-**Monarch Tweaks Reports / History Drill-down**
-![Settings](/images/MT_V3_History.png)
-
-**Monarch Tweaks Reports / Net Income (based on Tags)**
-![Settings](/images/MT_V3_09.png)
-
-**Monarch Tweaks Reports / Net Income (based on Notes Field)**
-![Settings](/images/MT_TagNotes.png)
-![Settings](/images/MT_TagsNotes2.png)
-
-**Monarch Tweaks Reports / Accounts**
-![Settings](/images/MT_V3_07.png)
-
-**Monarch Tweaks Reports / Accounts**
-![Settings](/images/MT_V3_08.png)
-
-**Monarch Tweaks Reports tag multiple cells**
-![Settings](/images/MT_V3_10.png)
-
-**Personal Net Worth Report (Reports / Accounts / Personal Statement)**
-![Settings](/images/MT_V3_12.png)
-
-**Monarch Tweaks Household Description for Breakdown**
-![Settings](/images/MT_V3_11.png)
-
-**Monarch Tweaks Household Breakdown on Accounts**
-![Settings](/images/MT_V3_13.png)
+* You are permitted to view and use the code for personal, non-commercial purposes.
+* You do not have the right to distribute, **publish**, or make any money from the code.
+* All rights to the code remain fully with the owner (myself).
+* Any use beyond personal use requires explicit permission.
 
 ## Discussions:
 
-This GitHub repository is currently not set up for contributions, but I welcome your ideas and feedback. For help and support, please use the **Monach Money forum on Reddit** or the **Discussions** area of this Github.
+This GitHub repository is currently not set up for contributions and the source is not open-source.  However, I welcome your ideas and feedback. For help and support, please use the **Monach Money forum on Reddit** or the **Discussions** area of this Github.
 
 One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
 
