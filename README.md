@@ -94,9 +94,8 @@ Enjoy!
 
 ## Usage License and Restrictions
 
-* You are permitted to view and use the code for personal, non-commercial purposes.
-* You do not have the right to distribute, **publish**, or make any money from the code.
-* All rights to the code remain fully with the owner (myself).
+* The code is not open-source.
+* All rights to the product and code remain fully with the owner (myself).
 * Any use beyond personal use requires explicit permission.
 
 ## Discussions:
