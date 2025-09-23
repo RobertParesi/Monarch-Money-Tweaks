@@ -2,7 +2,7 @@
 
 🚀 Chrome (Google) Browser - V4.00
 
-🚀 Firefox (Mozilla) Browser - Unreleased
+🚀 Firefox (Mozilla) Browser - V4.1
 
 🚀 Safari (Apple) Browser - Unreleased
 
