@@ -1,4 +1,4 @@
-# <img src="/images/mt_icon128.png" style="width:30px; height:30px; margin-top: 5px;"/> Monarch Money Tweaks - Latest Extension Releases
+# <img src="/images/mt_icon128.png" style="width:30px; height:30px; margin-top: 20px;"/> Monarch Money Tweaks - Latest Extension Releases
 
 🚀 Chrome (Google) Browser - V4.00
 
