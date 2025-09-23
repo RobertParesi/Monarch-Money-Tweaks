@@ -1,5 +1,6 @@
 ![Settings](/images/mt_icon128.png){width=96 height=96}
 
+<img src="/images/mt_icon128.png" alt="drawing" style="width:96px height:96px;"/>
 # Monarch Money Tweaks - Latest Extension Releases
 
 🚀 Chrome (Google) Browser - V4.00
