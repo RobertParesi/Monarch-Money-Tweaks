@@ -5,8 +5,8 @@ Thanks for using Monarch Money Tweaks. We want to assure you that our extension 
 # Data Collection and Usage
 
     Our extension does not collect, store, or transmit any user data.
-    We do not access, modify, or delete any information on your device or in your browser.
-    The extension does not update or manage any user data.
+    This extension does not modify, update or delete any of your Monarch Money data what-so-ever.
+    Monarch Money data what-so-ever.
 
 # Updates and Data Transmission
 
