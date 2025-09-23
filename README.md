@@ -1,10 +1,10 @@
 # <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
 
-🆕 Chrome (Google) Browser - V4.00
+✨ Chrome (Google) Browser - V4.00
 
-🆕 Firefox (Mozilla) Browser - V4.1
+✨ Firefox (Mozilla) Browser - V4.1
 
-🆕 Safari (Apple) Browser - Unreleased
+✨ Safari (Apple) Browser - Unreleased
 
 # 💻 Installing Monarch Money Tweaks:
 
