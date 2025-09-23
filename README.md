@@ -8,7 +8,7 @@
 
 # 💻 Installing Monarch Money Tweaks:
 
-Visit the Extensions area for your browser (Chrome, Firefox, Safari) and search for **Monarch Money Tweaks** to install. 
+Visit the Extensions area for your browser (Chrome, Firefox, Safari) and search for ![Settings](/images/mt_icon128.png)**Monarch Money Tweaks** to install. 
 
 Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure Monarch Money Tweaks.
 
