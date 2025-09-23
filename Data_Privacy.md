@@ -1,18 +1,18 @@
-## Monarch Money Tweaks Extension - Privacy Policy and Data Handling
+# Monarch Money Tweaks Extension - Privacy Policy and Data Handling
 
 Thanks for using Monarch Money Tweaks. We want to assure you that our extension respects your privacy and data security.
 
-# Data Collection and Usage
+## Data Collection and Usage
 
     This extension does not collect, store, or transmit any user data.
     This extension does not modify, update or delete any of your Monarch Money data.
 
-# Updates and Data Transmission
+## Updates and Data Transmission
 
     The extension does not send or receive data from third-party servers.
     We do not implement any analytics, tracking, or data collection mechanisms.
 
-# Security and Privacy
+## Security and Privacy
 
     Your browsing experience is completely private and unaffected by data collection.
     We are committed to maintaining the highest standards of privacy and security.
