@@ -22,7 +22,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 # ✨ Features:
 
-* **Reports / Trends**
+* **Reports / Trends:**
     - Summarize your Monarch Money Income/Spending history.
     - Compare with Last month, Same month last year, Same quarter last year.
     - Display by This year, Last year, Last 12 months, All years, All years YTD with monthly averages.
@@ -35,7 +35,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Customize comparisons and averages whether to include the current month if desired.
     - Click on date header to go back to End of Last Month
  
-* **Reports / Net Income**
+* **Reports / Net Income:**
      - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
@@ -47,7 +47,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Group transactions by Goals.
      - Click on date header to change date range.
 
-* **Reports / Accounts**
+* **Reports / Accounts:**
      - Summarize your Monarch Money Account balances
      - Compare to different time periods 
      - Display by any date range or show Monthly, Quarterly and Yearly balances.
@@ -56,7 +56,16 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Sort history data by any column.
      - Export to Excel or Numbers.
      - Generate a simple Personal Net Worth report for Loan Applications.
-     - Click on date header to change date range. 
+     - Click on date header to change date range.
+
+* **Reports / Investments:**
+
+    - Summarize your investment holdings.
+    - Show positions and performance.
+    - Show gain/loss, cost basis, stock price, and more.
+    - Sort holdings data by any column.
+    - Export to Excel or Numbers.
+
              
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
