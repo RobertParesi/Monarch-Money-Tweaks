@@ -6,7 +6,7 @@
 
 ✨ Safari (Apple) Browser - Unreleased
 
-# 💻 Installing Monarch Money Tweaks:
+# ⚙️ Installing Monarch Money Tweaks:
 
 Visit the Extensions area for your browser (Chrome, Firefox, Safari) and search for **Monarch Money Tweaks** to install. 
 
@@ -20,7 +20,7 @@ Hello!  I use **Monarch Money**.
 
 I found there were opportunities to enhance the Monarch Money web application with more functionality and configuration options.
 
-# ✨ Features:
+# 🌟 Features:
 
 * **Reports / Trends:**
     - Summarize your Monarch Money Income/Spending history.
