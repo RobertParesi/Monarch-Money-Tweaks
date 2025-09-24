@@ -1,10 +1,10 @@
 # <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
 
-🌐 Chrome (Google) Browser - (Awaiting final approval)
+🌐 Google Chrome browser - (Awaiting final approval)
 
-🦊 Firefox (Mozilla) Browser - (Awaiting approval)
+🦊 Mozilla Firefox browser - (Awaiting approval)
 
-🍏 Safari (Apple) Browser - (Being submitted)
+🍏 Apple Safari browser - (Being submitted)
 
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
