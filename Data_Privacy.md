@@ -17,4 +17,8 @@ Thanks for using Monarch Money Tweaks. We want to assure you that our extension 
     Your browsing experience is completely private and unaffected by data collection.
     We are committed to maintaining the highest standards of privacy and security.
 
+## Safety, Security and Transparency of this extension:
+
+This extension is built without any dependencies or external libraries ensuring maximum transparency and security. The Monarch Money GraphQL API is developed by Monarch Money and is utilized in their mobile framework, report graphs, and more. This extension utilizes the same security token stored by Monarch Money, ensuring no data is collected or transmitted outside of this connection.
+
 If you have any questions or concerns, please contact us here on this GitHub.
