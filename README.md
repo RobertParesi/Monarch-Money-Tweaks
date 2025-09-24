@@ -1,10 +1,13 @@
 # <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
 
-✨ Chrome (Google) Browser - V4.00
+✨ Chrome (Google) Browser - (Awaiting final approval)
 
-✨ Firefox (Mozilla) Browser - V4.1
+✨ Firefox (Mozilla) Browser - (Awaiting approval)
 
-✨ Safari (Apple) Browser - Unreleased
+✨ Safari (Apple) Browser - (Being submitted)
+
+🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/MonarchMoneyTrendReport/blob/main/VERSION_HISTORY.md)
+
 
 # ⚙️ Installing Monarch Money Tweaks:
 
@@ -65,7 +68,6 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Show gain/loss, cost basis, stock price, and more.
     - Sort holdings data by any column.
     - Export to Excel or Numbers.
-
              
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
@@ -111,5 +113,8 @@ I found there were opportunities to enhance the Monarch Money web application wi
 This GitHub repository is currently not set up for contributions and the source is not open-source.  However, I welcome your ideas and feedback. For help and support, please use the **Monach Money forum on Reddit** or the **Discussions** area of this Github.
 
 One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
+
+
+📚 [Click here for Documentation](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/Documentation.md) 
 
 
