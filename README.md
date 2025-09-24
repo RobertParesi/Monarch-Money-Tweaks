@@ -6,7 +6,8 @@
 
 🍏 Safari (Apple) Browser - (Being submitted)
 
-🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Verson_History.md)
+
+🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
 
 
 # ⚙️ Installing Monarch Money Tweaks:
