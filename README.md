@@ -1,6 +1,6 @@
 # <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
 
-🌐  Google Chrome browser - (Awaiting final approval)
+🌐  Google Chrome browser - (Approved - Waiting Publishing)
 
 🦊  Mozilla Firefox browser - (Awaiting approval)
 
