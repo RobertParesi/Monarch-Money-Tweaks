@@ -1,10 +1,10 @@
 # Version History
 
-* **Version 4.1 (September 30, 2025)**
-     - Migration from Tamper Money scripts
-     - Reports / Investments
-     - Reports / Accounts / Brokerage Statement
-     - Many visual improvements to Group shading and layout
-     - Lots of clean-up under the hood
+* **Version 4.1 (September 24, 2025)**
+     - Migration from Tamper Monkey scripts to secured extensions for Chrome, Firefox and Safari.
+     - Reports / Investments - New Portfolio & Performance reports including Cost Basis and more!
+     - Reports / Accounts / Brokerage Statement.
+     - Many visual improvements including Group Totals format & shading.
+     - Lots of clean-up under the hood.
  
        
