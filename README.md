@@ -53,7 +53,9 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 * **Reports / Accounts:**
      - Summarize your Monarch Money Account balances
-     - Compare to different time periods 
+     - Compare to different time periods
+     - Show a Personal New Worth Statement
+     - Show a Brokerage statement
      - Display by any date range or show Monthly, Quarterly and Yearly balances.
      - Display Income, Expenses and Transfers on the Account level.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
@@ -65,7 +67,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 * **Reports / Investments:**
 
     - Summarize your investment holdings.
-    - Show positions and performance.
+    - Show Positions and Performance.
     - Show gain/loss, cost basis, stock price, and more.
     - Sort holdings data by any column.
     - Export to Excel or Numbers.
