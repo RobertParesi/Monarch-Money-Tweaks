@@ -6,6 +6,7 @@
 
 🍏  Apple Safari browser - (Being submitted)
 
+To run a Chrome extension on **Microsoft Edge**, enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
 
