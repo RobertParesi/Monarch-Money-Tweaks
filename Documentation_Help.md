@@ -48,3 +48,38 @@
 
 **Monarch Tweaks Household Breakdown on Accounts**
 ![Settings](/images/MT_V3_13.png)
+
+
+## Account Groups 
+> Extension added field found when **editing** an **Institution Account** in Monarch Money:
+
+Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
+
+There are different scenerios that Monarch Money users use them in:
+
+    * Personal vs Business
+    * Household Members
+    * Tax and Tax Deferred
+    * Managed vs Non Managed
+    * Family vs Kids
+      
+**Personal & Business**
+
+If your accounts are designated for either Personal or Business purposes, you could assign each checking, savings, credit card, etc. account with either "Personal", "Business" or "Both.
+
+**Household Members**
+
+If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name", "Their Name", or "Both". Example:  "Jerry", "Elaine", "Both"
+
+**Tax and Tax Deferred**
+
+If your accounts are designated as accounts you can touch (taxable) versus IRAs and other Tax Deferred accounts, you could assign each checking, savings, investment, etc. account with either "Taxable" or "Tax Deferred". 
+
+**Managed and Non Managed**
+
+If some accounts are managed by an advisor and some are not, you can assign "Managed" and "Non Managed" to different accounts to compare performance of both types of accounts. 
+
+**Family vs Kids**
+
+If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
+
