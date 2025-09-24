@@ -6,7 +6,7 @@
 
 ✨ Safari (Apple) Browser - (Being submitted)
 
-🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/MonarchMoneyTrendReport/blob/main/VERSION_HISTORY.md)
+🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Verson_History.md)
 
 
 # ⚙️ Installing Monarch Money Tweaks:
@@ -115,6 +115,6 @@ This GitHub repository is currently not set up for contributions and the source 
 One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
 
 
-📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/raw/refs/heads/main/Documentation_Help.md) 
+📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/raw/refs/heads/blob/main/Documentation_Help.md) 
 
 
