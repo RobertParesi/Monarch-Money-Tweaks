@@ -43,12 +43,6 @@
 **Personal Net Worth Report (Reports / Accounts / Personal Statement)**
 ![Settings](/images/MT_V3_12.png)
 
-**Monarch Tweaks Household Description for Breakdown**
-![Settings](/images/MT_V3_11.png)
-
-**Monarch Tweaks Household Breakdown on Accounts**
-![Settings](/images/MT_V3_13.png)
-
 
 ## Account Groups 
 > Extension added field found when **editing** an **Institution Account** in Monarch Money:
@@ -82,4 +76,11 @@ If some accounts are managed by an advisor and some are not, you can assign "Man
 **Family vs Kids**
 
 If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
+
+
+**Monarch Tweaks Household Description for Breakdown**
+![Settings](/images/MT_V3_11.png)
+
+**Monarch Tweaks Household Breakdown on Accounts**
+![Settings](/images/MT_V3_13.png)
 
