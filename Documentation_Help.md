@@ -84,3 +84,10 @@ If there are future investments or credit cards your kids use, you could designa
 **Monarch Tweaks Household Breakdown on Accounts**
 ![Settings](/images/MT_V3_13.png)
 
+
+## Fixed vs Flexible Spending
+> Extension added field found when selecting Settings / Categories in Monarch Money:
+
+You can further define expenses **on the Group level** by either "Fixed Spending" or "Flexible Spending" when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.
+
+![Settings](/images/MM_FixedNoFixed.png)
