@@ -2,7 +2,7 @@
 
 ✨ Chrome (Google) Browser - (Awaiting final approval)
 
-✨ Firefox (Mozilla) Browser - (Awaiting approval)
+🦊 Firefox (Mozilla) Browser - (Awaiting approval)
 
 ✨ Safari (Apple) Browser - (Being submitted)
 
