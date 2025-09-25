@@ -1,6 +1,6 @@
 # <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
 
-🌐  Google Chrome / Microsoft Edge browser - (Approved - Waiting Publishing)
+🌐  Google Chrome / Microsoft Edge browser - Version 4.1 (September 25, 2025)
 
 🦊  Mozilla Firefox browser - (Awaiting approval)
 
