@@ -13,7 +13,7 @@
 
 Visit the Extensions area for your browser (Chrome, Firefox, Safari) and search for **Monarch Money Tweaks** to install. To run on **Microsoft Edge**, enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
-Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure Monarch Money Tweaks.
+Once installed, Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure Monarch Money Tweaks.
 
 Enjoy!
 
