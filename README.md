@@ -2,7 +2,7 @@
 
 🌐  Google Chrome / Microsoft Edge browser - Version 4.1 (September 25, 2025)
 
-🦊  Mozilla Firefox browser - (Awaiting approval)
+🦊  Mozilla Firefox browser - (Version 4.1 (September 26, 2025))
 
 🍏  Apple Safari browser - (Being submitted)
 
