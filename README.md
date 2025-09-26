@@ -4,7 +4,7 @@
 
 🦊  Mozilla Firefox browser - (Version 4.1 (September 26, 2025))
 
-🍏  Apple Safari browser - (Being submitted)
+🍏  Apple Safari browser - (Future!)
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
 
