@@ -2,7 +2,7 @@
 
 🌐  Google Chrome / Microsoft Edge browser - Version 4.1 (September 25, 2025)
 
-🦊  Mozilla Firefox browser - Version 4.1 (September 26, 2025)
+🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.1 (September 26, 2025)
 
 🍏  Apple Safari browser - (Future!)
 
