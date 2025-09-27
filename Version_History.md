@@ -2,6 +2,7 @@
 
 * **Version 4.2 (Beta)**
      - Green & Red colors of Gain/Loss fields in Reports / Investments.
+     - Drop-down wording in Reports / Investments to be steamlined to look like other drop-downs.
      
  
 * **Version 4.1 (September 24, 2025)**
