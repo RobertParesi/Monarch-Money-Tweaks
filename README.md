@@ -1,8 +1,8 @@
-# <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
+# <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension
 
-🌐  Google Chrome / Microsoft Edge browser - Version 4.1 (September 25, 2025)
+🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.1 (September 25, 2025)
 
-🦊  Mozilla Firefox browser - Version 4.1 (September 26, 2025)
+🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.1 (September 26, 2025)
 
 🍏  Apple Safari browser - (Future!)
 
@@ -17,9 +17,9 @@ Once installed, Refresh/Reload the Monarch Money webpage and select **Settings /
 
 Enjoy!
 
-# 🚀 Monarch Money Tweaks - Get Started! 
+# 🚀 Monarch Money Tweaks - Get Started!
 
-Hello!  I use **Monarch Money**.  
+Hello!  I use **Monarch Money**.
 
 I found there were opportunities to enhance the Monarch Money web application with more functionality and configuration options.
 
@@ -37,7 +37,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Export to Excel or Numbers.
     - Customize comparisons and averages whether to include the current month if desired.
     - Click on date header to go back to End of Last Month
- 
+
 * **Reports / Net Income:**
      - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
@@ -70,7 +70,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Show gain/loss, cost basis, stock price, and more.
     - Sort holdings data by any column.
     - Export to Excel or Numbers.
-             
+
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
 * Apply a compressed and smaller font in the Transactions grid to display more items.
@@ -85,7 +85,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 * Highlight pending transactions when the Allow Edits to Pending Transactions setting is set to "Off."
 * Save and Restore Monarch Money Tweaks settings (use between browsers)
 
-# 🙏 Quotes from Monarch Money users  
+# 🙏 Quotes from Monarch Money users
 - _This is fantastic! I just installed Monarch Money Tweaks and it makes up for some serious gaps in Monarch Money reporting. The trends report is exactly what I was looking for and probably the main reason I continue to run Quicken in parallel (which I have used for 15+ yrs). Thanks so much for doing this!_
 
 - _Doing the Lord's work_
@@ -100,9 +100,9 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _Great work as always!_
 
-- _Monarch Money on Steroids!_  
+- _Monarch Money on Steroids!_
 
-- _If you are a numbers person, you need this extension!_  
+- _If you are a numbers person, you need this extension!_
 
 ## Usage License and Restrictions
 
@@ -117,7 +117,7 @@ This GitHub repository is currently not set up for contributions and the source 
 One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
 
 
-📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md) 
+📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md)
 
 
 
