@@ -8,6 +8,8 @@
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
 
+🙏  If you are long-time Monarch Money Tweaks user, please be so kind as to leave a review on Chrome or Firefox store. 
+
 
 # ⚙️ Installing Monarch Money Tweaks:
 
