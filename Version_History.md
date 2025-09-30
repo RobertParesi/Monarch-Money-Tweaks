@@ -1,7 +1,7 @@
 # Version History
 
 * **Version 4.3 (Beta)**
-     - NEW: Reports / Investments side pabel Stock Chart (fast!)
+     - NEW: Reports / Investments side panel Stock Chart (fast!)
      - NEW: Reports / Investments side panel Stock Price will now show more recent.
 
 * **Version 4.2 (September 27, 2025)**
