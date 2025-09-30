@@ -6,7 +6,7 @@
 
 * **Version 4.2 (September 27, 2025)**
      - NEW: Reports / Investments - Added Green & Red colors on Gain/Loss fields.
-     - NEW: Display / Settings - Added ability to pick Header and Subtotal shading colors.  Choose Black (#000000) to clear back to defaults.
+     - NEW: Display / Settings - Added ability to pick Header and Subtotal shading colors.  Choose absolute Black (#000000) to clear back to defaults.
      - NEW: Reports / Net Income - Added ability to expand History drill-down side drawer.
      - CHANGE: Reports - Drop down wording streamlined to look like other drop downs.
      - FIX: Reports / Investments could fail (freeze) when selecting Performance.
