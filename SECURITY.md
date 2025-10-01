@@ -1,4 +1,4 @@
-## Monarch Money Tweaks Extension - Security & Privacy Policy 
+## Monarch Money Tweaks - Security & Privacy Policy 
 
 Thanks for using Monarch Money Tweaks. We want to assure you that our extension respects your privacy and data security.
 
