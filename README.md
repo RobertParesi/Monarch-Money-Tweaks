@@ -6,7 +6,7 @@
 
 🍏  Apple Safari browser - (Future! If you are an Apple XCode developer, please contact me.)
 
-🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Version_History.md)
+🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
 🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. 
 
