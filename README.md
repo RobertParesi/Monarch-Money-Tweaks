@@ -114,9 +114,9 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 ## Discussions:
 
-This GitHub repository is currently not set up for contributions and the source is not open-source.  However, I welcome your ideas and feedback. For help and support, please use the **Monach Money forum on Reddit** or the **Discussions** area of this Github.
+Monarch Money Tweaks and this repository is not set up for contributions. However, I welcome your feedback, help and support.  Please only use the **Discussions** area of this Github.
 
-One important guideline for this extension is that it will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data. Thank you for your understanding!
+This extension will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data.
 
 
 📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md) 
