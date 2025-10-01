@@ -1,7 +1,7 @@
 ## Monarch Money Tweaks - Contributing
 
-Monarch Money Tweaks extension (source-code/GitHub) is not set up for community contributions.   While I understand that there may be times someone may want to add their own code, I've put a lot of thought into this. I decided not to go down this path, specifically because of security, code-bloat, growing legs, consistancy, Website reviews, long-term support, my extra time and other factors)
+The Monarch Money Tweaks extension (source code/GitHub) is not configured for community contributions. I understand that at times, users may want to customize or add their own code, but I’ve carefully considered this decision. Factors such as security, code bloat, maintainability, consistency, website reviews, long-term support, and my available time influenced this choice.
 
-However, I welcome your feedback.  Please only use the **Discussions** area of this Github. 
+That said, I genuinely welcome your feedback. Please share any thoughts or suggestions in the Discussions section of this GitHub repository.
 
-This extension dos not include any features that **add, change, or delete records** in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data.
+Additionally, this extension does not include any features that add, modify, or delete records in Monarch. This is a deliberate choice to maintain a high level of trust and ensure that the extension does not impact or manipulate your data in any way.
