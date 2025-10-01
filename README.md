@@ -1,4 +1,4 @@
-# <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks Extension 
+## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Web Extension 
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.2 (September 27, 2025)
 
@@ -105,8 +105,6 @@ I found there were opportunities to enhance the Monarch Money web application wi
 - _Monarch Money on Steroids!_  
 
 - _If you are a numbers person, you need this extension!_  
-
-📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md) 
 
 
 
