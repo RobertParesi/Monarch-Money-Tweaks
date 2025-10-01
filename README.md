@@ -112,10 +112,6 @@ Monarch Money Tweaks extension source-code is not set up for community contribut
 
 This extension will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data.
 
-## Usage License and Restrictions
-
-* All rights to the product and code remain fully with the owner (myself).
-* Any use beyond personal use requires explicit permission from the owner (myself).
 
 📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md) 
 
