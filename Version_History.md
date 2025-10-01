@@ -3,6 +3,7 @@
 * **Version 4.3 (Beta)**
      - NEW: Reports / Investments side panel Stock Chart (fast!)
      - NEW: Reports / Investments side panel Stock Price will now show more recent.
+     - NEW: First time users can have default settings automatically setup.
 
 * **Version 4.2 (September 27, 2025)**
      - NEW: Reports / Investments - Added Green & Red colors on Gain/Loss fields.
