@@ -11,7 +11,7 @@
 🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. 
 
 
-# ⚙️ Installing Monarch Money Tweaks:
+### ⚙️ Installing Monarch Money Tweaks:
 
 Visit the Extensions area for your browser (Chrome, Firefox, Safari) and search for **Monarch Money Tweaks** to install. To run on **Microsoft Edge**, enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
@@ -19,13 +19,13 @@ Once installed, Refresh/Reload the Monarch Money webpage and select **Settings /
 
 Enjoy!
 
-# 🚀 Monarch Money Tweaks - Get Started! 
+### 🚀 Monarch Money Tweaks - Get Started! 
 
 Hello!  I use **Monarch Money**.  
 
 I found there were opportunities to enhance the Monarch Money web application with more functionality and configuration options.
 
-# 🌟 Features:
+### 🌟 Features:
 
 * **Reports / Trends:**
     - Summarize your Monarch Money Income/Spending history.
@@ -86,25 +86,4 @@ I found there were opportunities to enhance the Monarch Money web application wi
 * Hide the Accounts Net Worth Graph Panel for a simplified view.
 * Highlight pending transactions when the Allow Edits to Pending Transactions setting is set to "Off."
 * Save and Restore Monarch Money Tweaks settings (use between browsers)
-
-# 🙏 Quotes from Monarch Money users  
-- _This is fantastic! I just installed Monarch Money Tweaks and it makes up for some serious gaps in Monarch Money reporting. The trends report is exactly what I was looking for and probably the main reason I continue to run Quicken in parallel (which I have used for 15+ yrs). Thanks so much for doing this!_
-
-- _Doing the Lord's work_
-
-- _Love that they keep updating. Love it_
-
-- _Amazing work! Thank you!_
-
-- _Left to spend is huge! Thank you._
-
-- _I just want to say how much I appreciate the work done on this, it's really helpful._
-
-- _Great work as always!_
-
-- _Monarch Money on Steroids!_  
-
-- _If you are a numbers person, you need this extension!_  
-
-
 
