@@ -2,7 +2,7 @@
 
 * **Version 4.3 (Beta)**
      - NEW: Reports / Investments side panel Stock Chart (fast!)
-     - NEW: Reports / Investments side panel Stock Price will now show more recent.
+     - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
      - NEW: First time users can have default settings automatically setup.
      - CHANGE: Account setup screen has tips on Account Groups
