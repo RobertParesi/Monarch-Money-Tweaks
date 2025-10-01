@@ -106,13 +106,6 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _If you are a numbers person, you need this extension!_  
 
-## Discussions:
-
-Monarch Money Tweaks extension source-code is not set up for community contributions. However, I welcome your feedback.  Please only use the **Discussions** area of this Github.
-
-This extension will not include any features that add, change, or delete records in Monarch. This decision is made to maintain a high level of trust and confidence in the extension's use, ensuring that it does not impact anyone's data.
-
-
 📚 [Click here for Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/Documentation_Help.md) 
 
 
