@@ -5,7 +5,7 @@
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
      - NEW: First time users can have default settings automatically setup.
-     - CHANGE: Account setup screen has tips on Account Groups
+     - CHANGE: Account setup screen has tips on using Account Groups.
 
 * **Version 4.2 (September 27, 2025)**
      - NEW: Reports / Investments - Added Green & Red colors on Gain/Loss fields.
