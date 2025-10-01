@@ -1,4 +1,4 @@
-## Contributing and Discussions:
+## Contributing and Discussions
 
 Monarch Money Tweaks extension (source-code/GitHub) is not set up for community contributions.   While I understand that there may be times someone may want to add their own code, I've put a lot of thought into this. I decided not to go down this path, specifically because of security, code-bloat, growing legs, consistancy, Website reviews, long-term support, my extra time and other factors)
 
