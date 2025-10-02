@@ -1,4 +1,4 @@
-## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Web Extension 
+## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:26px; height: 26px;"/> Monarch Money Tweaks - Web Extension 
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.2 (September 27, 2025)
 
