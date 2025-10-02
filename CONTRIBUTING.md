@@ -1,4 +1,4 @@
-## Monarch Money Tweaks - Contributing
+##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Contributing
 
 The Monarch Money Tweaks extension (source code/GitHub) is not configured for community contributions. I understand that at times, users may want to customize or add their own code, but I’ve carefully considered this decision. Factors such as security, code bloat, maintainability, consistency, website reviews, long-term support, and my available time influenced this choice.
 
