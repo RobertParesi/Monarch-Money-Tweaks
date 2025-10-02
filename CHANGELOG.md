@@ -6,6 +6,7 @@
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
      - NEW: First time users can have default settings automatically setup.
      - CHANGE: Account setup screen has tips on using Account Groups.
+     - FIX: Compress tickbox "off" might not draw grid lines in some cases.
 
 * **Version 4.2 (September 27, 2025)**
      - NEW: Reports / Investments - Added Green & Red colors on Gain/Loss fields.
