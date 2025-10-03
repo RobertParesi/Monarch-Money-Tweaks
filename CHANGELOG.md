@@ -5,6 +5,7 @@
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
      - NEW: First time users can have default settings automatically setup.
+     - NEW: Expanded/Collasped sections are now remembered not just by report by also by sub-report as well.
      - CHANGE: Account setup screen has tips on using Account Groups.
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
 
