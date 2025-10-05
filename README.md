@@ -69,7 +69,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
     - Summarize your investment holdings.
     - Show Positions and Performance.
-    - Show gain/loss, cost basis, stock price, and more.
+    - Show gain/loss, cost basis, stock price, stock chart, and more.
     - Sort holdings data by any column.
     - Export to Excel or Numbers.
              
