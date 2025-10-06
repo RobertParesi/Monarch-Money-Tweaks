@@ -3,7 +3,7 @@
 * **Version 4.3 (Beta)**
      - NEW: Reports / Investments side panel Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
-     - NEW: Reports / Investments side panel will show 50-Day and 200-Day Moving Average.     
+     - NEW: Reports / Investments side panel will show 20 Day, 50-Day and 200-Day Moving Average.     
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
      - NEW: Reports / Investments will break out Bond information (AMT, XTRO, Coupon Rate, Yearly Income, etc.)
      - NEW: First time users can have default settings automatically setup.
