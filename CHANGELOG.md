@@ -9,7 +9,7 @@
      - NEW: First time users can have default settings automatically setup.
      - NEW: Expanded/Collasped sections are now remembered not just by report by also by sub-report as well.
      - CHANGE: Account setup screen has tips on using Account Groups.
-     - CHANGE: Ability to go straight to report (bookmark) using /reports/investments, /reports/accounts, /reports/net_income and /reports/trends
+     - CHANGE: Ability to go to report (bookmark) (/reports/investments, /reports/accounts, /reports/net_income and /reports/trends)
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
      - FIX Cost Basis for CASH/MONEY MARKET holding same as Value to correct Gain/Loss.
        
