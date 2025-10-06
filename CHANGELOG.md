@@ -11,7 +11,7 @@
      - CHANGE: Ability to go straight to report (bookmark) using /reports/investments, /reports/accounts, /reports/net_income and /reports/trends
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
      - FIX Cost Basis for CASH/MONEY MARKET holding same as Value to correct Gain/Loss.
-     - 
+       
 
 * **Version 4.2 (September 27, 2025)**
      - NEW: Reports / Investments - Added Green & Red colors on Gain/Loss fields.
