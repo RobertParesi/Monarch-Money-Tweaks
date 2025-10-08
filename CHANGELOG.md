@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.4 (October 9, 2025)**
+* **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments side panel will show 20 Day, 50-Day and 200-Day Moving Average with tooltip.     
