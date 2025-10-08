@@ -1,9 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.4 (Beta)**
-     - REGRESSION: Monthly Summary button did not work.
-
-* **Version 4.3 (October 7, 2025)**
+* **Version 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments side panel will show 20 Day, 50-Day and 200-Day Moving Average with tooltip.     
@@ -16,6 +13,7 @@
      - CHANGE: Ability to go to report (bookmark) (/reports/investments, /reports/accounts, /reports/net_income and /reports/trends)
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
      - FIX Cost Basis for CASH/MONEY MARKET holding same as Value to correct Gain/Loss.
+     - REGRESSION: Monthly Summary button did not work.
        
 
 * **Version 4.2 (September 27, 2025)**
