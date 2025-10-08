@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.4 (Beta)**
+     - REGRESSION: Monthly Summary button did not work.
+
 * **Version 4.3 (October 7, 2025)**
      - NEW: Reports / Investments side panel Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
