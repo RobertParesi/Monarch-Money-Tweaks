@@ -13,7 +13,7 @@
      - CHANGE: Ability to go to report (bookmark) (/reports/investments, /reports/accounts, /reports/net_income and /reports/trends)
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
      - FIX Cost Basis for CASH/MONEY MARKET holding same as Value to correct Gain/Loss.
-     - REGRESSION: Monthly Summary button did not work.
+     - REGRESSION: Cash Flow / Expenses / [Monthly Summary] button did not work.
        
 
 * **Version 4.2 (September 27, 2025)**
