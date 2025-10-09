@@ -6,7 +6,7 @@ Next, if you need additional help, please see the **Discussions** option at the 
 
 I want to clarify that this GitHub is not intended for requesting new features or wish list ideas for Monarch Money.  This extension is primarily focused on Reports **(Trends, Net Income, Accounts, Investments)**.
 
-Please refrain from creating discussions about modifying Monarch's screens and features such as in Transactions, Snapshot, Budgets, Recurring, Goals, or Advice, any of Monarch's graphs or hiding money fields within Monarch. This extension has no connection to Monarch Money’s mobile apps (iPhone & Android) and does not pertain to their core platform beyond the scope I’ve described.
+Please refrain from creating discussions about modifying Monarch's screens and features such as in Transactions, Snapshot, Budgets, Recurring, Goals, or Advice, any of Monarch's graphs or hiding money fields within Monarch. This extension has no connection to Monarch Money’s mobile apps (iPhone & Android).
 
 Monarch Money has its own roadmap and dedicated development teams. What I am offering here is my hobby project to the Monarch Money communinity, done for fun and free of charge. While I’m happy to help within this scope, I kindly ask for your respect my time and effort. 
 
