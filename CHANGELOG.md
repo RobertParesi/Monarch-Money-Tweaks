@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.5 (beta)**
+     - FIX: Reports / Investments fixes with regards to Manual Accounts (USD, Crypto, stock)
+       
 * **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
