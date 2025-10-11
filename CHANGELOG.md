@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.5 (beta)**
-     - FIX: Reports / Investments fixes (report does not display) when hitting some Manual Accounts (USD, Crypto)
+     - FIX: Reports / Investments fixes issue where report does not display because of Manual (USD, Crypto) being used.
        
 * **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel and pressing > on Stocks & ETF's shows new Stock Chart.
