@@ -2,7 +2,7 @@
 
 The Monarch Money Tweaks extension (source code/GitHub) is not configured for community contributions. I understand that at times, users may want to customize or add their own code, but I’ve carefully considered this decision. Factors such as security, code bloat, maintainability, consistency, website reviews, long-term support, and my available time influenced this choice.
 
-I'd like to focus mostly / solely on the four reports (**Trends, Net Income, Accounts and Investments**) for many of the reasons above.
+My Monarch Money Tweaks focus is mostly on the four additional reports (**Trends, Net Income, Accounts and Investments**) for many of the reasons above.
 
 That said, I genuinely welcome your feedback in those areas. Please share any thoughts or suggestions in the Discussions section of this GitHub repository.
 
