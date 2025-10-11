@@ -16,10 +16,8 @@ The extension does not send or receive data from third-party servers.  We do not
 
 ### Transparency
 
-This extension is built without any dependencies or external libraries ensuring maximum transparency and security.  The Monarch Money GraphQL API is developed by Monarch Money and is utilized in their mobile framework, report graphs, and more. This extension utilizes the same security token stored by Monarch Money, ensuring no data is collected or transmitted outside of this connection.  
+This extension has been developed without any dependencies or external libraries, ensuring maximum transparency and security. It utilizes the Monarch Money GraphQL API, which is developed by Monarch Money and integrated into their mobile framework, report graphs, and other features. The extension uses the same security token stored by Monarch Money, guaranteeing that no data is collected or transmitted outside of this secure connection.
 
-This extension goes through a verification process by Google (Chrome), Mozilla (Firefox) and Apple (Safari) for every update. 
-Before extensions are available to the public, they are reviewed by Google, Mozilla and Apple to identify potential threats and vulnerabilities. This ensures that this extension is safe and secure.  
+The extension undergoes a thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
 
-
-
+Extensions are designed to request only the data and permissions necessary for their functionality. During installation, users are informed of these requests. I am pleased to confirm that this extension's manifest requests no permissions beyond access within Monarch Money's application domain. It is incapable of sending or fetching data outside this domain, ensuring that your financial information remains secure and confined within its intended boundaries.
