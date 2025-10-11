@@ -2,6 +2,7 @@
 
 * **Version 4.5 (beta)**
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
+     - CHANGE: Reports with sub totals will now have sub header.
        
 * **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel and pressing > on stocks & ETF's will show Stock Chart.
