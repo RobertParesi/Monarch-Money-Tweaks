@@ -19,7 +19,7 @@ The extension does not send or receive data from third-party servers.  We do not
 This extension is built without any dependencies or external libraries ensuring maximum transparency and security.  The Monarch Money GraphQL API is developed by Monarch Money and is utilized in their mobile framework, report graphs, and more. This extension utilizes the same security token stored by Monarch Money, ensuring no data is collected or transmitted outside of this connection.  
 
 This extension goes through a verification process by Google (Chrome), Mozilla (Firefox) and Apple (Safari) for every update. 
-Before extensions are available to the public, they are reviewed by Google, Mozilla and Apple to identify potential threats and vulnerabilities. This ensures that this extension is safe and security.  
+Before extensions are available to the public, they are reviewed by Google, Mozilla and Apple to identify potential threats and vulnerabilities. This ensures that this extension is safe and secure.  
 
 
 
