@@ -1,6 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.5 (beta)**
+     - NEW: Reports / Investments added number of Gainers/Losers to top card.
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
      - CHANGE: Reports with sub totals will now have sub header.
        
