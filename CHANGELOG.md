@@ -4,7 +4,7 @@
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
        
 * **Version 4.3 & 4.4 (October 9, 2025)**
-     - NEW: Reports / Investments side panel and pressing > on Stocks & ETF's shows new Stock Chart.
+     - NEW: Reports / Investments side panel and pressing > on stocks & ETF's will show Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
      - NEW: Reports / Investments side panel will show 20 Day, 50-Day and 200-Day Moving Average with tooltip.     
      - NEW: Reports / Investments drop-down has new report "by Account/Stock Type" with sub-totals.
