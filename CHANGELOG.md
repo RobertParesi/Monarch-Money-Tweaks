@@ -5,6 +5,7 @@
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
      - FIX: Reports / Accounts / Standard Report Projected Balance wrong for Liabilities.
      - CHANGE: Reports with sub totals will now have sub header.
+     - CHANGE: Reports will scroll horizontally better for large reports on smaller monitors.
        
 * **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel and pressing > on stocks & ETF's will show Stock Chart.
