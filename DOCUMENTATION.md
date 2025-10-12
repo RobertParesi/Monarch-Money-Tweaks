@@ -83,7 +83,7 @@ If some accounts are managed by an advisor and some are not, you can assign "Man
 
 **Family vs Kids**
 
-If there are investments or credit cards are for kids use, you could further designate with "Family" or "Kids".
+If there are investments or credit cards for kids use, you could further designate with "Family" or "Kids".
 
 
 **Monarch Tweaks Household Description for Breakdown**
