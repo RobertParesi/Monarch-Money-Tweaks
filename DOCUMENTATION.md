@@ -1,6 +1,6 @@
 ## 📖 Documentation & Help:
 
-If you are using Monarch Money Tweaks (MMT), you definitely want to first look at Account Groups.  This allows you to group your accounts into custom groups which will make the four reports in MMT more effective.   Be sure to check out Account Groups at the bottom of this page.
+If you're using Monarch Money Tweaks (MMT), it's highly recommended to start by exploring Account Groups. Creating custom account groups can enhance the usefulness of the four reports in MMT by providing clearer organization and insights. Be sure to review the Account Groups section located at the bottom of this page to get started.
 
 
 **Monarch Tweaks Settings**
@@ -62,7 +62,7 @@ There are different scenerios that Monarch Money users use them in:
     * Credit Cards
     * Loans
 
-For me personally, I have my accounts labeled five ways:  **Personal** (checking, house, cars, etc.), **Credit Cards** (all my credit cards), **Loans** (all other liabilites), **Managed** (investments managed) and **Non Managed** (investments non managed).
+For me personally, I have my accounts labeled five ways:  **Personal** (checking, house, cars, etc.), **Credit Cards** (all my credit cards), **Loans** (all other liabilities), **Managed** (investments managed) and **Non Managed** (investments non managed).
     
       
 **Personal & Business**
