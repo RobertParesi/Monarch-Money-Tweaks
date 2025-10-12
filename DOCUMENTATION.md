@@ -67,11 +67,11 @@ For me personally, I have my accounts labeled five ways:  **Personal** (checking
       
 **Personal & Business**
 
-If your accounts are designated for either Personal or Business purposes, you could assign each checking, savings, credit card, etc. account with either "Personal", "Business" or "Both.
+If your accounts also have business accounts, consider adding "Personal", "Business" and "Both".
 
 **Household Members**
 
-If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name", "Their Name", or "Both". Example:  "Jerry", "Elaine", "Both"
+If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name", "Their Name", or "Both". Example:  "Jerry", "Elaine", "Both" rather than just "Personal".
 
 **Tax and Tax Deferred**
 
@@ -83,7 +83,7 @@ If some accounts are managed by an advisor and some are not, you can assign "Man
 
 **Family vs Kids**
 
-If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
+If there are investments or credit cards are for kids use, you could further designate with "Family" or "Kids".
 
 
 **Monarch Tweaks Household Description for Breakdown**
