@@ -60,8 +60,9 @@ There are different scenerios that Monarch Money users use them in:
     * Managed vs Non Managed
     * Family vs Kids
     * Credit Cards
+    * Loans
 
-For me personally, I have my accounts labeled four ways:  **Personal** (checking, house, cars, etc.), **Credit Cards** (all my credit cards), **Managed** (investments managed) and **Non Managed** (investments non managed).
+For me personally, I have my accounts labeled five ways:  **Personal** (checking, house, cars, etc.), **Credit Cards** (all my credit cards), **Loans** (all other liabilites), **Managed** (investments managed) and **Non Managed** (investments non managed).
     
       
 **Personal & Business**
