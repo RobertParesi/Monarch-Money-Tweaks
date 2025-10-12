@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.5 & 4.6 (October 12, 2025)**
+* **Version 4.5 & 4.6 (beta)**
      - NEW: Reports / Investments added number of Gainers/Losers to top card.
      - NEW: Reports has Save and Restore favorite view options.
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
