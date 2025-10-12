@@ -1,5 +1,8 @@
 ## 📖 Documentation & Help:
 
+If you are using Monarch Money Tweaks (MMT), you definitely want to first look at Account Groups.  This allows you to group your accounts into custom groups which will make the four reports in MMT more effective.   Be sure to check out Account Groups at the bottom of this page.
+
+
 **Monarch Tweaks Settings**
 ![Settings](/images/MT_V3_01.png)
 
