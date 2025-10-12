@@ -59,6 +59,10 @@ There are different scenerios that Monarch Money users use them in:
     * Tax and Tax Deferred
     * Managed vs Non Managed
     * Family vs Kids
+    * Credit Cards
+
+For me personally, I have my accounts lableled four ways:  Personal (checking, house, cars, etc.), Credit Cards (all my credit cards), Managed (investments managed) and Non Managed (investments non managed).
+    
       
 **Personal & Business**
 
