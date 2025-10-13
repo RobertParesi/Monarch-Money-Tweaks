@@ -3,11 +3,10 @@
 * **Version 4.5 & 4.6 (beta)**
      - NEW: Reports / Investments added number of Gainers/Losers to top card.
      - NEW: Reports has Save and Restore favorite view options.
+     - CHANGE: Reports with sub totals will now have sub header.
      - FIX: Reports / Investments fixes issue where report does not display because of manual accounts (USD, Crypto) being used.
      - FIX: Reports / Accounts / Standard Report Projected Balance wrong for Liabilities.
-     - CHANGE: Reports with sub totals will now have sub header.
- 
-       
+    
 * **Version 4.3 & 4.4 (October 9, 2025)**
      - NEW: Reports / Investments side panel and pressing > on stocks & ETF's will show Stock Chart.
      - NEW: Reports / Investments side panel Stock Price will now show more recent price.
