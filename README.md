@@ -11,8 +11,6 @@
 
 🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. 
 
-🧑‍💻  If you are computer-savy, have a MAC and want to be a beta (early) tester of Monarch Money Tweaks, contact me. 
-
 ### ⚙️ Installing Monarch Money Tweaks:
 
 Visit the Extensions area for your browser using the links above. 
