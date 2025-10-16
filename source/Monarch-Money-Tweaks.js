@@ -1,15 +1,15 @@
 (function() {
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.7
+// @version      4.7.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.7';
+const version = '4.7.1';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
-const graphql = 'https://api.monarchmoney.com/graphql';
+const graphql = 'https://api.monarch.com/graphql';
 let css_green = '',css_red = '', css_header = '',css_subtotal = '', css_reload = true, css_cec = false;
 let SaveLocationPathName = '';
 let r_headStyle = null, r_FlexButtonActive = false, r_tooltipHandle = null, MTSpawnProcess=8, debug=0;
@@ -4325,7 +4325,7 @@ function callGraphQL(data) {
     return {
         mode: 'cors',
         method: 'POST',
-        headers: {accept: '*/*',authorization: `Token ${getGraphqlToken()}`,'content-type': 'application/json',origin: 'https://app.monarchmoney.com',},
+        headers: {accept: '*/*',authorization: `Token ${getGraphqlToken()}`,'content-type': 'application/json',},
         body: JSON.stringify(data),
     };
 }
