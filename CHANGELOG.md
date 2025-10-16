@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.7 (October 16, 2025)**
+* **Version 4.7.1 (October 16, 2025)**
      - CHANGE: Handle new Monarch domain name.
 
 * **Version 4.5 & 4.6 (October 13, 2025)**
