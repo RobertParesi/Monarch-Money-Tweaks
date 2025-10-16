@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.7 (October 16, 2025)**
+     - CHANGE: Handle new Monarch domain name.
+
 * **Version 4.5 & 4.6 (October 13, 2025)**
      - NEW: Reports / Investments added number of Gainers/Losers to top card.
      - NEW: Reports has Save and Restore favorite view options.
