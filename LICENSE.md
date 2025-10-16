@@ -3,7 +3,7 @@
 
 * All rights to the product and its source code are exclusively retained by me.
 * Any use beyond personal purposes requires explicit permission from me.
-* The source code is to be kept confidential and is not to be published outside of this GitHub repository.
+* The source code is to be kept for personal use only and is not to be published outside of this GitHub repository.
 * Modifications to the source code must not be disclosed or shared publicly.
 
 
