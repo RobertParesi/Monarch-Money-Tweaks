@@ -1,10 +1,10 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks - Web Extension 
 
-**Updates to Monarch Money domain have been submitted to Google, Mozilla and Apple. Watch for V4.7.1 and update.**
+**Update to work with new Monarch Money domain have been submitted to Google, Mozilla and Apple. Watch for V4.7.1 and update.**
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.6 (October 13, 2025)
 
-🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.7.1 (October 16, 2025 to work with Monarch new domain)
+🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.7.1 (October 16, 2025)
 
 🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.6 (October 13, 2025)
 
