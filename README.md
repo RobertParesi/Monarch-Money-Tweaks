@@ -1,6 +1,6 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks - Web Extension 
 
-**Updates to Monarch Money domain might cause issues.  I'll correct as needed so no worries.**
+**Updates to Monarch Money domain have been submitted to Google, Mozilla and Apple. Watch for V4.7.1 and update.**
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.6 (October 13, 2025)
 
