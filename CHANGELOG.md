@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.8 (Beta)**
+     - CHANGE: Better handling of 1M, 3M and 6M days in stock chart.
+
 * **Version 4.7.1 (October 16, 2025)**
      - CHANGE: Handle new Monarch domain name.
 
