@@ -1,13 +1,13 @@
 (function() {
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.7.1
+// @version      4.8.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.7.1';
+const version = '4.8.1';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css_green = '',css_red = '', css_header = '',css_subtotal = '', css_reload = true, css_cec = false;
@@ -931,68 +931,77 @@ function MF_GridAddCard (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
     return 0;
 }
 // [ Chart Canvas ]
-function MF_DrawChart(inLocation) {
+function MF_DrawChart(inType,inLocation) {
 
-    const timeLit = getCookie('MT_StockSelect',false,'1W');
-    const timeNdx = inList(timeLit,['1W','1M','3M','6M','YTD','1Y']) -1;
-    const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year'][timeNdx]);
-    const a = isDarkMode();
-    const standardText = ['#333333','#cccccc'][a];
-    let topDiv = null, c=null,tooltip = null;
+    let xAxis = [], yAxis = [], points = [];
+    let topDiv = null, topChart = null, tooltip = null;
+
     if(inLocation != null) {
         topDiv = document.createElement('div');
         topDiv.className = 'MTChartContainer';
         topDiv.id = 'MTChartCanvas';
         topDiv = inLocation.insertAdjacentElement('afterend', topDiv);
-        c = cec('canvas','',topDiv,'','','','id','MTChart');c.width = 590; c.height = 400;
+        topChart = cec('canvas','',topDiv,'','','','id','MTChart');topChart.width = 590; topChart.height = 400;
         tooltip = cec('div','',topDiv,'','','position: absolute;background: #000000; color: #fff; padding: 4px 8px; border-radius: 4px; pointer-events: none; font-size: 14px; font-weight: 600; display: none;','id','MTChartTip');
     } else {
         topDiv = document.getElementById('MTChartCanvas');
-        c = document.getElementById('MTChart');
+        topChart = document.getElementById('MTChart');
         tooltip = document.getElementById('MTChartTip');
     }
+    if(inType = 'MT_Investments') {chartDrawInvestments();}
+    drawChart();
+    if(inType = 'MT_Investments') {chartTipInvestments();}
 
-    const ctx = c.getContext('2d');
-    const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
-    const xLen = chart.length;
-    let prices = [], dates = [],points = []
-    let moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
+    function chartDrawInvestments() {
+        const timeLit = getCookie('MT_StockSelect',false,'1W');
+        const timeNdx = inList(timeLit,['1W','1M','3M','6M','YTD','1Y']) -1;
+        const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year'][timeNdx]);
+        const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
+        const xLen = chart.length;
+        let moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
+        for (let i = 0; i < xLen; i++) {
+            const { date: useDate, value: useAmt } = chart[i];
+            const dateS = new Date(useDate);
+            for (let j = 0; j < 3; j++) { if (i > moveAvg.Start[j] && i < xLen - 1) {moveAvg.Accum[j] += useAmt;}}
+            if (dateS > timeFrame) {xAxis.push(useAmt);yAxis.push(useDate);}
+        }
+        if(moveAvg.Start[0] > 0) {moveAvg.Accum[0] = moveAvg.Accum[0] / 20;}
+        if(moveAvg.Start[1] > 0) {moveAvg.Accum[1] = moveAvg.Accum[1] / 50;}
+        if(moveAvg.Start[2] > 0) {moveAvg.Accum[2] = moveAvg.Accum[2] / 200;}
+        for (let j = 0; j < 3; j++) {moveAvg.Accum[j] = parseFloat(moveAvg.Accum[j].toFixed(2));}
 
-    for (let i = 0; i < xLen; i++) {
-        const { date: useDate, value: useAmt } = chart[i];
-        const dateS = new Date(useDate);
-        for (let j = 0; j < 3; j++) { if (i > moveAvg.Start[j] && i < xLen - 1) {moveAvg.Accum[j] += useAmt;}}
-        if (dateS > timeFrame) {prices.push(useAmt);dates.push(useDate);}
-    }
-
-    if(moveAvg.Start[0] > 0) {moveAvg.Accum[0] = moveAvg.Accum[0] / 20;}
-    if(moveAvg.Start[1] > 0) {moveAvg.Accum[1] = moveAvg.Accum[1] / 50;}
-    if(moveAvg.Start[2] > 0) {moveAvg.Accum[2] = moveAvg.Accum[2] / 200;}
-    for (let j = 0; j < 3; j++) {moveAvg.Accum[j] = parseFloat(moveAvg.Accum[j].toFixed(2));}
-
-    for (let i = 0; i < xLen; i++) {
-        const { value: useAmt } = chart[i];
-        for (let j = 0; j < 3; j++) {
-            if (i > moveAvg.Start[j] && i < xLen - 1) {
-                if(useAmt > moveAvg.Accum[j]) {moveAvg.Good[j]++;} else if (useAmt < moveAvg.Accum[j]) {moveAvg.Bad[j]++;}
+        for (let i = 0; i < xLen; i++) {
+            const { value: useAmt } = chart[i];
+            for (let j = 0; j < 3; j++) {
+                if (i > moveAvg.Start[j] && i < xLen - 1) {
+                    if(useAmt > moveAvg.Accum[j]) {moveAvg.Good[j]++;} else if (useAmt < moveAvg.Accum[j]) {moveAvg.Bad[j]++;}
+                }
+            }
+            if(i > xLen - 12 && i < xLen -1) {
+                if(useAmt > moveAvg.Accum[0]) {moveAvg.Good[3]++;} else if (useAmt < moveAvg.Accum[0]) {moveAvg.Bad[3]++;}
             }
         }
-        if(i > xLen - 12 && i < xLen -1) {
-            if(useAmt > moveAvg.Accum[0]) {moveAvg.Good[3]++;} else if (useAmt < moveAvg.Accum[0]) {moveAvg.Bad[3]++;}
+        if(moveAvg.Good[0] > 14) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[0] > 14) {moveAvg.Style[0] = css_red;}
+        if(moveAvg.Good[3] > 6) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[3] > 6) {moveAvg.Style[0] = css_red;}
+        if(moveAvg.Good[1] > 38) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[1] > 38) {moveAvg.Style[1] = css_red;}
+        if(moveAvg.Good[2] > 150) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[2] > 150) {moveAvg.Style[1] = css_red;}
+
+        updateChartDetail('MTCurrentPrice','',getDollarValue(xAxis[xAxis.length-1]));
+        updateChartDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0],false),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
+        updateChartDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1],false) + ' / ' + getDollarValue(moveAvg.Accum[2],false),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
+        let p = getPriceDiff();
+        if(p) {updateChartDetail('MTPriceChange','Price Change (' + timeLit + ')',getDollarValue(p[0]) + ' (' + p[1] + '%)', p[2]);}
+        if(inLocation != null) {
+            const minValue = Math.min(...xAxis);
+            const maxValue = Math.max(...xAxis);
+            updateChartDetail('MTYTDPriceChange','',getDollarValue(minValue) + ' - ' + getDollarValue(maxValue));
         }
     }
-    if(moveAvg.Good[0] > 14) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[0] > 14) {moveAvg.Style[0] = css_red;}
-    if(moveAvg.Good[3] > 6) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[3] > 6) {moveAvg.Style[0] = css_red;}
-    if(moveAvg.Good[1] > 38) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[1] > 38) {moveAvg.Style[1] = css_red;}
-    if(moveAvg.Good[2] > 150) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[2] > 150) {moveAvg.Style[1] = css_red;}
-
-    let dpMod = 1;
-    if(prices.length > 10) { dpMod = Math.floor(prices.length / 11); }
 
     function getPriceDiff(inX,inY, tt) {
-        if(inX == null) {inY = 0; inX = points.length-1;}
-        let df = points[inX].price - points[inY].price;
-        let df2 = (df / points[inY].price) * 100;
+        if(inX == null) {inY = 0; inX = xAxis.length-1;}
+        let df = xAxis[inX] - xAxis[inY];
+        let df2 = (df / xAxis[inY]) * 100;
         df = df.toFixed(2);df2 = df2.toFixed(1);
         let uc = '';
         if(tt == true) { uc = (df > 0) ? 'color: #3dd68c;' : (df < 0 ? 'color: #f9918e;' : ''); } else { uc = (df > 0) ? css_green : (df < 0 ? css_red : ''); }
@@ -1016,20 +1025,23 @@ function MF_DrawChart(inLocation) {
 
     function drawChart() {
 
-        ctx.clearRect(0, 0, c.width, c.height);
-        const minPrice = Math.min(...prices);
-        const maxPrice = Math.max(...prices);
+        const ctx = topChart.getContext('2d');
+        ctx.clearRect(0, 0, topChart.width, topChart.height);
+        const minPrice = Math.min(...xAxis);
+        const maxPrice = Math.max(...xAxis);
         const midPrice = (minPrice + maxPrice) / 2;
         const midHPrice = (midPrice + maxPrice) / 2;
         const midLPrice = (minPrice + midPrice) / 2;
         const paddingLeft = 50;
-        const chartHeight = c.height - 100;
+        const chartHeight = topChart.height - 100;
+        const a = isDarkMode();
+        const standardText = ['#333333','#cccccc'][a];
 
         points = [];
 
         ctx.strokeStyle = standardText;ctx.lineWidth = 1.0;
         // X axis
-        ctx.beginPath();ctx.moveTo(paddingLeft, chartHeight + 20);ctx.lineTo(c.width - 20, chartHeight + 20); ctx.stroke();
+        ctx.beginPath();ctx.moveTo(paddingLeft, chartHeight + 20);ctx.lineTo(topChart.width - 20, chartHeight + 20); ctx.stroke();
         // Y labels
         ctx.fillStyle = standardText;ctx.font = '600 12.8px Helvetica'; ctx.textAlign = 'right';
         ctx.fillText('$' + (maxPrice.toFixed(2)), paddingLeft - 5, 22);
@@ -1050,15 +1062,15 @@ function MF_DrawChart(inLocation) {
         ctx.strokeStyle = standardText;
         ctx.lineWidth = 0.50;
         lineYs.forEach(y => {
-            ctx.beginPath();ctx.moveTo(paddingLeft, y); ctx.lineTo(c.width - 20, y);ctx.stroke();
+            ctx.beginPath();ctx.moveTo(paddingLeft, y); ctx.lineTo(topChart.width - 20, y);ctx.stroke();
         });
 
         // Plot line and gather points
         ctx.strokeStyle = '#ff692d';ctx.lineWidth = 1.8;ctx.beginPath();
-        prices.forEach((p, i) => {
-            const x = paddingLeft + ((c.width - paddingLeft - 20) * i) / (prices.length - 1);
+        xAxis.forEach((p, i) => {
+            const x = paddingLeft + ((topChart.width - paddingLeft - 20) * i) / (xAxis.length - 1);
             const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
-            points.push({x, y, price: p, date: dates[i]});
+            points.push({x, y, price: p, date: yAxis[i]});
             if (i === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         });
@@ -1069,62 +1081,55 @@ function MF_DrawChart(inLocation) {
         points.forEach(pt => { ctx.beginPath();ctx.arc(pt.x, pt.y, 4, 0, Math.PI*2);ctx.fill(); });
 
         // All date labels
+        let dpMod = 1;
+        if(points.length > 10) { dpMod = Math.ceil(points.length / 11); }
         ctx.fillStyle = standardText; ctx.font = '12px Helvetica';ctx.textAlign = 'center';
         let dpS = 0,firstPass = false;
-        dates.forEach((d, i) => {
+        yAxis.forEach((d, i) => {
             dpS++;
             if(dpS == dpMod || firstPass == false) {
-                const x = paddingLeft + ((c.width - paddingLeft - 20) * i) / (dates.length - 1);
-                ctx.fillText(d.slice(5,10), x, c.height - 30);
+                const x = paddingLeft + ((topChart.width - paddingLeft - 20) * i) / (yAxis.length - 1);
+                ctx.fillText(d.slice(5,10), x, topChart.height - 30);
                 dpS=0;firstPass = true;
             }
         });
-        let cPrice = points[points.length-1].price;
-        updateChartDetail('MTCurrentPrice','',getDollarValue(cPrice));
-        updateChartDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0],false),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
-        updateChartDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1],false) + ' / ' + getDollarValue(moveAvg.Accum[2],false),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
-        let p = getPriceDiff();
-        if(p) {updateChartDetail('MTPriceChange','Price Change (' + timeLit + ')',getDollarValue(p[0]) + ' (' + p[1] + '%)', p[2]);}
-        if(inLocation != null) {
-            const minValue = Math.min(...performanceData.securityHistoricalPerformance.flatMap(perf => perf.historicalChart.map(chart => chart.value)));
-            const maxValue = Math.max(...performanceData.securityHistoricalPerformance.flatMap(perf => perf.historicalChart.map(chart => chart.value)));
-            updateChartDetail('MTYTDPriceChange','',getDollarValue(minValue) + ' - ' + getDollarValue(maxValue));
-        }
     }
-    if(r_tooltipHandle) { c.removeEventListener('mousemove', r_tooltipHandle); }
-    r_tooltipHandle = c.addEventListener('mousemove', (e) => {
-        const rect = c.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        let fd = false,x=0;
-        for (const pt of points) {
-            const dx = mouseX - pt.x;
-            const dy = mouseY - pt.y;
-            let tt='',mX=0, nd='';
-            if (dx * dx + dy * dy <= 64) {
-                mX = mouseX - 48;
-                if(mX > 420) mX = 410;
-                tooltip.style.left = mX + 'px';
-                tooltip.style.top = (e.clientY + 10) + 'px';
-                nd = new Date(pt.date + 'T00:00:00');
-                nd = getDates('s_FullDate',nd);
-                tt = nd + '<br/>$' + pt.price.toFixed(2) + '<br/>';
-                if(x > 0) {
-                    let p = getPriceDiff(x,x-1, true);
-                    tt+= '<div style="' + p[2] + '">Day Change: ' + getDollarValue(p[0]) + ' (' + p[1] + '%)</div>';
-                    p = getPriceDiff(x,0, true);
-                    tt+= '<div style="' + p[2] + '">Period Change: ' + getDollarValue(p[0]) + ' (' + p[1] + '%)</div>';
+
+    function chartTipInvestments() {
+        if(r_tooltipHandle) { topChart.removeEventListener('mousemove', r_tooltipHandle); }
+        r_tooltipHandle = topChart.addEventListener('mousemove', (e) => {
+            const rect = topChart.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            let fd = false,x=0;
+            for (const pt of points) {
+                const dx = mouseX - pt.x;
+                const dy = mouseY - pt.y;
+                let tt='',mX=0, nd='';
+                if (dx * dx + dy * dy <= 64) {
+                    mX = mouseX - 48;
+                    if(mX > 420) mX = 410;
+                    tooltip.style.left = mX + 'px';
+                    tooltip.style.top = (e.clientY + 10) + 'px';
+                    nd = new Date(pt.date + 'T00:00:00');
+                    nd = getDates('s_FullDate',nd);
+                    tt = nd + '<br/>$' + pt.price.toFixed(2) + '<br/>';
+                    if(x > 0) {
+                        let p = getPriceDiff(x,x-1, true);
+                        tt+= '<div style="' + p[2] + '">Day Change: ' + getDollarValue(p[0]) + ' (' + p[1] + '%)</div>';
+                        p = getPriceDiff(x,0, true);
+                        tt+= '<div style="' + p[2] + '">Period Change: ' + getDollarValue(p[0]) + ' (' + p[1] + '%)</div>';
+                    }
+                    tooltip.innerHTML = tt;
+                    tooltip.style.display = 'block';
+                    fd = true;
+                    break;
                 }
-                tooltip.innerHTML = tt;
-                tooltip.style.display = 'block';
-                fd = true;
-                break;
+                x++;
             }
-            x++;
-        }
-        if (!fd) {tooltip.style.display = 'none';}
-    });
-    drawChart();
+            if (!fd) {tooltip.style.display = 'none';}
+        });
+    }
 }
 
 // [ Reports Menu ]
@@ -3436,7 +3441,7 @@ function onClickUpdateTicker() {
     }
     element.className = 'MTSideDrawerTickerSelectA';
     setCookie('MT_StockSelect',element.innerText);
-    MF_DrawChart(null);
+    MF_DrawChart(MTFlex.Name,null);
 }
 
 function onClickMTFlexExpand(inAll) {
@@ -3619,7 +3624,7 @@ async function MenuTickerDrawer(inP) {
             cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent);
         }
         performanceData = await getPerformance(formatQueryDate(getDates('d_LastYear')),formatQueryDate(getDates('d_Today')),edg.id);
-        MF_DrawChart(div);
+        MF_DrawChart(MTFlex.Name,div);
     } else if (hld[p2].type == 'fixed_income') {
         if(bondInfo[1] != '') {
             MenuTickerDrawerLine('Coupon Rate',bondInfo[1]);
@@ -3964,9 +3969,9 @@ function getDates(InValue,InDate) {
         case 'd_Yesterday':d.setDate(d.getDate() - 1);return d;
         case 'd_MinusWeek':d.setDate(d.getDate() - 7);return d;
         case 'd_Minus2Weeks':d.setDate(d.getDate() - 14);return d;
-        case 'd_Minus1Month':d.setDate(1);d.setMonth(d.getMonth() - 1);return d;
-        case 'd_Minus3Months':d.setDate(1);d.setMonth(d.getMonth() - 2);return d;
-        case 'd_Minus6Months':d.setDate(1);d.setMonth(d.getMonth() - 5);return d;
+        case 'd_Minus1Month':d.setMonth(d.getMonth() - 1);return d;
+        case 'd_Minus3Months':d.setMonth(d.getMonth() - 3);d.setDate(d.getDate() + 1);return d;
+        case 'd_Minus6Months':d.setMonth(d.getMonth() - 6);d.setDate(d.getDate() + 1);return d;
         case 'd_LastYear':
             d.setFullYear(d.getFullYear() - 1);
             d.setDate(d.getDate() + 1);
