@@ -1,4 +1,4 @@
-Monarch Money Tweaks sourcecode is Copyright (c) Robert Paresi. 
+Monarch Money Tweaks source-code is Copyright (c) Robert Paresi. 
 
 **All Rights Reserved.**
 
