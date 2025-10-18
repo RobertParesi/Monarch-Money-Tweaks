@@ -1,4 +1,4 @@
-Copyright (c) Robert Paresi. All Rights Reserved.
+This source code is Copyright (c) Robert Paresi. All Rights Reserved.
 
 This source code is provided for personal, private use only.
 
