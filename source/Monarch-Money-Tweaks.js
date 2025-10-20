@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8.1
+// @version      4.8.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8.1';
+const version = '4.8.2';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css_green = '',css_red = '', css_header = '',css_subtotal = '', css_reload = true, css_cec = false;
@@ -529,7 +529,7 @@ function MT_GridDrawDetails() {
 function MT_GridDrawExpand() {
 
     const trS = document.querySelectorAll('tr[MTsection]');
-    const cName = MTFlex.Name + MTFlex.SortSeq[MTFlex.Button2] + 'Expand';
+    const cName = MF_GetSeqKey('Expand');
     let x = null, xBefore = null, cv = null;
     trS.forEach((tr) => {
         x = Number(tr.getAttribute('MTsection'));
@@ -545,10 +545,13 @@ function MT_GridDrawExpand() {
     });
 }
 
+function MF_GetSeqKey(inType) {
+    return MTFlex.Name + inType + MTFlex.SortSeq[MTFlex.Button2];
+}
+
 function MT_GridDrawSort() {
 
-    let cn = MTFlex.Name + 'Sort' + (MTFlex.SortSeq ? MTFlex.SortSeq[MTFlex.Button2] : '');
-    let useSort = getCookie(cn, true);
+    let useSort = getCookie(MF_GetSeqKey('Sort'), true);
     useSort = Math.abs(useSort) >= MTFlexTitle.length ? 0 : useSort;
     const useCol = MTFields + Math.abs(useSort);
 
@@ -930,7 +933,7 @@ function MF_GridAddCard (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
     return 0;
 }
 // [ Chart Canvas ]
-function MF_DrawChart(inType,inLocation) {
+function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
     let topDiv = null, topChart = null, tooltip = null;
@@ -947,12 +950,12 @@ function MF_DrawChart(inType,inLocation) {
         topChart = document.getElementById('MTChart');
         tooltip = document.getElementById('MTChartTip');
     }
-    if(inType = 'MT_Investments') {chartDrawInvestments();}
+    if(MTFlex.Name == 'MTInvestments') {drawChartInvestments();}
     drawChart();
-    if(inType = 'MT_Investments') {chartTipInvestments();}
+    drawChartTips();
 
-    function chartDrawInvestments() {
-        const timeLit = getCookie('MT_StockSelect',false,'1W');
+    function drawChartInvestments() {
+        const timeLit = getCookie(MTFlex.Name + 'StockSelect',false,'1W');
         const timeNdx = inList(timeLit,['1W','1M','3M','6M','YTD','1Y']) -1;
         const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year'][timeNdx]);
         const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
@@ -964,36 +967,33 @@ function MF_DrawChart(inType,inLocation) {
             for (let j = 0; j < 3; j++) { if (i > moveAvg.Start[j] && i < xLen - 1) {moveAvg.Accum[j] += useAmt;}}
             if (dateS > timeFrame) {xAxis.push(useAmt);yAxis.push(useDate);}
         }
-        if(moveAvg.Start[0] > 0) {moveAvg.Accum[0] = moveAvg.Accum[0] / 20;}
-        if(moveAvg.Start[1] > 0) {moveAvg.Accum[1] = moveAvg.Accum[1] / 50;}
-        if(moveAvg.Start[2] > 0) {moveAvg.Accum[2] = moveAvg.Accum[2] / 200;}
-        for (let j = 0; j < 3; j++) {moveAvg.Accum[j] = parseFloat(moveAvg.Accum[j].toFixed(2));}
-
-        for (let i = 0; i < xLen; i++) {
-            const { value: useAmt } = chart[i];
-            for (let j = 0; j < 3; j++) {
-                if (i > moveAvg.Start[j] && i < xLen - 1) {
-                    if(useAmt > moveAvg.Accum[j]) {moveAvg.Good[j]++;} else if (useAmt < moveAvg.Accum[j]) {moveAvg.Bad[j]++;}
-                }
-            }
-            if(i > xLen - 12 && i < xLen -1) {
-                if(useAmt > moveAvg.Accum[0]) {moveAvg.Good[3]++;} else if (useAmt < moveAvg.Accum[0]) {moveAvg.Bad[3]++;}
-            }
-        }
-        if(moveAvg.Good[0] > 14) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[0] > 14) {moveAvg.Style[0] = css_red;}
-        if(moveAvg.Good[3] > 6) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[3] > 6) {moveAvg.Style[0] = css_red;}
-        if(moveAvg.Good[1] > 38) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[1] > 38) {moveAvg.Style[1] = css_red;}
-        if(moveAvg.Good[2] > 150) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[2] > 150) {moveAvg.Style[1] = css_red;}
-
-        updateChartDetail('MTCurrentPrice','',getDollarValue(xAxis[xAxis.length-1]));
-        updateChartDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0],false),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
-        updateChartDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1],false) + ' / ' + getDollarValue(moveAvg.Accum[2],false),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
         let p = getPriceDiff();
         if(p) {updateChartDetail('MTPriceChange','Price Change (' + timeLit + ')',getDollarValue(p[0]) + ' (' + p[1] + '%)', p[2]);}
+
         if(inLocation != null) {
-            const minValue = Math.min(...xAxis);
-            const maxValue = Math.max(...xAxis);
-            updateChartDetail('MTYTDPriceChange','',getDollarValue(minValue) + ' - ' + getDollarValue(maxValue));
+            if(moveAvg.Start[0] > 0) {moveAvg.Accum[0] = moveAvg.Accum[0] / 20;}
+            if(moveAvg.Start[1] > 0) {moveAvg.Accum[1] = moveAvg.Accum[1] / 50;}
+            if(moveAvg.Start[2] > 0) {moveAvg.Accum[2] = moveAvg.Accum[2] / 200;}
+            for (let j = 0; j < 3; j++) {moveAvg.Accum[j] = parseFloat(moveAvg.Accum[j].toFixed(2));}
+            for (let i = 0; i < xLen; i++) {
+                const { value: useAmt } = chart[i];
+                for (let j = 0; j < 3; j++) {
+                    if (i > moveAvg.Start[j] && i < xLen - 1) {
+                        if(useAmt > moveAvg.Accum[j]) {moveAvg.Good[j]++;} else if (useAmt < moveAvg.Accum[j]) {moveAvg.Bad[j]++;}
+                    }
+                }
+                if(i > xLen - 12 && i < xLen -1) {
+                    if(useAmt > moveAvg.Accum[0]) {moveAvg.Good[3]++;} else if (useAmt < moveAvg.Accum[0]) {moveAvg.Bad[3]++;}
+                }
+            }
+            if(moveAvg.Good[0] > 14) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[0] > 14) {moveAvg.Style[0] = css_red;}
+            if(moveAvg.Good[3] > 6) {moveAvg.Style[0] = css_green;} else if(moveAvg.Bad[3] > 6) {moveAvg.Style[0] = css_red;}
+            if(moveAvg.Good[1] > 38) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[1] > 38) {moveAvg.Style[1] = css_red;}
+            if(moveAvg.Good[2] > 150) {moveAvg.Style[1] = css_green;} else if(moveAvg.Bad[2] > 150) {moveAvg.Style[1] = css_red;}
+            updateChartDetail('MTCurrentPrice','',getDollarValue(xAxis[xAxis.length-1]));
+            updateChartDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0],false),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
+            updateChartDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1],false) + ' / ' + getDollarValue(moveAvg.Accum[2],false),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
+            updateChartDetail('MTYTDPriceChange','',getDollarValue(Math.min(...xAxis)) + ' - ' + getDollarValue(Math.max(...xAxis)));
         }
     }
 
@@ -1094,7 +1094,7 @@ function MF_DrawChart(inType,inLocation) {
         });
     }
 
-    function chartTipInvestments() {
+    function drawChartTips() {
         if(r_tooltipHandle) { topChart.removeEventListener('mousemove', r_tooltipHandle); }
         r_tooltipHandle = topChart.addEventListener('mousemove', (e) => {
             const rect = topChart.getBoundingClientRect();
@@ -1482,7 +1482,7 @@ async function MenuReportsAccountsGo() {
                 }
             }
         }
-     
+
         let workDate = null;
         for (let i = 0; i < 12; i += 1) {
             let used = false;
@@ -1886,7 +1886,7 @@ async function MenuReportsInvestmentsGo() {
     }
     if(getCookie('MT_InvestmentsHideInst',true) == 1) {MF_QueueAddTitle(2,'Institution',MTP,2);} else { MF_QueueAddTitle(2,'Institution',MTP,MTFlex.Button1+1);}
     if(MTFlex.Button1 == 2 || MTFlex.Button1 == 5) {MTP.IsHidden = true;}
-    MF_QueueAddTitle(3,'Account',MTP);
+    MF_QueueAddTitle(3,'Account',MTP,MTFlex.Button1+1);
     MF_QueueAddTitle(4,'Subtype',MTP,MTFlex.Button1+1);
     MF_QueueAddTitle(5,'Type',MTP,MTFlex.Button1+1);
 
@@ -2908,8 +2908,6 @@ function MTUpdateAccountPartner() {
         p = SaveLocationPathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
         div3 = cec('div','',div,'* Account Group examples could be "Joint", "His", "Hers", "Kids", "Managed", "Non Mananged", "Business", etc to help group your accounts further.','','font-size:13px;');
-
-
     }
 }
 // [ Calendar ]
@@ -3439,15 +3437,14 @@ function onClickUpdateTicker() {
         child.className = 'MTSideDrawerTickerSelect';
     }
     element.className = 'MTSideDrawerTickerSelectA';
-    setCookie('MT_StockSelect',element.innerText);
-    MF_DrawChart(MTFlex.Name,null);
+    setCookie(MTFlex.Name + 'StockSelect',element.innerText);
+    MF_DrawChart(null);
 }
 
 function onClickMTFlexExpand(inAll) {
 
-    let x = null;
-    let cName = MTFlex.Name + MTFlex.SortSeq[MTFlex.Button2] + 'Expand';
-    let els = null;
+    let cName = MF_GetSeqKey('Expand');
+    let x = null, els = null;
     switch(inAll) {
         case 0:
             x = event.target.parentNode.getAttribute('MTSection');
@@ -3466,7 +3463,7 @@ function onClickMTFlexExpand(inAll) {
         case 2:
             if(confirm('Save current view as ' + MTFlex.Name.slice(2) + ' favorite?')) {
                 cName = MTFlex.Name;
-                setCookie(cName + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4);
+                setCookie(cName + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'), true));
             }
             break;
         case 3:
@@ -3478,6 +3475,7 @@ function onClickMTFlexExpand(inAll) {
                 setCookie(cName + 'Button2',els[1]);
                 setCookie(cName + 'Button3',els[2]);
                 setCookie(cName + 'Button4',els[3]);
+                if(els[4] != undefined) {setCookie(MF_GetSeqKey('Sort'),els[4]);}
             }
             MenuReportsGo(MTFlex.Name);break;
     }
@@ -3523,7 +3521,7 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
     }
 
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date ▲','','width: 89px;','datatype','date');
+    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date ▲','','width: 91px;','datatype','date');
     td.setAttribute('columnindex','0');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','width:240px;','datatype','alpha');
     td.setAttribute('columnindex','1');
@@ -3598,15 +3596,22 @@ async function MenuTickerDrawer(inP) {
     const p2 = inP[1];
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p1].node;
     const hld = portfolioData.portfolio.aggregateHoldings.edges[p1].node.holdings;
-    let bondInfo = [];
+    let bondInfo = [],stockInfo = ['',''];
     let useTitle = hld[p2].name;
     if(hld[p2].type == 'fixed_income') {
         bondInfo = getBondPieces(useTitle);
         useTitle = bondInfo[0];
     } else {
-        if(hld[p2].ticker != null) {useTitle = hld[p2].ticker + ' • ' + hld[p2].name;}
+        if(hld[p2].ticker != null) {
+            useTitle = hld[p2].ticker + ' • ' + hld[p2].name;
+            const xT = inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund']);
+            if(xT > 0) {
+                stockInfo[0] = 'Stock Analysis for ' + hld[p2].ticker;
+                stockInfo[1] = 'https://stockanalysis.com/' + ['stocks','etf','quote/mutf'][xT-1] + '/' + hld[p2].ticker;
+            }
+        }
     }
-    let topDiv = MF_SidePanelOpen('','', false, useTitle, hld[p2].typeDisplay);
+    let topDiv = MF_SidePanelOpen('','', false, useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1]);
     let topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','');
 
     MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
@@ -3616,14 +3621,14 @@ async function MenuTickerDrawer(inP) {
         MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
         MenuTickerDrawerLine('Price Change','','MTPriceChange','margin-top:20px;');
         const div = cec('span','',topDiv2,'','','display:flex;float:right;margin-top: 12px;');
-        let dSelect = getCookie('MT_StockSelect',false),dCurrent = '';
+        let dSelect = getCookie(MTFlex.Name + 'StockSelect',false),dCurrent = '';
         if(dSelect == '') dSelect = '1W';
         for (let s = 0; s < 6; s++) {
             dCurrent = ['1W','1M','3M','6M','YTD','1Y'][s];
             cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent);
         }
         performanceData = await getPerformance(formatQueryDate(getDates('d_LastYear')),formatQueryDate(getDates('d_Today')),edg.id);
-        MF_DrawChart(MTFlex.Name,div);
+        MF_DrawChart(div);
     } else if (hld[p2].type == 'fixed_income') {
         if(bondInfo[1] != '') {
             MenuTickerDrawerLine('Coupon Rate',bondInfo[1]);
@@ -3870,11 +3875,9 @@ function onClickGridSort() {
     let Column = event.target.getAttribute("column");
     if(Column != '') {
         let elSelected = Number(Column);
-        let cn = MTFlex.Name + 'Sort';
-        if(MTFlex.SortSeq != null) {cn = cn + MTFlex.SortSeq[MTFlex.Button2];}
-        let elCurrent = getCookie(cn,true);
+        let elCurrent = getCookie(MF_GetSeqKey('Sort'),true);
         if(Math.abs(elCurrent) == Math.abs(elSelected)) { elSelected = elCurrent * -1; }
-        setCookie(cn,elSelected);
+        setCookie(MF_GetSeqKey('Sort'),elSelected);
         MF_GridDraw(1);
     }
 }
