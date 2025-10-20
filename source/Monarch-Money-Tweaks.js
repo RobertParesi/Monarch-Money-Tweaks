@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8.3
+// @version      4.8.5
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8.3';
+const version = '4.8.5';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', header: '', subtotal: ''};
@@ -3075,6 +3075,9 @@ function MenuSettings(OnFocus) {
     if (glo.pathName.startsWith('/settings/display')) {
         if(OnFocus == true) {
             if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
+            if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
+            if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
+            if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
             const p = MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','text','font-size: 18px; font-weight: 500;');
             MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
             MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
@@ -3135,6 +3138,9 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
             MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
             MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
+            MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
+            MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
+            MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
             MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
@@ -3171,54 +3177,61 @@ function MenuSettings(OnFocus) {
                     e1.style = 'margin: 11px 25px;';
             }
             qs.after(e1);
-            let OldValue = getCookie(inCookie,false);
-            if(inType == 'checkbox') {
-                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
-                e2.id = inCookie;
-                if(OldValue == 1) {e2.checked = 'checked';}
-                e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
-                e3 = document.createElement("label");
-                e3.innerText = inValue;
-                e3.htmlFor = inCookie;
-                e2.parentNode.insertBefore(e3, e2.nextSibling);
-            }
-            if(inType == 'color') {
-                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
-                e2.value = OldValue;
-                e2.id = inCookie;
-                e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
-                e3 = document.createElement("label");
-                e3.innerText = inValue;
-                e3.htmlFor = inCookie;
-                e2.parentNode.insertBefore(e3, e2.nextSibling);
-            }
-            if(inType == 'number') {
-                cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
-                e2 = cec('input','MTInputClass',e1,'','','','type',inType);
-                e2.min = optValue;
-                e2.max = optValue2;
-                e2.value = OldValue;
-                e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
-            }
-            if(inType == 'dropdown') {
-                let mtObj = [],fnd=false;
-                for (let i = 0; i < optValue.length; i++) {
-                    mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                    if(OldValue == mtObj[1]) {OldValue = mtObj[0];fnd=true;break;}
-                }
-                if(fnd==false) {
-                    mtObj = optValue[0].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                    setCookie(inCookie,mtObj[1]);OldValue = mtObj[0];
-                }
-                cec('div','',e1,inValue + ':','','margin-top: 10px;');
-                e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
-                e2 = cec('button','MTSettButton' + dropDowns,e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;');
-                e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown'+dropDowns);
-                for (let i = 0; i < optValue.length; i++) {
-                    mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                    e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
-                    e2.setAttribute('MTSetupValue',mtObj[1]);
-                }
+            let OldValue = getCookie(inCookie,false),mtObj = [],fnd=false;
+            switch(inType) {
+                case 'checkbox':
+                    e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                    e2.id = inCookie;
+                    if(OldValue == 1) {e2.checked = 'checked';}
+                    e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
+                    e3 = document.createElement("label");
+                    e3.innerText = inValue;
+                    e3.htmlFor = inCookie;
+                    e2.parentNode.insertBefore(e3, e2.nextSibling);
+                    break;
+                case 'color':
+                    e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                    e2.value = OldValue;
+                    e2.id = inCookie;
+                    e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
+                    e3 = document.createElement("label");
+                    e3.innerText = inValue;
+                    e3.htmlFor = inCookie;
+                    e2.parentNode.insertBefore(e3, e2.nextSibling);
+                    break;
+                case 'number':
+                    cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                    e2 = cec('input','MTInputClass',e1,'','','','type',inType);
+                    e2.min = optValue;
+                    e2.max = optValue2;
+                    e2.value = OldValue;
+                    e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
+                    break;
+                case 'string':
+                    cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                    e2 = cec('input','MTInputClass',e1);
+                    e2.value = OldValue;
+                    e2.style = inStyle;
+                    e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
+                    break;
+                case 'dropdown':
+                    for (let i = 0; i < optValue.length; i++) {
+                        mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                        if(OldValue == mtObj[1]) {OldValue = mtObj[0];fnd=true;break;}
+                    }
+                    if(fnd==false) {
+                        mtObj = optValue[0].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                        setCookie(inCookie,mtObj[1]);OldValue = mtObj[0];
+                    }
+                    cec('div','',e1,inValue + ':','','margin-top: 10px;');
+                    e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
+                    e2 = cec('button','MTSettButton' + dropDowns,e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;');
+                    e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown'+dropDowns);
+                    for (let i = 0; i < optValue.length; i++) {
+                        mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                        e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
+                        e2.setAttribute('MTSetupValue',mtObj[1]);
+                    }
             }
             return e1;
         }
@@ -3607,7 +3620,8 @@ async function MenuTickerDrawer(inP) {
             const xT = inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
                 stockInfo[0] = 'Stock Analysis for ' + hld[p2].ticker;
-                stockInfo[1] = 'https://stockanalysis.com/' + ['stocks','etf','quote/mutf'][xT-1] + '/' + hld[p2].ticker;
+                stockInfo[1] = getCookie(['MT_InvestmentURLStock','MT_InvestmentURLETF','MT_InvestmentURLMuni'][xT-1],false);
+                stockInfo[1] = stockInfo[1].replace('{ticker}',hld[p2].ticker);
             }
         }
     }
