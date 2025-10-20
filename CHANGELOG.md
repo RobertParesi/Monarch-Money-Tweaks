@@ -3,7 +3,8 @@
 * **Version 4.8 (Beta)**
      - CHANGE: Better handling of 1M, 3M and 6M days in stock chart.
      - CHANGE: Saving Favorite View will now save the Sort Sequence as well.
-     - FIX: Reports / Investments Accounts column was not hidden when grouping by Accounts.
+     - FIX: Reports / Investments Accounts column was not hidden when grouping by Account.
+     - FIX: Reports / Investments Accounts & Type columns were not hidden when grouping by Account/Stock Type.
 
 * **Version 4.7.1 (October 16, 2025)**
      - CHANGE: Handle new Monarch domain name.
