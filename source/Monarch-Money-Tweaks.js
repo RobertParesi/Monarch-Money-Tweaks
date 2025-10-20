@@ -1,4 +1,3 @@
-(function() {
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @version      4.8.1
@@ -4498,4 +4497,3 @@ function rtnCategoryGroup(InId) {
     for (let i = 0; i < accountGroups.length; i++) {if(accountGroups[i].ID == InId || accountGroups[i].GROUP == InId) {return accountGroups[i];}}
     return [null];
 }
-})();
