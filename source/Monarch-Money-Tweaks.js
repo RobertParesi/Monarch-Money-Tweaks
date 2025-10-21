@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8.5
+// @version      4.8.7
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8.5';
+const version = '4.8.7';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', header: '', subtotal: ''};
@@ -19,7 +19,7 @@ const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
-let MTFlexCR = 0, MTFlexContainer = null, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
+let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
@@ -391,30 +391,9 @@ function MT_GridDrawDetails() {
                             HeaderStyle = 'border-radius: 0px 10px 10px 0px;' + css.header;
                         }
                     }
-                    useValue = useRow[j + MTFields];useValue2 = useValue;useStyle2 = '';
-
-                    // -1 Date, 0=As-is, 1=Decimals, 2=No Decimals, 3=Qty, 4=Percent
-                    switch(thisTitle.Format) {
-                        case -1:
-                            if(useValue != null) {useValue2 = getMonthName(useValue,2);}
-                            break;
-                        case 1:
-                        case 11:
-                            if(useValue != null) {useValue2 = getDollarValue(useValue,false);}
-                            break;
-                        case 2:
-                        case 12:
-                            if(useValue != null) {useValue2 = getDollarValue(useValue,true);}
-                            break;
-                        case 3:
-                        case 13:
-                            if(useValue != null) {useValue2 = useValue.toLocaleString('en-US');}
-                            break;
-                        case 4:
-                        case 14:
-                            if(useValue != null) {useValue2 = useValue.toLocaleString('en-US') + '%';}
-                            break;
-                    }
+                    useValue = useRow[j + MTFields];
+                    useValue2 = MT_GetFormattedValue(thisTitle.Format,useValue);
+                    useStyle2 = '';
 
                     // Calc Percentages
                     if((thisTitle.ShowPercent != null)) {
@@ -523,6 +502,34 @@ function MT_GridDrawDetails() {
             if(useCols > 0) {useRow[MTFields + inColumn] = useValue / (useCols);} else {useRow[MTFields + inColumn] = 0;}
         }
     }
+}
+
+function MT_GetFormattedValue(inType,inValue) {
+
+    // -1 Date, 0=As-is, 1=Decimals, 2=No Decimals, 3=Qty, 4=Percent
+    let useValue2 = inValue;
+    switch(inType) {
+        case -1:
+            if(inValue != null) {useValue2 = getMonthName(inValue,2);}
+            break;
+        case 1:
+        case 11:
+            if(inValue != null) {useValue2 = getDollarValue(inValue,false);}
+            break;
+        case 2:
+        case 12:
+            if(inValue != null) {useValue2 = getDollarValue(inValue,true);}
+            break;
+        case 3:
+        case 13:
+            if(inValue != null) {useValue2 = inValue.toLocaleString('en-US');}
+            break;
+        case 4:
+        case 14:
+            if(inValue != null) {useValue2 = inValue.toLocaleString('en-US') + '%';}
+            break;
+    }
+    return useValue2;
 }
 
 function MT_GridDrawExpand() {
@@ -672,11 +679,9 @@ function MT_GridExport() {
     const c = ',';
     const MTFieldsEnd = MTFields + MTFlexTitle.length;
     let csvContent = '',useValue = '', k = 0,Cols = 0;
-
     for (const Title of MTFlexTitle) {
         if(Title.isHidden == false) {
-            Cols++;
-            if(MTFlex.HideDetails != true) csvContent = csvContent + '"' + Title.Title + '"' + c;
+            Cols++;if(MTFlex.HideDetails != true) csvContent = csvContent + '"' + Title.Title + '"' + c;
         }
     }
     if(MTFlex.HideDetails != true) {
@@ -690,13 +695,24 @@ function MT_GridExport() {
                     if(MTFlexRow[i].IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
                         if(MTFlexRow[i][j] != undefined && MTFlexRow[i][j] != null) {
                             switch(MTFlexTitle[k].Format) {
-                                case 1: useValue = Number(MTFlexRow[i][j]).toFixed(2); break;
-                                case 2: useValue = Math.round(Number(MTFlexRow[i][j])).toFixed(0); break;
-                                case 3: useValue = Number(MTFlexRow[i][j]); break;
-                                case 4: useValue = Number(MTFlexRow[i][j].toFixed(1)); break;
+                                case 1:
+                                case 11:
+                                    useValue = Number(MTFlexRow[i][j]).toFixed(2); break;
+                                case 2:
+                                case 12:
+                                    useValue = Math.round(Number(MTFlexRow[i][j])).toFixed(0); break;
+                                case 3:
+                                case 13:
+                                    useValue = Number(MTFlexRow[i][j]); break;
+                                case 4:
+                                case 14:
+                                    useValue = Number(MTFlexRow[i][j].toFixed(1)); break;
                                 default: useValue = MTFlexRow[i][j];
                             }
                         }
+                    }
+                    if(MTFlexRow[i].IsHeader == false) {
+                        if(MTFlex.Subtotals == true && j == MTFields) { useValue = MTFlexRow[i].PK + ' / ' + useValue; }
                     }
                     csvContent = csvContent + useValue + c;
                 }
@@ -3481,7 +3497,7 @@ function onClickMTFlexExpand(inAll) {
             break;
         case 3:
             cName = MTFlex.Name;
-            els = getCookie(cName + 'View',false)
+            els = getCookie(cName + 'View',false);
             if(els) {
                 els = els.split('|');
                 setCookie(cName + 'Button1',els[0]);
