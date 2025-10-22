@@ -519,11 +519,11 @@ function MT_GetFormattedValue(inType,inValue,inRaw = false) {
             break;
         case 3:
         case 13:
-            if(inValue != null) {useValue2 = inValue.toLocaleString('en-US');}
+            if(inValue != null) {useValue2 = inRaw == true ? inValue : inValue.toLocaleString('en-US');}
             break;
         case 4:
         case 14:
-            if(inValue != null) {useValue2 = inValue.toLocaleString('en-US');}
+            if(inValue != null) {useValue2 = inRaw == true ? inValue.toFixed(2) : inValue.toLocaleString('en-US') + '%';}
             break;
     }
     if(inRaw == true && useValue2 == null) useValue2 = '';
