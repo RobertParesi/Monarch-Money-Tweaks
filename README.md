@@ -22,7 +22,7 @@ Once installed, Refresh/Reload the Monarch Money webpage and select **Settings /
 
 Enjoy!
 
-🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Apple, Chrome or Firefox store. Also, always looking for tech savy beta testers on Safari.
+🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Apple, Chrome or Firefox store. Currently looking for tech savy beta tester on Safari.
 
 
 ### 🚀 Monarch Money Tweaks - Get Started! 
