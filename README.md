@@ -11,7 +11,7 @@
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
 
-🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. 
+🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. Also, always looking for tech savy beta testers on Safari.
 
 ### ⚙️ Installing Monarch Money Tweaks:
 
