@@ -10,9 +10,6 @@
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
-
-🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. Also, always looking for tech savy beta testers on Safari.
-
 ### ⚙️ Installing Monarch Money Tweaks:
 
 Visit the Extensions area for your browser using the links above. 
@@ -24,6 +21,9 @@ To run on **Apple iPad**, use the Scripts App found in Apple Store and then past
 Once installed, Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Monarch to configure Monarch Money Tweaks.
 
 Enjoy!
+
+🙏  If you are long-time Monarch Money Tweaks user, please be so kind to leave a review on Chrome or Firefox store. Also, always looking for tech savy beta testers on Safari.
+
 
 ### 🚀 Monarch Money Tweaks - Get Started! 
 
