@@ -3,6 +3,7 @@
 * **Version 4.8 (Beta)**  
      - NEW: Added link to Stock Analysis when expanding Stock, ETF and Mutual Funds.
      - CHANGE: When exporting reports with Subtotals, the GROUP name will export as well as the CATEGORY.
+     - CHANGE: Clean up with Exporting - better formatting.
      - CHANGE: Better handling of 1M, 3M and 6M days in stock chart.
      - CHANGE: Saving Favorite View will now save the Sort Sequence as well.
      - FIX: Reports / Investments Accounts column was not hidden when grouping by Account.
