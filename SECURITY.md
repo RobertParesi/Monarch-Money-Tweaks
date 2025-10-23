@@ -1,6 +1,6 @@
 ##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Security & Privacy Policy 
 
-Thanks for using Monarch Money Tweaks. We want to assure you that our extension respects your privacy and data security.
+Thanks for using Monarch Money Tweaks. I want to assure you that this extension respects your privacy and data security.
 
 ### Security and Privacy
 
