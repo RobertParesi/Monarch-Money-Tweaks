@@ -769,12 +769,12 @@ function MT_GetInput(inputs) {
 
     }
     div = cec('span','MTSideDrawerHeader',topDiv);
-    cec('button','MTInputButton',div,'Last Month','','margin-left: 0px;',);
-    cec('button','MTInputButton',div,'This Month');
-    cec('button','MTInputButton',div,'This Quarter');
-    cec('button','MTInputButton',div,'This Year');
+    cec('button','MTInputButton',div,'Past week','','margin-left: 0px;',);
+    cec('button','MTInputButton',div,'Last month');
+    cec('button','MTInputButton',div,'This month');
+    cec('button','MTInputButton',div,'This quarter');
+    cec('button','MTInputButton',div,'This year');
     cec('button','MTInputButton',div,'Apply','','float:right;');
-    cec('button','MTInputButton',div,'Cancel','','float:right;' );
 }
 
 function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL, inGroupId ) {
@@ -3603,15 +3603,16 @@ function onClickCloseDrawer() {
             divs = document.querySelector('input.MTDateCheckbox');
             if(divs) {if(divs.checked == true) {setCookie(MTFlex.Name + 'HigherDate','d_Today');}}
             returnV = true; break;
-        case 'Last Month':
-        case 'This Month':
-        case 'This Quarter':
-        case 'This Year':
+        case 'Past week':
+        case 'Last month':
+        case 'This month':
+        case 'This quarter':
+        case 'This year':
             onClickCloseDrawer2();
             returnV = true;
             break;
         case 'Remove Ticker':
-        case 'Add Ticker':
+        case 'Watch Ticker':
             divs = event.target.getAttribute('id');
             MenuTickerUpdate(divs);
             break;
@@ -3716,7 +3717,7 @@ async function MenuTickerDrawer(inP) {
     if(glo.debug == 1) {cec('button','MTInputButton',topDiv2,'Debug','','float:right;','id',p1);}
     if(MTFlex.Button2 == 1) {
         if(hld[p2].ticker != 'null') {
-            let bName = 'Add Ticker';
+            let bName = 'Watch Ticker';
             if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
             cec('button','MTInputButton',topDiv2,bName,'','margin-left: 0px;','id',hld[p2].ticker);
         }
@@ -3757,7 +3758,7 @@ function onClickDumpDebug(inNode) {
 }
 
 function onClickCloseDrawer2() {
-    const cases = {'Last Month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This Month': ['d_StartofMonth', 'd_Today'], 'This Quarter': ['d_ThisQTRs', 'd_Today'], 'This Year': ['d_StartofYear', 'd_Today']};
+    const cases = {'Past week': ['d_MinusWeek','d_Today'],'Last month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This month': ['d_StartofMonth', 'd_Today'], 'This quarter': ['d_ThisQTRs', 'd_Today'], 'This year': ['d_StartofYear', 'd_Today']};
     if(cases[event.target.innerText.trim()]) {
         const [lowerDate, higherDate] = cases[event.target.innerText.trim()];
         if(MTFlex.TriggerEvent == 2) {
