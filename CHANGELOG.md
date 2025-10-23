@@ -6,6 +6,7 @@
      - CHANGE: Clean up with Exporting - better formatting.
      - CHANGE: Better handling of 1M, 3M and 6M days in stock chart.
      - CHANGE: Saving Favorite View will now save the Sort Sequence as well.
+     - CHANGE: Calendar now has "Past Week".
      - FIX: Reports / Net Income / by Accounts would include accounts not used and show all 0.00 
      - FIX: Reports / Investments Accounts column was not hidden when grouping by Account.
      - FIX: Reports / Investments Accounts & Type columns were not hidden when grouping by Account/Stock Type.
@@ -28,7 +29,7 @@
      - NEW: Reports / Investments stock price will show tooltip "Last Updated".
      - NEW: Reports / Investments will break out Bond information (AMT, XTRO, Coupon Rate, Cost Per Share, Est. Income, etc.)
      - NEW: First time users can have default settings automatically setup.
-     - NEW: Expanded/Collasped sections are now remembered not just by report by also by sub-report as well.
+     - NEW: Expanded/Collapsed sections are now remembered not just by report by also by sub-report as well.
      - CHANGE: Account setup screen has tips on using Account Groups.
      - FIX: Compress tickbox "off" might not draw grid lines in some cases.
      - FIX Cost Basis for CASH/MONEY MARKET holding same as Value to correct Gain/Loss.
