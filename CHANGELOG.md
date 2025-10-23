@@ -49,6 +49,6 @@
      - Reports / Investments - New Portfolio & Performance reports including Cost Basis and more!
      - Reports / Accounts / Brokerage Statement.
      - Many visual improvements including Group Totals format & shading.
-     - Lots of clean-up under the hood.
+     - Lots of under-the-hood clean-up.
  
        
