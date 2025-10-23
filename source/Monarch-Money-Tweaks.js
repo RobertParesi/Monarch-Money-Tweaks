@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8.8
+// @version      4.8.9
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8.8';
+const version = '4.8.9';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', header: '', subtotal: ''};
@@ -1335,43 +1335,39 @@ async function MenuReportsNetIncomeGo() {
         useID = Tag.ID;
         if(MF_GridUpdateUID(useID,ii+1,Tag.Amt,false) == false) {
             let retGroup = await rtnCategoryGroup(useID);
-            if(retGroup.TYPE == 'transfer') {
-
+            MTP = [];
+            MTP.IsHeader = false;
+            MTP.UID = useID;
+            if(retGroup.TYPE == 'expense') {
+                if(retGroup.ISFIXED == true) {MTP.BasedOn = 3;MTP.Section = 4;
+                                             } else {MTP.BasedOn = 5;MTP.Section = 6;}
+                useURL = '#|spending|';
             } else {
-                MTP = [];
-                MTP.IsHeader = false;
-                MTP.UID = useID;
-                if(retGroup.TYPE == 'expense') {
-                    if(retGroup.ISFIXED == true) {MTP.BasedOn = 3;MTP.Section = 4;
-                    } else {MTP.BasedOn = 5;MTP.Section = 6;}
-                    useURL = '#|spending|';
-                } else {
-                    MTP.BasedOn = 1;MTP.Section = 2;
-                    useURL = '#|income|';
-                }
-
-                if(MTFlex.Button1 > 0) {
-                    if(MTFlex.Button1 == 2) {
-                        MTP.PK = retGroup.GROUPNAME;
-                        MTP.PKHRef = useURL + '|' + retGroup.GROUP + '|';
-                        MTP.PKTriggerEvent = 'category-groups|' + retGroup.GROUP;
-                    }
-                    MTP.SKHRef = useURL + retGroup.ID + '||';
-                    MTP.SKTriggerEvent = 'categories|' + retGroup.ID;
-                    useTitle = retGroup.NAME;
-                } else {
-                    useTitle = retGroup.GROUPNAME;
-                    MTP.SKHRef = useURL + '|' + retGroup.GROUP + '|';
-                    MTP.PKTriggerEvent = '';
-                    MTP.SKTriggerEvent = 'category-groups|' + retGroup.GROUP;
-                }
-                MTP.SKHRef = MTP.SKHRef + HiddenFilter + '|';
-
-                MTP.Icon = retGroup.ICON;
-                MF_QueueAddRow(MTP);
-                MTFlexRow[MTFlexCR][MTFields] = useTitle;
-                MTFlexRow[MTFlexCR][MTFields+ii+1] = Tag.Amt;
+                MTP.BasedOn = 1;MTP.Section = 2;
+                useURL = '#|income|';
             }
+
+            if(MTFlex.Button1 > 0) {
+                if(MTFlex.Button1 == 2) {
+                    MTP.PK = retGroup.GROUPNAME;
+                    MTP.PKHRef = useURL + '|' + retGroup.GROUP + '|';
+                    MTP.PKTriggerEvent = 'category-groups|' + retGroup.GROUP;
+                }
+                MTP.SKHRef = useURL + retGroup.ID + '||';
+                MTP.SKTriggerEvent = 'categories|' + retGroup.ID;
+                useTitle = retGroup.NAME;
+            } else {
+                useTitle = retGroup.GROUPNAME;
+                MTP.SKHRef = useURL + '|' + retGroup.GROUP + '|';
+                MTP.PKTriggerEvent = '';
+                MTP.SKTriggerEvent = 'category-groups|' + retGroup.GROUP;
+            }
+            MTP.SKHRef = MTP.SKHRef + HiddenFilter + '|';
+
+            MTP.Icon = retGroup.ICON;
+            MF_QueueAddRow(MTP);
+            MTFlexRow[MTFlexCR][MTFields] = useTitle;
+            MTFlexRow[MTFlexCR][MTFields+ii+1] = Tag.Amt;
         }
     }
     MF_GridRollup(1,2,1,'Income');
@@ -1385,7 +1381,9 @@ async function MenuReportsNetIncomeGo() {
     function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor,inFirstPass) {
         for (const Tag of TagQueue) {
              if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; TagsSortQueue(inTag, inAmt); return;}
-         }
+        }
+        let retGroup = rtnCategoryGroup(useID);
+        if(retGroup.TYPE == 'transfer') return;
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
         if(inFirstPass == null) inFirstPass = 0;
         if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt + inFirstPass});}
