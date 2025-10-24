@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8
+// @version      4.9
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8';
+const version = '4.9';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', header: '', subtotal: ''};
@@ -15,12 +15,23 @@ let accountGroups = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null;
 
 // flex container
-const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
+const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments', 'MTRebalancing'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
+
+// Rebalancing Asset Class Configuration
+const AssetClassConfig = {
+    'US Large/Mid': { target: 41.65, tickers: ['SCHK', 'SCHX', 'VINIX', 'VFIAX'], securityNames: ['Vanguard 500 Index Portfolio'] },
+    'US Small': { target: 17.85, tickers: ['SCHA', 'VSCPX', 'VSCIX'], securityNames: ['Vanguard Small-Cap Index Portfolio'] },
+    'Int\'l Large/Mid': { target: 17.85, tickers: ['VEA', 'SCHF'], securityNames: [] },
+    'Int\'l Small': { target: 3.83, tickers: ['VSS', 'SCHC'], securityNames: [] },
+    'Int\'l EM': { target: 3.83, tickers: ['VWO', 'SCHE'], securityNames: [] },
+    'Alternatives & Crypto': { target: 15.00, tickers: ['FBTC', 'ETHE', 'ETH', 'EZBC'], securityNames: [] },
+    'Cash': { target: 0.00, tickers: ['CUR:USD', 'DIDA', 'CASH-INFERRED'], securityNames: [] }
+};
 
 function MM_Init() {
 
@@ -748,6 +759,18 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
         case 'MTInvestments':
             if (inCol > 10 ) { if(inValue == 0) return ''; return inValue < 0 ? css.red : css.green ;}
             break;
+        case 'MTRebalancing':
+            // Highlight variance column - red if underweight (negative), green if overweight (positive)
+            if (inCol == 4) {
+                if (inValue < 0) return css.red;  // Underweight
+                if (inValue > 0) return css.green; // Overweight
+            }
+            // Highlight $ difference column
+            if (inCol == 6) {
+                if (inValue < 0) return css.red;  // Need to buy
+                if (inValue > 0) return css.green; // Need to sell
+            }
+            break;
     }
     return '';
 }
@@ -1231,6 +1254,10 @@ function MenuReportsGo(inName) {
             case 'MTInvestments':
                 MenuReportsCustomUpdate(6);
                 MenuReportsInvestmentsGo();
+                break;
+            case 'MTRebalancing':
+                MenuReportsCustomUpdate(7);
+                MenuReportsRebalancingGo();
                 break;
         }
     }
@@ -2112,6 +2139,252 @@ async function MenuReportsInvestmentsGo() {
             case 4:
                 return inType;
         }
+    }
+}
+
+async function MenuReportsRebalancingGo() {
+
+    await MF_GridInit('MTRebalancing', 'Rebalancing Analysis');
+
+    MTFlex.Title1 = 'Portfolio Rebalancing Analysis';
+    MTFlex.Title2 = 'As of ' + getDates('s_FullDate');
+    MTFlex.TriggerEvents = false;
+
+    // Summary cards
+    let totalPortfolio = 0, totalCash = 0, totalInvested = 0;
+    let accountsData = [], assetClassTotals = {}, holdingsDataAvailable = true;
+
+    // Initialize asset class totals
+    for (let assetClass in AssetClassConfig) {
+        assetClassTotals[assetClass] = 0;
+    }
+
+    // Fetch account and portfolio data
+    let snapshotData = await getAccountsData();
+    let lowerDate = formatQueryDate(getDates('d_Today'));
+    let higherDate = formatQueryDate(getDates('d_Today'));
+    let portfolioData = await getPortfolio(lowerDate, higherDate);
+
+    // Step 1: Build account holdings data with inferred cash
+    await BuildAccountHoldings();
+
+    // Step 2: Build asset allocation table
+    await BuildAssetAllocationTable();
+
+    // Step 3: Build account summary cards
+    await BuildSummaryCards();
+
+    // Step 4: Build rebalancing recommendations
+    await BuildRebalancingRecommendations();
+
+    glo.spawnProcess = 1;
+
+    async function BuildAccountHoldings() {
+        let accQueue = [];
+
+        // Process all investment holdings
+        for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
+            const holdings = edge.node.holdings;
+            for (const holding of holdings) {
+                let useAccount = holding.account.displayName || '';
+                let useTicker = holding.ticker || '';
+                let longTitle = holding.name || '';
+                let useHoldingValue = Number(holding.value);
+
+                // Determine asset class
+                let assetClass = classifyAssetClass(useTicker, longTitle, holding.typeDisplay);
+
+                if (assetClass && assetClassTotals[assetClass] !== undefined) {
+                    assetClassTotals[assetClass] += useHoldingValue;
+                }
+
+                totalInvested += useHoldingValue;
+
+                // Track account for cash calculation
+                const account = accQueue.find(acc => acc.id === holding.account.id);
+                if (account) {
+                    account.holdingBalance += useHoldingValue;
+                } else {
+                    accQueue.push({
+                        id: holding.account.id,
+                        holdingBalance: useHoldingValue,
+                        portfolioBalance: Number(holding.account.displayBalance),
+                        accountName: useAccount
+                    });
+                }
+
+                // Store for detailed view
+                accountsData.push({
+                    account: useAccount,
+                    ticker: useTicker,
+                    name: longTitle,
+                    value: useHoldingValue,
+                    assetClass: assetClass
+                });
+            }
+        }
+
+        // Calculate inferred cash for each account
+        for (const acc of accQueue) {
+            totalPortfolio += acc.portfolioBalance;
+            let cashValue = acc.portfolioBalance - acc.holdingBalance;
+            if (cashValue > 0.01) { // Only count meaningful cash positions
+                totalCash += cashValue;
+                assetClassTotals['Cash'] += cashValue;
+
+                accountsData.push({
+                    account: acc.accountName,
+                    ticker: 'CASH-INFERRED',
+                    name: 'Uninvested Cash (Inferred)',
+                    value: cashValue,
+                    assetClass: 'Cash'
+                });
+            }
+        }
+    }
+
+    async function BuildAssetAllocationTable() {
+        // Set up table structure
+        MTP = [];
+        MTP.IsSortable = 1; MTP.Format = 0; MTP.Width = '180px';
+        MF_QueueAddTitle(0, 'Asset Class', MTP);
+
+        MTP.IsSortable = 2; MTP.Format = 2; MTP.Width = '120px';
+        MF_QueueAddTitle(1, 'Current Value', MTP);
+
+        MTP.Format = 0; MTP.Width = '100px';
+        MF_QueueAddTitle(2, 'Current %', MTP);
+
+        MF_QueueAddTitle(3, 'Target %', MTP);
+
+        MTP.Format = 4; // Percent format with 2 decimals
+        MF_QueueAddTitle(4, 'Variance', MTP);
+
+        MTP.Format = 2; MTP.Width = '120px';
+        MF_QueueAddTitle(5, 'Target Value', MTP);
+
+        MF_QueueAddTitle(6, '$ Difference', MTP);
+
+        // Add rows for each asset class
+        for (let assetClass in AssetClassConfig) {
+            let currentValue = assetClassTotals[assetClass] || 0;
+            let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
+            let targetPercent = AssetClassConfig[assetClass].target;
+            let variance = currentPercent - targetPercent;
+            let targetValue = totalPortfolio * (targetPercent / 100);
+            let dollarDiff = currentValue - targetValue;
+
+            MTP = {};
+            MTP.Section = 2;
+            MF_QueueAddRow(MTP);
+
+            MTFlexRow[MTFlexCR][MTFields] = assetClass;
+            MTFlexRow[MTFlexCR][MTFields + 1] = currentValue;
+            MTFlexRow[MTFlexCR][MTFields + 2] = currentPercent.toFixed(1) + '%';
+            MTFlexRow[MTFlexCR][MTFields + 3] = targetPercent.toFixed(2) + '%';
+            // Store variance as numeric value but display as formatted string
+            MTFlexRow[MTFlexCR][MTFields + 4] = variance; // Numeric for sorting
+            MTFlexRow[MTFlexCR][MTFields + 5] = targetValue;
+            MTFlexRow[MTFlexCR][MTFields + 6] = dollarDiff;
+        }
+
+        // Add total row
+        MTP = {};
+        MTP.Section = 4;
+        MTP.IsHeader = true;
+        MF_QueueAddRow(MTP);
+
+        MTFlexRow[MTFlexCR][MTFields] = 'TOTAL';
+        MTFlexRow[MTFlexCR][MTFields + 1] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 2] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 4] = 0;
+        MTFlexRow[MTFlexCR][MTFields + 5] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 6] = 0;
+    }
+
+    async function BuildSummaryCards() {
+        MF_QueueAddCard({
+            Col: 0,
+            Title: getDollarValue(totalPortfolio, true),
+            Subtitle: 'Total Portfolio Value',
+            Style: ''
+        });
+
+        MF_QueueAddCard({
+            Col: 1,
+            Title: getDollarValue(totalCash, true),
+            Subtitle: 'Total Cash Position',
+            Style: totalCash > 0 ? css.red : css.green
+        });
+
+        MF_QueueAddCard({
+            Col: 2,
+            Title: getDollarValue(totalInvested, true),
+            Subtitle: 'Total Invested',
+            Style: css.green
+        });
+
+        if (totalPortfolio > 0) {
+            let cashPercent = (totalCash / totalPortfolio * 100).toFixed(1);
+            MF_QueueAddCard({
+                Col: 3,
+                Title: cashPercent + '%',
+                Subtitle: 'Cash as % of Portfolio',
+                Style: cashPercent > 1 ? css.red : css.green
+            });
+        }
+    }
+
+    async function BuildRebalancingRecommendations() {
+        // This function would build detailed recommendations
+        // For now, we'll add a placeholder section
+        // You can expand this with specific buy/sell recommendations
+    }
+
+    function classifyAssetClass(ticker, securityName, typeDisplay) {
+        // Check if it's a cryptocurrency or alternative
+        if (typeDisplay === 'cryptocurrency' || typeDisplay === 'Cryptocurrency') {
+            return 'Alternatives & Crypto';
+        }
+
+        // Normalize inputs
+        ticker = (ticker || '').toUpperCase().trim();
+        securityName = (securityName || '').toLowerCase();
+
+        // Check each asset class
+        for (let assetClass in AssetClassConfig) {
+            let config = AssetClassConfig[assetClass];
+
+            // Check ticker match
+            if (ticker && config.tickers) {
+                for (let t of config.tickers) {
+                    if (ticker === t.toUpperCase()) {
+                        return assetClass;
+                    }
+                }
+            }
+
+            // Check security name match
+            if (config.securityNames) {
+                for (let sn of config.securityNames) {
+                    if (securityName.includes(sn.toLowerCase())) {
+                        return assetClass;
+                    }
+                }
+            }
+        }
+
+        // Default classification based on type
+        if (typeDisplay) {
+            let type = typeDisplay.toLowerCase();
+            if (type.includes('money market') || type.includes('cash')) {
+                return 'Cash';
+            }
+        }
+
+        // If unclassified, return null or a default
+        return 'US Large/Mid'; // Default to US Large/Mid if unclassified
     }
 }
 
@@ -3160,6 +3433,9 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
             MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
             MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
+            MenuDisplay_Input('Reports / Rebalancing','','spacer');
+            MenuDisplay_Input('Enable Rebalancing Analysis Report','MT_RebalancingEnabled','checkbox');
+            MenuDisplay_Input('Cash threshold for alerts (whole dollars)','MT_RebalancingCashThreshold','number',null,0,100000);
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
             MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');

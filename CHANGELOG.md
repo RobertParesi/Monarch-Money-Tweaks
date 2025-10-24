@@ -1,5 +1,15 @@
 # Change Log (Version History)
 
+* **Version 4.9 (In Development)**
+     - NEW: Added Portfolio Rebalancing Analysis report to Reports menu.
+     - NEW: Automatically calculates inferred cash positions (Account Balance - Sum of Holdings).
+     - NEW: Asset class categorization for 7 asset classes with configurable target allocations.
+     - NEW: Displays current vs. target allocation with variance analysis.
+     - NEW: Summary cards show total portfolio value, cash position, and invested amount.
+     - NEW: Configurable asset class ticker mappings and target percentages.
+     - NEW: Color-coded variance highlighting (red for underweight, green for overweight).
+     - NEW: Settings options for enabling/disabling rebalancing report and cash thresholds.
+
 * **Version 4.8 (Submitted)**  
      - NEW: Added link to Stock Analysis when expanding Stock, ETF and Mutual Funds.
      - CHANGE: When exporting reports with Subtotals, GROUP name will export as well as the CATEGORY.

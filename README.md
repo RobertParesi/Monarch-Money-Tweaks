@@ -78,6 +78,16 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Show gain/loss, cost basis, stock price, stock chart, and more.
     - Sort holdings data by any column.
     - Export to Excel or Numbers.
+
+* **Reports / Rebalancing:**
+
+    - Portfolio rebalancing analysis with asset class allocation.
+    - Automatically calculates inferred cash (Account Balance - Holdings).
+    - Compare current allocation vs. target allocation across 7 asset classes.
+    - Shows variance and dollar amounts needed to rebalance.
+    - Configurable target allocations and ticker mappings.
+    - Summary cards display total portfolio, cash position, and invested amounts.
+    - Color-coded variance (red = underweight, green = overweight).
              
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).

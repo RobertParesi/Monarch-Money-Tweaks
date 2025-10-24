@@ -46,6 +46,57 @@ If you're using Monarch Money Tweaks (MMT), it's highly recommended to start by 
 **Personal Net Worth Report (Reports / Accounts / Personal Statement)**
 ![Settings](/images/MT_V3_12.png)
 
+## Portfolio Rebalancing Analysis
+> New feature for analyzing and rebalancing investment portfolios
+
+The Rebalancing Analysis report provides a comprehensive view of your investment portfolio allocation and helps you maintain your target asset allocation strategy.
+
+### Key Features:
+
+**Automatic Cash Calculation:**
+- Calculates "inferred cash" for each investment account
+- Formula: Account Balance - Sum of All Holdings = Inferred Cash
+- Pure cash positions don't appear in Monarch's holdings API, only money market funds do
+- Adds CASH-INFERRED line items automatically
+
+**Asset Class Categorization:**
+Seven pre-configured asset classes with default target allocations:
+- US Large/Mid (41.65% target)
+- US Small (17.85% target)
+- Int'l Large/Mid (17.85% target)
+- Int'l Small (3.83% target)
+- Int'l EM (3.83% target)
+- Alternatives & Crypto (15.00% target)
+- Cash (0.00% target)
+
+**Allocation Analysis:**
+- Current Value and Percentage for each asset class
+- Target Percentage and Value
+- Variance (how far you are from target)
+- Dollar amount needed to reach target allocation
+- Color-coded variance (Red = underweight, Green = overweight)
+
+**Summary Cards:**
+- Total Portfolio Value
+- Total Cash Position (with alert if too high)
+- Total Invested Amount
+- Cash as Percentage of Portfolio
+
+### How to Use:
+
+1. Navigate to Reports section in Monarch Money
+2. Click on the "Rebalancing" tab
+3. View your current asset allocation vs. targets
+4. Identify which asset classes are over/underweight
+5. Use the variance column to prioritize rebalancing actions
+
+### Configuration:
+
+Asset class mappings are defined in the code and can be customized:
+- Add your specific tickers to each asset class
+- Modify target allocation percentages
+- Configure cash threshold alerts in Settings > Display
+
 
 ## Account Groups 
 > Extension added field found when **editing** an **Institution Account** in Monarch Money:
