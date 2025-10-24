@@ -2,7 +2,7 @@
 
 For help with the product, please see the DOCUMENTATION file first.   
 
-Next, if you need additional help, please see the **Discussions** option at the top of this GitHub.
+Next, if you need additional help, please see the **Discussions** option at the top of this GitHub or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/).
 
 I want to clarify that this GitHub is not intended for requesting new features or wish list ideas for Monarch Money.  This extension is primarily focused on Reports **(Trends, Net Income, Accounts, Investments)**.
 
