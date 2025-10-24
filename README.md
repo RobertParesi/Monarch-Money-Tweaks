@@ -6,7 +6,7 @@
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.8 (October 24, 2025)
 
-🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.7.1 (October 16, 2025)
+🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.8 (October 24, 2025)
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
