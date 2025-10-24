@@ -10,6 +10,4 @@ Please refrain from creating discussions about modifying Monarch's screens and f
 
 Monarch Money has its own roadmap and dedicated development teams. What I am offering here is my hobby project to the Monarch Money communinity, done for fun and free of charge. While I’m happy to help within this scope, I kindly ask for your respect my time and effort. 
 
-I also ask that you use the extension before posting in this discussion forum, especially for new features.
-
 Thank you for your understanding.
