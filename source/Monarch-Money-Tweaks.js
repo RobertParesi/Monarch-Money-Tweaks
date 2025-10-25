@@ -761,12 +761,12 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
             break;
         case 'MTRebalancing':
             // Highlight variance column - red if underweight (negative), green if overweight (positive)
-            if (inCol == 4) {
+            if (inCol == 5) {
                 if (inValue < 0) return css.red;  // Underweight
                 if (inValue > 0) return css.green; // Overweight
             }
             // Highlight $ difference column
-            if (inCol == 6) {
+            if (inCol == 7) {
                 if (inValue < 0) return css.red;  // Need to buy
                 if (inValue > 0) return css.green; // Need to sell
             }
@@ -2249,28 +2249,31 @@ async function MenuReportsRebalancingGo() {
     }
 
     async function BuildAssetAllocationTable() {
-        // Set up table structure
+        // Set up table structure with columns for both summary and detail views
         MTP = [];
         MTP.IsSortable = 1; MTP.Format = 0; MTP.Width = '180px';
-        MF_QueueAddTitle(0, 'Asset Class', MTP);
+        MF_QueueAddTitle(0, 'Asset Class / Account', MTP);
 
-        MTP.IsSortable = 2; MTP.Format = 2; MTP.Width = '120px';
-        MF_QueueAddTitle(1, 'Current Value', MTP);
-
-        MTP.Format = 0; MTP.Width = '100px';
-        MF_QueueAddTitle(2, 'Current %', MTP);
-
-        MF_QueueAddTitle(3, 'Target %', MTP);
-
-        MTP.Format = 4; // Percent format with 2 decimals
-        MF_QueueAddTitle(4, 'Variance', MTP);
+        MTP.IsSortable = 2; MTP.Format = 0; MTP.Width = '140px';
+        MF_QueueAddTitle(1, 'Ticker / Security', MTP);
 
         MTP.Format = 2; MTP.Width = '120px';
-        MF_QueueAddTitle(5, 'Target Value', MTP);
+        MF_QueueAddTitle(2, 'Current Value', MTP);
 
-        MF_QueueAddTitle(6, '$ Difference', MTP);
+        MTP.Format = 0; MTP.Width = '100px';
+        MF_QueueAddTitle(3, 'Current %', MTP);
 
-        // Add rows for each asset class
+        MF_QueueAddTitle(4, 'Target %', MTP);
+
+        MTP.Format = 4; // Percent format with 2 decimals
+        MF_QueueAddTitle(5, 'Variance', MTP);
+
+        MTP.Format = 2; MTP.Width = '120px';
+        MF_QueueAddTitle(6, 'Target Value', MTP);
+
+        MF_QueueAddTitle(7, '$ Difference', MTP);
+
+        // Add rows for each asset class with expandable holdings
         for (let assetClass in AssetClassConfig) {
             let currentValue = assetClassTotals[assetClass] || 0;
             let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
@@ -2279,18 +2282,42 @@ async function MenuReportsRebalancingGo() {
             let targetValue = totalPortfolio * (targetPercent / 100);
             let dollarDiff = currentValue - targetValue;
 
+            // Asset class summary row (expandable)
             MTP = {};
             MTP.Section = 2;
+            MTP.BasedOn = 1; // Makes this row expandable
             MF_QueueAddRow(MTP);
 
             MTFlexRow[MTFlexCR][MTFields] = assetClass;
-            MTFlexRow[MTFlexCR][MTFields + 1] = currentValue;
-            MTFlexRow[MTFlexCR][MTFields + 2] = currentPercent.toFixed(1) + '%';
-            MTFlexRow[MTFlexCR][MTFields + 3] = targetPercent.toFixed(2) + '%';
-            // Store variance as numeric value but display as formatted string
-            MTFlexRow[MTFlexCR][MTFields + 4] = variance; // Numeric for sorting
-            MTFlexRow[MTFlexCR][MTFields + 5] = targetValue;
-            MTFlexRow[MTFlexCR][MTFields + 6] = dollarDiff;
+            MTFlexRow[MTFlexCR][MTFields + 1] = ''; // Empty for summary row
+            MTFlexRow[MTFlexCR][MTFields + 2] = currentValue;
+            MTFlexRow[MTFlexCR][MTFields + 3] = currentPercent.toFixed(1) + '%';
+            MTFlexRow[MTFlexCR][MTFields + 4] = targetPercent.toFixed(2) + '%';
+            MTFlexRow[MTFlexCR][MTFields + 5] = variance; // Numeric for sorting
+            MTFlexRow[MTFlexCR][MTFields + 6] = targetValue;
+            MTFlexRow[MTFlexCR][MTFields + 7] = dollarDiff;
+
+            // Add detail rows for holdings in this asset class
+            let classHoldings = accountsData.filter(h => h.assetClass === assetClass);
+
+            // Sort holdings by value (largest first)
+            classHoldings.sort((a, b) => b.value - a.value);
+
+            for (let holding of classHoldings) {
+                MTP = {};
+                MTP.Section = 2;
+                MTP.BasedOn = 2; // This is a detail row under the summary
+                MF_QueueAddRow(MTP);
+
+                MTFlexRow[MTFlexCR][MTFields] = '  ' + holding.account; // Indent account name
+                MTFlexRow[MTFlexCR][MTFields + 1] = holding.ticker + (holding.name ? ' • ' + holding.name : '');
+                MTFlexRow[MTFlexCR][MTFields + 2] = holding.value;
+                MTFlexRow[MTFlexCR][MTFields + 3] = totalPortfolio > 0 ? ((holding.value / totalPortfolio * 100).toFixed(2) + '%') : '0%';
+                MTFlexRow[MTFlexCR][MTFields + 4] = ''; // No target for individual holdings
+                MTFlexRow[MTFlexCR][MTFields + 5] = null; // No variance for individual holdings
+                MTFlexRow[MTFlexCR][MTFields + 6] = null; // No target value for individual holdings
+                MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
+            }
         }
 
         // Add total row
@@ -2300,12 +2327,13 @@ async function MenuReportsRebalancingGo() {
         MF_QueueAddRow(MTP);
 
         MTFlexRow[MTFlexCR][MTFields] = 'TOTAL';
-        MTFlexRow[MTFlexCR][MTFields + 1] = totalPortfolio;
-        MTFlexRow[MTFlexCR][MTFields + 2] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 1] = '';
+        MTFlexRow[MTFlexCR][MTFields + 2] = totalPortfolio;
         MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
-        MTFlexRow[MTFlexCR][MTFields + 4] = 0;
-        MTFlexRow[MTFlexCR][MTFields + 5] = totalPortfolio;
-        MTFlexRow[MTFlexCR][MTFields + 6] = 0;
+        MTFlexRow[MTFlexCR][MTFields + 4] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 5] = 0;
+        MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 7] = 0;
     }
 
     async function BuildSummaryCards() {
