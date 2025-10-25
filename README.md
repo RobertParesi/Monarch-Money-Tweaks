@@ -22,7 +22,7 @@ To run on **Apple iPad**, download the Scripts App found in Apple Store first an
 
 Enjoy!
 
-🙏  Please be so kind to leave a review on Apple, Chrome or Firefox store. Currently looking for tech savy beta tester on Safari.
+🙏  Please be so kind to leave a review on Apple, Chrome or Firefox store.
 
 
 ### 🚀 Monarch Money Tweaks - Get Started! 
