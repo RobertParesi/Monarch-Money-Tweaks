@@ -2148,7 +2148,12 @@ async function MenuReportsRebalancingGo() {
 
     MTFlex.Title1 = 'Portfolio Rebalancing Analysis';
     MTFlex.Title2 = 'As of ' + getDates('s_FullDate');
+    MTFlex.Title3 = '';
     MTFlex.TriggerEvents = false;
+    MTFlex.SortSeq = ['1']; // Enable sorting on first column (Asset Class)
+    MTFlex.Button1 = 0;
+    MTFlex.Button2 = 0;
+    MTFlex.Button4 = 0;
 
     // Summary cards
     let totalPortfolio = 0, totalCash = 0, totalInvested = 0;
