@@ -2273,50 +2273,47 @@ async function MenuReportsRebalancingGo() {
 
         MF_QueueAddTitle(7, '$ Difference', MTP);
 
-        // Add rows for each asset class with expandable holdings
-        for (let assetClass in AssetClassConfig) {
-            let currentValue = assetClassTotals[assetClass] || 0;
-            let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
-            let targetPercent = AssetClassConfig[assetClass].target;
-            let variance = currentPercent - targetPercent;
-            let targetValue = totalPortfolio * (targetPercent / 100);
-            let dollarDiff = currentValue - targetValue;
-
-            // Asset class summary row (expandable)
+        // Add all holdings as detail rows with their asset class as PK
+        for (let holding of accountsData) {
             MTP = {};
             MTP.Section = 2;
-            MTP.BasedOn = 1; // Makes this row expandable
+            MTP.BasedOn = 1; // Detail row
+            MTP.PK = holding.assetClass; // Group by asset class
             MF_QueueAddRow(MTP);
 
-            MTFlexRow[MTFlexCR][MTFields] = assetClass;
-            MTFlexRow[MTFlexCR][MTFields + 1] = ''; // Empty for summary row
-            MTFlexRow[MTFlexCR][MTFields + 2] = currentValue;
-            MTFlexRow[MTFlexCR][MTFields + 3] = currentPercent.toFixed(1) + '%';
-            MTFlexRow[MTFlexCR][MTFields + 4] = targetPercent.toFixed(2) + '%';
-            MTFlexRow[MTFlexCR][MTFields + 5] = variance; // Numeric for sorting
-            MTFlexRow[MTFlexCR][MTFields + 6] = targetValue;
-            MTFlexRow[MTFlexCR][MTFields + 7] = dollarDiff;
+            MTFlexRow[MTFlexCR][MTFields] = holding.account; // Account name
+            MTFlexRow[MTFlexCR][MTFields + 1] = holding.ticker + (holding.name ? ' • ' + holding.name : '');
+            MTFlexRow[MTFlexCR][MTFields + 2] = holding.value;
+            MTFlexRow[MTFlexCR][MTFields + 3] = totalPortfolio > 0 ? ((holding.value / totalPortfolio * 100).toFixed(2) + '%') : '0%';
+            MTFlexRow[MTFlexCR][MTFields + 4] = ''; // No target for individual holdings
+            MTFlexRow[MTFlexCR][MTFields + 5] = null; // No variance for individual holdings
+            MTFlexRow[MTFlexCR][MTFields + 6] = null; // No target value for individual holdings
+            MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
+        }
 
-            // Add detail rows for holdings in this asset class
-            let classHoldings = accountsData.filter(h => h.assetClass === assetClass);
+        // Group by asset class and create subtotals
+        MF_GridGroupByPK();
+        MTFlex.Subtotals = true;
 
-            // Sort holdings by value (largest first)
-            classHoldings.sort((a, b) => b.value - a.value);
+        // Update the subtotal rows with asset class summary data
+        for (let i = 0; i < MTFlexRow.length; i++) {
+            if (MTFlexRow[i].Section == 4) { // Subtotal row
+                let assetClass = MTFlexRow[i].PK;
+                let currentValue = assetClassTotals[assetClass] || 0;
+                let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
+                let targetPercent = AssetClassConfig[assetClass]?.target || 0;
+                let variance = currentPercent - targetPercent;
+                let targetValue = totalPortfolio * (targetPercent / 100);
+                let dollarDiff = currentValue - targetValue;
 
-            for (let holding of classHoldings) {
-                MTP = {};
-                MTP.Section = 2;
-                MTP.BasedOn = 2; // This is a detail row under the summary
-                MF_QueueAddRow(MTP);
-
-                MTFlexRow[MTFlexCR][MTFields] = '  ' + holding.account; // Indent account name
-                MTFlexRow[MTFlexCR][MTFields + 1] = holding.ticker + (holding.name ? ' • ' + holding.name : '');
-                MTFlexRow[MTFlexCR][MTFields + 2] = holding.value;
-                MTFlexRow[MTFlexCR][MTFields + 3] = totalPortfolio > 0 ? ((holding.value / totalPortfolio * 100).toFixed(2) + '%') : '0%';
-                MTFlexRow[MTFlexCR][MTFields + 4] = ''; // No target for individual holdings
-                MTFlexRow[MTFlexCR][MTFields + 5] = null; // No variance for individual holdings
-                MTFlexRow[MTFlexCR][MTFields + 6] = null; // No target value for individual holdings
-                MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
+                MTFlexRow[i][MTFields] = assetClass;
+                MTFlexRow[i][MTFields + 1] = ''; // Empty for summary row
+                MTFlexRow[i][MTFields + 2] = currentValue;
+                MTFlexRow[i][MTFields + 3] = currentPercent.toFixed(1) + '%';
+                MTFlexRow[i][MTFields + 4] = targetPercent.toFixed(2) + '%';
+                MTFlexRow[i][MTFields + 5] = variance; // Numeric for sorting
+                MTFlexRow[i][MTFields + 6] = targetValue;
+                MTFlexRow[i][MTFields + 7] = dollarDiff;
             }
         }
 
