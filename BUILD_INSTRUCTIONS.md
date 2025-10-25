@@ -30,6 +30,37 @@ Two extension folders have been created for you:
 2. Navigate to Reports
 3. You should see a new "Rebalancing" tab!
 
+## 🧭 Safari Installation (macOS/iOS/iPadOS)
+
+Safari uses a different approach than Chrome/Firefox. You have two options:
+
+### Option 1: Use as UserScript with Scripts App (Recommended for iPad/iPhone)
+
+1. **Install Scripts App** from the App Store (by Michael Forrest)
+2. Open the Scripts App
+3. Create a new script
+4. Copy the entire contents of `source/Monarch-Money-Tweaks.js`
+5. Paste into the Scripts app
+6. Enable the script for `app.monarch.com`
+7. Reload Monarch Money
+
+### Option 2: Convert to Safari Extension (macOS Only)
+
+Safari extensions require Xcode and code signing. For development:
+
+1. **Install Xcode** from the Mac App Store
+2. Open Terminal and run:
+   ```bash
+   xcrun safari-web-extension-converter /path/to/extension-chrome
+   ```
+3. This creates a Safari extension project
+4. Open the project in Xcode
+5. Build and run (Cmd+R)
+6. Enable the extension in Safari preferences
+7. Trust the developer certificate
+
+**Note**: Safari extensions are more complex. For personal use on Safari, the UserScript approach (Option 1) is much simpler.
+
 ## 🦊 Firefox Installation (Temporary)
 
 ### Option 1: Temporary Installation (For Testing)
