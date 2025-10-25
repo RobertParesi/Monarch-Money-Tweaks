@@ -1,0 +1,16 @@
+# Extension build folders (can be regenerated from source)
+extension-chrome/
+extension-firefox/
+
+# macOS
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log
