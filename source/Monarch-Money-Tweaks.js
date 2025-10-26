@@ -2273,6 +2273,18 @@ async function MenuReportsRebalancingGo() {
 
         MF_QueueAddTitle(7, '$ Difference', MTP);
 
+        // Sort accountsData by asset class for better grouping, then by value
+        accountsData.sort((a, b) => {
+            if (a.assetClass !== b.assetClass) {
+                // Sort by asset class order in AssetClassConfig
+                const aIndex = Object.keys(AssetClassConfig).indexOf(a.assetClass);
+                const bIndex = Object.keys(AssetClassConfig).indexOf(b.assetClass);
+                return aIndex - bIndex;
+            }
+            // Within same asset class, sort by value descending
+            return b.value - a.value;
+        });
+
         // Add all holdings as detail rows with their asset class as PK
         for (let holding of accountsData) {
             MTP = {};
@@ -2297,7 +2309,7 @@ async function MenuReportsRebalancingGo() {
 
         // Update the subtotal rows with asset class summary data
         for (let i = 0; i < MTFlexRow.length; i++) {
-            if (MTFlexRow[i].Section == 4) { // Subtotal row
+            if (MTFlexRow[i].Section == 4 && MTFlexRow[i].PK) { // Subtotal row with a PK
                 let assetClass = MTFlexRow[i].PK;
                 let currentValue = assetClassTotals[assetClass] || 0;
                 let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
@@ -2314,23 +2326,18 @@ async function MenuReportsRebalancingGo() {
                 MTFlexRow[i][MTFields + 5] = variance; // Numeric for sorting
                 MTFlexRow[i][MTFields + 6] = targetValue;
                 MTFlexRow[i][MTFields + 7] = dollarDiff;
+            } else if (MTFlexRow[i].Section == 4 && !MTFlexRow[i].PK) {
+                // This is the grand total row, update it
+                MTFlexRow[i][MTFields] = 'TOTAL';
+                MTFlexRow[i][MTFields + 1] = '';
+                MTFlexRow[i][MTFields + 2] = totalPortfolio;
+                MTFlexRow[i][MTFields + 3] = '100.0%';
+                MTFlexRow[i][MTFields + 4] = '100.0%';
+                MTFlexRow[i][MTFields + 5] = 0;
+                MTFlexRow[i][MTFields + 6] = totalPortfolio;
+                MTFlexRow[i][MTFields + 7] = 0;
             }
         }
-
-        // Add total row
-        MTP = {};
-        MTP.Section = 4;
-        MTP.IsHeader = true;
-        MF_QueueAddRow(MTP);
-
-        MTFlexRow[MTFlexCR][MTFields] = 'TOTAL';
-        MTFlexRow[MTFlexCR][MTFields + 1] = '';
-        MTFlexRow[MTFlexCR][MTFields + 2] = totalPortfolio;
-        MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
-        MTFlexRow[MTFlexCR][MTFields + 4] = '100.0%';
-        MTFlexRow[MTFlexCR][MTFields + 5] = 0;
-        MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
-        MTFlexRow[MTFlexCR][MTFields + 7] = 0;
     }
 
     async function BuildSummaryCards() {
