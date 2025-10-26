@@ -1,14 +1,13 @@
 **Please Read**
 
-This is the latest update and could contain beta/changed features from the released extensions.  If you see any issues in this source-code while running Monarch Money Tweaks, please report them quickly so they are resolved.  I appreciate it.
+This is the latest update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. Thank you for your support!
 
 **Copyright Notice**
 
-Monarch Money Tweaks ideas (the extension's functions) and the source-code (javascript) is (c) Robert Paresi, All Rights Reserved.
+**Monarch Money Tweaks** is an extension designed to enhance and customize your experience with Monarch Money web application. It offers various features and ideas aimed at improving functionality and personalization of your financial management tasks.
 
-This source code is provided for personal, private use only.
+The ideas behind this extension (the New features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. All rights are reserved.
 
-You may not reproduce, distribute, or publicly display this source code or any derivative works without 
-explicit written permission from the copyright holder. 
+This source code is provided strictly for personal, private use only. You may not reproduce, distribute, or publicly display this source code or any derivative works without explicit written permission from the copyright holder.
 
-Any unauthorized use is strictly prohibited and would result in legal action.
+Any unauthorized use, reproduction, or distribution is strictly prohibited and may result in legal action.
