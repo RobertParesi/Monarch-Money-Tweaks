@@ -1,6 +1,10 @@
-Monarch Money Tweaks source-code is Copyright (c) Robert Paresi. 
+**Please Read**
 
-**All Rights Reserved.**
+This is the latest update and could contain beta/changed features from the released extensions.  If you see any issues in this source-code while running Monarch Money Tweaks, please report them quickly so they are resolved.  I appreciate it.
+
+**Copyright Notice**
+
+Monarch Money Tweaks source-code (javascript) is (c) Robert Paresi, All Rights Reserved.
 
 This source code is provided for personal, private use only.
 
