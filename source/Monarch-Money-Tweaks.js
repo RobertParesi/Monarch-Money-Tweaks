@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.8
+// @version      4.9.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.8';
+const version = '4.9.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', header: '', subtotal: ''};
@@ -147,7 +147,7 @@ function MM_MenuFix() {
     glo.debug = getCookie('MT_Log',true);
     for (const div of divs) {
         let j = startsInList(div.pathname,wbs);
-        if(j > 0) { j-=1;getCookie(cks[j],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
+        if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
     }
 }
 
@@ -169,14 +169,13 @@ function MM_flipSideElement(inCookie) {
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
 function MF_SetupDates() {
-    let ckd = getCookie(MTFlex.Name + 'LowerDate',false);
-    if(MTFlex.TriggerEvent == 2) {
-        if(ckd == '') ckd = 'd_StartofMonth';
-        if(ckd.startsWith('d_')) {MTFlexDate1 = getDates(ckd);} else {MTFlexDate1 = unformatQueryDate(ckd);}
-    }
-    ckd = getCookie(MTFlex.Name + 'HigherDate',false);
-    if(ckd == '') ckd = 'd_Today';
-    if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd);} else {MTFlexDate2 = unformatQueryDate(ckd);}
+    let ckd = getCookie(MTFlex.Name + 'LowerDate', false);
+    ckd = ckd || (MTFlex.TriggerEvent == 2 ? 'd_StartofMonth' : '');
+    MTFlexDate1 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
+
+    ckd = getCookie(MTFlex.Name + 'HigherDate', false);
+    ckd = ckd || 'd_Today';
+    MTFlexDate2 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
 }
 
 function MF_QueueAddTitle(inCol,inTitle,p,inIsHidden) {
@@ -189,11 +188,9 @@ function MF_QueueAddTitle(inCol,inTitle,p,inIsHidden) {
 
 function MF_QueueAddRow(p) {
     MTFlexCR = MTFlexRow.length;
-    if(p.PK == undefined || p.PK == null) {p.PK = '';}
-    if(p.SK == undefined || p.SK == null) {p.SK = '';}
-    if(p.IsHeader == undefined) {p.IsHeader = false;}
+    p.PK = p.PK ?? '';p.SK = p.SK ?? '';p.IsHeader = p.IsHeader ?? false;
     MTFlexRow.push({"Num": MTFlexCR, "IsHeader": p.IsHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKlogoUrl": p.SKlogoUrl, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
-    for (let j = 1; j < MTFlexTitle.length; j += 1) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][MTFields+j] = 0;}}}
+    for (let j = 1; j < MTFlexTitle.length; j++) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][MTFields+j] = 0;}}}
 
 function MF_QueueAddCard(p) {
     MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style});}
@@ -437,9 +434,7 @@ function MT_GridDrawDetails() {
                         useStyle2 = pct[1];
                     }
                     if(useRow.IsHeader == true || isSubTotal == true) {
-                        if(thisTitle.IgnoreTotals == true) {
-                            useValue = ''; useValue2 = '';
-                        }
+                        if(thisTitle.IgnoreTotals == true) { useValue = ''; useValue2 = ''; }
                     }
 
                     // Write Detail
@@ -1598,7 +1593,7 @@ async function MenuReportsAccountsGo() {
         snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
 
-        for (let i = 0; i < 5; i ++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
+        for (let i = 0; i < 5; i++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
         for (let i = 0; i < snapshotData.accounts.length; i ++) {
             if(MTFlex.Button2 == 2) {if(snapshotData.accounts[i].type.name != 'brokerage') continue;}
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
@@ -1691,7 +1686,7 @@ async function MenuReportsAccountsGo() {
             MTFlex.AutoCard = {Title: 'Net Change', Section: 2, Column: 10, IgnoreDec: true};
         } else {
             cards=0;
-            for (let i = 0; i < 5; i += 1) {
+            for (let i = 0; i < 5; i++) {
                 if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {
                     if(acard[i] != 0) {
                         MTP = [];MTP.Col = cards;MTP.Title = getDollarValue(acard[i],MTFlexTitle[4].Format == 2 ? true : false);MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
@@ -1716,7 +1711,7 @@ async function MenuReportsAccountsGo() {
         }
         function getAccountPendingBalance(inId) {
             let amt = 0;
-            for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
+            for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
                 if(snapshotData4.allTransactions.results[j].account.id == inId) {
                     amt = amt + snapshotData4.allTransactions.results[j].amount;
                 }
@@ -2396,8 +2391,7 @@ async function WriteByMonthData() {
 
 async function WriteCompareData() {
 
-    let useDesc = '',Numcards=0, useURL = '';
-    let useFormat = false;
+    let useDesc = '',Numcards=0, useURL = '', useFormat = false;
     if(getCookie('MT_NoDecimals',true) == 1) {useFormat = true;}
 
     for (let i = 0; i < TrendQueue.length; i++) {
@@ -4281,15 +4275,13 @@ function uploadfileSettings() {
     link.click();
 }
 
-function setCookie(cName, cValue) { localStorage.setItem(cName,cValue);}
+function setCookie(cName, cValue) {localStorage.setItem(cName,cValue);}
 
-function getCookie(cname,isNum,useDefault) {
-
+function getCookie(cname, isNum = false, useDefault) {
     let value = localStorage.getItem(cname);
-    if(value !== null) {
-        if(isNum == true) {return Number(value);} else {return value;}
-    }
-    if(useDefault) {return useDefault;} else {if(isNum == true) {return 0;} else {return '';}}
+    if (value !== null) { return isNum ? Number(value) : value;}
+    if (useDefault !== undefined) {return useDefault;}
+    return isNum ? 0 : '';
 }
 
 function flipCookie(inCookie,spin) {
@@ -4329,7 +4321,7 @@ function sortTableByColumn(inEvent) {
         sortedRows.forEach(row => table.appendChild(row));
     }
     const cols = document.querySelectorAll('td.MTSortTableByColumn');
-    for (let i = 0; i < cols.length; i += 1) {
+    for (let i = 0; i < cols.length; i++) {
         cols[i].innerText = cols[i].innerText.replace(/[▲▼]/g, "");
         if(i == columnIndex) { if(dirModifier == -1) {cols[i].innerText += ' ▼';} else {cols[i].innerText += ' ▲';} }
     }
@@ -4483,7 +4475,7 @@ async function buildCategoryGroups() {
     if(accountGroups.length == 0) {
         const categoryData = await getCategoryData();
         let isFixed = '';
-        for (let i = 0; i < categoryData.categories.length; i += 1) {
+        for (let i = 0; i < categoryData.categories.length; i++) {
             isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
             if(isFixed == true) {glo.accountsHasFixed = true;}
             accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order, "ISFIXED": isFixed});
