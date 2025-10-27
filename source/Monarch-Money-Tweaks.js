@@ -54,8 +54,8 @@ const RebalancingAccountCatalog = {
     '203461215647144623': { preferredName: 'CohnReznick LLP 401(k) (Empower)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460490319862038': { preferredName: 'HSA Brokerage (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460993179163182': { preferredName: 'HSA Investment Account (Payflex)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
-    '203471919180650813': { preferredName: 'MTO Profit Sharing Plan (Principal)', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false },
-    '210273360542145492': { preferredName: 'KMPG Pension', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false },
+    '203471919180650813': { preferredName: 'MTO Profit Sharing Plan (Principal)', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false, showInNoControl: true },
+    '210273360542145492': { preferredName: 'KMPG Pension', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false, showInNoControl: true },
     '203461154479512185': { preferredName: 'Eliza 529 (Vanguard)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460490205567253': { preferredName: 'Eliza ESA (Schwab)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460491805694236': { preferredName: 'Eliza UTMA (Schwab)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Taxable', controllable: true, includeInAllocation: true }
@@ -100,7 +100,8 @@ function buildAccountProfile(account) {
         includeInAllocation: false,
         includeBalance: true,
         groupKey: id,
-        id
+        id,
+        showInNoControl: false
     };
     let profile = { ...baseProfile };
     const fromCatalog = !!catalogEntry;
@@ -163,6 +164,7 @@ function buildAccountProfile(account) {
     }
 
     profile.includeBalance = profile.includeBalance !== false;
+    profile.showInNoControl = profile.showInNoControl === true;
 
     if (!profile.preferredName) {
         profile.preferredName = displayName;
@@ -2513,7 +2515,7 @@ async function MenuReportsRebalancingGo() {
             const participates = summary.includeInAllocation !== false;
             const isGroupRoot = summary.id === summary.groupKey;
 
-            if (isGroupRoot && !summary.controllable && !seenNoControl.has(summary.id)) {
+            if (isGroupRoot && summary.showInNoControl && !seenNoControl.has(summary.id)) {
                 coverageDetails.accountsNoControl.push(summary);
                 seenNoControl.add(summary.id);
             }
