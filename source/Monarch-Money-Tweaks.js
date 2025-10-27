@@ -2511,10 +2511,20 @@ async function MenuReportsRebalancingGo() {
         }
 
         for (const summary of accountSummaries.values()) {
-            if (summary.includeInAllocation === false) {
-                continue;
+            const participates = summary.includeInAllocation !== false;
+            const isGroupRoot = summary.id === summary.groupKey;
+
+            if (isGroupRoot && !summary.controllable && !seenNoControl.has(summary.id)) {
+                coverageDetails.accountsNoControl.push(summary);
+                seenNoControl.add(summary.id);
             }
-            if (summary.id !== summary.groupKey) {
+
+            if (isGroupRoot && summary.category === AccountCategoryLabels.ALTERNATIVES && !seenAlternatives.has(summary.id)) {
+                coverageDetails.accountsAlternatives.push(summary);
+                seenAlternatives.add(summary.id);
+            }
+
+            if (!participates || !isGroupRoot) {
                 continue;
             }
 
@@ -2538,14 +2548,6 @@ async function MenuReportsRebalancingGo() {
                     coverageDetails.accountsMissing.push(summary);
                     seenMissing.add(summary.id);
                 }
-            } else if (summary.category !== AccountCategoryLabels.ALTERNATIVES && !seenNoControl.has(summary.id)) {
-                coverageDetails.accountsNoControl.push(summary);
-                seenNoControl.add(summary.id);
-            }
-
-            if (summary.category === AccountCategoryLabels.ALTERNATIVES && !seenAlternatives.has(summary.id)) {
-                coverageDetails.accountsAlternatives.push(summary);
-                seenAlternatives.add(summary.id);
             }
         }
 
@@ -2719,16 +2721,8 @@ async function MenuReportsRebalancingGo() {
         if (noControlLines.length === 0) {
             noControlLines.push('• None');
         }
-        const alternativeLines = coverageDetails.accountsAlternatives
-            .slice(0, 6)
-            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)}`);
-        if (alternativeLines.length === 0) {
-            alternativeLines.push('• None');
-        }
-
         appendSummaryBlock('Missing Holdings Data', missingLines);
         appendSummaryBlock('No-Control Accounts', noControlLines);
-        appendSummaryBlock('Alternative Investments', alternativeLines);
 
         function appendSummaryBlock(title, lines) {
             if (!lines || lines.length === 0) {
