@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.8 (Submitted)**  
+* **Version 4.8 (October 26, 2025)**  
      - NEW: Added link to Stock Analysis when expanding Stock, ETF and Mutual Funds.
      - CHANGE: When exporting reports with Subtotals, GROUP name will export as well as the CATEGORY.
      - CHANGE: Clean up with Exporting - better formatting.
