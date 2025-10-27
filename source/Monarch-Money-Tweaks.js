@@ -2467,9 +2467,8 @@ async function MenuReportsRebalancingGo() {
                 continue;
             }
             let inferredCash = Number((summary.balance - summary.holdingsValue).toFixed(2));
-            if (inferredCash < 0) {
-                inferredCash = 0;
-            }
+            if (inferredCash < 0) { inferredCash = 0; }
+            if (summary.category === AccountCategoryLabels.ALTERNATIVES) { inferredCash = 0; }
             summary.inferredCash = inferredCash;
             summary.cashValue = inferredCash;
 
