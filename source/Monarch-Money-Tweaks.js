@@ -2324,6 +2324,7 @@ async function MenuReportsRebalancingGo() {
     const seenMissing = new Set();
     const seenNoControl = new Set();
     const seenAlternatives = new Set();
+    let extraAssetClasses = [];
     let rebalancingPlan = null;
 
     // Initialize asset class totals
@@ -2553,6 +2554,67 @@ async function MenuReportsRebalancingGo() {
             }
         }
 
+        const supplementalGroups = [
+            {
+                name: 'Missing Holdings Data',
+                includeInTotal: false,
+                entries: coverageDetails.accountsMissing.map(acc => ({
+                    account: acc.name,
+                    value: acc.balance || 0,
+                    note: '(no holdings data)'
+                }))
+            },
+            {
+                name: 'No-Control Accounts',
+                includeInTotal: true,
+                entries: coverageDetails.accountsNoControl.map(acc => ({
+                    account: acc.name,
+                    value: acc.balance || 0,
+                    note: '(no control)'
+                }))
+            }
+        ];
+
+        for (const group of supplementalGroups) {
+            extraAssetClasses.push(group.name);
+            let groupTotal = 0;
+            if (group.entries.length === 0) {
+                accountsData.push({
+                    accountId: null,
+                    account: 'None',
+                    ticker: '',
+                    name: '',
+                    value: 0,
+                    assetClass: group.name,
+                    category: group.name,
+                    taxStatus: '',
+                    controllable: false
+                });
+            } else {
+                for (const entry of group.entries) {
+                    const entryValue = entry.value || 0;
+                    groupTotal += entryValue;
+                    accountsData.push({
+                        accountId: null,
+                        account: entry.account,
+                        ticker: '',
+                        name: entry.note,
+                        value: entryValue,
+                        assetClass: group.name,
+                        category: group.name,
+                        taxStatus: '',
+                        controllable: false
+                    });
+                }
+            }
+            assetClassTotals[group.name] = groupTotal;
+            if (group.includeInTotal) {
+                totalPortfolio += groupTotal;
+                totalInvested += groupTotal;
+                categoryTotals[group.name] = (categoryTotals[group.name] || 0) + groupTotal;
+            }
+        }
+
         accountsData = accountsData.filter(row => Math.abs(row.value) > 0.01);
 
         if (coverageDetails.controllableTotal === 0) {
@@ -2593,15 +2655,21 @@ async function MenuReportsRebalancingGo() {
 
         MF_QueueAddTitle(7, '$ Difference', MTP);
 
-        // Sort accountsData by asset class for better grouping, then by value
+        const assetOrder = [...Object.keys(AssetClassConfig), ...extraAssetClasses];
+        const orderMap = {};
+        assetOrder.forEach((name, idx) => {
+            if (!Object.prototype.hasOwnProperty.call(orderMap, name)) {
+                orderMap[name] = idx;
+            }
+        });
+
+        // Sort accountsData by asset class order, then by value
         accountsData.sort((a, b) => {
             if (a.assetClass !== b.assetClass) {
-                // Sort by asset class order in AssetClassConfig
-                const aIndex = Object.keys(AssetClassConfig).indexOf(a.assetClass);
-                const bIndex = Object.keys(AssetClassConfig).indexOf(b.assetClass);
+                const aIndex = orderMap.hasOwnProperty(a.assetClass) ? orderMap[a.assetClass] : assetOrder.length;
+                const bIndex = orderMap.hasOwnProperty(b.assetClass) ? orderMap[b.assetClass] : assetOrder.length;
                 return aIndex - bIndex;
             }
-            // Within same asset class, sort by value descending
             return b.value - a.value;
         });
 
@@ -2711,22 +2779,6 @@ async function MenuReportsRebalancingGo() {
             appendSummaryBlock('Open Shortfalls', shortfallLines);
         }
 
-        const missingLines = coverageDetails.accountsMissing
-            .slice(0, 6)
-            .map(acc => ({ text: `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no holdings data)` }));
-        if (missingLines.length === 0) {
-            missingLines.push({ text: '• None' });
-        }
-        const noControlLines = coverageDetails.accountsNoControl
-            .slice(0, 6)
-            .map(acc => ({ text: `• ${acc.name} (no control)`, value: acc.balance }));
-        if (noControlLines.length === 0) {
-            noControlLines.push({ text: '• None' });
-        }
-
-        appendSummaryBlock('Missing Holdings Data', missingLines);
-        appendSummaryBlock('No-Control Accounts', noControlLines);
-
         function appendSummaryBlock(title, lines) {
             if (!lines || lines.length === 0) {
                 return;
@@ -2734,25 +2786,20 @@ async function MenuReportsRebalancingGo() {
             MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
             MF_QueueAddRow(MTP);
             MTFlexRow[MTFlexCR][MTFields] = title;
-            clearNumericColumns(MTFlexCR, true);
+            clearNumericColumns(MTFlexCR);
             nextSection += 1;
             for (const line of lines) {
-                const hasValue = typeof line === 'object' && line.value != null;
-                const text = typeof line === 'string' ? line : line.text;
-                MTP = { IsHeader: false, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
+                MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
                 MF_QueueAddRow(MTP);
-                MTFlexRow[MTFlexCR][MTFields] = text;
-                if (hasValue) {
-                    MTFlexRow[MTFlexCR][MTFields + 2] = line.value;
-                }
-                clearNumericColumns(MTFlexCR, !hasValue);
+                MTFlexRow[MTFlexCR][MTFields] = line;
+                clearNumericColumns(MTFlexCR);
                 nextSection += 1;
             }
         }
 
-        function clearNumericColumns(rowIdx, forceClear) {
+        function clearNumericColumns(rowIdx) {
             for (let col = 1; col < MTFlexTitle.length; col++) {
-                if (MTFlexTitle[col].Format > 0 && (forceClear || MTFlexRow[rowIdx][MTFields + col] == null)) {
+                if (MTFlexTitle[col].Format > 0) {
                     MTFlexRow[rowIdx][MTFields + col] = '';
                 }
             }
