@@ -2397,7 +2397,8 @@ async function MenuReportsRebalancingGo() {
                 groupKey: profile.groupKey || account.id,
                 notes: profile.notes || '',
                 dataAvailable: false,
-                isManual: account.isManual === true
+                isManual: account.isManual === true,
+                showInNoControl: profile.showInNoControl === true
             };
 
             accountSummaries.set(account.id, summary);
@@ -2722,8 +2723,16 @@ async function MenuReportsRebalancingGo() {
         if (noControlLines.length === 0) {
             noControlLines.push('• None');
         }
+        const alternativeLines = coverageDetails.accountsAlternatives
+            .slice(0, 6)
+            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)}`);
+        if (alternativeLines.length === 0) {
+            alternativeLines.push('• None');
+        }
+
         appendSummaryBlock('Missing Holdings Data', missingLines);
         appendSummaryBlock('No-Control Accounts', noControlLines);
+        appendSummaryBlock('Alternative Investments', alternativeLines);
 
         function appendSummaryBlock(title, lines) {
             if (!lines || lines.length === 0) {
