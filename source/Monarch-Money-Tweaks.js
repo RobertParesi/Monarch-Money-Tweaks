@@ -33,6 +33,157 @@ const AssetClassConfig = {
     'Cash': { target: 0.00, tickers: ['CUR:USD', 'DIDA', 'CASH-INFERRED'], securityNames: [] }
 };
 
+const AccountCategoryLabels = {
+    CASH_CREDIT: 'Cash & Credit',
+    INVEST_CONTROL: 'Investment (Control)',
+    INVEST_NO_CONTROL: 'Investment (No Control)',
+    CUSTODIAL: 'Custodial',
+    ALTERNATIVES: 'Alternative Investments',
+    REAL_ESTATE: 'Real Estate & Mortgage',
+    OTHER_DEBT: 'Other Debt',
+    UNCATEGORIZED: 'Uncategorized'
+};
+
+const RebalancingAccountCatalog = {
+    '203460490854635801': { preferredName: 'Joint Brokerage (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Taxable', controllable: true, includeInAllocation: true },
+    '203460489863731476': { preferredName: 'FPT Roth IRA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460491373680922': { preferredName: 'AMT Roth IRA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203461215413312173': { preferredName: 'TokenTax 401(k) (Empower)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460491607513371': { preferredName: 'MTO 401k SDBA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: false, includeBalance: false, combineWith: '203471918807357756' },
+    '203471918807357756': { preferredName: 'MTO 401(k) (Principal)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203461215647144623': { preferredName: 'CohnReznick LLP 401(k) (Empower)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460490319862038': { preferredName: 'HSA Brokerage (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460993179163182': { preferredName: 'HSA Investment Account (Payflex)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203471919180650813': { preferredName: 'MTO Profit Sharing Plan (Principal)', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false },
+    '210273360542145492': { preferredName: 'KMPG Pension', category: AccountCategoryLabels.INVEST_NO_CONTROL, taxStatus: 'Tax-Deferred', controllable: false, includeInAllocation: false },
+    '203461154479512185': { preferredName: 'Eliza 529 (Vanguard)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460490205567253': { preferredName: 'Eliza ESA (Schwab)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
+    '203460491805694236': { preferredName: 'Eliza UTMA (Schwab)', category: AccountCategoryLabels.CUSTODIAL, taxStatus: 'Taxable', controllable: true, includeInAllocation: true }
+};
+
+const RebalancingAccountFallbacks = [
+    { matcher: /opportunity zone/i, category: AccountCategoryLabels.ALTERNATIVES, taxStatus: 'Taxable', controllable: false, includeInAllocation: true },
+    { matcher: /brewpub/i, category: AccountCategoryLabels.ALTERNATIVES, taxStatus: 'Taxable', controllable: false, includeInAllocation: true },
+    { matcher: /portfolia/i, category: AccountCategoryLabels.ALTERNATIVES, taxStatus: 'Taxable', controllable: false, includeInAllocation: true },
+    { matcher: /savings|checking|cash|venmo|apple/i, category: AccountCategoryLabels.CASH_CREDIT, taxStatus: 'Taxable', controllable: false, includeInAllocation: false },
+    { matcher: /credit card/i, category: AccountCategoryLabels.CASH_CREDIT, taxStatus: 'Taxable', controllable: false, includeInAllocation: false },
+    { matcher: /mortgage|home loan/i, category: AccountCategoryLabels.REAL_ESTATE, taxStatus: 'Liability', controllable: false, includeInAllocation: false },
+    { matcher: /loan|debt/i, category: AccountCategoryLabels.OTHER_DEBT, taxStatus: 'Liability', controllable: false, includeInAllocation: false }
+];
+
+function inferTaxStatusFromName(accountName) {
+    const name = (accountName || '').toLowerCase();
+    if (name.includes('roth') || name.includes('ira') || name.includes('401') || name.includes('hsa') || name.includes('profit sharing') || name.includes('pension')) {
+        return 'Tax-Deferred';
+    }
+    if (name.includes('529') || name.includes('esa')) {
+        return 'Tax-Deferred';
+    }
+    if (name.includes('utma')) {
+        return 'Taxable';
+    }
+    if (name.includes('mortgage') || name.includes('loan') || name.includes('debt')) {
+        return 'Liability';
+    }
+    return 'Taxable';
+}
+
+function buildAccountProfile(account) {
+    const id = account?.id || '';
+    const displayName = account?.displayName || '';
+    const catalogEntry = RebalancingAccountCatalog[id];
+    const baseProfile = {
+        preferredName: displayName,
+        category: null,
+        taxStatus: null,
+        controllable: false,
+        includeInAllocation: false,
+        includeBalance: true,
+        groupKey: id,
+        id
+    };
+    let profile = { ...baseProfile };
+    const fromCatalog = !!catalogEntry;
+
+    if (fromCatalog) {
+        profile = { ...profile, ...catalogEntry };
+    }
+
+    if (!fromCatalog) {
+        for (const fallback of RebalancingAccountFallbacks) {
+            if (fallback.matcher.test(displayName)) {
+                profile = { ...profile, ...fallback };
+                break;
+            }
+        }
+    }
+
+    const typeGroup = account?.type?.group || '';
+    const typeDisplay = (account?.type?.display || '').toLowerCase();
+    const subtypeDisplay = (account?.subtype?.display || '').toLowerCase();
+
+    if (!profile.category) {
+        if (typeGroup === 'investment') {
+            profile.category = AccountCategoryLabels.INVEST_CONTROL;
+        } else if (typeGroup === 'cash') {
+            profile.category = AccountCategoryLabels.CASH_CREDIT;
+        } else if (typeGroup === 'loan') {
+            profile.category = AccountCategoryLabels.OTHER_DEBT;
+        } else if (typeGroup === 'property') {
+            profile.category = AccountCategoryLabels.REAL_ESTATE;
+        }
+    }
+
+    if (!profile.taxStatus) {
+        profile.taxStatus = inferTaxStatusFromName(displayName);
+    }
+
+    if (profile.controllable == null) {
+        const maybeCustodial = displayName.toLowerCase().includes('529') || displayName.toLowerCase().includes('utma') || displayName.toLowerCase().includes('esa');
+        profile.controllable = profile.category === AccountCategoryLabels.INVEST_CONTROL || profile.category === AccountCategoryLabels.CUSTODIAL || maybeCustodial;
+    }
+
+    profile.controllable = profile.controllable === true;
+    if (profile.category === AccountCategoryLabels.CUSTODIAL) {
+        profile.controllable = true;
+    }
+
+    if (profile.includeInAllocation == null) {
+        if (fromCatalog) {
+            profile.includeInAllocation = catalogEntry.includeInAllocation === true;
+        } else {
+            profile.includeInAllocation = false;
+        }
+    } else {
+        profile.includeInAllocation = profile.includeInAllocation === true;
+    }
+
+    if (!fromCatalog && profile.category === AccountCategoryLabels.ALTERNATIVES && profile.includeInAllocation !== true) {
+        profile.includeInAllocation = false;
+    }
+
+    profile.includeBalance = profile.includeBalance !== false;
+
+    if (!profile.preferredName) {
+        profile.preferredName = displayName;
+    }
+
+    profile.groupKey = profile.combineWith || profile.groupKey || id;
+    profile.id = id;
+    return profile;
+}
+
+function inferFallbackAssetClass(holding) {
+    const typeDisplay = (holding?.typeDisplay || '').toLowerCase();
+    if (typeDisplay.includes('cash') || typeDisplay.includes('money market')) {
+        return 'Cash';
+    }
+    if (typeDisplay.includes('bond')) {
+        return 'US Large/Mid';
+    }
+    return 'Alternatives & Crypto';
+}
+
 function MM_Init() {
 
     MM_RefreshAll();
@@ -2157,7 +2308,21 @@ async function MenuReportsRebalancingGo() {
 
     // Summary cards
     let totalPortfolio = 0, totalCash = 0, totalInvested = 0;
-    let accountsData = [], assetClassTotals = {}, holdingsDataAvailable = true;
+    let accountsData = [];
+    let assetClassTotals = {};
+    let accountSummaries = new Map();
+    let categoryTotals = {};
+    let coverageDetails = {
+        controllableTotal: 0,
+        holdingsCovered: 0,
+        accountsMissing: [],
+        accountsNoControl: [],
+        accountsAlternatives: []
+    };
+    const seenMissing = new Set();
+    const seenNoControl = new Set();
+    const seenAlternatives = new Set();
+    let rebalancingPlan = null;
 
     // Initialize asset class totals
     for (let assetClass in AssetClassConfig) {
@@ -2182,70 +2347,221 @@ async function MenuReportsRebalancingGo() {
     // Step 4: Build rebalancing recommendations
     await BuildRebalancingRecommendations();
 
+    coverageDetails.accountsMissing.sort((a, b) => (b.balance || 0) - (a.balance || 0));
+    coverageDetails.accountsNoControl.sort((a, b) => (b.balance || 0) - (a.balance || 0));
+    coverageDetails.accountsAlternatives.sort((a, b) => (b.balance || 0) - (a.balance || 0));
+
+    MTFlex.Metadata = {
+        accountSummaries: Array.from(accountSummaries.values()),
+        coverage: {
+            controllableTotal: coverageDetails.controllableTotal,
+            holdingsCovered: coverageDetails.holdingsCovered,
+            dataCoveragePct: coverageDetails.dataCoveragePct,
+            accountsMissing: coverageDetails.accountsMissing.map(({ id, name, balance }) => ({ id, name, balance })),
+            accountsNoControl: coverageDetails.accountsNoControl.map(({ id, name, balance }) => ({ id, name, balance })),
+            accountsAlternatives: coverageDetails.accountsAlternatives.map(({ id, name, balance }) => ({ id, name, balance }))
+        },
+        categoryTotals,
+        rebalancing: rebalancingPlan
+    };
+
     glo.spawnProcess = 1;
 
     async function BuildAccountHoldings() {
-        let accQueue = [];
+        const snapshotAccounts = snapshotData?.accounts || [];
 
-        // Process all investment holdings
-        for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
-            const holdings = edge.node.holdings;
+        const registerSummary = (account) => {
+            if (!account || !account.id) {
+                return null;
+            }
+            if (accountSummaries.has(account.id)) {
+                return accountSummaries.get(account.id);
+            }
+
+            const profile = buildAccountProfile(account);
+            const summary = {
+                id: account.id,
+                name: profile.preferredName,
+                rawName: account.displayName || profile.preferredName,
+                balance: Number(account.displayBalance ?? account.currentBalance ?? 0) || 0,
+                holdingsValue: 0,
+                cashValue: 0,
+                inferredCash: 0,
+                category: profile.category || AccountCategoryLabels.UNCATEGORIZED,
+                taxStatus: profile.taxStatus || inferTaxStatusFromName(profile.preferredName),
+                controllable: profile.controllable === true,
+                includeInAllocation: profile.includeInAllocation !== false,
+                includeBalance: profile.includeBalance !== false,
+                groupKey: profile.groupKey || account.id,
+                notes: profile.notes || '',
+                dataAvailable: false,
+                isManual: account.isManual === true
+            };
+
+            accountSummaries.set(account.id, summary);
+
+            if (summary.includeInAllocation && summary.includeBalance && summary.controllable && summary.id === summary.groupKey) {
+                coverageDetails.controllableTotal += summary.balance;
+            }
+            return summary;
+        };
+
+        for (const account of snapshotAccounts) {
+            registerSummary(account);
+        }
+
+        const holdingsEdges = portfolioData?.portfolio?.aggregateHoldings?.edges || [];
+        for (const edge of holdingsEdges) {
+            const holdings = edge?.node?.holdings || [];
             for (const holding of holdings) {
-                let useAccount = holding.account.displayName || '';
-                let useTicker = holding.ticker || '';
-                let longTitle = holding.name || '';
-                let useHoldingValue = Number(holding.value);
+                if (!holding?.account?.id) {
+                    continue;
+                }
 
-                // Determine asset class
+                const summary = registerSummary(holding.account);
+                if (!summary || summary.includeInAllocation === false) {
+                    continue;
+                }
+
+                const useAccountName = summary.name;
+                const useTicker = holding.ticker || '';
+                const longTitle = holding.name || '';
+                const useHoldingValue = Number(holding.value) || 0;
+
                 let assetClass = classifyAssetClass(useTicker, longTitle, holding.typeDisplay);
-
-                if (assetClass && assetClassTotals[assetClass] !== undefined) {
+                if (!assetClass || AssetClassConfig[assetClass] === undefined) {
+                    assetClass = inferFallbackAssetClass(holding);
+                }
+                if (AssetClassConfig[assetClass] !== undefined) {
                     assetClassTotals[assetClass] += useHoldingValue;
                 }
 
                 totalInvested += useHoldingValue;
+                summary.holdingsValue += useHoldingValue;
+                summary.dataAvailable = true;
 
-                // Track account for cash calculation
-                const account = accQueue.find(acc => acc.id === holding.account.id);
-                if (account) {
-                    account.holdingBalance += useHoldingValue;
-                } else {
-                    accQueue.push({
-                        id: holding.account.id,
-                        holdingBalance: useHoldingValue,
-                        portfolioBalance: Number(holding.account.displayBalance),
-                        accountName: useAccount
-                    });
+                if (summary.groupKey && summary.groupKey !== summary.id) {
+                    const parentSummary = accountSummaries.get(summary.groupKey);
+                    if (parentSummary) {
+                        parentSummary.holdingsValue += useHoldingValue;
+                        parentSummary.dataAvailable = true;
+                    }
                 }
 
-                // Store for detailed view
                 accountsData.push({
-                    account: useAccount,
+                    accountId: summary.id,
+                    account: useAccountName,
                     ticker: useTicker,
                     name: longTitle,
                     value: useHoldingValue,
-                    assetClass: assetClass
+                    assetClass: AssetClassConfig[assetClass] ? assetClass : 'Alternatives & Crypto',
+                    category: summary.category,
+                    taxStatus: summary.taxStatus,
+                    controllable: summary.controllable
                 });
             }
         }
 
-        // Calculate inferred cash for each account
-        for (const acc of accQueue) {
-            totalPortfolio += acc.portfolioBalance;
-            let cashValue = acc.portfolioBalance - acc.holdingBalance;
-            if (cashValue > 0.01) { // Only count meaningful cash positions
-                totalCash += cashValue;
-                assetClassTotals['Cash'] += cashValue;
+        for (const summary of accountSummaries.values()) {
+            if (summary.includeInAllocation === false) {
+                continue;
+            }
+            let inferredCash = Number((summary.balance - summary.holdingsValue).toFixed(2));
+            if (inferredCash < 0) {
+                inferredCash = 0;
+            }
+            summary.inferredCash = inferredCash;
+            summary.cashValue = inferredCash;
 
+            if (inferredCash > 0.01) {
                 accountsData.push({
-                    account: acc.accountName,
+                    accountId: summary.id,
+                    account: summary.name,
                     ticker: 'CASH-INFERRED',
                     name: 'Uninvested Cash (Inferred)',
-                    value: cashValue,
-                    assetClass: 'Cash'
+                    value: inferredCash,
+                    assetClass: 'Cash',
+                    category: summary.category,
+                    taxStatus: summary.taxStatus,
+                    controllable: summary.controllable
                 });
             }
+
+            let manualAltValue = 0;
+            if (summary.category === AccountCategoryLabels.ALTERNATIVES && summary.includeInAllocation) {
+                manualAltValue = Number((summary.balance - summary.inferredCash - summary.holdingsValue).toFixed(2));
+                if (manualAltValue > 0.01) {
+                    summary.holdingsValue += manualAltValue;
+                    summary.dataAvailable = true;
+                    assetClassTotals['Alternatives & Crypto'] = (assetClassTotals['Alternatives & Crypto'] || 0) + manualAltValue;
+                    totalInvested += manualAltValue;
+                    accountsData.push({
+                        accountId: summary.id,
+                        account: summary.name,
+                        ticker: 'MANUAL',
+                        name: 'Manual Alternative Holding',
+                        value: manualAltValue,
+                        assetClass: 'Alternatives & Crypto',
+                        category: summary.category,
+                        taxStatus: summary.taxStatus,
+                        controllable: summary.controllable
+                    });
+                }
+            }
         }
+
+        for (const summary of accountSummaries.values()) {
+            if (summary.includeInAllocation === false) {
+                continue;
+            }
+            if (summary.id !== summary.groupKey) {
+                continue;
+            }
+
+            if (summary.includeBalance) {
+                totalPortfolio += summary.balance;
+            }
+
+            if ((summary.inferredCash || 0) > 0.01 && summary.includeBalance) {
+                totalCash += summary.inferredCash;
+                if (assetClassTotals['Cash'] !== undefined) {
+                    assetClassTotals['Cash'] += summary.inferredCash;
+                }
+            }
+
+            categoryTotals[summary.category] = (categoryTotals[summary.category] || 0) + summary.balance;
+
+            if (summary.controllable) {
+                if (summary.dataAvailable) {
+                    coverageDetails.holdingsCovered += summary.balance;
+                } else if (!seenMissing.has(summary.id)) {
+                    coverageDetails.accountsMissing.push(summary);
+                    seenMissing.add(summary.id);
+                }
+            } else if (summary.category !== AccountCategoryLabels.ALTERNATIVES && !seenNoControl.has(summary.id)) {
+                coverageDetails.accountsNoControl.push(summary);
+                seenNoControl.add(summary.id);
+            }
+
+            if (summary.category === AccountCategoryLabels.ALTERNATIVES && !seenAlternatives.has(summary.id)) {
+                coverageDetails.accountsAlternatives.push(summary);
+                seenAlternatives.add(summary.id);
+            }
+        }
+
+        accountsData = accountsData.filter(row => Math.abs(row.value) > 0.01);
+
+        if (coverageDetails.controllableTotal === 0) {
+            for (const summary of accountSummaries.values()) {
+                if (summary.includeInAllocation && summary.includeBalance && summary.controllable && summary.id === summary.groupKey) {
+                    coverageDetails.controllableTotal += summary.balance;
+                }
+            }
+        }
+
+        coverageDetails.dataCoveragePct = coverageDetails.controllableTotal > 0
+            ? coverageDetails.holdingsCovered / coverageDetails.controllableTotal
+            : 1;
     }
 
     async function BuildAssetAllocationTable() {
@@ -2308,34 +2624,135 @@ async function MenuReportsRebalancingGo() {
         MTFlex.Subtotals = true;
 
         // Update the subtotal rows with asset class summary data
+        let maxSection = 0;
         for (let i = 0; i < MTFlexRow.length; i++) {
-            if (MTFlexRow[i].Section == 4 && MTFlexRow[i].PK) { // Subtotal row with a PK
-                let assetClass = MTFlexRow[i].PK;
-                let currentValue = assetClassTotals[assetClass] || 0;
-                let currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
-                let targetPercent = AssetClassConfig[assetClass]?.target || 0;
-                let variance = currentPercent - targetPercent;
-                let targetValue = totalPortfolio * (targetPercent / 100);
-                let dollarDiff = currentValue - targetValue;
+            const row = MTFlexRow[i];
+            if (row.Section != null && row.Section > maxSection) {
+                maxSection = row.Section;
+            }
+            if (row.IsHeader === true) {
+                const assetClass = (row[MTFields] || '').trim();
+                if (assetClassTotals.hasOwnProperty(assetClass)) {
+                    const currentValue = assetClassTotals[assetClass] || 0;
+                    const currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
+                    const targetPercent = AssetClassConfig[assetClass]?.target || 0;
+                    const variance = currentPercent - targetPercent;
+                    const targetValue = totalPortfolio * (targetPercent / 100);
+                    const dollarDiff = currentValue - targetValue;
 
-                MTFlexRow[i][MTFields] = assetClass;
-                MTFlexRow[i][MTFields + 1] = ''; // Empty for summary row
-                MTFlexRow[i][MTFields + 2] = currentValue;
-                MTFlexRow[i][MTFields + 3] = currentPercent.toFixed(1) + '%';
-                MTFlexRow[i][MTFields + 4] = targetPercent.toFixed(2) + '%';
-                MTFlexRow[i][MTFields + 5] = variance; // Numeric for sorting
-                MTFlexRow[i][MTFields + 6] = targetValue;
-                MTFlexRow[i][MTFields + 7] = dollarDiff;
-            } else if (MTFlexRow[i].Section == 4 && !MTFlexRow[i].PK) {
-                // This is the grand total row, update it
-                MTFlexRow[i][MTFields] = 'TOTAL';
-                MTFlexRow[i][MTFields + 1] = '';
-                MTFlexRow[i][MTFields + 2] = totalPortfolio;
-                MTFlexRow[i][MTFields + 3] = '100.0%';
-                MTFlexRow[i][MTFields + 4] = '100.0%';
-                MTFlexRow[i][MTFields + 5] = 0;
-                MTFlexRow[i][MTFields + 6] = totalPortfolio;
-                MTFlexRow[i][MTFields + 7] = 0;
+                    row[MTFields] = assetClass;
+                    row[MTFields + 1] = ''; // Empty for summary row
+                    row[MTFields + 2] = currentValue;
+                    row[MTFields + 3] = currentPercent.toFixed(1) + '%';
+                    row[MTFields + 4] = targetPercent.toFixed(2) + '%';
+                    row[MTFields + 5] = parseFloat(variance.toFixed(2)); // Numeric for sorting
+                    row[MTFields + 6] = targetValue;
+                    row[MTFields + 7] = dollarDiff;
+                }
+            }
+        }
+
+        // Append a grand total row at the bottom
+        const totalSection = maxSection + 1;
+        MTP = { IsHeader: true, IgnoreShade: true, Section: totalSection, SummaryOnly: true };
+        MF_QueueAddRow(MTP);
+        MTFlexRow[MTFlexCR][MTFields] = 'TOTAL';
+        MTFlexRow[MTFlexCR][MTFields + 1] = '';
+        MTFlexRow[MTFlexCR][MTFields + 2] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 4] = '100.0%';
+        MTFlexRow[MTFlexCR][MTFields + 5] = 0;
+        MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 7] = 0;
+
+        let nextSection = totalSection + 1;
+
+        const recommendationLines = [];
+        if (rebalancingPlan) {
+            if (rebalancingPlan.recommendations && rebalancingPlan.recommendations.length > 0) {
+                for (const rec of rebalancingPlan.recommendations) {
+                    const amount = getDollarValue(rec.amount, true);
+                    recommendationLines.push(`• ${rec.accountName}: Buy ${amount} ${rec.ticker} (${rec.assetClass})`);
+                }
+            } else {
+                recommendationLines.push('• No cash deployment required; allocation within target bands.');
+            }
+
+            const cashLines = [];
+            if (rebalancingPlan.cashSources) {
+                for (const src of rebalancingPlan.cashSources) {
+                    if (src.deployed && src.deployed > 1) {
+                        cashLines.push(`• ${src.accountName}: Deploy ${getDollarValue(src.deployed, true)} (${src.taxStatus})`);
+                    }
+                }
+            }
+            if (cashLines.length === 0) {
+                cashLines.push('• No idle cash available.');
+            }
+
+            const shortfallLines = [];
+            if (rebalancingPlan.remainingShortfalls) {
+                for (const short of rebalancingPlan.remainingShortfalls) {
+                    if (short.remaining > 1) {
+                        shortfallLines.push(`• ${short.assetClass}: ${getDollarValue(short.remaining, true)} still needed`);
+                    }
+                }
+            }
+            if (shortfallLines.length === 0) {
+                shortfallLines.push('• None');
+            }
+
+            appendSummaryBlock('Rebalancing Recommendations', recommendationLines);
+            appendSummaryBlock('Cash Deployment', cashLines);
+            appendSummaryBlock('Open Shortfalls', shortfallLines);
+        }
+
+        const missingLines = coverageDetails.accountsMissing
+            .slice(0, 6)
+            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no holdings data)`);
+        if (missingLines.length === 0) {
+            missingLines.push('• None');
+        }
+        const noControlLines = coverageDetails.accountsNoControl
+            .slice(0, 6)
+            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no control)`);
+        if (noControlLines.length === 0) {
+            noControlLines.push('• None');
+        }
+        const alternativeLines = coverageDetails.accountsAlternatives
+            .slice(0, 6)
+            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)}`);
+        if (alternativeLines.length === 0) {
+            alternativeLines.push('• None');
+        }
+
+        appendSummaryBlock('Missing Holdings Data', missingLines);
+        appendSummaryBlock('No-Control Accounts', noControlLines);
+        appendSummaryBlock('Alternative Investments', alternativeLines);
+
+        function appendSummaryBlock(title, lines) {
+            if (!lines || lines.length === 0) {
+                return;
+            }
+            MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
+            MF_QueueAddRow(MTP);
+            MTFlexRow[MTFlexCR][MTFields] = title;
+            clearNumericColumns(MTFlexCR);
+            nextSection += 1;
+            for (const line of lines) {
+                MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
+                MF_QueueAddRow(MTP);
+                MTFlexRow[MTFlexCR][MTFields] = line;
+                clearNumericColumns(MTFlexCR);
+                nextSection += 1;
+            }
+        }
+
+        function clearNumericColumns(rowIdx) {
+            for (let col = 1; col < MTFlexTitle.length; col++) {
+                if (MTFlexTitle[col].Format > 0) {
+                    MTFlexRow[rowIdx][MTFields + col] = '';
+                }
             }
         }
     }
@@ -2371,12 +2788,147 @@ async function MenuReportsRebalancingGo() {
                 Style: cashPercent > 1 ? css.red : css.green
             });
         }
+
+        const altValue = categoryTotals[AccountCategoryLabels.ALTERNATIVES] || 0;
+        if (altValue > 0) {
+            MF_QueueAddCard({
+                Col: 4,
+                Title: getDollarValue(altValue, true),
+                Subtitle: 'Alternative Investments',
+                Style: ''
+            });
+        }
+
+        if (coverageDetails.controllableTotal > 0) {
+            const coveragePct = coverageDetails.dataCoveragePct * 100;
+            MF_QueueAddCard({
+                Col: 5,
+                Title: coveragePct.toFixed(1) + '%',
+                Subtitle: 'Holdings Coverage',
+                Style: coveragePct >= 95 ? css.green : (coveragePct >= 80 ? '' : css.red)
+            });
+        }
     }
 
     async function BuildRebalancingRecommendations() {
-        // This function would build detailed recommendations
-        // For now, we'll add a placeholder section
-        // You can expand this with specific buy/sell recommendations
+        if (totalPortfolio <= 0) {
+            rebalancingPlan = { recommendations: [], cashSources: [], assetShortfalls: [], assetOverweights: [] };
+            return;
+        }
+
+        const assetShortfalls = [];
+        const assetOverweights = [];
+        const assetPurchases = {};
+
+        for (const assetClass of Object.keys(AssetClassConfig)) {
+            const currentValue = assetClassTotals[assetClass] || 0;
+            const targetPercent = AssetClassConfig[assetClass]?.target || 0;
+            const targetValue = totalPortfolio * (targetPercent / 100);
+            const delta = targetValue - currentValue;
+
+            const record = {
+                assetClass,
+                currentValue,
+                targetPercent,
+                targetValue,
+                delta,
+                remaining: delta
+            };
+
+            if (assetClass === 'Cash') {
+                continue;
+            }
+
+            if (delta > 1) {
+                assetShortfalls.push(record);
+            } else if (delta < -1) {
+                assetOverweights.push({ ...record, remaining: Math.abs(delta) });
+            }
+        }
+
+        assetShortfalls.sort((a, b) => b.delta - a.delta);
+
+        const cashSources = [];
+        for (const summary of accountSummaries.values()) {
+            if (summary.id !== summary.groupKey) {
+                continue;
+            }
+            if (!summary.controllable || summary.includeInAllocation === false) {
+                continue;
+            }
+            const availableCash = Math.max(0, summary.inferredCash || 0);
+            if (availableCash > 1) {
+                cashSources.push({
+                    accountId: summary.id,
+                    accountName: summary.name,
+                    amount: availableCash,
+                    taxStatus: summary.taxStatus || 'Taxable'
+                });
+            }
+        }
+
+        cashSources.sort((a, b) => b.amount - a.amount);
+
+        const recommendations = [];
+        for (const source of cashSources) {
+            let remainingCash = source.amount;
+            for (const shortfall of assetShortfalls) {
+                if (shortfall.remaining <= 1) {
+                    continue;
+                }
+                const deploy = Math.min(remainingCash, shortfall.remaining);
+                if (deploy <= 1) {
+                    continue;
+                }
+
+                const ticker = AssetClassConfig[shortfall.assetClass]?.tickers?.[0] || shortfall.assetClass;
+                recommendations.push({
+                    action: 'BUY',
+                    accountId: source.accountId,
+                    accountName: source.accountName,
+                    assetClass: shortfall.assetClass,
+                    amount: deploy,
+                    ticker,
+                    taxImpact: 'Neutral',
+                    priority: 'Deploy Idle Cash'
+                });
+
+                remainingCash -= deploy;
+                shortfall.remaining -= deploy;
+                assetPurchases[shortfall.assetClass] = (assetPurchases[shortfall.assetClass] || 0) + deploy;
+
+                if (remainingCash <= 1) {
+                    break;
+                }
+            }
+            source.deployed = source.amount - remainingCash;
+            source.remaining = remainingCash;
+        }
+
+        const remainingShortfalls = assetShortfalls
+            .filter(item => item.remaining > 1)
+            .map(item => ({
+                assetClass: item.assetClass,
+                remaining: item.remaining,
+                targetPercent: item.targetPercent
+            }));
+
+        const cashDeploymentTotal = recommendations.reduce((sum, rec) => sum + rec.amount, 0);
+
+        rebalancingPlan = {
+            cashSources,
+            recommendations,
+            assetShortfalls: assetShortfalls.map(item => ({
+                assetClass: item.assetClass,
+                needed: item.delta,
+                remaining: item.remaining,
+                targetPercent: item.targetPercent
+            })),
+            assetOverweights,
+            remainingShortfalls,
+            assetPurchases,
+            cashDeploymentTotal
+        };
     }
 
     function classifyAssetClass(ticker, securityName, typeDisplay) {
