@@ -2713,26 +2713,19 @@ async function MenuReportsRebalancingGo() {
 
         const missingLines = coverageDetails.accountsMissing
             .slice(0, 6)
-            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no holdings data)`);
+            .map(acc => ({ text: `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no holdings data)` }));
         if (missingLines.length === 0) {
-            missingLines.push('• None');
+            missingLines.push({ text: '• None' });
         }
         const noControlLines = coverageDetails.accountsNoControl
             .slice(0, 6)
-            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)} (no control)`);
+            .map(acc => ({ text: `• ${acc.name} (no control)`, value: acc.balance }));
         if (noControlLines.length === 0) {
-            noControlLines.push('• None');
-        }
-        const alternativeLines = coverageDetails.accountsAlternatives
-            .slice(0, 6)
-            .map(acc => `• ${acc.name}: ${getDollarValue(acc.balance, true)}`);
-        if (alternativeLines.length === 0) {
-            alternativeLines.push('• None');
+            noControlLines.push({ text: '• None' });
         }
 
         appendSummaryBlock('Missing Holdings Data', missingLines);
         appendSummaryBlock('No-Control Accounts', noControlLines);
-        appendSummaryBlock('Alternative Investments', alternativeLines);
 
         function appendSummaryBlock(title, lines) {
             if (!lines || lines.length === 0) {
@@ -2741,20 +2734,25 @@ async function MenuReportsRebalancingGo() {
             MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
             MF_QueueAddRow(MTP);
             MTFlexRow[MTFlexCR][MTFields] = title;
-            clearNumericColumns(MTFlexCR);
+            clearNumericColumns(MTFlexCR, true);
             nextSection += 1;
             for (const line of lines) {
-                MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
+                const hasValue = typeof line === 'object' && line.value != null;
+                const text = typeof line === 'string' ? line : line.text;
+                MTP = { IsHeader: false, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
                 MF_QueueAddRow(MTP);
-                MTFlexRow[MTFlexCR][MTFields] = line;
-                clearNumericColumns(MTFlexCR);
+                MTFlexRow[MTFlexCR][MTFields] = text;
+                if (hasValue) {
+                    MTFlexRow[MTFlexCR][MTFields + 2] = line.value;
+                }
+                clearNumericColumns(MTFlexCR, !hasValue);
                 nextSection += 1;
             }
         }
 
-        function clearNumericColumns(rowIdx) {
+        function clearNumericColumns(rowIdx, forceClear) {
             for (let col = 1; col < MTFlexTitle.length; col++) {
-                if (MTFlexTitle[col].Format > 0) {
+                if (MTFlexTitle[col].Format > 0 && (forceClear || MTFlexRow[rowIdx][MTFields + col] == null)) {
                     MTFlexRow[rowIdx][MTFields + col] = '';
                 }
             }
