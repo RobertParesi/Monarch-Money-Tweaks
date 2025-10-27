@@ -2724,23 +2724,8 @@ async function MenuReportsRebalancingGo() {
             noControlLines.push({ text: '• None' });
         }
 
-    // Inject supplemental groups above TOTAL so they integrate with rollups
-    const supplementalGroups = [
-        {
-            title: 'Missing Holdings Data',
-            pk: 'Missing Holdings Data',
-            rows: missingLines
-        },
-        {
-            title: 'No-Control Accounts',
-            pk: 'No-Control Accounts',
-            rows: noControlLines
-        }
-    ];
-
-    for (const group of supplementalGroups) {
-        MF_QueueAddGroupSubtotal(group.pk, group.title, group.rows);
-    }
+        appendSummaryBlock('Missing Holdings Data', missingLines);
+        appendSummaryBlock('No-Control Accounts', noControlLines);
 
         function appendSummaryBlock(title, lines) {
             if (!lines || lines.length === 0) {
