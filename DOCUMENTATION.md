@@ -24,16 +24,17 @@ You can further specify Account Groups to organize your Accounts in to custom gr
 
 Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
 
-    * Personal vs Business - "Personal", "Business", "ABC Company", and "Both"
-    * Household Members - "Your Name", "Their Name", "Kids", "Personal", "Both"
+    * Personal vs Business - "Personal", "Business", "ABC Company"
+    * Household Members - "Your Name", "Their Name", "Kids", "Both"
     * How taxed - "Taxed", "Tax Deferred"
     * How managed - "Managed", "Non Managed"
+    * Types - "Credit Cards", "Retirement Accounts", "Homes", "Loans"
     * ... or anything else you want to Group reports by
 
 Personally I did the following:
-   * For each investment account, I put "Managed" and "Non Managed" since I have an advisor managing some of my investments and others I manage myself
-   * For each credit card, I put "Credit Cards" so they are all grouped together
-   * For my house, cars and all other accounts, I put "Both" since we own everything else jointly
+   * Investment accounts: I put "Managed" and "Non Managed" since I have an advisor managing some of my investments and others I manage myself
+   * Cedit cards: I put "Credit Cards" so they are all grouped together
+   * House, Cars, all other accounts: I put "Both" since we own everything else jointly
 
 ![Settings](/images/MT_V3_11.png)
 
