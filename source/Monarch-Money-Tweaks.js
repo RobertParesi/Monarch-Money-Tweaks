@@ -2432,8 +2432,11 @@ async function MenuReportsRebalancingGo() {
                 const longTitle = holding.name || '';
                 const useHoldingValue = Number(holding.value) || 0;
 
-                if (summary.id === '203471918807357756' && (holding.name || '').toUpperCase().includes('SDBA')) {
-                    continue;
+                if (summary.id === '203471918807357756') {
+                    const entryName = (holding.name || '').toUpperCase();
+                    if (entryName.includes('SDBA') || entryName.includes('SELF-DIRECTED BROKERAGE')) {
+                        continue;
+                    }
                 }
 
                 let assetClass = classifyAssetClass(useTicker, longTitle, holding.typeDisplay);
