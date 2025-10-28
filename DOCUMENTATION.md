@@ -28,13 +28,13 @@ Monarch Money users utilize them in various scenarios and combinations for the M
     * Household Members - "Your Name", "Their Name", "Kids", "Both"
     * How taxed - "Taxed", "Tax Deferred"
     * How managed - "Managed", "Non Managed"
-    * Types - "Credit Cards", "Retirement Accounts", "Homes", "Loans"
+    * Types - "Credit Cards", "Retirement", "Trust", "Homes", "Loans"
     * ... or anything else you want to Group reports by
 
 Personally I did the following:
    * Investment accounts: I put "Managed" or "Non Managed" since I have an advisor for some investments and not others
-   * Cedit cards: I put "Credit Cards" so they are all grouped together
-   * House, Cars, all other accounts: I put "Both" since we own everything else jointly
+   * Credit cards: I put "Credit Cards" so they are all grouped together
+   * House, Cars, all other accounts: I put "Trust" or "Non Trust" depending on where it is titled.
 
 ![Settings](/images/MT_V3_11.png)
 
