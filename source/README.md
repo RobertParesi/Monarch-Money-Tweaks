@@ -1,6 +1,8 @@
+### Copyright Notice
+
 This is the latest source update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. Thank you for your support!
 
-**Copyright Notice**
+### Copyright Notice
 
 **Monarch Money Tweaks** is an extension designed to enhance and customize your experience with Monarch Money web application. It offers various features and ideas aimed at improving functionality and personalization of your financial management tasks.
 
