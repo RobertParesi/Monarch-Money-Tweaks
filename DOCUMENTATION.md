@@ -20,13 +20,17 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 
 ### Monarch Money Tweaks - Account Groups 
 
-You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Accounts** and **edit** each account to assign an Account Group in the **Account Group - (MM Tweaks)** field. Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
+You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Accounts** and **edit** each account to assign an Account Group in the **Account Group - (MM Tweaks)** field. 
 
-    * Personal vs Business - ie: "Personal", "Business" and "Both".
-    * Household Members - ie: "Your Name", "Their Name", "Kids", "Personal", "Both", etc.
-    * How taxed - "Taxed" and "Tax Deferred"
-    * How Managed (Investments) - "Managed" and "Non Managed"
+Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
+
+    * Personal vs Business - "Personal", "Business", "ABC Company", and "Both"
+    * Household Members - "Your Name", "Their Name", "Kids", "Personal", "Both"
+    * How taxed - "Taxed", "Tax Deferred"
+    * How managed - "Managed", "Non Managed"
     * ... or anything else you want to Group reports by
+
+Personally, For my investment accounts, I put "Managed" and "Non Managed", my Credit Cards I put "Credit Cards" and my House and all other accounts, I put "Both" since we own everything Jointly.
 
 ![Settings](/images/MT_V3_11.png)
 
