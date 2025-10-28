@@ -32,9 +32,11 @@ Monarch Money users utilize them in various scenarios and combinations for the M
     * ... or anything else you want to Group reports by
 
 Personally I did the following:
-   * Investment accounts: I put "Managed" or "Non Managed" since I have an advisor for some investments and not others
-   * Credit cards: I put "Credit Cards" so they are all grouped together
+   * Investment accounts: I put "Managed" or "Non Managed" since I have an advisor for some investments and not others.
+   * Credit cards: I put "Credit Cards" so they are all grouped together.
    * House, Cars, all other accounts: I put "Trust" or "Non Trust" depending on where it is titled.
+
+If you are simply separating your finances with your partner, you may want to either put your name, their name or "Both".
 
 ![Settings](/images/MT_V3_11.png)
 
