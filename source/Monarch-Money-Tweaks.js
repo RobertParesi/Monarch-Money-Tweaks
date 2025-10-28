@@ -2704,6 +2704,15 @@ async function MenuReportsRebalancingGo() {
             MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
         }
 
+        const recomputedPortfolio = Object.values(assetClassTotals).reduce((sum, value) => sum + (value || 0), 0);
+        if (Math.abs(recomputedPortfolio - totalPortfolio) > 0.5) {
+            totalPortfolio = recomputedPortfolio;
+        }
+        const recomputedInvested = recomputedPortfolio - (assetClassTotals['Cash'] || 0);
+        if (Math.abs(recomputedInvested - totalInvested) > 0.5) {
+            totalInvested = recomputedInvested;
+        }
+
         // Group by asset class and create subtotals
         MF_GridGroupByPK();
         MTFlex.Subtotals = true;
