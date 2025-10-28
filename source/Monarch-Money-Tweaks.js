@@ -2326,6 +2326,8 @@ async function MenuReportsRebalancingGo() {
     const seenAlternatives = new Set();
     let extraAssetClasses = [];
     let rebalancingPlan = null;
+    const includedAssetClasses = new Set(Object.keys(AssetClassConfig));
+    const excludedAssetClasses = new Set();
 
     // Initialize asset class totals
     for (let assetClass in AssetClassConfig) {
@@ -2620,8 +2622,15 @@ async function MenuReportsRebalancingGo() {
                 totalPortfolio += groupTotal;
                 totalInvested += groupTotal;
                 categoryTotals[group.name] = (categoryTotals[group.name] || 0) + groupTotal;
+                includedAssetClasses.add(group.name);
+            } else {
+                excludedAssetClasses.add(group.name);
             }
         }
+
+        const totalCurrentIncluded = Array.from(includedAssetClasses).reduce((sum, name) => sum + (assetClassTotals[name] || 0), 0);
+        totalPortfolio = totalCurrentIncluded;
+        totalInvested = totalPortfolio - (assetClassTotals['Cash'] || 0);
 
         accountsData = accountsData.filter(row => {
             if (row.assetClass && extraAssetClasses.includes(row.assetClass)) {
@@ -2722,6 +2731,7 @@ async function MenuReportsRebalancingGo() {
 
         // Update the subtotal rows with asset class summary data
         let maxSection = 0;
+        let runningTargetIncluded = 0;
         for (let i = 0; i < MTFlexRow.length; i++) {
             const row = MTFlexRow[i];
             if (row.Section != null && row.Section > maxSection) {
@@ -2752,6 +2762,10 @@ async function MenuReportsRebalancingGo() {
                     row[MTFields + 5] = parseFloat(variance.toFixed(2)); // Numeric for sorting
                     row[MTFields + 6] = targetValue;
                     row[MTFields + 7] = dollarDiff;
+
+                    if (includedAssetClasses.has(assetClass)) {
+                        runningTargetIncluded += targetValue;
+                    }
                 }
             }
         }
@@ -2766,8 +2780,8 @@ async function MenuReportsRebalancingGo() {
         MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
         MTFlexRow[MTFlexCR][MTFields + 4] = '100.0%';
         MTFlexRow[MTFlexCR][MTFields + 5] = 0;
-        MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
-        MTFlexRow[MTFlexCR][MTFields + 7] = 0;
+        MTFlexRow[MTFlexCR][MTFields + 6] = runningTargetIncluded;
+        MTFlexRow[MTFlexCR][MTFields + 7] = totalPortfolio - runningTargetIncluded;
 
         let nextSection = totalSection + 1;
 
