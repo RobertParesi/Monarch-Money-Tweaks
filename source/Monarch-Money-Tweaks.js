@@ -2309,7 +2309,7 @@ async function MenuReportsRebalancingGo() {
     MTFlex.Button4 = 0;
 
     // Summary cards
-    let totalPortfolio = 0, totalCash = 0, totalInvested = 0;
+    let totalPortfolio = 0, totalCash = 0, totalInvested = 0, totalControllable = 0;
     let accountsData = [];
     let assetClassTotals = {};
     let accountSummaries = new Map();
@@ -2631,6 +2631,8 @@ async function MenuReportsRebalancingGo() {
         const totalCurrentIncluded = Array.from(includedAssetClasses).reduce((sum, name) => sum + (assetClassTotals[name] || 0), 0);
         totalPortfolio = totalCurrentIncluded;
         totalInvested = totalPortfolio - (assetClassTotals['Cash'] || 0);
+        const noControlValue = assetClassTotals['No-Control Accounts'] || 0;
+        totalControllable = Math.max(totalPortfolio - noControlValue, 0);
 
         accountsData = accountsData.filter(row => {
             if (row.assetClass && extraAssetClasses.includes(row.assetClass)) {
@@ -2713,18 +2715,6 @@ async function MenuReportsRebalancingGo() {
             MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
         }
 
-        const recomputedPortfolio = Object.values(assetClassTotals).reduce((sum, value) => sum + (value || 0), 0);
-        if (Math.abs(recomputedPortfolio - totalPortfolio) > 0.5) {
-            totalPortfolio = recomputedPortfolio;
-        }
-        const recomputedInvested = recomputedPortfolio - (assetClassTotals['Cash'] || 0);
-        if (Math.abs(recomputedInvested - totalInvested) > 0.5) {
-            totalInvested = recomputedInvested;
-        }
-
-        const noControlShare = totalPortfolio > 0 ? ((assetClassTotals['No-Control Accounts'] || 0) / totalPortfolio) * 100 : 0;
-        const controllableScale = Math.max(0, 100 - noControlShare) / 100;
-
         // Group by asset class and create subtotals
         MF_GridGroupByPK();
         MTFlex.Subtotals = true;
@@ -2742,23 +2732,21 @@ async function MenuReportsRebalancingGo() {
                 if (assetClassTotals.hasOwnProperty(assetClass)) {
                     const currentValue = assetClassTotals[assetClass] || 0;
                     const currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
-                    let targetPercent = AssetClassConfig[assetClass]?.target || 0;
-                    if (!extraAssetClasses.includes(assetClass)) {
-                        targetPercent *= controllableScale;
-                    }
-                    let targetValue = totalPortfolio * (targetPercent / 100);
+                    const baseTargetPercent = AssetClassConfig[assetClass]?.target || 0;
+                    let targetValue = totalControllable * (baseTargetPercent / 100);
+                    let displayTargetPercent = totalPortfolio > 0 ? (targetValue / totalPortfolio * 100) : 0;
                     if (extraAssetClasses.includes(assetClass)) {
-                        targetPercent = currentPercent;
+                        displayTargetPercent = currentPercent;
                         targetValue = currentValue;
                     }
-                    const variance = currentPercent - targetPercent;
+                    const variance = currentPercent - displayTargetPercent;
                     const dollarDiff = currentValue - targetValue;
 
                     row[MTFields] = assetClass;
                     row[MTFields + 1] = ''; // Empty for summary row
                     row[MTFields + 2] = currentValue;
                     row[MTFields + 3] = currentPercent.toFixed(1) + '%';
-                    row[MTFields + 4] = targetPercent.toFixed(2) + '%';
+                    row[MTFields + 4] = displayTargetPercent.toFixed(2) + '%';
                     row[MTFields + 5] = parseFloat(variance.toFixed(2)); // Numeric for sorting
                     row[MTFields + 6] = targetValue;
                     row[MTFields + 7] = dollarDiff;
