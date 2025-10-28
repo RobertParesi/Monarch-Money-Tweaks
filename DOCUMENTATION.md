@@ -1,6 +1,6 @@
 ## 📖 Documentation & Help:
 
-**Monarch Tweaks Getting Started**
+### Monarch Tweaks Getting Started
 
 If you're starting with Monarch Money Tweaks (MMT), it's recommended to start with the following three steps, all explained further below:
 
