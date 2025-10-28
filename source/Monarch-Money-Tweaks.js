@@ -49,7 +49,7 @@ const RebalancingAccountCatalog = {
     '203460489863731476': { preferredName: 'FPT Roth IRA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460491373680922': { preferredName: 'AMT Roth IRA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203461215413312173': { preferredName: 'TokenTax 401(k) (Empower)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
-    '203460491607513371': { preferredName: 'MTO 401k SDBA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: false, includeBalance: false, combineWith: '203471918807357756' },
+    '203460491607513371': { preferredName: 'MTO 401k SDBA (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203471918807357756': { preferredName: 'MTO 401(k) (Principal)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203461215647144623': { preferredName: 'CohnReznick LLP 401(k) (Empower)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
     '203460490319862038': { preferredName: 'HSA Brokerage (Schwab)', category: AccountCategoryLabels.INVEST_CONTROL, taxStatus: 'Tax-Deferred', controllable: true, includeInAllocation: true },
