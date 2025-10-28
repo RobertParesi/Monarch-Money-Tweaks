@@ -1,7 +1,5 @@
 ## 📚 Getting Started & Documentation
 
-### Monarch Money Tweaks Getting Started
-
 It's recommended to start with the following three steps, all explained further below:
 
 1. Settings / Display for initial **Monarch Tweaks Settings**.
