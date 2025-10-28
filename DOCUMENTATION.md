@@ -32,7 +32,7 @@ Monarch Money users utilize them in various scenarios and combinations for the M
     * ... or anything else you want to Group reports by
 
 Personally I did the following:
-   * Investment accounts: I put "Managed" and "Non Managed" since I have an advisor managing some of my investments and others I manage myself
+   * Investment accounts: I put "Managed" or "Non Managed" since I have an advisor for some investments and not others
    * Cedit cards: I put "Credit Cards" so they are all grouped together
    * House, Cars, all other accounts: I put "Both" since we own everything else jointly
 
