@@ -2615,7 +2615,12 @@ async function MenuReportsRebalancingGo() {
             }
         }
 
-        accountsData = accountsData.filter(row => Math.abs(row.value) > 0.01);
+        accountsData = accountsData.filter(row => {
+            if (row.assetClass && extraAssetClasses.includes(row.assetClass)) {
+                return true;
+            }
+            return Math.abs(row.value) > 0.01;
+        });
 
         if (coverageDetails.controllableTotal === 0) {
             for (const summary of accountSummaries.values()) {
@@ -2707,9 +2712,13 @@ async function MenuReportsRebalancingGo() {
                 if (assetClassTotals.hasOwnProperty(assetClass)) {
                     const currentValue = assetClassTotals[assetClass] || 0;
                     const currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
-                    const targetPercent = AssetClassConfig[assetClass]?.target || 0;
+                    let targetPercent = AssetClassConfig[assetClass]?.target || 0;
+                    let targetValue = totalPortfolio * (targetPercent / 100);
+                    if (extraAssetClasses.includes(assetClass)) {
+                        targetPercent = currentPercent;
+                        targetValue = currentValue;
+                    }
                     const variance = currentPercent - targetPercent;
-                    const targetValue = totalPortfolio * (targetPercent / 100);
                     const dollarDiff = currentValue - targetValue;
 
                     row[MTFields] = assetClass;
