@@ -1,6 +1,6 @@
 ## 📖 Documentation & Help:
 
-### Monarch Tweaks Getting Started
+### Monarch Money Tweaks Getting Started
 
 It's recommended to start with the following three steps, all explained further below:
 
@@ -8,17 +8,17 @@ It's recommended to start with the following three steps, all explained further 
 2. Settings / Categories to further setup **Fixed & Flexible Spending**
 3. Accounts to setup **Account Groups**.
 
-### Monarch Tweaks Settings
+### Monarch Money Tweaks Settings
 
 ![Settings](/images/MT_V3_01.png)
 
-### Monarch Tweaks - Fixed vs Flexible
+### Monarch Money Tweaks - Fixed vs Flexible
 
 You can further specify expenses at the Group level by choosing between "Fixed Spending" and "Flexible Spending" within the Trends and Net Income reports. To do this, navigate to **Settings > Categories** and select the appropriate option. Please note, MMT does not utilize the Fixed and Flexible Spending settings within Monarch, as MMT operates solely at the Group level.
 
 ![Settings](/images/MTFixed.png)
 
-### Monarch Tweaks - Account Groups 
+### Monarch Money Tweaks - Account Groups 
 
 You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Accounts** and **edit** each account to assign an Account Group in the **Account Group - (MM Tweaks)** field. Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
 
@@ -28,10 +28,10 @@ You can further specify Account Groups to organize your Accounts in to custom gr
     * How Managed (Investments) - "Managed" and "Non Managed"
     * ... or anything else you want to Group reports by
 
-**Monarch Tweaks Accounts / Account Group**
+**Monarch Money Tweaks Accounts / Account Group**
 ![Settings](/images/MT_V3_11.png)
 
-# Reports (Trends, Net Income, Accounts and Investments)
+### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
 All four reports use the same flex-grid, structure and options:**
 
