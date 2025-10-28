@@ -2562,6 +2562,52 @@ async function MenuReportsRebalancingGo() {
             }
         }
 
+        const recommendationEntries = [];
+        const cashEntries = [];
+        const shortfallEntries = [];
+
+        if (rebalancingPlan && rebalancingPlan.recommendations && rebalancingPlan.recommendations.length > 0) {
+            for (const rec of rebalancingPlan.recommendations) {
+                recommendationEntries.push({
+                    account: `${rec.accountName}: ${rec.ticker}`,
+                    value: rec.amount,
+                    note: `Buy ${getDollarValue(rec.amount, true)} of ${rec.assetClass}`
+                });
+            }
+        } else {
+            recommendationEntries.push({ account: 'No cash deployment required', value: 0, note: '' });
+        }
+
+        if (rebalancingPlan && rebalancingPlan.cashSources) {
+            for (const src of rebalancingPlan.cashSources) {
+                if (src.deployed && src.deployed > 1) {
+                    cashEntries.push({
+                        account: src.accountName,
+                        value: src.deployed,
+                        note: `Deploy ${getDollarValue(src.deployed, true)} (${src.taxStatus})`
+                    });
+                }
+            }
+        }
+        if (cashEntries.length === 0) {
+            cashEntries.push({ account: 'No idle cash available', value: 0, note: '' });
+        }
+
+        if (rebalancingPlan && rebalancingPlan.remainingShortfalls) {
+            for (const short of rebalancingPlan.remainingShortfalls) {
+                if (short.remaining > 1) {
+                    shortfallEntries.push({
+                        account: short.assetClass,
+                        value: short.remaining,
+                        note: `${getDollarValue(short.remaining, true)} to reach target`
+                    });
+                }
+            }
+        }
+        if (shortfallEntries.length === 0) {
+            shortfallEntries.push({ account: 'None', value: 0, note: '' });
+        }
+
         const supplementalGroups = [
             {
                 name: 'Missing Holdings Data',
@@ -2580,8 +2626,25 @@ async function MenuReportsRebalancingGo() {
                     value: acc.balance || 0,
                     note: '(no control)'
                 }))
+            },
+            {
+                name: 'Rebalancing Recommendations',
+                includeInTotal: false,
+                entries: recommendationEntries
+            },
+            {
+                name: 'Cash Deployment',
+                includeInTotal: false,
+                entries: cashEntries
+            },
+            {
+                name: 'Open Shortfalls',
+                includeInTotal: false,
+                entries: shortfallEntries
             }
         ];
+
+        const excludedFromTotals = new Set();
 
         for (const group of supplementalGroups) {
             extraAssetClasses.push(group.name);
@@ -2620,6 +2683,8 @@ async function MenuReportsRebalancingGo() {
                 totalPortfolio += groupTotal;
                 totalInvested += groupTotal;
                 categoryTotals[group.name] = (categoryTotals[group.name] || 0) + groupTotal;
+            } else {
+                excludedFromTotals.add(group.name);
             }
         }
 
@@ -2704,7 +2769,10 @@ async function MenuReportsRebalancingGo() {
             MTFlexRow[MTFlexCR][MTFields + 7] = null; // No difference for individual holdings
         }
 
-        const recomputedPortfolio = Object.values(assetClassTotals).reduce((sum, value) => sum + (value || 0), 0);
+        const recomputedPortfolio = Object.entries(assetClassTotals).reduce((sum, [name, value]) => {
+            if (excludedFromTotals.has(name)) { return sum; }
+            return sum + (value || 0);
+        }, 0);
         if (Math.abs(recomputedPortfolio - totalPortfolio) > 0.5) {
             totalPortfolio = recomputedPortfolio;
         }
@@ -2763,73 +2831,6 @@ async function MenuReportsRebalancingGo() {
         MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
         MTFlexRow[MTFlexCR][MTFields + 7] = 0;
 
-        let nextSection = totalSection + 1;
-
-        const recommendationLines = [];
-        if (rebalancingPlan) {
-            if (rebalancingPlan.recommendations && rebalancingPlan.recommendations.length > 0) {
-                for (const rec of rebalancingPlan.recommendations) {
-                    const amount = getDollarValue(rec.amount, true);
-                    recommendationLines.push(`• ${rec.accountName}: Buy ${amount} ${rec.ticker} (${rec.assetClass})`);
-                }
-            } else {
-                recommendationLines.push('• No cash deployment required; allocation within target bands.');
-            }
-
-            const cashLines = [];
-            if (rebalancingPlan.cashSources) {
-                for (const src of rebalancingPlan.cashSources) {
-                    if (src.deployed && src.deployed > 1) {
-                        cashLines.push(`• ${src.accountName}: Deploy ${getDollarValue(src.deployed, true)} (${src.taxStatus})`);
-                    }
-                }
-            }
-            if (cashLines.length === 0) {
-                cashLines.push('• No idle cash available.');
-            }
-
-            const shortfallLines = [];
-            if (rebalancingPlan.remainingShortfalls) {
-                for (const short of rebalancingPlan.remainingShortfalls) {
-                    if (short.remaining > 1) {
-                        shortfallLines.push(`• ${short.assetClass}: ${getDollarValue(short.remaining, true)} still needed`);
-                    }
-                }
-            }
-            if (shortfallLines.length === 0) {
-                shortfallLines.push('• None');
-            }
-
-            appendSummaryBlock('Rebalancing Recommendations', recommendationLines);
-            appendSummaryBlock('Cash Deployment', cashLines);
-            appendSummaryBlock('Open Shortfalls', shortfallLines);
-        }
-
-        function appendSummaryBlock(title, lines) {
-            if (!lines || lines.length === 0) {
-                return;
-            }
-            MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
-            MF_QueueAddRow(MTP);
-            MTFlexRow[MTFlexCR][MTFields] = title;
-            clearNumericColumns(MTFlexCR);
-            nextSection += 1;
-            for (const line of lines) {
-                MTP = { IsHeader: true, SummaryOnly: true, Section: nextSection, BasedOn: 1 };
-                MF_QueueAddRow(MTP);
-                MTFlexRow[MTFlexCR][MTFields] = line;
-                clearNumericColumns(MTFlexCR);
-                nextSection += 1;
-            }
-        }
-
-        function clearNumericColumns(rowIdx) {
-            for (let col = 1; col < MTFlexTitle.length; col++) {
-                if (MTFlexTitle[col].Format > 0) {
-                    MTFlexRow[rowIdx][MTFields + col] = '';
-                }
-            }
-        }
     }
 
     async function BuildSummaryCards() {
