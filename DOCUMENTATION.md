@@ -2,7 +2,7 @@
 
 If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by exploring Account Groups. Creating custom account groups can enhance the usefulness of the four reports in MMT by providing clearer organization and insights. Be sure to review the Account Groups section located at the bottom of this page to get started.
 
-**All four reports (Trends, Net Income, Accounts and Investment) follow the same flex-grid and structure:**
+**All four reports (Trends, Net Income, Accounts and Investments) use the same flex-grid, structure and options:**
 
 * The "Sub-Report" allows you to look at the report in different ways. 
 * The "How report is grouped" allows you to pick the Grouping of the data in the report.  Toggle any column header to sort the report in Ascending or Decending order.
