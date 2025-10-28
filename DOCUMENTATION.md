@@ -79,7 +79,7 @@ All four reports use the same flex-grid, structure and options:
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
 
-**Monarch Tweaks Reports / Accounts / Personal Statement)**
+**Monarch Tweaks Reports / Accounts / Personal Statement**
 ![Settings](/images/MT_V3_12.png)
 
 **Monarch Tweaks Reports tag multiple cells**
