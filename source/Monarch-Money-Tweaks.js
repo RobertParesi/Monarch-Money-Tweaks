@@ -2432,6 +2432,10 @@ async function MenuReportsRebalancingGo() {
                 const longTitle = holding.name || '';
                 const useHoldingValue = Number(holding.value) || 0;
 
+                if (summary.id === '203471918807357756' && (holding.name || '').toUpperCase().includes('SDBA')) {
+                    continue;
+                }
+
                 let assetClass = classifyAssetClass(useTicker, longTitle, holding.typeDisplay);
                 if (!assetClass || AssetClassConfig[assetClass] === undefined) {
                     assetClass = inferFallbackAssetClass(holding);
