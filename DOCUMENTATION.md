@@ -2,7 +2,7 @@
 
 **Monarch Tweaks Getting Started**
 
-If you're starting with Monarch Money Tweaks (MMT), it's recommended to start with, all explained further below:
+If you're starting with Monarch Money Tweaks (MMT), it's recommended to start with the following three steps, all explained further below:
 
 1. Settings / Display for initial **Monarch Tweaks Settings**.
 2. Settings / Categories to further setup **Fixed & Flexible Spending**
