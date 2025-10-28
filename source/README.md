@@ -1,4 +1,4 @@
-### Copyright Notice
+### Latest Source Update
 
 This is the latest source update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. Thank you for your support!
 
