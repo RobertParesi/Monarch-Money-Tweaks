@@ -2713,18 +2713,6 @@ async function MenuReportsRebalancingGo() {
             totalInvested = recomputedInvested;
         }
 
-        let baseTargetScale = 1;
-        if (totalPortfolio > 0) {
-            let extraShare = 0;
-            for (const group of supplementalGroups) {
-                if (group.includeInTotal) {
-                    extraShare += ((assetClassTotals[group.name] || 0) / totalPortfolio) * 100;
-                }
-            }
-            extraShare = Math.min(extraShare, 100);
-            baseTargetScale = Math.max(0, 100 - extraShare) / 100;
-        }
-
         // Group by asset class and create subtotals
         MF_GridGroupByPK();
         MTFlex.Subtotals = true;
@@ -2742,9 +2730,6 @@ async function MenuReportsRebalancingGo() {
                     const currentValue = assetClassTotals[assetClass] || 0;
                     const currentPercent = totalPortfolio > 0 ? (currentValue / totalPortfolio * 100) : 0;
                     let targetPercent = AssetClassConfig[assetClass]?.target || 0;
-                    if (!extraAssetClasses.includes(assetClass)) {
-                        targetPercent = targetPercent * baseTargetScale;
-                    }
                     let targetValue = totalPortfolio * (targetPercent / 100);
                     if (extraAssetClasses.includes(assetClass)) {
                         targetPercent = currentPercent;
