@@ -87,7 +87,7 @@ All four reports use the same flex-grid, structure and options:
 
 ### Other Monarch Money Tweaks non-report options:
 
-**Monarch Tweaks Spit Transaction 50/50**
+**Monarch Tweaks Split Transaction 50/50**
 ![Settings](/images/MT_V3_03.png)
 
 **Monarch Tweaks Household Breakdown on Accounts**
