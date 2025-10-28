@@ -1,4 +1,4 @@
-## 📖 Documentation & Help:
+## 📚 Getting Started & Documentation
 
 ### Monarch Money Tweaks Getting Started
 
