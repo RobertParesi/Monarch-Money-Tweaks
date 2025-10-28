@@ -2,9 +2,9 @@
 
 It's recommended to start with the following three steps, all explained further below:
 
-1. Settings / Display for initial Monarch Money Tweaks **Settings**.
-2. Settings / Categories to further setup **Fixed vs Flexible Spending**
-3. Accounts to setup **Account Groups**.
+1. **Settings / Display** for initial Monarch Money Tweaks Settings.
+2. **Settings / Categories** to further setup Fixed vs Flexible Spending.
+3. **Accounts / Edit Account**  to setup Account Groups.
 
 ### Monarch Money Tweaks - Settings
 
