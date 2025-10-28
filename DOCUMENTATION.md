@@ -20,7 +20,7 @@ If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by
 **Monarch Tweaks Spit Transaction 50/50**
 ![Settings](/images/MT_V3_03.png)
 
-**Monarch Tweaks Reports - Simplified Budgeting by Trends**
+**Monarch Tweaks Reports - Trends and Monthly Averages**
 ![Settings](/images/MTTrendInfo.png)
 
 **Monarch Tweaks Reports / Trends Compare**
