@@ -55,10 +55,10 @@ All four reports use the same flex-grid, structure and options:
 ![Settings](/images/MTTrendInfo.png)
 
 **Monarch Tweaks Reports / Trends Compare**
-![Settings](/images/MT_V3_04.png)
+![Settings](/images/MT_V3_05.png)
 
 **Monarch Tweaks Reports / Trends Monthly**
-![Settings](/images/MT_V3_05.png)
+![Settings](/images/MT_V3_04.png)
 
 **Monarch Tweaks Reports / Trends Yearly**
 ![Settings](/images/MT_V3_06.png)
