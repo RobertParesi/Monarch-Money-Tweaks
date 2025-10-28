@@ -20,19 +20,19 @@ If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by
 **Monarch Tweaks Spit Transaction 50/50**
 ![Settings](/images/MT_V3_03.png)
 
-**Monarch Tweaks Reports - Trends and Monthly Averages**
+**Monarch Tweaks Reports - Trends Compare, Monthly & Yearly sub-reports**
 ![Settings](/images/MTTrendInfo.png)
 
 **Monarch Tweaks Reports / Trends Compare**
 ![Settings](/images/MT_V3_04.png)
 
-**Monarch Tweaks Reports / Trends Monthly Breakdown**
+**Monarch Tweaks Reports / Trends Monthly**
 ![Settings](/images/MT_V3_05.png)
 
-**Monarch Tweaks Reports / Trends Yearly Breakdown**
+**Monarch Tweaks Reports / Trends Yearly**
 ![Settings](/images/MT_V3_06.png)
 
-**Monarch Tweaks Reports / History Drill-down**
+**Monarch Tweaks Reports / Trends > History Drill-down**
 ![Settings](/images/MT_V3_History.png)
 
 **Monarch Tweaks Reports / Net Income (based on Tags)**
@@ -48,11 +48,11 @@ If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
 
-**Monarch Tweaks Reports tag multiple cells**
-![Settings](/images/MT_V3_10.png)
-
 **Personal Net Worth Report (Reports / Accounts / Personal Statement)**
 ![Settings](/images/MT_V3_12.png)
+
+**Monarch Tweaks Reports tag multiple cells**
+![Settings](/images/MT_V3_10.png)
 
 
 ## Account Groups 
