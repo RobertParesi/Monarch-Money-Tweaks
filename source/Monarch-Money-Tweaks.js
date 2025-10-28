@@ -2720,9 +2720,6 @@ async function MenuReportsRebalancingGo() {
         MF_GridGroupByPK();
         MTFlex.Subtotals = true;
 
-        let sumCurrentIncluded = 0;
-        let sumTargetIncluded = 0;
-
         // Update the subtotal rows with asset class summary data
         let maxSection = 0;
         for (let i = 0; i < MTFlexRow.length; i++) {
@@ -2755,11 +2752,6 @@ async function MenuReportsRebalancingGo() {
                     row[MTFields + 5] = parseFloat(variance.toFixed(2)); // Numeric for sorting
                     row[MTFields + 6] = targetValue;
                     row[MTFields + 7] = dollarDiff;
-
-                    if (!excludedFromTotals.has(assetClass)) {
-                        sumCurrentIncluded += currentValue;
-                        sumTargetIncluded += targetValue;
-                    }
                 }
             }
         }
@@ -2770,12 +2762,12 @@ async function MenuReportsRebalancingGo() {
         MF_QueueAddRow(MTP);
         MTFlexRow[MTFlexCR][MTFields] = 'TOTAL';
         MTFlexRow[MTFlexCR][MTFields + 1] = '';
-        MTFlexRow[MTFlexCR][MTFields + 2] = sumCurrentIncluded;
+        MTFlexRow[MTFlexCR][MTFields + 2] = totalPortfolio;
         MTFlexRow[MTFlexCR][MTFields + 3] = '100.0%';
         MTFlexRow[MTFlexCR][MTFields + 4] = '100.0%';
         MTFlexRow[MTFlexCR][MTFields + 5] = 0;
-        MTFlexRow[MTFlexCR][MTFields + 6] = sumTargetIncluded;
-        MTFlexRow[MTFlexCR][MTFields + 7] = sumCurrentIncluded - sumTargetIncluded;
+        MTFlexRow[MTFlexCR][MTFields + 6] = totalPortfolio;
+        MTFlexRow[MTFlexCR][MTFields + 7] = 0;
 
         let nextSection = totalSection + 1;
 
