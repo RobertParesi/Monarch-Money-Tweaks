@@ -7,6 +7,13 @@ Core logic lives in `source/Monarch-Money-Tweaks.js`; there is no longer a paral
 Use targeted copies instead of transpilation:  
 `cp source/Monarch-Money-Tweaks.js extension-chrome/content.js` updates Chromium builds, and `cp source/Monarch-Money-Tweaks.js extension-firefox/content.js` refreshes Firefox. For Safari or iOS Scripts App usage, paste the same file directly. Reload the browser extension page (`chrome://extensions`, `about:debugging`) after each copy to pick up changes.
 
+## Rebalancing Report Notes
+- Manual alternative investments (Origin Opportunity Zone, Brewpub, Portfolia, etc.) are injected as `MANUAL` holdings under `Alternatives & Crypto`; inferred cash is forced to zero for those accounts.
+- The Schwab MTO 401k SDBA is treated as a normal controllable account; any placeholder “SDBA / Self-Directed Brokerage” rows from the Principal account are filtered out and the parent’s inferred cash is forced to zero.
+- No-control accounts (KPMG Pension, MTO Profit Sharing Plan) are flagged via `showInNoControl`; they appear in the summary bullets after the grid and are excluded from the controllable target scaling.
+- Target percentages are scaled by the controllable share of the portfolio (`controllableScale`); totals still rely on the original grand total logic, so downstream work may be needed to make target value/$ difference foot perfectly.
+- Recommendation metadata is assembled (cash deployment, shortfalls) but currently rendered as bullet summaries after the TOTAL row rather than collapsible sections.
+
 ## Coding Style & Naming Conventions
 Stick to vanilla ES2020 with four-space indentation, trailing semicolons, and single quotes for strings unless template literals clarify intent. Global helpers follow the `MM_*` prefix, while configuration objects use `PascalCase` keys (`AssetClassConfig`). Keep constants uppercase (`CRLF`, `FlexOptions`), prefer `const` over `let` unless reassignment is required, and co-locate feature-specific helpers near their usage.
 
