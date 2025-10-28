@@ -37,7 +37,7 @@ All four reports use the same flex-grid, structure and options:**
 
 ![Settings](/images/MT_V3_99.png)
 
-* The "Sub-Report" allows you to look at the report in different ways. 
+* The "Sub Report" allows you to look at the report in different ways. 
 * The "How report is grouped" allows you to pick the Grouping of the data in the report.  Toggle any column header to sort the report in Ascending or Decending order.
 * The "Account Group Filter" will only show once you have edited each of your Accounts and assigned your custom Account Group.
 
