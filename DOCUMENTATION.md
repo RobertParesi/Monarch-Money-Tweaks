@@ -28,8 +28,8 @@ You can further specify Account Groups to organize your Accounts in to custom gr
     * How Managed (Investments) - "Managed" and "Non Managed"
     * ... or anything else you want to Group reports by
 
-**Monarch Money Tweaks Accounts / Account Group**
 ![Settings](/images/MT_V3_11.png)
+
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
@@ -75,11 +75,10 @@ All four reports use the same flex-grid, structure and options:**
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
 
-# Other Monarch Money Tweaks non-report options:
+### Other Monarch Money Tweaks non-report options:
 
 **Monarch Tweaks Spit Transaction 50/50**
 ![Settings](/images/MT_V3_03.png)
-
 
 **Monarch Tweaks Household Breakdown on Accounts**
 ![Settings](/images/MT_V3_13.png)
