@@ -18,7 +18,7 @@ To run on **Microsoft Edge**, Enable "Allow extensions from other stores" in the
 
 To run on **Apple iPad**, Download the Scripts App found in Apple Store first and then paste the Monarch Money Tweaks source code from the source folder into it.
 
-Please be so kind to leave a review on Apple, Chrome or Firefox store 🙏.
+Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
 
 ### 🌟 Features:
 
