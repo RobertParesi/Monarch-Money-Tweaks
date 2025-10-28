@@ -18,9 +18,9 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 
 ![Settings](/images/MTFixed.png)
 
-### Account Groups 
+### Monarch Tweaks - Account Groups 
 
-Account Groups enable you to organize your transactions (Income & Expenses) and your Accounts (Assets & Liabilities). To do this, go to Accounts and edit each account to assign an appropriate Account Group. Monarch Money users utilize them in various scenarios and combinations to suit their budgeting and tracking needs:
+You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Accounts** and **edit** each account to assign an Account Group in the **Account Group - (MM Tweaks)** field. Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
 
     * Personal vs Business - ie: "Personal", "Business" and "Both".
     * Household Members - ie: "Your Name", "Their Name", "Kids", "Personal", "Both", etc.
