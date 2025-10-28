@@ -1,5 +1,8 @@
 ## 📖 Documentation & Help:
 
+**Monarch Tweaks Settings**
+![Settings](/images/MT_V3_01.png)
+
 If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by exploring Account Groups. Creating custom account groups can enhance the usefulness of the four reports in MMT by providing clearer organization and insights. Be sure to review the Account Groups section located at the bottom of this page to get started.
 
 **All four reports (Trends, Net Income, Accounts and Investments) use the same flex-grid, structure and options:**
@@ -10,9 +13,6 @@ If you're starting with Monarch Money Tweaks (MMT), it's recommended to start by
   
 ![Settings](/images/MT_V3_99.png)
 
-
-**Monarch Tweaks Settings**
-![Settings](/images/MT_V3_01.png)
 
 **Monarch Tweaks - Set Groups that are Fixed vs Flexible**
 ![Settings](/images/MTFixed.png)
