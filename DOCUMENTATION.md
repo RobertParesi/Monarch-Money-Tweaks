@@ -8,18 +8,18 @@ If you're starting with Monarch Money Tweaks (MMT), it's recommended to start wi
 2. Settings / Categories to further setup **Fixed & Flexible Spending**
 3. Accounts to setup **Account Groups**.
 
-# Monarch Tweaks Settings**
+### Monarch Tweaks Settings
 
 ![Settings](/images/MT_V3_01.png)
 
-# Monarch Tweaks - Fixed vs Flexible**
+### Monarch Tweaks - Fixed vs Flexible
 ![Settings](/images/MTFixed.png)
 
 You can further define expenses **on the Group level** by either "Fixed Spending" or "Flexible Spending" when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.   MMT does not use the Fixed and Flexbile Spending setting inside Monarch since MMT is only set at the Group level.
 
 ![Settings](/images/MM_FixedNoFixed.png)
 
-# Account Groups 
+### Account Groups 
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).   Select Accounts and then Edit each account to assign an Account Group.  There are different scenerios and combindations that Monarch Money users use them in:
 
