@@ -33,7 +33,7 @@ You can further specify Account Groups to organize your Accounts in to custom gr
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
-All four reports use the same flex-grid, structure and options:**
+All four reports use the same flex-grid, structure and options:
 
 ![Settings](/images/MT_V3_99.png)
 
