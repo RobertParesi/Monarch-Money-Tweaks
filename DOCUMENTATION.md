@@ -14,15 +14,13 @@ It's recommended to start with the following three steps, all explained further 
 
 ### Monarch Tweaks - Fixed vs Flexible
 
-You can further define expenses **on the Group level** by either "Fixed Spending" or "Flexible Spending" when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.   MMT does not use the Fixed and Flexbile Spending setting inside Monarch since MMT is only set at the Group level.
+You can further specify expenses at the Group level by choosing between "Fixed Spending" and "Flexible Spending" within the Trends and Net Income reports. To do this, navigate to **Settings > Categories** and select the appropriate option. Please note, MMT does not utilize the Fixed and Flexible Spending settings within Monarch, as MMT operates solely at the Group level.
 
 ![Settings](/images/MTFixed.png)
 
-![Settings](/images/MM_FixedNoFixed.png)
-
 ### Account Groups 
 
-Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).   Select Accounts and then Edit each account to assign an Account Group.  There are different scenerios and combindations that Monarch Money users use them in:
+Account Groups enable you to organize your transactions (Income & Expenses) and your Accounts (Assets & Liabilities). To do this, go to Accounts and edit each account to assign an appropriate Account Group. Monarch Money users utilize them in various scenarios and combinations to suit their budgeting and tracking needs:
 
     * Personal vs Business - ie: "Personal", "Business" and "Both".
     * Household Members - ie: "Your Name", "Their Name", "Kids", "Personal", "Both", etc.
