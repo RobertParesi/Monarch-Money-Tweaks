@@ -13,9 +13,10 @@ It's recommended to start with the following three steps, all explained further 
 ![Settings](/images/MT_V3_01.png)
 
 ### Monarch Tweaks - Fixed vs Flexible
-![Settings](/images/MTFixed.png)
 
 You can further define expenses **on the Group level** by either "Fixed Spending" or "Flexible Spending" when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.   MMT does not use the Fixed and Flexbile Spending setting inside Monarch since MMT is only set at the Group level.
+
+![Settings](/images/MTFixed.png)
 
 ![Settings](/images/MM_FixedNoFixed.png)
 
