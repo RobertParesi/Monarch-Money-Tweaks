@@ -52,13 +52,13 @@ All four reports use the same flex-grid, structure and options:
 * The "Account Group Filter" will only show once you have edited each of your Accounts and assigned your custom Account Group.
 
 **Monarch Tweaks Reports - Trends Compare, Monthly & Yearly sub-reports**
-![Settings](/images/MTTrendInfo.png)
+![Settings](/images/MT_V3_04.png)
 
 **Monarch Tweaks Reports / Trends Compare**
-![Settings](/images/MT_V3_05.png)
+![Settings](/images/MTTrendInfo.png)
 
 **Monarch Tweaks Reports / Trends Monthly**
-![Settings](/images/MT_V3_04.png)
+![Settings](/images/MT_V3_05.png)
 
 **Monarch Tweaks Reports / Trends Yearly**
 ![Settings](/images/MT_V3_06.png)
