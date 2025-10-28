@@ -30,7 +30,10 @@ Monarch Money users utilize them in various scenarios and combinations for the M
     * How managed - "Managed", "Non Managed"
     * ... or anything else you want to Group reports by
 
-Personally, For my investment accounts, I put "Managed" and "Non Managed", my Credit Cards I put "Credit Cards" and my House and all other accounts, I put "Both" since we own everything Jointly.
+Personally I did the following:
+   * For each investment account, I put "Managed" and "Non Managed" since I have an advisor managing some of my investments and others I manage myself
+   * For each credit card, I put "Credit Cards" so they are all grouped together
+   * For my house, cars and all other accounts, I put "Both" since we own everything else jointly
 
 ![Settings](/images/MT_V3_11.png)
 
