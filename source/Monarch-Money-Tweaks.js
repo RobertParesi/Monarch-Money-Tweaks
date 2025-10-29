@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.9.2
+// @version      4.9.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.9.2';
+const version = '4.9.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -66,7 +66,8 @@ function MM_Init() {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
-    addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
+    addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
+    addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
     addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTFlexExpand, .MTFlexSave, .MTFlexRestore {font-family: MonarchIcons; margin-left: 3px; font-size: 19px; cursor: pointer;}');
@@ -84,7 +85,7 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 34px;}');
     addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
-    addStyle('.MTFlexGridItem { font-size: 14px;height: 30px;}');
+    addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
@@ -120,7 +121,7 @@ function MM_Init() {
     addStyle('.MTSideDrawerSummaryTable {font-size: 13px;text-align: left; width: 100%;}');
     addStyle('.MTSideDrawerSummaryTableTH {font-weight:600; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTSideDrawerSummaryData {overflow: hidden; white-space: nowrap; text-overflow: ellipsis;max-width: 250px;}');
-    addStyle('.MTSideDrawerSummaryData2 {text-align: right;}');
+    addStyle('.MTSideDrawerSummaryData2 {text-align: right; width: 105px;}');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
@@ -2929,23 +2930,23 @@ function MTUpdateAccountPartner() {
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
 
-        cec('div','',div,'Subtype free-form override - (MM Tweaks)','','height: 30px;font-size: 14px;font-weight: 500;');
-        let div3 = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;','id','accountSubGroupID');
+        cec('div','MTInputTitle',div,'Subtype free-form override - (MM Tweaks)');
+        let div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountSubGroupID');
         let p = glo.pathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccountsSub:' + p[3],false);}
 
-        cec('div','',div,'Accounts Dashboard - (MM Tweaks)','','height: 30px;font-size: 14px;font-weight: 500;');
-        div3 = cec('label','',div,'Add to Accounts Dashboard','','font-size: 13px;','htmlFor','DashboardCheckbox');
+        div3 = cec('div','MTInputClass',div);
+        cec('div','MTInputTitle',div3,'Accounts Dashboard - (MM Tweaks)');
+        div3 = cec('label','',div3,'Add to Accounts List on Dashboard','','','htmlFor','DashboardCheckbox');
         div3 = cec('input','MTDashboardCheckbox',div3,'','','float:left;','id','DashboardCheckbox');
         div3.type = 'checkbox';
         div3.setAttribute('act',p[3]);
         if(getCookie('MTAccountDashboard:' + p[3],true) == true) {div3.checked = 'true';}
 
-        cec('div','',div,'Account Group - (MM Tweaks)','','margin-top: 10px;height: 30px;font-size: 14px;font-weight: 500;');
-        div3 = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;','id','accountGroupID');
+        cec('div','MTInputTitle',div,'Account Group - (MM Tweaks)');
+        div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
         p = glo.pathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
-
    }
 }
 // [ Calendar ]
@@ -3080,21 +3081,22 @@ async function MenuDashboardAccounts() {
         newDiv.className = 'MTFlexContainerPanel';
         newDiv.id = 'MTFlexDashboardAccounts';
         let topDiv = ds.insertBefore(newDiv, ds.firstChild);
-
         topDiv = cec('div','',topDiv,'','','padding: 20px;');
 
-        let rowDiv = cec('div','',topDiv,'','','height:30px;');
+        let rowDiv = cec('div','',topDiv);
         cec('span','MTFlexBig',rowDiv,'Accounts');
+        rowDiv = cec('div','',topDiv);
+        cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 10px 0px 10px 0px;');
 
-        newDiv = cec('table','MTSideDrawerSummaryTable',topDiv);
+        newDiv = cec('table','MTSideDrawerSummaryTable',topDiv,'','','font-size: 14px;','TableName','DashboardAccounts');
         let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-        let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account ▲','','','datatype','alpha');
+        let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account','','','datatype','alpha');
         td.setAttribute('columnindex','0');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Balance','','width: 100px;','datatype','amount');
+        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Balance','','','datatype','amount');
         td.setAttribute('columnindex','1');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Pending','','width: 100px;','datatype','amount');
+        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Pending','','','datatype','amount');
         td.setAttribute('columnindex','2');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Proj Balance','','width: 100px;','datatype','amount');
+        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Proj Balance','','','datatype','amount');
         td.setAttribute('columnindex','3');
 
         let snapshotData = await getAccountsData();
@@ -3118,9 +3120,9 @@ async function MenuDashboardAccounts() {
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(amt,false));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal,false));
         }
+        sortTableByColumn(newDiv);
     }
 }
-
 
 function MenuTransactions(OnFocus) {
     if (glo.pathName.startsWith('/transactions')) {
@@ -3270,8 +3272,10 @@ function MenuSettings(OnFocus) {
                     e1.hRef = e1.innerText = inValue; e1.style = inStyle + 'margin-left:24px;padding-bottom:12px;'; break;
                 case 'dropdown':
                     e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;'; dropDowns++; break;
+                case 'string':
+                    e1.style = 'margin-left: 25px;'; break;
                 default:
-                    e1.style = 'margin: 11px 25px;';
+                    e1.style = 'margin: 11px 25px 5px;';
             }
             qs.after(e1);
             let OldValue = getCookie(inCookie,false),mtObj = [],fnd=false;
@@ -3612,8 +3616,9 @@ async function onClickExpandSidePanelDetail(useTarget) {
         let newDiv = document.createElement('div');
         newDiv.className = 'MTSideDrawerSummary';
         newDiv = pn.insertAdjacentElement('afterend', newDiv);
-        newDiv = cec('table','MTSideDrawerSummaryTable',newDiv);
-        SidePanelDetailTransactions(event.target,newDiv,data);
+        newDiv = cec('table','MTSideDrawerSummaryTable',newDiv,'','','','TableName','AccountDetailSummary');
+        await SidePanelDetailTransactions(event.target,newDiv,data);
+        sortTableByColumn(newDiv);
     }
 }
 
@@ -3637,13 +3642,13 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
     }
 
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date ▲','','width: 91px;','datatype','date');
+    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 91px;','datatype','date');
     td.setAttribute('columnindex','0');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','width:240px;','datatype','alpha');
     td.setAttribute('columnindex','1');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Category','','width:136px;','datatype','alpha');
     td.setAttribute('columnindex','2');
-    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Amount','','width:96px;','datatype','amount');
+    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Amount','','','datatype','amount');
     td.setAttribute('columnindex','3');
 
     let rec = null, useDate = null,useAmt = 0,useColor = '';
@@ -4388,10 +4393,24 @@ function getChecked(InA,InB) {
 
 function sortTableByColumn(inEvent) {
 
-    const table = inEvent.parentNode.parentNode;
-    const columnIndex = inEvent.getAttribute('ColumnIndex');
-    const datatype = inEvent.getAttribute('datatype');
-    const dirModifier = inEvent.innerText.includes('▲') ? -1 : 1;
+    let table = null,tableName = '',columnIndex='',datatype='',dirModifier='';
+    const nodeN = inEvent.nodeName;
+    if(nodeN == 'TABLE') {
+        tableName = inEvent.getAttribute('TableName');
+        table = inEvent;
+        const ck = getCookie( 'MTSortTable' + tableName,false).split('|');
+        if(ck.length == 0) return;
+        columnIndex = ck[0];
+        datatype = ck[1];
+        dirModifier = ck[2];
+    } else {
+        table = inEvent.parentNode.parentNode;
+        tableName = table.getAttribute('TableName');
+        columnIndex = inEvent.getAttribute('ColumnIndex');
+        datatype = inEvent.getAttribute('datatype');
+        dirModifier = inEvent.innerText.includes('▲') ? -1 : 1;
+        setCookie('MTSortTable' + tableName,columnIndex + '|' + datatype + '|' + dirModifier);
+    }
     if(table.childNodes.length > 1) {
         const secondRowClassName = 'tr.' + table.childNodes[1].className;
         const rows = Array.from(document.querySelectorAll(secondRowClassName));
@@ -4399,12 +4418,9 @@ function sortTableByColumn(inEvent) {
             const aText = a.children[columnIndex].innerText.trim();
             const bText = b.children[columnIndex].innerText.trim();
             switch (datatype) {
-                case 'date':
-                    return (new Date(aText) - new Date(bText)) * dirModifier;
-                case 'amount':
-                    return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
-                default:
-                    return aText.localeCompare(bText) * dirModifier;
+                case 'date':return (new Date(aText) - new Date(bText)) * dirModifier;
+                case 'amount':return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
+                default:return aText.localeCompare(bText) * dirModifier;
             }
         });
         rows.forEach(row => row.remove());
