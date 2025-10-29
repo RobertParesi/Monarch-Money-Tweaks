@@ -17,7 +17,7 @@ Visit the Extensions area for your browser using the links above.
 
 To run on **Microsoft Edge**, Enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
-To run on **Apple iPad**, Download the Scripts App found in Apple Store first and then paste the Monarch Money Tweaks source code from the source folder into it.
+To run on **Apple iPad**, Download the  User Script and Style Manager by Justin Wasack found in Apple Store first and then paste the Monarch Money Tweaks source code from the source folder into it.
 
 Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
 
