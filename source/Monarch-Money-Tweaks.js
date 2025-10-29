@@ -3077,34 +3077,13 @@ async function MenuDashboardAccounts() {
     if(ds) return;
     ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
     if(ds) {
-        let newDiv = document.createElement('div');
-        newDiv.className = 'MTFlexContainerPanel';
-        newDiv.id = 'MTFlexDashboardAccounts';
-        let topDiv = ds.insertBefore(newDiv, ds.firstChild);
-        topDiv = cec('div','',topDiv,'','','padding: 20px;');
-
-        let rowDiv = cec('div','',topDiv);
-        cec('span','MTFlexBig',rowDiv,'Accounts');
-        rowDiv = cec('div','',topDiv);
-        cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 10px 0px 10px 0px;');
-
-        newDiv = cec('table','MTSideDrawerSummaryTable',topDiv,'','','font-size: 14px;','TableName','DashboardAccounts');
-        let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-        let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account','','','datatype','alpha');
-        td.setAttribute('columnindex','0');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Balance','','','datatype','amount');
-        td.setAttribute('columnindex','1');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Pending','','','datatype','amount');
-        td.setAttribute('columnindex','2');
-        td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Proj Balance','','','datatype','amount');
-        td.setAttribute('columnindex','3');
-
         let snapshotData = await getAccountsData();
         let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
-
+        let newDiv = null;
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const aa = snapshotData.accounts[i].id;
             if(getCookie('MTAccountDashboard:' + aa,true) != 1) continue;
+            if(!newDiv) MenuDashboardAccountsHeader();
             let amt = 0;
             for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
                 if(snapshotData4.allTransactions.results[j].account.id == aa) {
@@ -3120,7 +3099,31 @@ async function MenuDashboardAccounts() {
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(amt,false));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal,false));
         }
-        sortTableByColumn(newDiv);
+        if(newDiv) sortTableByColumn(newDiv);
+
+        function MenuDashboardAccountsHeader() {
+            newDiv = document.createElement('div');
+            newDiv.className = 'MTFlexContainerPanel';
+            newDiv.id = 'MTFlexDashboardAccounts';
+            let topDiv = ds.insertBefore(newDiv, ds.firstChild);
+            topDiv = cec('div','',topDiv,'','','padding: 20px;');
+
+            let rowDiv = cec('div','',topDiv);
+            cec('span','MTFlexBig',rowDiv,'Accounts');
+            rowDiv = cec('div','',topDiv);
+            cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 10px 0px 10px 0px;');
+
+            newDiv = cec('table','MTSideDrawerSummaryTable',topDiv,'','','font-size: 14px;','TableName','DashboardAccounts');
+            let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
+            let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account','','','datatype','alpha');
+            td.setAttribute('columnindex','0');
+            td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Balance','','','datatype','amount');
+            td.setAttribute('columnindex','1');
+            td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Pending','','','datatype','amount');
+            td.setAttribute('columnindex','2');
+            td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Proj Balance','','','datatype','amount');
+            td.setAttribute('columnindex','3');
+        }
     }
 }
 
