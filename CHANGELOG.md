@@ -1,8 +1,8 @@
 # Change Log (Version History)
 
 * **Version 4.9 (Beta)**  
-     - NEW: Stock Chart will now show green and red lines depending on if stock price is Up vs Down
-     - NEW: Ability to watch tagged accounts in Dashboard
+     - NEW: Stock Chart will now show green and red lines depending on if stock price is Up vs Down.
+     - NEW: Ability to watch selected accounts in Dashboard.
 
 * **Version 4.8 (October 26, 2025)**  
      - NEW: Added link to Stock Analysis when expanding Stock, ETF and Mutual Funds.
