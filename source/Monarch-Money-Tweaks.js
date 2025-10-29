@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.9.3
+// @version      4.9.4
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.9.3';
+const version = '4.9.4';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -1602,7 +1602,7 @@ async function MenuReportsAccountsGo() {
                 if(getCookie('MT_AccountsHidePending',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
             }
             MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
-            MF_QueueAddTitle(12,'Proj Balance',MTP);
+            MF_QueueAddTitle(12,'Projected',MTP);
         }
 
         snapshotData = await getAccountsData();
@@ -3121,7 +3121,7 @@ async function MenuDashboardAccounts() {
             td.setAttribute('columnindex','1');
             td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Pending','','','datatype','amount');
             td.setAttribute('columnindex','2');
-            td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Proj Balance','','','datatype','amount');
+            td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Projected','','','datatype','amount');
             td.setAttribute('columnindex','3');
         }
     }
