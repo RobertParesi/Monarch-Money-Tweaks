@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.9.4
+// @version      4.9.5
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.9.4';
+const version = '4.9.5';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -3434,6 +3434,7 @@ window.onclick = function(event) {
                 cn = event.target.getAttribute('options').split(',');
                 cn = cn[MM_flipSideElement(MTFlex.Name + '_SidePanel')];
                 event.target.innerText = cn;
+                if(MTFlex.Name =='MTInvestments') MenuTickerDrawer(null);
                 return;
             case 'MTPanelLink':
                 MenuTrendsHistoryExport();return;
@@ -3717,6 +3718,11 @@ function onClickCloseDrawer() {
 
 async function MenuTickerDrawer(inP) {
 
+    let reload = null,topDiv=null,topDiv2=null;
+    if(inP == null) {
+        reload = document.getElementById('MTSideDrawerGroup');
+        inP = reload.getAttribute('data').split(',');
+    }
     const p1 = inP[0];
     const p2 = inP[1];
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p1].node;
@@ -3737,66 +3743,89 @@ async function MenuTickerDrawer(inP) {
             }
         }
     }
-    let topDiv = MF_SidePanelOpen('','', null , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1]);
-    let topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','');
 
-    MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-    if(hld[p2].typeDisplay == 'Stock' || hld[p2].typeDisplay == 'ETF') {
-        MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
-        MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
-        MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
-        MenuTickerDrawerLine('Price Change','','MTPriceChange','margin-top:20px;');
-        const div = cec('span','',topDiv2,'','','display:flex;float:right;margin-top: 12px;');
-        let dSelect = getCookie(MTFlex.Name + 'StockSelect',false),dCurrent = '';
-        if(dSelect == '') dSelect = '1W';
-        for (let s = 0; s < 6; s++) {
-            dCurrent = ['1W','1M','3M','6M','YTD','1Y'][s];
-            cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent);
-        }
-        performanceData = await getPerformance(formatQueryDate(getDates('d_LastYear')),formatQueryDate(getDates('d_Today')),edg.id);
-        MF_DrawChart(div);
-    } else if (hld[p2].type == 'fixed_income') {
-        if(bondInfo[1] != '') {
-            MenuTickerDrawerLine('Coupon Rate',bondInfo[1]);
-            let pct = bondInfo[1].replace('%','');
-            pct = Number(pct);
-            if(isNaN(pct) == false) {
-                pct = hld[p2].quantity * (pct * 0.01);
-                MenuTickerDrawerLine('Estimated Yearly Income',getDollarValue(pct,false));
+    if(reload == null) {
+        topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1]);
+        topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
+        MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
+        if(hld[p2].typeDisplay == 'Stock' || hld[p2].typeDisplay == 'ETF') {
+            MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
+            MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
+            MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
+            MenuTickerDrawerLine('Price Change','','MTPriceChange','margin-top:20px;');
+            const div = cec('span','',topDiv2,'','','display:flex;float:right;margin-top: 12px;');
+            let dSelect = getCookie(MTFlex.Name + 'StockSelect',false),dCurrent = '';
+            if(dSelect == '') dSelect = '1W';
+            for (let s = 0; s < 6; s++) {
+                dCurrent = ['1W','1M','3M','6M','YTD','1Y'][s];
+                cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent);
             }
+            performanceData = await getPerformance(formatQueryDate(getDates('d_LastYear')),formatQueryDate(getDates('d_Today')),edg.id);
+            MF_DrawChart(div);
+        } else if (hld[p2].type == 'fixed_income') {
+            if(bondInfo[1] != '') {
+                MenuTickerDrawerLine('Coupon Rate',bondInfo[1]);
+                let pct = bondInfo[1].replace('%','');
+                pct = Number(pct);
+                if(isNaN(pct) == false) {
+                    pct = hld[p2].quantity * (pct * 0.01);
+                    MenuTickerDrawerLine('Estimated Yearly Income',getDollarValue(pct,false));
+                }
+            }
+            if(bondInfo[2] != '') MenuTickerDrawerLine('Maturity Date ',bondInfo[2]);
+            if(bondInfo[3] == 'Yes') MenuTickerDrawerLine('Extraordinary Redemption',bondInfo[3]);
+            if(bondInfo[4] == 'Yes') MenuTickerDrawerLine('Subject to AMT',bondInfo[4]);
+            if(bondInfo[5] == 'Yes') MenuTickerDrawerLine('Original Issue Discount',bondInfo[5]);
+            MenuTickerDrawerSpacer();
         }
-        if(bondInfo[2] != '') MenuTickerDrawerLine('Maturity Date ',bondInfo[2]);
-        if(bondInfo[3] == 'Yes') MenuTickerDrawerLine('Extraordinary Redemption',bondInfo[3]);
-        if(bondInfo[4] == 'Yes') MenuTickerDrawerLine('Subject to AMT',bondInfo[4]);
-        if(bondInfo[5] == 'Yes') MenuTickerDrawerLine('Original Issue Discount',bondInfo[5]);
-        MenuTickerDrawerSpacer();
     }
 
-    MenuTickerDrawerLine('Quantity',hld[p2].quantity.toLocaleString('en-US'));
+    let allQty = 0,allCost = 0,allValue=0;
+    for (let h = 0; h < hld.length; h++) {
+        if(hld[h].account.institution != null) {
+            allQty+=hld[h].quantity;
+            allValue+=hld[h].value;
+            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity)
+        }
+    }
+
+    if(reload == null) {
+        topDiv2 = cec('div','',topDiv2,'','','','id','MTSideDrawerGroup');
+        topDiv2.setAttribute('data',inP);
+    } else {
+        topDiv2 = reload;
+        while (topDiv2.firstChild) {topDiv2.removeChild(topDiv2.firstChild);}
+    }
+
+    if(getCookie('MTInvestments_SidePanel',true) == 0) {
+        allQty = hld[p2].quantity;
+        allValue = hld[p2].value;
+        allCost = getCostBasis(hld[p2].costBasis,hld[p2].type,hld[p2].quantity);
+        MenuTickerDrawerLine('Account',hld[p2].account.displayName,'','margin-top:20px;');
+        if(hld[p2].account.institution != null) {MenuTickerDrawerLine('Institution',hld[p2].account.institution.name);}
+    }
+
     if(hld[p2].account.institution == null) {
-        MenuTickerDrawerLine('Price',getDollarValue(hld[p2].value / hld[p2].quantity,false));
+        MenuTickerDrawerLine('Price',getDollarValue(allValue / allQty,false));
     } else {
         MenuTickerDrawerLine('Price',getDollarValue(hld[p2].closingPrice,false),'','','','Price Updated ' + getDates('s_CompleteDate',hld[p2].closingPriceUpdatedAt));
     }
-    MenuTickerDrawerLine('Current Value',getDollarValue(hld[p2].value));
-    const useCostBasis = getCostBasis(hld[p2].costBasis,hld[p2].type,hld[p2].quantity);
-    MenuTickerDrawerLine('Cost Basis',getDollarValue(useCostBasis),'','','','To change Cost Basis, choose Accounts / ' + hld[p2].account.displayName + ' and then ' + hld[p2].name);
+    MenuTickerDrawerLine('Current Value',getDollarValue(allValue,false));
+    MenuTickerDrawerLine('Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + hld[p2].name) + ')';
 
-    let useGainLoss = hld[p2].value - useCostBasis;
-    let useGainLossPct = ((useGainLoss / useCostBasis) * 100);
+    let useGainLoss = allValue - allCost;
+    let useGainLossPct = ((useGainLoss / allCost) * 100);
     let rnStr = useGainLossPct.toFixed(2);
     useGainLossPct = parseFloat(rnStr);
     MenuTickerDrawerLine('Unrealized Gain/Loss',getDollarValue(useGainLoss) + ' (' + useGainLossPct + '%)','','',null,'',useGainLoss < 0 ? css.red : css.green);
 
     if(hld[p2].type == 'fixed_income') {
-        useGainLoss = (hld[p2].quantity / useCostBasis) * 100;
+        useGainLoss = (allQty / allCost) * 100;
         MenuTickerDrawerLine('Cost Per Share',getDollarValue(useGainLoss));
     }
 
-    MenuTickerDrawerLine('Account',hld[p2].account.displayName,'','margin-top:20px;');
-    if(hld[p2].account.institution != null) {MenuTickerDrawerLine('Institution',hld[p2].account.institution.name);}
-
     MenuTickerDrawerSpacer();
+
     for (let h = 0; h < hld.length; h++) {
         MenuTickerDrawerLine(hld[h].account.displayName,getDollarValue(hld[h].value),'','',hld[h].account.logoUrl);
         if(hld[h].account.institution != null) {
@@ -3804,14 +3833,16 @@ async function MenuTickerDrawer(inP) {
         }
     }
 
-    topDiv2 = cec('span','MTSideDrawerHeader',topDiv);
-    cec('button','MTInputButton',topDiv2,'Close','','float:right;' );
-    if(glo.debug == 1) {cec('button','MTInputButton',topDiv2,'Debug','','float:right;','id',p1);}
-    if(MTFlex.Button2 == 1) {
-        if(hld[p2].ticker != 'null') {
-            let bName = 'Watch Ticker';
-            if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
-            cec('button','MTInputButton',topDiv2,bName,'','margin-left: 0px;','id',hld[p2].ticker);
+    if(reload == null) {
+        topDiv2 = cec('span','MTSideDrawerHeader',topDiv);
+        cec('button','MTInputButton',topDiv2,'Close','','float:right;' );
+        if(glo.debug == 1) {cec('button','MTInputButton',topDiv2,'Debug','','float:right;','id',p1);}
+        if(MTFlex.Button2 == 1) {
+            if(hld[p2].ticker != 'null') {
+                let bName = 'Watch Ticker';
+                if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
+                cec('button','MTInputButton',topDiv2,bName,'','margin-left: 0px;','id',hld[p2].ticker);
+            }
         }
     }
 
