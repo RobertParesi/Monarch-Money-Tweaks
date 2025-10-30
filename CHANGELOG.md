@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.9 (Beta)**  
+* **Version 4.9 (Submitted)**  
      - NEW: Investments Stock Chart will now show green and red lines depending on if stock price is Up vs Down.
      - NEW: Investments Stock Chart side panel has toggle in upper-right to combine or not combine same holding totals.
      - NEW: Ability to watch selected accounts in Dashboard.
