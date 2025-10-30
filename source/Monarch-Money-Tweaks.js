@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.9.5
+// @version      4.9
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.9.5';
+const version = '4.9';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -775,7 +775,7 @@ function MT_GetInput(inputs) {
     cec('button','MTInputButton',div,'Apply','','float:right;');
 }
 
-function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL, inGroupId ) {
+function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL, inGroupId, inToggleTip ) {
     let topDiv = document.getElementById('root');
     if(topDiv) {
         topDiv = topDiv.childNodes[0];
@@ -792,7 +792,8 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
         if(inToggle != null) {
             let useButton = getCookie(MTFlex.Name + '_SidePanel',true);
             useButton = inToggle[useButton];
-            cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',inToggle);
+            const a = cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',inToggle);
+            a.setAttribute('title',inToggleTip);
         }
         cec('div','MTFlexCardBig',div,inBig,'','text-align: left;');
         div = cec('span','MTSideDrawerHeader',div4);
@@ -1567,7 +1568,7 @@ async function MenuReportsAccountsGo() {
             MTFlex.Title2 = 'As of ' + getDates('s_FullDate',MTFlexDate2);
 
         } else {
-            MTFlex.TriggerEvents = true;
+            // MTFlex.TriggerEvents = true;
             MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
             MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
             MTFlex.RequiredCols = [5,9,11,12];
@@ -2606,7 +2607,7 @@ async function MenuTrendsHistory(inType,inID) {
         useGroupId = retGroups.ID;
     }
 
-    MF_SidePanelOpen(inType, retGroups.TYPE, ExpandItems, useTitle, retGroups.TYPE, useURLText, useURL, useGroupId);
+    MF_SidePanelOpen(inType, retGroups.TYPE, ExpandItems, useTitle, retGroups.TYPE, useURLText, useURL, useGroupId, 'Show/Hide Categories');
 
     TrendQueue2 = []; TrendPending = [0,0];
     let ld = getDates('d_StartofLastMonth'),hd = getDates('d_Today');
@@ -3111,7 +3112,7 @@ async function MenuDashboardAccounts() {
             let rowDiv = cec('div','',topDiv);
             cec('span','MTFlexBig',rowDiv,'Accounts');
             rowDiv = cec('div','',topDiv);
-            cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 10px 0px 10px 0px;');
+            cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 5px 0px 5px 0px;');
 
             newDiv = cec('table','MTSideDrawerSummaryTable',topDiv,'','','font-size: 14px;','TableName','DashboardAccounts');
             let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
@@ -3745,7 +3746,7 @@ async function MenuTickerDrawer(inP) {
     }
 
     if(reload == null) {
-        topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1]);
+        topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
         MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
         if(hld[p2].typeDisplay == 'Stock' || hld[p2].typeDisplay == 'ETF') {
