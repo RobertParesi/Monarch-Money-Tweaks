@@ -14,4 +14,4 @@ The ideas behind this extension (the New features and enhancements), along with 
 
 This source code is provided strictly for personal, private use only. You may not reproduce, distribute, or publicly display this source code or any derivative works without explicit written permission from the copyright holder.
 
-Any unauthorized use, reproduction, or distribution is strictly prohibited and may result in legal action.
+Any unauthorized use, reproduction, or distribution is strictly prohibited.
