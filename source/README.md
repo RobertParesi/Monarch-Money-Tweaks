@@ -1,6 +1,6 @@
 ### Notice (READ THIS!)
 
-Forked repositories must be made **PRIVATE** and not make **PUBLIC**.  Any forked **public** repositories will be blocked.
+Forked repositories must be made **PRIVATE** and not made **PUBLIC**.  Any forked **public** repositories will be blocked.
 
 ### Latest Source Update
 
