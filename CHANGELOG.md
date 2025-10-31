@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.10 (Beta)**  
+     - NEW: Added Report Description and Tips to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
+ 
 * **Version 4.9 (October 30, 2025)**  
      - NEW: Investments Stock Chart will now show green and red lines depending on if stock price is Up vs Down.
      - NEW: Investments Stock Chart side panel has toggle in upper-right to combine or not combine same holding totals.
