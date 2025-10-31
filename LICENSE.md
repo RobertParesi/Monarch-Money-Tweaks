@@ -3,7 +3,8 @@
 
 * All rights to the product and its source code are exclusively retained by me.
 * Any use beyond personal purposes requires explicit permission from me.
-* The source code can be used for personal use only and is not to be published or **made public in any other GitHub repository**.
+* The source code can be used for personal use only.
+* Forked repositories must be made **PRIVATE** and not make **PUBLIC**.
 * Modifications to the source code must not be disclosed or shared publicly.
 
 
