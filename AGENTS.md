@@ -24,4 +24,4 @@ There is no automated test harness; rely on browser-based verification. Enable t
 Follow the existing concise, imperative history (`Fix: Adjust rollover panel`, `Add debug version`). Each PR should summarize scope, link relevant issues or docs, and attach before/after visuals when UI is involved. Call out manual test coverage in the description so reviewers can replay high-risk flows.
 
 ## Security & Distribution Notes
-Respect the all-rights-reserved notice in `source/README.md`: changes are for personal use only. Never check in API keys, account data, or browser export artifacts, and avoid publishing modified builds to public stores without written approval.
+Respect the all-rights-reserved notice in `source/README.md`: changes are for personal use only. Never check in API keys, account data, or browser export artifacts, >>>>>>>>>>>>>>>>>>>>> **and avoid publishing modified builds to public stores without written approval.**
