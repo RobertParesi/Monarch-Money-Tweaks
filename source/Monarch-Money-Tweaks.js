@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.10.1
+// @version      4.10
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.10.1';
+const version = '4.10';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -174,7 +174,7 @@ function MM_flipSideElement(inCookie) {
 // [ Flex Queue MF_ Called externally, MT_ used internally]
 function MF_SetupDates() {
     let ckd = getCookie(MTFlex.Name + 'LowerDate', false);
-    ckd = ckd || (MTFlex.TriggerEvent == 2 ? 'd_StartofMonth' : '');
+    ckd = ckd || (MTFlex.DateEvent == 2 ? 'd_StartofMonth' : '');
     MTFlexDate1 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
 
     ckd = getCookie(MTFlex.Name + 'HigherDate', false);
@@ -229,12 +229,12 @@ function MF_GridTip() {
             break;
         case 'MTTrends':
             switch (MTFlex.Button2) {
-                case 0: return "Compare & pace last month's income & spending versus this month's, along with year-to-date totals. Click on date to go to last month.";
-                case 1: return "Compare & pace the same month last year's income & spending versus this month's, along with year-to-date totals.";
-                case 2: return "Compare & pace the same quarter last year's income & spending versus this month's, along with year-to-date totals.";
-                case 3: return "Shows this year's income & spending by month with the monthly average.";
-                case 4: return "Shows last year's income & spending by month with the monthly average.";
-                case 5: return "Shows the last 12 months' income & spending by month with the monthly average.";
+                case 0: return "Compare last month's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
+                case 1: return "Compare the same month last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
+                case 2: return "Compare the same quarter last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
+                case 3: return "Shows this year's income & spending by month with the monthly average. Click on date to view as previous month.";
+                case 4: return "Shows last year's income & spending by month with the monthly average. Click on date to view as previous month.";
+                case 5: return "Shows the last 12 months' income & spending by month with the monthly average. Click on date to view as previous month.";
                 case 6: return "Shows two years ago's income & spending by month with the monthly average.";
                 case 7: return "Shows three years ago's income & spending by month with the monthly average.";
                 case 8: return "Shows yearly totals for all years with the yearly average.";
@@ -637,7 +637,7 @@ function MT_GridDrawContainer() {
     let div = cec('div','MTFlexTitle',cht);
     div = cec('div','MTFlexTitle2',div);
     let div2 = cec('span','MTFlexSmall',div,MTFlex.Title1);
-    if(MTFlex.TriggerEvent > 0) { div2 = cec('a','MTFlexBig MThRefClass',div,MTFlex.Title2); } else {div2 = cec('span','MTFlexBig',div,MTFlex.Title2);}
+    if(MTFlex.DateEvent > 0) { div2 = cec('a','MTFlexBig MThRefClass',div,MTFlex.Title2); } else {div2 = cec('span','MTFlexBig',div,MTFlex.Title2);}
     div2 = cec('span','MTFlexLittle',div,MTFlex.Title3);
 
     let tbs = cec('span','MTFlexButtonContainer',cht);
@@ -1306,7 +1306,7 @@ async function MenuReportsNetIncomeGo() {
     let HiddenFilter = false, hasNotes = false, hasGoals = [];
 
     MF_GridInit('MTNet_Income', 'Net Income');
-    MTFlex.TriggerEvent = 2;
+    MTFlex.DateEvent = 2;
     MTFlex.TriggerEvents = true;
     MF_SetupDates();
     MF_GridOptions(1,['by Group','by Category','by Both']);
@@ -1470,7 +1470,7 @@ async function MenuReportsNetIncomeGo() {
 async function MenuReportsAccountsGo() {
     await MF_GridInit('MTAccounts', 'Accounts');
     MTFlex.SortSeq = ['1','2','3','4','5','6','7'];
-    if(MTFlex.Button2 == 0 || MTFlex.Button2 == 2) { MTFlex.TriggerEvent = 2;} else { MTFlex.TriggerEvent = 3; }
+    if(MTFlex.Button2 == 0 || MTFlex.Button2 == 2) { MTFlex.DateEvent = 2;} else { MTFlex.DateEvent = 3; }
     MTFlex.TriggerEvents = false;
     MF_SetupDates();
     MF_GridOptions(1,['by Class','by Account Type','by Account Subtype','by Account Group']);
@@ -1927,7 +1927,7 @@ async function MenuReportsInvestmentsGo() {
 
     MTFlex.CanvasTitle = 'font-size: 13.1px;';
     MTFlex.CanvasRow = 'height: 20px;';
-    if(MTFlex.Button2 == 1) {MTFlex.TriggerEvent = 2;}
+    if(MTFlex.Button2 == 1) {MTFlex.DateEvent = 2;}
     MTFlex.TriggerEvents = true;
     MF_SetupDates();
     MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Stock Type','by Account/Stock Type']);
@@ -2201,7 +2201,7 @@ async function MenuReportsTrendsGo() {
     let month = lowerDate.getMonth(), day = lowerDate.getDate(), year = lowerDate.getFullYear();
     let month2 = higherDate.getMonth(), day2 = higherDate.getDate(), year2 = higherDate.getFullYear();
 
-    MTFlex.TriggerEvent = 1;
+    MTFlex.DateEvent = 1;
     MTFlex.TriggerEvents = true;
     MF_GridOptions(1,['by Group','by Category','by Both']);
     MF_GridOptions(2,['Compare last month','Compare same month','Compare same quarter','This year by month','Last year by month','Last 12 months by month', 'Two years ago by month', 'Three years ago by month', 'All years by year','All years by YTD']);
@@ -3734,7 +3734,7 @@ function onClickCloseDrawer() {
     let divs = null,returnV=false;
     switch(event.target.innerText.trim()) {
         case 'Apply':
-            if(MTFlex.TriggerEvent == 2) {
+            if(MTFlex.DateEvent == 2) {
                 let lv = null,hv=null;
                 divs = document.querySelectorAll('input.MTInputClass');
                 for (let i = 0; i < divs.length; i++) {
@@ -3746,7 +3746,7 @@ function onClickCloseDrawer() {
             divs = document.querySelectorAll('input.MTInputClass');
             for (let i = 0; i < divs.length; i++) {
                 let value = divs[i].value;
-                if(MTFlex.TriggerEvent == 3) {
+                if(MTFlex.DateEvent == 3) {
                     MTFlexDate2 = unformatQueryDate(value);setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
                 } else {
                     if(i == 0) {MTFlexDate1 = unformatQueryDate(value);setCookie(MTFlex.Name + 'LowerDate',formatQueryDate(MTFlexDate1));}
@@ -3887,7 +3887,9 @@ async function MenuTickerDrawer(inP) {
     MenuTickerDrawerSpacer();
 
     for (let h = 0; h < hld.length; h++) {
-        MenuTickerDrawerLine(hld[h].account.displayName,getDollarValue(hld[h].value),'','',hld[h].account.logoUrl);
+        let useName = hld[h].account.displayName;
+        if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(hld[h].account.id)) {useName += ' (Outside ' + MTFlexAccountFilter.name + ')';} }
+        MenuTickerDrawerLine(useName,getDollarValue(hld[h].value),'','',hld[h].account.logoUrl);
         if(hld[h].account.institution != null) {
             MenuTickerDrawerLine(hld[h].account.institution.name,hld[h].quantity.toLocaleString('en-US') + ' shares',null,'font-size:13px;margin-bottom:12px;');
         }
@@ -3944,7 +3946,7 @@ function onClickCloseDrawer2() {
     const cases = {'Past week': ['d_MinusWeek','d_Today'],'Last month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This month': ['d_StartofMonth', 'd_Today'], 'This quarter': ['d_ThisQTRs', 'd_Today'], 'This year': ['d_StartofYear', 'd_Today']};
     if(cases[event.target.innerText.trim()]) {
         const [lowerDate, higherDate] = cases[event.target.innerText.trim()];
-        if(MTFlex.TriggerEvent == 2) {
+        if(MTFlex.DateEvent == 2) {
             setCookie(MTFlex.Name + 'LowerDate', lowerDate);
             setCookie(MTFlex.Name + 'HigherDate', higherDate);
         }
@@ -4056,7 +4058,11 @@ function onClickMTSettings() {
 
 function onClickMTFlexBig() {
     let inputs = [];
-    switch(MTFlex.TriggerEvent) {
+    switch(MTFlex.DateEvent) {
+        case 1:
+            if(getDates('isToday',MTFlexDate2)) { MTFlexDate1 = getDates('d_StartofLastMonth'); MTFlexDate2 = getDates('d_EndofLastMonth');
+                                                } else { MTFlexDate1 = getDates('d_StartofMonth'); MTFlexDate2 = getDates('d_Today');}
+            MenuReportsGo(MTFlex.Name);break;
         case 2:
             inputs.push({'NAME': 'Lower Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate1)});
             inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
@@ -4064,10 +4070,6 @@ function onClickMTFlexBig() {
         case 3:
             inputs.push({'NAME': 'As of Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
             MT_GetInput(inputs);break;
-        case 1:
-            if(getDates('isToday',MTFlexDate2)) { MTFlexDate1 = getDates('d_StartofLastMonth'); MTFlexDate2 = getDates('d_EndofLastMonth');
-                                                } else { MTFlexDate1 = getDates('d_StartofMonth'); MTFlexDate2 = getDates('d_Today');}
-            MenuReportsGo(MTFlex.Name);break;
     }
 }
 
@@ -4173,8 +4175,10 @@ function getDates(InValue,InDate) {
     d.setHours(0,0,0,0);
     let month = d.getMonth(), day = d.getDate(), year = d.getFullYear();
     if(InValue == 'isToday') {
+        d.setHours(0, 0, 0, 0);
         let todaysDate = new Date();
-        if(d == todaysDate.setHours(0,0,0,0)) {return true;} else {return false;}
+        todaysDate.setHours(0, 0, 0, 0);
+        if (InValue == 'isToday') {if (d.getTime() === todaysDate.getTime()) {return true;} else {return false;}}
     }
     if(InValue == 'isWeekend') {
         if(d.getDay() == 0 || d.getDay() == 6) {return true;} else {return false;}
