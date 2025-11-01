@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.10 (Beta)**  
+* **Version 4.10 (Submitted)**  
      - NEW: Added Report Description and Tip to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
      - FIX: Toggling Trends date on first day of month would not toggle to previous month.
  
