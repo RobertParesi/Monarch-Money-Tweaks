@@ -747,7 +747,7 @@ function MT_GridExport() {
                     useValue = '';
                     if(MTFlexRow[i].IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
                         if(MTFlexRow[i][j] != undefined && MTFlexRow[i][j] != null) {
-                            useValue = MT_GetFormattedValue(MTFlexTitle[k].Format,MTFlexRow[i][j],true)
+                            useValue = MT_GetFormattedValue(MTFlexTitle[k].Format,MTFlexRow[i][j],true);
                         }
                     }
                     if(MTFlex.Subtotals == true && j == MTFields) {
@@ -3151,7 +3151,7 @@ async function MenuDashboardAccounts() {
                     amt = amt + snapshotData4.allTransactions.results[j].amount;
                 }
             }
-            amt = amt * -1
+            amt = amt * -1;
             let bal = snapshotData.accounts[i].displayBalance;
             let pBal = bal + amt;
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
@@ -3845,7 +3845,7 @@ async function MenuTickerDrawer(inP) {
         if(hld[h].account.institution != null) {
             allQty+=hld[h].quantity;
             allValue+=hld[h].value;
-            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity)
+            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity);
         }
     }
 
