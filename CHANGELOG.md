@@ -1,5 +1,7 @@
 # Change Log (Version History)
 
+Up next, Investments Allocation and Rebalancing, Balance History Export and Account graphs.
+
 * **Version 4.10 (Submitted November 1, 2025)**  
      - NEW: Added Report Description and Tip to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
      - ENHANCEMENT: The accounts listed on the Investments side panel will show if account is outside of filter group.
