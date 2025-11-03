@@ -8,7 +8,7 @@ We are committed to maintaining the highest standards of security and privacy. T
 
 The extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
 
-Extensions are designed to request only the data and permissions necessary for their functionality. During installation, users are informed of these requests. I am pleased to say that **this extension's manifest requests no permissions beyond access within Monarch Money's application domain**. You can confirm this inside the details tab of the extension. This extensions manifest has no background process at all, ensuring that your financial information remains secure and confined within its intended boundaries.
+Extensions are designed to request only the data and permissions necessary for their functionality. During installation, users are informed of these requests. I am pleased to say that **the extension's manifest requests no permissions beyond access within Monarch Money's application domain**. You can confirm this inside the details tab of the extension. This extension's manifest also has **no background process at all**, ensuring that your financial information remains secure and confined within its intended boundaries.
 
 ### Data Collection and Modification
 
