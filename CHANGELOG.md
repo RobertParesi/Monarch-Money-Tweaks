@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-Up next, Investments allocation and more enhancements combining like holdings.
+Up next, Investments and portfolio allocation and more enhancements combining like holdings.
 
 * **Version 4.10 (November 2, 2025)**  
      - NEW: Added Report Description and Tip to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
