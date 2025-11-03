@@ -7,7 +7,7 @@
 * Forked repositories must be kept **PRIVATE** and are not permitted to be made **PUBIC**. 
 * Any modifications to the source code must not be disclosed or shared publicly
 
-Important Note regarding Forked Repositories:
+**Important Note regarding Forked Repositories:**
 While you're welcome to use ChatGPT or AI tools to help customize the source code to suit your needs, I cannot provide support for such modifications.  
 
 Please be aware that I have encountered instances where AI-assisted forks of this repository have inadvertently included sensitive financial information—such as bank names and account balances—in publicly accessible source code.  
