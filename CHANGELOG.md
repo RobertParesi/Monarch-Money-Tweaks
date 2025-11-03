@@ -10,7 +10,7 @@ Up next, Investments allocation and more enhancements combining like holdings.
 * **Version 4.9 (October 30, 2025)**  
      - NEW: Investments Stock Chart will now show green and red lines depending on if stock price is Up vs Down.
      - NEW: Investments Stock Chart side panel has toggle in upper-right to combine or not combine same holding totals.
-     - NEW: Ability to watch selected accounts in Dashboard.
+     - NEW:  Ability to watch your selected account balances in Dashboard. 
      - CHANGE: History Detail drill-down will now remember sort.
 
 * **Version 4.8 (October 26, 2025)**  
