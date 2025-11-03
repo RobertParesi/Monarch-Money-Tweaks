@@ -4,7 +4,7 @@ Thanks for using Monarch Money Tweaks. I want to assure you that this extension 
 
 ### Security and Privacy
 
-We are committed to maintaining the highest standards of security and privacy. This extension utilizes the Monarch Money GraphQL API, which is developed by Monarch Money and integrated into their web app and mobile framework, report graphs, and other features. The extension uses the **same security token stored by Monarch Money**, guaranteeing it's using the same methods for reading your data that they designed.  
+We are committed to maintaining the highest standards of security and privacy. This extension utilizes the Monarch Money GraphQL API, which is developed by Monarch Money and integrated into their web app and mobile framework, report graphs, and other features. The extension uses this **same security token stored by Monarch Money**, guaranteeing it's using the same methods for accessing your data that they designed.  
 
 The extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
 
