@@ -7,5 +7,10 @@
 * Forked repositories must be kept **PRIVATE** and are not permitted to be made **PUBIC**. 
 * Any modifications to the source code must not be disclosed or shared publicly
 
-Note: If you are thinking of using ChatGPT or AI over the source code to make Tweaks do what you want it to do, feel free but I can't support it.  I've now seen twice where forked repositories ran through AI has put sensitive financial information (bank names and balances) in forked public source code.   Please, if you fork this repository playing with the source code, first make the repository **PRIVATE**.
+Important Note regarding Forked Repositories:
+While you're welcome to use ChatGPT or AI tools to help customize the source code to suit your needs, I cannot provide support for such modifications.  
+
+Please be aware that I have encountered instances where AI-assisted forks of this repository have inadvertently included sensitive financial information—such as bank names and account balances—in publicly accessible source code.  
+
+If you choose to fork this repository and experiment with the source code, please ensure that the fork is set to **Private** to protect any sensitive data.
 
