@@ -12,5 +12,5 @@ While you're welcome to use ChatGPT or AI tools to help customize the source cod
 
 Please be aware that I have encountered instances where AI-assisted forks of this repository have included financial information—such as account names and account balances—in publicly accessible source code.  
 
-If you choose to fork this repository and experiment with the source code, please ensure that your fork is set to **Private** to protect any sensitive data.
+If you choose to fork this repository and experiment with the source code, please ensure that your fork is set to **PRIVATE** to protect any sensitive data.
 
