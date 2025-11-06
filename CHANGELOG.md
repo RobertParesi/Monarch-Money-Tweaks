@@ -6,7 +6,7 @@ Up next, Investments portfolio allocation and more enhancements combining like h
     - NEW: Reports / Investments now include Positions, **Allocation**, and Performance.  Allocation is similar to Positions, but combines all like holdings. Some users prefer viewing duplicate tickers as separate **Positions**, while others prefer viewing them as a consolidated **Allocation**.
     - NEW: Reports / Investments now display a Grand Total at the top.
     - NEW: A "% of Portfolio" column has been added for better insight.
-    - NEW: The Joint/Ownership option on the Accounts screen has been hidden (accessible via Settings / Display).
+    - NEW: Ability to hide Joint/Ownership options on the Accounts screen (Settings / Display).
     - CHANGE:: The columns in Reports / Investments have been reordered for a more intuitive layout.
     - FIX: Resolved an issue with the small initial sorting bug in the percentage column.
     - FIX: Improved consistency in menu item visibility when expanding the sidebar.
