@@ -6,8 +6,10 @@ Up next, Investments portfolio allocation and more enhancements combining like h
      - NEW: Reports / Investments now has Positions, **Allocation** and Performance.  Allocation is the same as Positions, except that all like holdings are combined.  Some people like to look at duplicate tickers as individual **Positions** while others like to look at duplicate tickers as combined **Allocation**.
      - NEW: Reports / Investments now has Grand Total at the top.
      - NEW: Reports / Investments now has "% of Portfolio" column.
+     - NEW: Hide Joint/Ownership on Accounts screen (Settings / Display)
      - CHANGE: Reports / Investments re-order of columns for better layout.
      - FIX: Small initial sorting of percentage column bug.
+     - FIX: More consistant menu items being hidden when Expanding sidebar.
   
 * **Version 4.10 (November 2, 2025)**  
      - NEW: Added Report Description and Tip to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
