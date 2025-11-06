@@ -2,6 +2,9 @@
 
 Up next, Investments portfolio allocation and more enhancements combining like holdings.
 
+* **Version 4.11 (Beta)**  
+     - NEW: Reports / Investments now has Positions, **Allocation** and Performance.  Allocation is the same as positions, except that all like holdings are combined.  Some people like to look at the data as Positions and some people like to look at the data as combined Allocation.
+
 * **Version 4.10 (November 2, 2025)**  
      - NEW: Added Report Description and Tip to all reports to make it easier for first-time users.  Settings / Display / Reports to turn off.
      - ENHANCEMENT: The accounts listed on the Investments side panel will show if account is outside of filter group.
