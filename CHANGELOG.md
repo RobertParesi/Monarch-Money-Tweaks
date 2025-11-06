@@ -7,8 +7,8 @@ Up next, Investments portfolio allocation and more enhancements combining like h
     - NEW: Reports / Investments now display a Grand Total at the top.
     - NEW: A "% of Portfolio" column has been added for better insight.
     - NEW: Ability to hide Joint/Ownership options on the Accounts screen (Settings / Display).
-    - CHANGE:: The columns in Reports / Investments have been reordered for a more intuitive layout.
-    - FIX: Resolved an issue with the small initial sorting bug in the percentage column.
+    - CHANGE: The columns in Reports / Investments have been reordered for a more intuitive layout.
+    - FIX: Resolved an issue with the small initial sorting bug in percentage columns.
     - FIX: Improved consistency in menu item visibility when expanding the sidebar.
 
   
