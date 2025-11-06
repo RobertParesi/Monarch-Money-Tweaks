@@ -1,7 +1,5 @@
 # Change Log (Version History)
 
-Up next, Investments portfolio allocation and more enhancements combining like holdings.
-
 * **Version 4.11 (Beta)**  
     - NEW: Reports / Investments now include Positions, **Allocation**, and Performance.  Allocation is similar to Positions, but combines all like holdings. Some users prefer viewing duplicate tickers as separate **Positions**, while others prefer viewing them as a consolidated **Allocation**.
     - NEW: Reports / Investments now display a Grand Total at the top.
