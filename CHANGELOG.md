@@ -7,7 +7,7 @@
     - NEW: Ability to hide Joint/Ownership options on the Accounts screen (Settings / Display).
     - CHANGE: The columns in Reports / Investments have been reordered for a more intuitive layout.
     - FIX: Resolved an issue with the small initial sorting bug in percentage columns.
-    - FIX: Improved consistency in menu item visibility when expanding the sidebar.
+    - FIX: Improved consistency in menu item hiding when expanding the sidebar.
 
   
 * **Version 4.10 (November 2, 2025)**  
