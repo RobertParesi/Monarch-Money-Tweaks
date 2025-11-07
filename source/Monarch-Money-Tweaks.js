@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.11.3
+// @version      4.11
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.11.3';
+const version = '4.11';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -3310,10 +3310,10 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
             MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
             MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
-            MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
             MenuDisplay_Input('Accounts','','spacer');
             MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
             MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
+            MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
             MenuDisplay_Input('Transactions','','spacer');
             MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
             MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
