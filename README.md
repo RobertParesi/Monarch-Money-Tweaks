@@ -14,13 +14,13 @@ To run on **Microsoft Edge**, Enable "Allow extensions from other stores" in the
 
 To run on **Apple iPad**, Download the  User Script and Style Manager by Justin Wasack found in Apple Store first and then paste the Monarch Money Tweaks source code from the source folder into it.
 
-Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
-
 ### 📚 Changes and Documentation:
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
 📖  [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md)
+
+Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
 
 ### 🌟 Features:
 
