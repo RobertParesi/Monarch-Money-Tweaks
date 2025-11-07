@@ -2,7 +2,7 @@
 
 ### Monarch Money Tweaks - Installation, License and Security
 
-To install Monarch Money Tweaks, visit the Extensions area for your browser using the links provided.   Click here for detailed information on [License](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/LICENSE.md) and [Security](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/SECURITY.md).   Once you have installed the extension, simply refresh the Monarch Money app website.
+To install Monarch Money Tweaks, visit the [Extensions area](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/README.md) for your browser using the links provided.   Click here for detailed information on [License](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/LICENSE.md) and [Security](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/SECURITY.md).   Once you have installed the extension, simply refresh the Monarch Money app website.
 
 It's recommended to start with the following three steps, all explained further below:
 
