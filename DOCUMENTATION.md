@@ -9,8 +9,8 @@ It's recommended to start with the following steps, all explained further below:
 1. **Settings / Display** for initial Monarch Money Tweaks Settings.
 2. **Settings / Categories** to further setup Fixed vs Flexible Spending.
 3. **Accounts / Edit Account**  to setup Account Groups.
-4. Check out **Reports / (Trends, Net Income, Accounts, Investments)
-**
+4. Check out **Reports / (Trends, Net Income, Accounts, Investments)**
+
 ### Monarch Money Tweaks - Settings
 
 ![Settings](/images/MT_V3_01.png)
