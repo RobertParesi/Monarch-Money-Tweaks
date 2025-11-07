@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.11
+// @version      4.12
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.11';
+const version = '4.12';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -56,8 +56,8 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.earyfo, .gwrczp, .hIruVD, .jduSPT {height: 36px; font-size: 14px;}');addStyle('.dzNuLu, .fgtPHG, .dVgTYt, .djwbSf {height: 26px; font-size: 14px;}');}
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {padding-top: 1px; padding-bottom: 1px;}');addStyle('.dHdtJt,.bmeuLc,.dUcLPZ,.hNpQPw,.iRHwlh {font-size:14px;}');}
-    if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}')};
-    if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}')};
+    if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
+    if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
     addStyle('.MTWait {width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
@@ -2068,14 +2068,16 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund']) == 0) continue; } //crypto?
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
-
+                    let skipRec = false;
                     if (holding.ticker != null) {
                         useTicker = holding.ticker.trim();
                         if(MTFlex.Button2 == 1) {
-                            if(MF_GridUpdateUID(useTicker,7,holding.quantity,false,true)) {
-                                MF_GridUpdateUID(useTicker,8,holding.value,false,true);
-                                MF_GridUpdateUID(useTicker,9,useCostBasis,false,true);
-                                continue;
+                            if(MTFlex.Button1 == 0 || MTFlex.Button1 == 1 || MTFlex.Button1 == 4) {
+                                if(MF_GridUpdateUID(useTicker,7,holding.quantity,false,true)) {
+                                    MF_GridUpdateUID(useTicker,8,holding.value,false,true);
+                                    MF_GridUpdateUID(useTicker,9,useCostBasis,false,true);
+                                    skipRec = true;
+                                }
                             }
                         }
                     }
@@ -2108,48 +2110,50 @@ async function MenuReportsInvestmentsGo() {
                     }
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
                     let useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
-                    MTP = [];
-                    MTP.UID = holding.id;
-                    if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;}
-                    MTP.RRN = RRN;
-                    if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
-                    MTP.SKTriggerEvent = MTP.RRN + '|' + (hld-1);
-                    MTP.PK = getInvestmentPK(useInst,useAccount, useSubType,holding.typeDisplay);
-                    if(MTP.PK == null) {MTP.PK = '';}
-                    MTP.SKHRef = '/accounts/details/' + holding.account.id;
-                    MF_QueueAddRow(MTP);
-                    if(splitTicker == 1) { MTFlexRow[MTFlexCR][MTFields] = useTicker;} else {MTFlexRow[MTFlexCR][MTFields] = shortTitle;}
-                    if (longTitle.length > 45) {longTitle = longTitle.slice(0, 45) + ' ...';}
-                    MTFlexRow[MTFlexCR][MTFields+1] = longTitle;
-                    MTFlexRow[MTFlexCR][MTFields+2] = useInst;
-                    MTFlexRow[MTFlexCR][MTFields+3] = useAccount;
-                    MTFlexRow[MTFlexCR][MTFields+4] = useSubType;
-                    MTFlexRow[MTFlexCR][MTFields+5] = holding.typeDisplay;
-                    MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
-                    MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
-                    MTFlexRow[MTFlexCR][MTFields+8] = useHoldingValue;
-                    MTFlexRow[MTFlexCR][MTFields+9] = useCostBasis;
-                    if(useCostBasis != null && useHoldingValue != 0) {
-                        MTFlexRow[MTFlexCR][MTFields+10] = useGainLoss;
-                        // 11 = % of Gain/Loss
-                    }
-                    if(MTFlex.Button2 == 2) {
-                        MTFlexRow[MTFlexCR][MTFields+12] = secPrice;
-                        MTFlexRow[MTFlexCR][MTFields+13] = secPercent;
-                        if(secPercent < Cards[2]) {Cards[2] = secPercent;Cards[3]=shortTitle;}
-                        if(secPercent > Cards[0]) {Cards[0] = secPercent;Cards[1]=shortTitle;}
-                        if(secPercent < 0) {UpDown[0]++;} else if(secPercent > 0) {UpDown[1]++;}
-                        const tickerNdx = inList(holding.ticker,tickers);
-                        if(tickerNdx > 0 && CardShown == false) {
-                            let cardStyle = '';
-                            if(secPercent == null) { secPercent = 0; } else {
-                                if(secPercent < 0) {cardStyle = css.red;}
-                                else if(secPercent > 0) {cardStyle = css.green;}
-                            }
-                            if(numCards + 2 < maxCards) {
-                                numCards++;
-                                MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: BuildInvestmentCardDesc(shortTitle), Style: cardStyle});
-                                CardShown = true;
+                    if(skipRec == false) {
+                        MTP = [];
+                        MTP.UID = holding.id;
+                        if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;}
+                        MTP.RRN = RRN;
+                        if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
+                        MTP.SKTriggerEvent = MTP.RRN + '|' + (hld-1);
+                        MTP.PK = getInvestmentPK(useInst,useAccount, useSubType,holding.typeDisplay);
+                        if(MTP.PK == null) {MTP.PK = '';}
+                        MTP.SKHRef = '/accounts/details/' + holding.account.id;
+                        MF_QueueAddRow(MTP);
+                        if(splitTicker == 1) { MTFlexRow[MTFlexCR][MTFields] = useTicker;} else {MTFlexRow[MTFlexCR][MTFields] = shortTitle;}
+                        if (longTitle.length > 45) {longTitle = longTitle.slice(0, 45) + ' ...';}
+                        MTFlexRow[MTFlexCR][MTFields+1] = longTitle;
+                        MTFlexRow[MTFlexCR][MTFields+2] = useInst;
+                        MTFlexRow[MTFlexCR][MTFields+3] = useAccount;
+                        MTFlexRow[MTFlexCR][MTFields+4] = useSubType;
+                        MTFlexRow[MTFlexCR][MTFields+5] = holding.typeDisplay;
+                        MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
+                        MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
+                        MTFlexRow[MTFlexCR][MTFields+8] = useHoldingValue;
+                        MTFlexRow[MTFlexCR][MTFields+9] = useCostBasis;
+                        if(useCostBasis != null && useHoldingValue != 0) {
+                            MTFlexRow[MTFlexCR][MTFields+10] = useGainLoss;
+                            // 11 = % of Gain/Loss
+                        }
+                        if(MTFlex.Button2 == 2) {
+                            MTFlexRow[MTFlexCR][MTFields+12] = secPrice;
+                            MTFlexRow[MTFlexCR][MTFields+13] = secPercent;
+                            if(secPercent < Cards[2]) {Cards[2] = secPercent;Cards[3]=shortTitle;}
+                            if(secPercent > Cards[0]) {Cards[0] = secPercent;Cards[1]=shortTitle;}
+                            if(secPercent < 0) {UpDown[0]++;} else if(secPercent > 0) {UpDown[1]++;}
+                            const tickerNdx = inList(holding.ticker,tickers);
+                            if(tickerNdx > 0 && CardShown == false) {
+                                let cardStyle = '';
+                                if(secPercent == null) { secPercent = 0; } else {
+                                    if(secPercent < 0) {cardStyle = css.red;}
+                                    else if(secPercent > 0) {cardStyle = css.green;}
+                                }
+                                if(numCards + 2 < maxCards) {
+                                    numCards++;
+                                    MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: BuildInvestmentCardDesc(shortTitle), Style: cardStyle});
+                                    CardShown = true;
+                                }
                             }
                         }
                     }
@@ -2172,14 +2176,18 @@ async function MenuReportsInvestmentsGo() {
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
                 if(cashValue > 0) {
                     sumCash+=cashValue;
+                    let useID = '$$';
                     if(MTFlex.Button2 == 1) {
-                        if(MF_GridUpdateUID('$$',8,cashValue,false,true)) {
-                            MF_GridUpdateUID('$$',9,cashValue,false,true);
+                        if(MTFlex.Button1 == 2 || MTFlex.Button1 == 3 || MTFlex.Button1 == 5) {
+                            useID += '-' + acc.id;
+                        }
+                        if(MF_GridUpdateUID(useID,8,cashValue,false,true)) {
+                            MF_GridUpdateUID(useID,9,cashValue,false,true);
                             continue;
                         }
                     }
                     MTP = [];
-                    MTP.UID = '$$';
+                    MTP.UID = useID;
                     if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                     MTP.PK = getInvestmentPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
                     MF_QueueAddRow(MTP);
