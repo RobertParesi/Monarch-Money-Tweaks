@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.11.2
+// @version      4.11.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.11.2';
+const version = '4.11.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -250,6 +250,7 @@ function MF_GridTip() {
                 case 3: return "Shows Income & Spending by note tags (notes which start with an asterisk, like *Vacation or *Hawaii).";
                 case 4: return "Shows Income & Spending by accounts. Great for account reconciliation and comparing with institution websites and statements.";
                 case 5: return "Shows Income & Spending related to a goal.";
+                case 6: return "Shows Income & Spending related to Shared Views, either Shared or Owner.";
             }
             break;
         case 'MTAccounts':
@@ -1336,7 +1337,7 @@ async function MenuReportsNetIncomeGo() {
     MF_SetupDates();
     MF_GridOptions(1,['by Group','by Category','by Both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (Starts with asterisk)','by Accounts','by Goals']);
+    MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (Starts with asterisk)','by Accounts','by Goals', 'by Owner']);
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
@@ -1360,6 +1361,8 @@ async function MenuReportsNetIncomeGo() {
             for (let i = 0; i < snapshotData4.goalsV2.length; i += 1) {hasGoals.push(snapshotData4.goalsV2[i].id);}
             if(hasGoals.length == 0) {glo.spawnProcess = 1;return;}
             break;
+        case 6:
+            HiddenFilter = null;break;
     }
 
     let recIdx = 0, recCnt = 0,useTag = '';
@@ -1383,6 +1386,12 @@ async function MenuReportsNetIncomeGo() {
                 if(rec.goal == null) return;
                 useTag = rec.goal.name;
                 TagsUpdateQueue(useID,useAmt,useTag,useTag,'',0);
+            } else if (MTFlex.Button2 == 6) {
+                if(rec.ownedByUser == null) {
+                   TagsUpdateQueue(useID,useAmt,'Shared',' Shared','',0);
+                } else {
+                    TagsUpdateQueue(useID,useAmt,rec.ownedByUser.displayName,rec.ownedByUser.displayName,'',0);
+                }
             } else {
                 ii = rec.tags.length;
                 if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','',9000000);}
@@ -4650,7 +4659,7 @@ async function getTransactions(startDate,endDate, offset, isPending, inAccounts,
     if(inCat == undefined || inCat == null) inCat = [];
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n id\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n order} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n id\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n order} \n ownedByUser {\n id \n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(graphql, options)
         .then((response) => response.json())
