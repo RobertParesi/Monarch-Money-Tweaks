@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.11.1
+// @version      4.11.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.11.1';
+const version = '4.11.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -56,7 +56,8 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.earyfo, .gwrczp, .hIruVD, .jduSPT {height: 36px; font-size: 14px;}');addStyle('.dzNuLu, .fgtPHG, .dVgTYt, .djwbSf {height: 26px; font-size: 14px;}');}
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {padding-top: 1px; padding-bottom: 1px;}');addStyle('.dHdtJt,.bmeuLc,.dUcLPZ,.hNpQPw,.iRHwlh {font-size:14px;}');}
-    if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
+    if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}')};
+    if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}')};
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
     addStyle('.MTWait {width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
@@ -1888,12 +1889,19 @@ function getAccountGroupFilter() {
 async function MenuAccountsSummary() {
     const topDiv = document.querySelector('div.MTAccountSummary');
     if(topDiv) return;
-
     let aSummary = [];
     const elements = document.querySelectorAll('[class*="AccountSummaryCardGroup__CardSection"]');
     if(elements.length > 1) {
+        if(getCookie('MT_Ownership',true) == 1) {
+            const divc = document.querySelector('[class*="Controls-sc-1"]');
+            if(divc && divc.childNodes.length > 3) {
+                divc.childNodes[0].style = 'display:none;';
+                divc.childNodes[1].style = 'display:none;';
+                divc.childNodes[2].style = 'display:none;';
+            }
+        }
         let snapshotData = await getAccountsData();
-        for (let i = 0; i < snapshotData.accounts.length; i += 1) {
+        for (let i = 0; i < snapshotData.accounts.length; i++) {
             if(snapshotData.accounts[i].hideFromList == false) {
                 let AccountGroupFilter = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
                 MenuAccountSummaryUpdate(AccountGroupFilter, snapshotData.accounts[i].isAsset, snapshotData.accounts[i].displayBalance,snapshotData.accounts[i].displayName);
@@ -1911,7 +1919,7 @@ async function MenuAccountsSummary() {
         div.className = 'MTAccountSummary';
         div = inParent.insertBefore(div, cn.nextSibling);
         let divChild = null,tt='';
-        for (let j = 0; j < aSummary.length; j += 1) {
+        for (let j = 0; j < aSummary.length; j++) {
             if((isAsset && aSummary[j].Asset != 0) || (!isAsset && aSummary[j].Liability !=0)) {
                 divChild = cec('div',cnClass,div,'','','margin-bottom: 5px;');
                 if(isAsset == true) {tt = aSummary[j].ToolTipAsset;} else {tt = aSummary[j].ToolTipLiability;}
@@ -1927,7 +1935,7 @@ async function MenuAccountsSummary() {
         let tta='',ttl='';
         if(inA == true) {tta = ttLit;} else {ttl = ttLit;}
 
-        for (let j = 0; j < aSummary.length; j += 1) {
+        for (let j = 0; j < aSummary.length; j++) {
             if(aSummary[j].AccountGroup == inGroup) {
                 if(inA == true) {
                     aSummary[j].Asset += Number(inBal);
@@ -3293,6 +3301,7 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
             MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
             MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
+            MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
             MenuDisplay_Input('Accounts','','spacer');
             MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
             MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
@@ -3493,12 +3502,16 @@ function MenuCheckSpawnProcess() {
 window.onclick = function(event) {
 
     let cn = event.target.className;
+    if(typeof cn === 'object') {MM_MenuFix();return;}
     if(typeof cn === 'string') {
         if(glo.debug == 1) console.log('MM-Tweaks',cn,event.target);
         cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
                 glo.spawnProcess=6;return;
+            case 'AbstractButton__Root-sc-1ebfgjo-0':
+                MM_MenuFix();
+                break;
             case 'Menu__MenuItem-nvthxu-1':
             case 'Flex-sc-165659u-0':
                 if(event.target.innerText.trim() == 'Last') {onClickLastNumber();}
@@ -3938,7 +3951,7 @@ async function MenuTickerDrawer(inP) {
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv);
         cec('button','MTInputButton',topDiv2,'Close','','float:right;' );
         if(glo.debug == 1) {cec('button','MTInputButton',topDiv2,'Debug','','float:right;','id',p1);}
-        if(MTFlex.Button2 == 1) {
+        if(MTFlex.Button2 == 2) {
             if(hld[p2].ticker != 'null') {
                 let bName = 'Watch Ticker';
                 if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
@@ -4581,7 +4594,7 @@ function sortTableByColumn(inEvent) {
             MM_MenuFix();MM_MenuRun(true);
         }
         MenuCheckSpawnProcess();
-    },400);
+    },300);
 }());
 // Run when leaving & entering a page
 function MM_MenuRun(onFocus) {
