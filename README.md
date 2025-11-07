@@ -37,7 +37,7 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
     - Click on date header to go back to End of Last Month
  
 * **Reports / Net Income:**
-     - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
+     - Summarize your Monarch Money Income/Spending history by Tags, Notes, Accounts, Shared Views and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort summarized data by any column
