@@ -10,15 +10,17 @@ Visit the Extensions area for your browser using the following links:
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.12 (November 7, 2025)
 
-🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
-
-📚 [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md)
-
 To run on **Microsoft Edge**, Enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
 To run on **Apple iPad**, Download the  User Script and Style Manager by Justin Wasack found in Apple Store first and then paste the Monarch Money Tweaks source code from the source folder into it.
 
 Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
+
+### 📚 Changes and Documentation:
+
+🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
+
+📖  [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md)
 
 ### 🌟 Features:
 
