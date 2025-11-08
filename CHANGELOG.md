@@ -3,7 +3,6 @@
 * **Up Next**
     - NEW: Reports / Net Income cards
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
-    - ENHANCEMENT: Reports / Investments exporting when not splitting Ticker and Description will now split Ticker.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
     - FIX: Reports / Accounts / Brokerage Statement Liability and Net Worth Totals removed.
 
