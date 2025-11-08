@@ -1,5 +1,11 @@
 # Change Log (Version History)
 
+* **Up Next**
+    - NEW: Reports / Net Income cards
+    - CHANGE: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
+    - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
+
+
 * **Version 4.12 (November 7, 2025)**  
     - NEW: Reports / Net Income / by Owner to show Income & Spending by Shared Views & Owner.
     - NEW: Reports / Investments now include Positions, **Allocation**, and Performance.  Allocation is similar to Positions, but combines all like holdings. Some users prefer viewing duplicate tickers as separate **Positions**, while others prefer viewing them as a consolidated **Allocation**.
