@@ -6,7 +6,7 @@ Visit the Extensions area for your browser using the following links:
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.12 (November 7, 2025)
 
-🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.10 (November 2, 2025)
+🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.12 (November 9, 2025)
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.12 (November 7, 2025)
 
