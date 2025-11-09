@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.1
+// @version      4.13.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.1';
+const version = '4.13.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -66,12 +66,12 @@ function MM_Init() {
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
-    addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
+    addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
     addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
     addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
-    addStyle('.MTFlexExpand, .MTFlexSave, .MTFlexRestore {font-family: MonarchIcons; margin-left: 3px; font-size: 19px; cursor: pointer;}');
+    addStyle('.MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -85,7 +85,7 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 34px;}');
-    addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
+    addStyle('.MTFlexSpacer, .MTFlexSpacer3, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
     addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
@@ -223,16 +223,16 @@ function MF_GridTip() {
     switch (MTFlex.Name) {
         case 'MTInvestments':
             switch (MTFlex.Button2) {
-                case 0: return 'Displays all your holdings, grouped different ways. See Settings / Display / Reports / Investments for more options.';
-                case 1: return 'Displays all your holdings with same holdings combined, grouped different ways. See Settings / Display / Reports / Investments for more options.';
+                case 0: return 'Displays all your holdings, grouped different ways.';
+                case 1: return 'Displays all your holdings with same holdings combined, grouped different ways.';
                 case 2: return 'Displays your Stock, ETF, and Mutual Fund holdings with their price performance over time. Click on date to change date range.';
             }
             break;
         case 'MTTrends':
             switch (MTFlex.Button2) {
-                case 0: return "Compare last month's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
-                case 1: return "Compare the same month last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
-                case 2: return "Compare the same quarter last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month. See Settings / Display / Reports / Trends for more options.";
+                case 0: return "Compare last month's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month.";
+                case 1: return "Compare the same month last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month.";
+                case 2: return "Compare the same quarter last year's income & spending versus this month's, along with year-to-date pace. Click on date to view as previous month.";
                 case 3: return "Shows this year's income & spending by month with the monthly average. Click on date to view as previous month.";
                 case 4: return "Shows last year's income & spending by month with the monthly average. Click on date to view as previous month.";
                 case 5: return "Shows the last 12 months' income & spending by month with the monthly average. Click on date to view as previous month.";
@@ -244,7 +244,7 @@ function MF_GridTip() {
             break;
         case 'MTNet_Income':
             switch (MTFlex.Button2) {
-                case 0: return "Shows Income & Spending by tags. Click on the date to change date range.";
+                case 0: return "Shows Income & Spending by tags. Click on date to change date range.";
                 case 1: return "Shows Income & Spending by tags, including hidden transactions.";
                 case 2: return "Shows Income & Spending by tags for only hidden transactions.";
                 case 3: return "Shows Income & Spending by note tags (notes which start with an asterisk, like *Vacation or *Hawaii).";
@@ -255,13 +255,13 @@ function MF_GridTip() {
             break;
         case 'MTAccounts':
             switch (MTFlex.Button2) {
-                case 0: return "Shows all assets and liabilities within a date range. Click on the date to change the range.";
+                case 0: return "Shows all assets and liabilities within a date range. Click on date to change the range.";
                 case 1: return "Shows a consolidated Personal Net Worth Statement for loans and other assets.";
-                case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs). To exclude transfers from the Net Change amount, see Settings / Display / Reports / Accounts.";
-                case 3: return "Shows account balances for the last six months. Click on the date range to select the last month. To display end-of-month balances, see Settings / Display / Reports / Accounts.";
-                case 4: return "Shows account balances for the last twelve months. Click on the date range to select the last month. To display end-of-month balances, see Settings / Display / Reports / Accounts.";
-                case 5: return "Shows account balances over time for this year. Click on the date range for the last month. To display end-of-month balances, see Settings / Display / Reports / Accounts.";
-                case 6: return "Shows account balances over time by quarter for the past three years. Click on the date range for the last month.";
+                case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs). To exclude transfers from the Net Change amount, see Settings.";
+                case 3: return "Shows account balances for the last six months. Click on date range to select the last month.";
+                case 4: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
+                case 5: return "Shows account balances over time for this year. Click on date range for the last month.";
+                case 6: return "Shows account balances over time by quarter for the past three years. Click on date range for the last month.";
             }
             break;
     }
@@ -315,7 +315,7 @@ function MT_GridDrawDetails() {
         }
     }
 
-    if(RowI < 1) { cec('div','MTFlexError',MTFlexTable,'No records in ' + MTFlex.Name.slice(2) + '.  Check date range & selections above.');}
+    if(RowI < 1) { cec('div','MTFlexError',MTFlexTable,'No records in ' + MTFlex.Title1 + '.\nCheck date range & selections above.');}
 
     function MT_GridDrawClear() {RecsInc = 0; for (let j=0; j < MTFlexTitle.length; j++) {Grouptotals[j] = null;}}
 
@@ -530,10 +530,10 @@ function MT_GridDrawDetails() {
             }
         }
         function MT_GridDrawLine() {
-            let el2 = cec('tr','MTSpacerClassTR',Header,'','',MTFlex.HideDetails != true ? 'height: 4px;' : '','MTsection',useRow.Section);
-            el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
+            let el2 = cec('tr','',Header,'','',MTFlex.HideDetails != true ? 'height: 4px;' : '','MTsection',useRow.Section);
+            el2 = cec('td','',el2,'','','padding: 0px;','colspan',MTFlexTitle.length);
             if(useRow.IsHeader == false) {cec('div','MTFlexSpacer',el2,'','',hide);}
-            if(isSubTotal == true && MTFlex.HideDetails != true) {cec('tr','MTSpacerClassTR',Header,'','','height: 4px;','MTsection',useRow.Section);}
+            if(isSubTotal == true && MTFlex.HideDetails != true) {cec('tr','',Header,'','','height: 4px;','MTsection',useRow.Section);}
         }
 
         function MT_GridDrawRowSub(inColumn,inStart,inEnd) {
@@ -664,8 +664,9 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexExpand',div2,'','','','title','Collapse / Expand');
     cec('span','MTFlexText',div2, MF_GridTip(),'','margin-left: 12px;');
     div2 = cec('div','',cht);
-    cec('span','MTFlexRestore',div2,'','','margin-right: 10px;','title','Restore Favorite View');
+    cec('span','MTFlexRestore',div2,'','','','title','Restore Favorite View');
     cec('span','MTFlexSave',div2,'','','','title','Save as Favorite View');
+    cec('span','MTFlexConfig',div2,'','','margin-left:6px;','title',MTFlex.Title1 + ' Settings');
 
     function createDropdown(inName,inOpt,inBut) {
         if(inOpt != null && inOpt.length > 0) {
@@ -1369,7 +1370,7 @@ async function MenuReportsNetIncomeGo() {
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP = [];MTP.IsSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(0,['Group','Category','Group/Category'][MTFlex.Button1],MTP);
-    MTFlex.Title1 = 'Net Income Report ';
+    MTFlex.Title1 = 'Net Income Report';
     MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
     switch(MTFlex.Button2) {
         case 0:
@@ -3305,193 +3306,205 @@ function MenuSettings(OnFocus) {
 
     if(glo.pathName.startsWith('/settings/categories')) {
         if(OnFocus == false) {accountGroups=[];}
-        if(OnFocus == true) {
-            let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
-            if(divs.length == 0) {glo.pathName = '';return;}
-            let div = null,grp=null,isExp=null;
-            for (let i = 0; i < divs.length; i++) {
-                grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
-                isExp = divs[i].parentNode.parentNode.parentNode;
-                if(isExp && isExp.innerText.startsWith('Expenses')) {
-                    div = cec ('div','',divs[i],'','','flex:1;');
-                    div = cec('label','',div,'Fixed Expense (MM Tweaks)','','font-size: 13px;float:right;','htmlFor','MTFixed');
-                    div = cec('input','MTFixedCheckbox',div,'','','margin-top: 2px;','id','MTFixed');
-                    div.setAttribute('grp',grp);
-                    div.type = 'checkbox';
-                    if(getCookie('MTGroupFixed:' + grp,true) == true) {div.checked = 'true';}
-                }
-            }
-        }
+        if(OnFocus == true) {MenuSetttingsCategory();}
     }
+    if(glo.pathName.startsWith('/settings/display')) {
+        if(OnFocus == true) {MenuSettingsDisplay();}
+    }
+}
 
-    let dropDowns = 0;
-    if (glo.pathName.startsWith('/settings/display')) {
-        if(OnFocus == true) {
-            if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
-            if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
-            if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
-            if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
-            const p = MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','text','font-size: 18px; font-weight: 500;');
-            MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
-            MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
-            MenuDisplay_Button(p,'Save Settings');
-            MenuDisplay_Button(p,'Restore Settings');
-            MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
-            MenuDisplay_Input('','MT_LowCalendarYear','number',null,2000,getDates('n_CurYear'));
-            MenuDisplay_Input('Menu','','spacer');
-            MenuDisplay_Input('Hide Budget','MT_Budget','checkbox');
-            MenuDisplay_Input('Hide Recurring','MT_Recurring','checkbox');
-            MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
-            MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
-            MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
-            MenuDisplay_Input('Accounts','','spacer');
-            MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
-            MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
-            MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
-            MenuDisplay_Input('Transactions','','spacer');
-            MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
-            MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
-            MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
-            MenuDisplay_Input('Assist & populate when Searching Merchants','MT_MerAssist','checkbox');
-            MenuDisplay_Input('Reports','','spacer');
-            MenuDisplay_Input('Hide the Difference Amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
-            MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
-            MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
-            MenuDisplay_Input('Override Report Grid Header background-color','MT_ColorHigh','color','');
-            MenuDisplay_Input('Override Report Grid SubTotal background-color','MT_ColorLow','color','');
-            MenuDisplay_Input('Reports / Trends','','spacer');
-            MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
-            MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
-            MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
-            MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month" based on last year)','MT_TrendHideNextMonth','checkbox');
-            MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
-            MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
-            MenuDisplay_Input('Reports / Net Income','','spacer');
-            MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
-            MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
-            MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
-            MenuDisplay_Input('Reports / Accounts','','spacer');
-            MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
-            MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
-            MenuDisplay_Input('Hide Last Updated column','MT_AccountsHideUpdated','checkbox');
-            MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
-            MenuDisplay_Input('Hide Pending & Projected Balance columns on Standard Report','MT_AccountsHidePending','checkbox');
-            MenuDisplay_Input('Hide Pending & Projected Balance columns on Brokerage Statement','MT_AccountsHidePending2','checkbox');
-            MenuDisplay_Input('Summary reports are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
-            MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
-            MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
-            MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
-            MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
-            MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
-            MenuDisplay_Input('Add Transfers to Net Change amount in Brokerage Statement','MT_AccountsNetTransfers','checkbox');
-            MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
-            MenuDisplay_Input('Reports / Investments','','spacer');
-            MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
-            MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
-            MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
-            MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
-            MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
-            MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
-            MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
-            MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
-            MenuDisplay_Input('Budget','','spacer');
-            MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
-            MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
-            MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
-            MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
-            MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
-            MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
-        }
-    }
-    function MenuDisplay_Button(inDiv,inText) {
-        cec('button','MTSettingsButton',inDiv,inText,'','float:right; margin-left: 0px; margin-right: 24px;');
-    }
-    function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
-        let qs = document.querySelector('[class*="SettingsCard__Placeholder-"]');
-        if(qs != null) {
-            qs = qs.firstChild.lastChild;
-            let e1 = document.createElement('div'),e2=null,e3=null;
-            switch(inType) {
-                case 'spacer':
-                    e1.className = 'MTSpacerClass';
-                    qs.after(e1);
-                    qs = document.querySelector('[class*="SettingsCard__Placeholder-"]');
-                    qs = qs.firstChild.lastChild;
-                    e1 = document.createElement('div');
-                    e1.style = 'font-size: 17px; font-weight: 500;margin-left:24px;';
-                    e1.innerText = inValue;
-                    qs.after(e1);
-                    return;
-                case 'text':
-                    e1.hRef = e1.innerText = inValue; e1.style = inStyle + 'margin-left:24px;padding-bottom:12px;'; break;
-                case 'dropdown':
-                    e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;'; dropDowns++; break;
-                case 'string':
-                    e1.style = 'margin-left: 25px;'; break;
-                default:
-                    e1.style = 'margin: 11px 25px 5px;';
-            }
-            qs.after(e1);
-            let OldValue = getCookie(inCookie,false),mtObj = [],fnd=false;
-            switch(inType) {
-                case 'checkbox':
-                    e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
-                    e2.id = inCookie;
-                    if(OldValue == 1) {e2.checked = 'checked';}
-                    e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
-                    e3 = document.createElement("label");
-                    e3.innerText = inValue;
-                    e3.htmlFor = inCookie;
-                    e2.parentNode.insertBefore(e3, e2.nextSibling);
-                    break;
-                case 'color':
-                    e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
-                    e2.value = OldValue;
-                    e2.id = inCookie;
-                    e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
-                    e3 = document.createElement("label");
-                    e3.innerText = inValue;
-                    e3.htmlFor = inCookie;
-                    e2.parentNode.insertBefore(e3, e2.nextSibling);
-                    break;
-                case 'number':
-                    cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
-                    e2 = cec('input','MTInputClass',e1,'','','','type',inType);
-                    e2.min = optValue;
-                    e2.max = optValue2;
-                    e2.value = OldValue;
-                    e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
-                    break;
-                case 'string':
-                    cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
-                    e2 = cec('input','MTInputClass',e1,'','',inStyle,'value',OldValue);
-                    e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
-                    break;
-                case 'dropdown':
-                    for (let i = 0; i < optValue.length; i++) {
-                        mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                        if(OldValue == mtObj[1]) {OldValue = mtObj[0];fnd=true;break;}
-                    }
-                    if(fnd==false) {
-                        mtObj = optValue[0].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                        setCookie(inCookie,mtObj[1]);OldValue = mtObj[0];
-                    }
-                    cec('div','',e1,inValue + ':','','margin-top: 10px;');
-                    e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
-                    e2 = cec('button','MTSettButton' + dropDowns,e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;');
-                    e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown'+dropDowns);
-                    for (let i = 0; i < optValue.length; i++) {
-                        mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                        e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
-                        e2.setAttribute('MTSetupValue',mtObj[1]);
-                    }
-            }
-            return e1;
+function MenuSetttingsCategory() {
+    let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
+    if(divs.length == 0) {glo.pathName = '';return;}
+    let div = null,grp=null,isExp=null;
+    for (let i = 0; i < divs.length; i++) {
+        grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
+        isExp = divs[i].parentNode.parentNode.parentNode;
+        if(isExp && isExp.innerText.startsWith('Expenses')) {
+            div = cec ('div','',divs[i],'','','flex:1;');
+            div = cec('label','',div,'Fixed Expense (MM Tweaks)','','font-size: 13px;float:right;','htmlFor','MTFixed');
+            div = cec('input','MTFixedCheckbox',div,'','','margin-top: 2px;','id','MTFixed');
+            div.setAttribute('grp',grp);
+            div.type = 'checkbox';
+            if(getCookie('MTGroupFixed:' + grp,true) == true) {div.checked = 'true';}
         }
     }
 }
+
+function MenuSettingsDisplay(inDiv) {
+
+    let qs = inDiv;
+    if(!qs) {
+        qs = document.querySelector('[class*="SettingsCard__StyledCard-sc-189f681"]');
+        if (!qs) return;
+        qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
+    } else {
+        qs = cec('span','MTSideDrawerHeader',qs);
+    }
+    let OnOff = (inDiv == null);
+    let dropDowns = 0;
+
+    if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
+    if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
+    if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
+    if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
+    const p = MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','text','font-size: 18px; font-weight: 500;');
+    MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
+    MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
+    MenuDisplay_Input(p,'Save Settings', 'button');
+    MenuDisplay_Input(p,'Restore Settings', 'button');
+    MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
+    MenuDisplay_Input('','MT_LowCalendarYear','number',null,2000,getDates('n_CurYear'));
+    MenuDisplay_Input('Menu','','spacer');
+    MenuDisplay_Input('Hide Budget','MT_Budget','checkbox');
+    MenuDisplay_Input('Hide Recurring','MT_Recurring','checkbox');
+    MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
+    MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
+    MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
+    MenuDisplay_Input('Accounts','','spacer');
+    MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
+    MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
+    MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
+    MenuDisplay_Input('Transactions','','spacer');
+    MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
+    MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
+    MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
+    MenuDisplay_Input('Assist & populate when Searching Merchants','MT_MerAssist','checkbox');
+    MenuDisplay_Input('Reports','','spacer');
+    MenuDisplay_Input('Hide the Difference Amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
+    MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
+    MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
+    MenuDisplay_Input('Override Report Grid Header background-color','MT_ColorHigh','color','');
+    MenuDisplay_Input('Override Report Grid SubTotal background-color','MT_ColorLow','color','');
+    MenuDisplay_Input('Reports / Trends Report','','spacer');
+    MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
+    MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
+    MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
+    MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
+    MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
+    MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
+    MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
+    MenuDisplay_Input('Reports / Net Income','','spacer');
+    MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
+    MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
+    MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
+    MenuDisplay_Input('Reports / Accounts Report','','spacer');
+    MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
+    MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
+    MenuDisplay_Input('Hide Last Updated column','MT_AccountsHideUpdated','checkbox');
+    MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
+    MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
+    MenuDisplay_Input('Hide Pending & Projected Balance columns on Standard Report','MT_AccountsHidePending','checkbox');
+    MenuDisplay_Input('Hide Pending & Projected Balance columns on Brokerage Statement','MT_AccountsHidePending2','checkbox');
+    MenuDisplay_Input('Summary reports are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
+    MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
+    MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
+    MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
+    MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
+    MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
+    MenuDisplay_Input('Add Transfers to Net Change amount in Brokerage Statement','MT_AccountsNetTransfers','checkbox');
+    MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
+    MenuDisplay_Input('Reports / Investments Report','','spacer');
+    MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
+    MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
+    MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
+    MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
+    MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
+    MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
+    MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
+    MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
+    MenuDisplay_Input('Budget','','spacer');
+    MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
+    MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
+    MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
+    MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
+    MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
+    MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
+
+    function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
+        if(inDiv && inType == 'spacer') {
+            if(inValue.includes(MTFlex.Title1)) {OnOff = true; return;}
+            OnOff = false;
+        }
+        if(OnOff == false) return;
+
+        let e1 = null,e2=null,e3=null;
+
+        switch(inType) {
+            case 'button':
+                return cec('button','MTSettingsButton',inValue,inCookie,'','float:right; margin-left: 0px; margin-right: 24px;');
+            case 'spacer':
+                e1 = cec('div','MTSpacerClass',qs);
+                return cec('div','MTItemClass',qs,inValue,'','font-size: 17px; font-weight: 500;');
+            case 'text':
+                return cec('div','MTItemClass',qs,inValue,'',inStyle);
+            case 'dropdown':
+                e1 = cec('div','MTItemClass',qs,'','','display:flex;column-gap: 10px;');
+                dropDowns++;
+                break;
+            default:
+                e1 = cec('div','MTItemClass',qs);
+        }
+
+        let OldValue = getCookie(inCookie,false),mtObj = [],fnd=false;
+
+        switch(inType) {
+            case 'checkbox':
+                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                e2.id = inCookie;
+                if(OldValue == 1) {e2.checked = 'checked';}
+                e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
+                e3 = document.createElement("label");
+                e3.innerText = inValue;
+                e3.htmlFor = inCookie;
+                e2.parentNode.insertBefore(e3, e2.nextSibling);
+                break;
+            case 'color':
+                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                e2.value = OldValue;
+                e2.id = inCookie;
+                e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
+                e3 = document.createElement("label");
+                e3.innerText = inValue;
+                e3.htmlFor = inCookie;
+                e2.parentNode.insertBefore(e3, e2.nextSibling);
+                break;
+            case 'number':
+                cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                e2 = cec('input','MTInputClass',e1,'','','','type',inType);
+                e2.min = optValue;
+                e2.max = optValue2;
+                e2.value = OldValue;
+                e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
+                break;
+            case 'string':
+                cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                e2 = cec('input','MTInputClass',e1,'','',inStyle,'value',OldValue);
+                e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
+                break;
+            case 'dropdown':
+                for (let i = 0; i < optValue.length; i++) {
+                    mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                    if(OldValue == mtObj[1]) {OldValue = mtObj[0];fnd=true;break;}
+                }
+                if(fnd==false) {
+                    mtObj = optValue[0].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                    setCookie(inCookie,mtObj[1]);OldValue = mtObj[0];
+                }
+                cec('div','',e1,inValue + ':','','margin-top: 10px;');
+                e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
+                e2 = cec('button','MTSettButton' + dropDowns,e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;');
+                e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown'+dropDowns);
+                for (let i = 0; i < optValue.length; i++) {
+                    mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
+                    e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
+                    e2.setAttribute('MTSetupValue',mtObj[1]);
+                }
+        }
+        return e1;
+    }
+}
+
 function MenuFirstTimeUser() {
     const a = confirm('Welcome to Monarch Money Tweaks!\n\nWould you like to set up the default configuration now to get started?');
     if(a) {
@@ -3603,6 +3616,8 @@ window.onclick = function(event) {
                 onClickMTFlexExpand(1);return;
             case 'MTFlexSave':
                 onClickMTFlexExpand(2);return;
+            case 'MTFlexConfig':
+                onClickMTFlexConfig();return;
             case 'MTFlexRestore':
                 onClickMTFlexExpand(3);return;
             case 'MTNoteTagButton':
@@ -3720,6 +3735,14 @@ function onClickUpdateTicker() {
     MF_DrawChart(null);
 }
 
+function onClickMTFlexConfig() {
+    let topDiv = MF_SidePanelOpen('','', null, MTFlex.Title1 + ' Settings' );
+    MenuSettingsDisplay(topDiv)
+    let div = cec('span','MTSideDrawerHeader',topDiv);
+    cec('button','MTInputButton',div,'Close','','float:right;');
+    cec('button','MTInputButton',div,'Reload','','float:right;');
+}
+
 function onClickMTFlexExpand(inAll) {
 
     let cName = MF_GetSeqKey('Expand');
@@ -3740,9 +3763,8 @@ function onClickMTFlexExpand(inAll) {
             MT_GridDrawExpand();
             return;
         case 2:
-            if(confirm('Save current view as ' + MTFlex.Name.slice(2) + ' favorite?')) {
-                cName = MTFlex.Name;
-                setCookie(cName + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'), true));
+            if(confirm('Save current view as ' + MTFlex.Title1 + ' favorite?')) {
+                setCookie(MTFlex.Name + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'), true));
             }
             break;
         case 3:
@@ -3863,6 +3885,9 @@ function onClickCloseDrawer() {
         case 'Watch Ticker':
             divs = event.target.getAttribute('id');
             MenuTickerUpdate(divs);
+            break;
+        case 'Reload':
+            returnV = true;
             break;
         case 'Debug':
             onClickDumpDebug(Number(event.target.getAttribute('id')));
