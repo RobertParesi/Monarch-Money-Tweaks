@@ -4,6 +4,7 @@
     - NEW: Reports / Net Income cards
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
     - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
+    - CHANGE: Added Overflow and removal of "Reports" for menu for small width browsers.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
     - FIX: Reports / Accounts / Brokerage Statement Liability and Net Worth Totals removed.
 
