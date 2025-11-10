@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.2
+// @version      4.13.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.2';
+const version = '4.13.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -530,7 +530,9 @@ function MT_GridDrawDetails() {
             }
         }
         function MT_GridDrawLine() {
-            let el2 = cec('tr','',Header,'','',MTFlex.HideDetails != true ? 'height: 4px;' : '','MTsection',useRow.Section);
+            let h = 'height: 3px;';
+            if(MTFlex.HideDetails) h = '';
+            let el2 = cec('tr','',Header,'','',h,'MTsection',useRow.Section);
             el2 = cec('td','',el2,'','','padding: 0px;','colspan',MTFlexTitle.length);
             if(useRow.IsHeader == false) {cec('div','MTFlexSpacer',el2,'','',hide);}
             if(isSubTotal == true && MTFlex.HideDetails != true) {cec('tr','',Header,'','','height: 4px;','MTsection',useRow.Section);}
@@ -1295,12 +1297,13 @@ function MenuReportsFix() {
 function MenuReportsCustom() {
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
     if(div) {
+        div.style = 'margin-left: 12px;';
         const mItems = div.childNodes.length;
         let useClass = div.childNodes[0].className;
-        for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 14px;';}
+        for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1;  white-space: nowrap; overflow: hidden;';}
         useClass = useClass.replace(' tab-nav-item-active','');
         for (let i = 0; i < FlexOptions.length; i++) {
-            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 14px;');}
+            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
             else {div.childNodes[i + 3].className = FlexOptions[i] + ' ' + useClass;}
         }
     }
@@ -3336,7 +3339,8 @@ function MenuSettingsDisplay(inDiv) {
     let qs = inDiv;
     if(!qs) {
         qs = document.querySelector('[class*="SettingsCard__StyledCard-sc-189f681"]');
-        if (!qs) return;
+        console.log('menu here>>>>>>>>',qs,event);
+        if (!qs) {glo.spawnProcess = 11;return;}
         qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
     } else {
         qs = cec('span','MTSideDrawerHeader',qs);
@@ -3384,7 +3388,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
     MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
-    MenuDisplay_Input('Reports / Net Income','','spacer');
+    MenuDisplay_Input('Reports / Net Income Report','','spacer');
     MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
     MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
@@ -3432,7 +3436,7 @@ function MenuSettingsDisplay(inDiv) {
 
         switch(inType) {
             case 'button':
-                return cec('button','MTSettingsButton',inValue,inCookie,'','float:right; margin-left: 0px; margin-right: 24px;');
+                return cec('button','MTSettingsButton',inValue,inCookie,'','float:right;');
             case 'spacer':
                 e1 = cec('div','MTSpacerClass',qs);
                 return cec('div','MTItemClass',qs,inValue,'','font-size: 17px; font-weight: 500;');
@@ -3550,6 +3554,9 @@ function MenuCheckSpawnProcess() {
                 break;
             case 9:
                 if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag();}
+                break;
+            case 11:
+                MenuSettings();
                 break;
         }
     }
