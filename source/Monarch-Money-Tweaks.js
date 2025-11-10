@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.3
+// @version      4.13.4
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.3';
+const version = '4.13.4';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -1709,15 +1709,17 @@ async function MenuReportsAccountsGo() {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                if(getCookie('MT_AccountsHidePending2',true) == 1) {MTP.IsHidden = true;} else {MTP.IsHidden = false;}
+                if(getCookie('MT_AccountsHideCashInv',true) == 1) {MTP.IsHidden = true;} else {MTP.IsHidden = false;portfolioData = await getPortfolioHolding();}
+                MTP.ShowPercent = null;MF_QueueAddTitle(11,'Inv Balance',MTP);
+                MTP.ShowPercent = null;MF_QueueAddTitle(12,'Cash Balance',MTP);
             } else {
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 if(getCookie('MT_AccountsHidePer1',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 if(getCookie('MT_AccountsHidePending',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
+                MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
+                MF_QueueAddTitle(12,'Projected',MTP);
             }
-            MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
-            MF_QueueAddTitle(12,'Projected',MTP);
         }
 
         snapshotData = await getAccountsData();
@@ -1786,8 +1788,15 @@ async function MenuReportsAccountsGo() {
                                 MTFlexRow[MTFlexCR][MTFields+10] = useBalance - MTFlexRow[MTFlexCR][MTFields+5];
                             }
                             MTFlexRow[MTFlexCR][MTFields+10] = parseFloat(MTFlexRow[MTFlexCR][MTFields+10].toFixed(2));
-                            MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(MTFlexRow[MTFlexCR][MTFields+11].toFixed(2));
-                            MTFlexRow[MTFlexCR][MTFields+12] = useBalance + MTFlexRow[MTFlexCR][MTFields+11];
+                            if(MTFlex.Button2 == 2) {
+                                if(MTFlexTitle[11].IsHidden == false) {
+                                    MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
+                                    MTFlexRow[MTFlexCR][MTFields+12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
+                                }
+                            } else {
+                                MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(MTFlexRow[MTFlexCR][MTFields+11].toFixed(2));
+                                MTFlexRow[MTFlexCR][MTFields+12] = useBalance + MTFlexRow[MTFlexCR][MTFields+11];
+                            }
                             if(MTFlex.Button2 != 1) {
                                 if(snapshotData.accounts[i].subtype.name == 'checking') {acard[0] += useBalance;}
                                 if(snapshotData.accounts[i].subtype.name == 'savings') {acard[1] += useBalance;}
@@ -3399,7 +3408,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
     MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
     MenuDisplay_Input('Hide Pending & Projected Balance columns on Standard Report','MT_AccountsHidePending','checkbox');
-    MenuDisplay_Input('Hide Pending & Projected Balance columns on Brokerage Statement','MT_AccountsHidePending2','checkbox');
+    MenuDisplay_Input('Hide Cash and Inv Balance columns on Brokerage Statement','MT_AccountsHideCashInv','checkbox');
     MenuDisplay_Input('Summary reports are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
     MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
     MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
@@ -3515,7 +3524,7 @@ function MenuFirstTimeUser() {
         setCookie('MT_RefreshAll',1);setCookie('MT_MerAssist',1);setCookie('MT_MonoMT','Arial');
         setCookie('MT_TrendHidePer1',1);setCookie('MT_TrendCard1',1);setCookie('MT_NoDecimals','1');
         setCookie('MT_AccountsHidden',1);setCookie('MT_AccountsHidden2',1);setCookie('MT_AccountsHideUpdated','1');
-        setCookie('MT_AccountsHidePending2',1);setCookie('MT_AccountsCard0',1);setCookie('MT_AccountsCard2','1');
+        setCookie('MT_AccountsCard0',1);setCookie('MT_AccountsCard2','1');
         setCookie('MT_AccountsNoDecimals',1);setCookie('MT_AccountsNetTransfers',1);setCookie('MT_AccountsCard2','1');
         setCookie('MT_InvestmentCardShort',1);setCookie('MT_InvestmentCards',10);setCookie('MT_AccountsCard2','1');
         setCookie('MT_PlanCompressed',1);setCookie('MT_PlanLTB',1);
@@ -4759,6 +4768,30 @@ async function getPortfolio(startDate,endDate,inAccounts) {
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function getPortfolio2() {
+
+    const filters = { };
+    const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n holdings { \n id \n value \n account {\n id } }}}}}}\n"});
+       return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function getPortfolioHolding() {
+
+    const accountSums = {};
+    portfolioData = await getPortfolio2();
+    portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
+        edge.node.holdings.forEach(holding => {
+            const accountId = holding.account.id;
+            const totalValue = holding.value;
+            if (accountSums[accountId]) { accountSums[accountId] += totalValue; } else { accountSums[accountId] = totalValue; }
+        });
+    });
+    return accountSums;
 }
 
 async function getPerformance(startDate,endDate,securityIds) {
