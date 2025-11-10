@@ -89,6 +89,12 @@ All four reports use the same flex-grid, structure and options:
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
 
+**Monarch Tweaks Reports / Investments**
+![Settings](/images/MT_Invest01.png)
+
+**Monarch Tweaks Reports / Investments**
+![Settings](/images/MT_Invest02.png)
+
 ### Other Monarch Money Tweaks non-report options:
 
 **Monarch Tweaks Split Transaction 50/50**
