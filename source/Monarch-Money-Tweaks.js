@@ -1709,9 +1709,12 @@ async function MenuReportsAccountsGo() {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                if(getCookie('MT_AccountsHideCashInv',true) == 1) {MTP.IsHidden = true;} else {MTP.IsHidden = false;portfolioData = await getPortfolioHolding();}
-                MTP.ShowPercent = null;MF_QueueAddTitle(11,'Inv Balance',MTP);
-                MTP.ShowPercent = null;MF_QueueAddTitle(12,'Cash Balance',MTP);
+                portfolioData = await getPortfolioHolding();
+                MTP.ShowPercent = null;
+                if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
+                MF_QueueAddTitle(11,'Positions',MTP);
+                if(getCookie('MT_AccountsHideBSCash',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
+                MF_QueueAddTitle(12,'Cash Balance',MTP);
             } else {
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 if(getCookie('MT_AccountsHidePer1',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
@@ -1789,10 +1792,8 @@ async function MenuReportsAccountsGo() {
                             }
                             MTFlexRow[MTFlexCR][MTFields+10] = parseFloat(MTFlexRow[MTFlexCR][MTFields+10].toFixed(2));
                             if(MTFlex.Button2 == 2) {
-                                if(MTFlexTitle[11].IsHidden == false) {
-                                    MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
-                                    MTFlexRow[MTFlexCR][MTFields+12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
-                                }
+                                MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
+                                MTFlexRow[MTFlexCR][MTFields+12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
                             } else {
                                 MTFlexRow[MTFlexCR][MTFields+11] = parseFloat(MTFlexRow[MTFlexCR][MTFields+11].toFixed(2));
                                 MTFlexRow[MTFlexCR][MTFields+12] = useBalance + MTFlexRow[MTFlexCR][MTFields+11];
@@ -3408,8 +3409,9 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
     MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
     MenuDisplay_Input('Hide Pending & Projected Balance columns on Standard Report','MT_AccountsHidePending','checkbox');
-    MenuDisplay_Input('Hide Cash and Inv Balance columns on Brokerage Statement','MT_AccountsHideCashInv','checkbox');
-    MenuDisplay_Input('Summary reports are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
+    MenuDisplay_Input('Hide Positions Balance column on Brokerage Statement','MT_AccountsHideBSPos','checkbox');
+    MenuDisplay_Input('Hide Cash Balance column on Brokerage Statement','MT_AccountsHideBSCash','checkbox');
+    MenuDisplay_Input('Month/Year reports based on "End of month" instead of "Beginning of month"','MT_AccountsEOM','checkbox');
     MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
     MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
     MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
