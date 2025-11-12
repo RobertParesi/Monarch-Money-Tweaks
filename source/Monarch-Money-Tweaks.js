@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.4
+// @version      4.13.5
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.4';
+const version = '4.13.5';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -225,7 +225,7 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return 'Displays all your holdings, grouped different ways.';
                 case 1: return 'Displays all your holdings with same holdings combined, grouped different ways.';
-                case 2: return 'Displays your Stock, ETF, and Mutual Fund holdings with their price performance over time. Click on date to change date range.';
+                case 2: return 'Displays your Stock, ETF, and Mutual Fund holdings with price performance over time.';
             }
             break;
         case 'MTTrends':
@@ -257,7 +257,7 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return "Shows all assets and liabilities within a date range. Click on date to change the range.";
                 case 1: return "Shows a consolidated Personal Net Worth Statement for loans and other assets.";
-                case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs). To exclude transfers from the Net Change amount, see Settings.";
+                case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs).  To exclude transfers from the Net Change amount, see Settings.";
                 case 3: return "Shows account balances for the last six months. Click on date range to select the last month.";
                 case 4: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
                 case 5: return "Shows account balances over time for this year. Click on date range for the last month.";
@@ -1070,7 +1070,7 @@ function MF_DrawChart(inLocation) {
         topChart = document.getElementById('MTChart');
         tooltip = document.getElementById('MTChartTip');
     }
-    if(MTFlex.Name == 'MTInvestments') {drawChartInvestments();}
+    drawChartInvestments();
     drawChart();
     drawChartTips();
 
@@ -1723,10 +1723,10 @@ async function MenuReportsAccountsGo() {
                 MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
                 MF_QueueAddTitle(12,'Projected',MTP);
             }
+            snapshotData2 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null,cats);
         }
 
         snapshotData = await getAccountsData();
-        snapshotData2 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null,cats);
         snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate1));
         snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
@@ -1761,18 +1761,18 @@ async function MenuReportsAccountsGo() {
                             MTFlexRow[MTFlexCR][MTFields+3] = accountName;
                             MTFlexRow[MTFlexCR][MTFields+4] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                             MTFlexRow[MTFlexCR][MTFields+9] = useBalance;
-                            if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
-                                for (let j = 0; j < snapshotData2.allTransactions.results.length; j ++) {
+                            if(MTFlex.Button2 != 1 && snapshotData.accounts[i].hideTransactionsFromReports == false) {
+                                for (let j = 0; j < snapshotData2.allTransactions.results.length; j++) {
                                     if(snapshotData2.allTransactions.results[j].hideFromReports == false) {
                                         if(snapshotData2.allTransactions.results[j].account.id == snapshotData.accounts[i].id) {
                                             switch (snapshotData2.allTransactions.results[j].category.group.type) {
-                                                case 'income':
-                                                    MTFlexRow[MTFlexCR][MTFields+6] += snapshotData2.allTransactions.results[j].amount;
-                                                    break;
                                                 case 'expense':
                                                     useAmount = snapshotData2.allTransactions.results[j].amount * -1;
                                                     MTFlexRow[MTFlexCR][MTFields+7] += useAmount;
                                                     MTFlexRow[MTFlexCR][MTFields+7] = parseFloat(MTFlexRow[MTFlexCR][MTFields+7].toFixed(2));
+                                                    break;
+                                                case 'income':
+                                                    MTFlexRow[MTFlexCR][MTFields+6] += snapshotData2.allTransactions.results[j].amount;
                                                     break;
                                                 case 'transfer':
                                                     MTFlexRow[MTFlexCR][MTFields+8] += snapshotData2.allTransactions.results[j].amount;
@@ -2095,9 +2095,8 @@ async function MenuReportsInvestmentsGo() {
         await BuildInvestmentCards();
 
         async function BuildInvestmentHoldings() {
-            let secPrice = 0, secPercent = 0, RRN = 0;
+            let secPercent = 0, RRN = 0;
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
-                secPrice = edge.node.securityPriceChangeDollars;
                 secPercent = edge.node.securityPriceChangePercent;
                 const holdings = edge.node.holdings;
                 let CardShown = false,hld=0;
@@ -2105,7 +2104,7 @@ async function MenuReportsInvestmentsGo() {
                     let useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
                     hld++;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
-                    if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund']) == 0) continue; } //crypto?
+                    if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund','Cryptocurrency']) == 0) continue; } //crypto?
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
                     let skipRec = false;
                     if (holding.ticker != null) {
@@ -2167,7 +2166,12 @@ async function MenuReportsInvestmentsGo() {
                         MTFlexRow[MTFlexCR][MTFields+3] = useAccount;
                         MTFlexRow[MTFlexCR][MTFields+4] = useSubType;
                         MTFlexRow[MTFlexCR][MTFields+5] = holding.typeDisplay;
-                        MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
+                        if(edge.node.lastSyncedAt == null) {
+                            const up = useHoldingValue / holding.quantity;
+                            MTFlexRow[MTFlexCR][MTFields+6] = up;
+                        } else {
+                            MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
+                        }
                         MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
                         MTFlexRow[MTFlexCR][MTFields+8] = useHoldingValue;
                         MTFlexRow[MTFlexCR][MTFields+9] = useCostBasis;
@@ -2176,7 +2180,7 @@ async function MenuReportsInvestmentsGo() {
                             // 11 = % of Gain/Loss
                         }
                         if(MTFlex.Button2 == 2) {
-                            MTFlexRow[MTFlexCR][MTFields+12] = secPrice;
+                            MTFlexRow[MTFlexCR][MTFields+12] = edge.node.securityPriceChangeDollars;
                             MTFlexRow[MTFlexCR][MTFields+13] = secPercent;
                             if(secPercent < Cards[2]) {Cards[2] = secPercent;Cards[3]=shortTitle;}
                             if(secPercent > Cards[0]) {Cards[0] = secPercent;Cards[1]=shortTitle;}
@@ -3424,6 +3428,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
+  //  MenuDisplay_Input('Recalculate holding and account value with most recent ticker price','MT_InvestmentCurrentPrice','checkbox');
     MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
     MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
     MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
@@ -3946,7 +3951,7 @@ async function MenuTickerDrawer(inP) {
         topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
         MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(hld[p2].typeDisplay == 'Stock' || hld[p2].typeDisplay == 'ETF') {
+        if(inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund','Cryptocurrency']) > 0) {
             MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
             MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
             MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
