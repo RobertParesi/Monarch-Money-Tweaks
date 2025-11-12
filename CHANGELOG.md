@@ -5,8 +5,10 @@
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement can show Positions Balance and Cash Balance.
     - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
+    - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds.
     - CHANGE: Added Overflow and removal of "Reports" in Reports menu for small width browsers.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
+    - FIX: Reports / Investments will show a better stock price for manually entered holdings.
     - FIX: Reports / Accounts / Brokerage Statement Liability and Net Worth Totals removed.
 
 * **Version 4.12 (November 7, 2025)**  
