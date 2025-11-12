@@ -5,7 +5,7 @@
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement can show Positions Balance and Cash Balance.
     - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
-    - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds.
+    - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds in addition to Stock and ETFs.
     - CHANGE: Change CSS for Reports sub-menu for reducced screen widths.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
     - FIX: Reports / Investments will show a better stock price for manually entered holdings.
