@@ -4,7 +4,7 @@
 * All rights to the product and its source code are exclusively reserved by me. 
 * Any use beyond personal purposes requires prior explicit permission.
 * The source code may be used solely for personal use. 
-* Forked repositories must be kept **PRIVATE** and are not permitted to be made **PUBIC**. 
+* You must change Repository Settings / Repository visibility to **private**. 
 * Any modifications to the source code must not be disclosed or shared publicly
 
 **Important Note regarding Forked Repositories:**
@@ -12,5 +12,5 @@ While you're welcome to use ChatGPT or AI tools to help customize the source cod
 
 Please be aware that I have encountered instances where AI-assisted forks of this repository have included financial information—such as account names and account balances—in publicly accessible source code.  
 
-If you choose to fork this repository and experiment with the source code, please ensure that your fork is set to **PRIVATE** to protect any sensitive data.
+If you choose to fork this repository and experiment with the source code, please ensure that your Repository visibility is set to **private** to protect any sensitive data.
 
