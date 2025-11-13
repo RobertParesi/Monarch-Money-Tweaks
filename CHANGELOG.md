@@ -13,6 +13,7 @@
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
     - FIX: Reports / Investments will show a better stock price for manually entered holdings.
     - FIX: Reports / Accounts / Brokerage Statement Liability and Net Worth Totals removed.
+    - FIX: Reports / Investments side drawer "Shares" would not show for manually entered accounts.
 
 * **Version 4.12 (November 7, 2025)**  
     - NEW: Reports / Net Income / by Owner to show Income & Spending by Shared Views & Owner.
