@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.5
+// @version      4.13.7
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.5';
+const version = '4.13.7';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -86,7 +86,7 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 34px;}');
     addStyle('.MTFlexSpacer, .MTFlexSpacer3, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
-    addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
+    addStyle('.MTFlexGridItem { font-size: 13.5px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
@@ -2096,23 +2096,54 @@ async function MenuReportsInvestmentsGo() {
 
         async function BuildInvestmentHoldings() {
             let secPercent = 0, RRN = 0;
+            const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 secPercent = edge.node.securityPriceChangePercent;
                 const holdings = edge.node.holdings;
-                let CardShown = false,hld=0;
+                let CardShown = false,fixEntry = false,hld=0;
+
+                let currentStockPrice = edge.node.totalValue / edge.node.quantity;
+                currentStockPrice = +currentStockPrice.toFixed(3);
+                if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT'; fixEntry = true;}
+
                 for (const holding of holdings) {
                     let useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
                     hld++;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
-                    if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund','Cryptocurrency']) == 0) continue; } //crypto?
+                    if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund','Crypto']) == 0) continue; }
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
                     let skipRec = false;
+
+                    let useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
+                    if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
+                    if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
+
+                    if(!fixEntry) {
+                        const account = accQueue.find(acc => acc.id === holding.account.id);
+                        if (account) { account.holdingBalance += holding.value;} else {
+                            accQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
+                                           "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
+                                           "accountName": useAccount,"accountSubtype": useSubType,});
+                        }
+                    }
+
+                    if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
+                        holding.closingPrice = currentStockPrice;
+                        holding.closingPriceUpdatedAt = getDates('s_YMD');
+                        holding.value = holding.quantity * holding.closingPrice;
+                        holding.value = holding.value.toFixed(2);
+                    }
+
+
+                    let useHoldingValue = Number(holding.value);
+                    let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
+
                     if (holding.ticker != null) {
                         useTicker = holding.ticker.trim();
                         if(MTFlex.Button2 == 1) {
                             if(MTFlex.Button1 == 0 || MTFlex.Button1 == 1 || MTFlex.Button1 == 4) {
                                 if(MF_GridUpdateUID(useTicker,7,holding.quantity,false,true)) {
-                                    MF_GridUpdateUID(useTicker,8,holding.value,false,true);
+                                    MF_GridUpdateUID(useTicker,8,useHoldingValue,false,true);
                                     MF_GridUpdateUID(useTicker,9,useCostBasis,false,true);
                                     skipRec = true;
                                 }
@@ -2134,21 +2165,8 @@ async function MenuReportsInvestmentsGo() {
                         }
                     }
                     if (shortTitle.length > 50) {shortTitle = shortTitle.slice(0, 50) + ' ...';}
-
-                    if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
-                    if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
-
-                    let useHoldingValue = Number(holding.value);
-                    if(holding.account.institution == null && holding.type == 'cryptocurrency') {
-                        useHoldingValue = edge.node.totalValue;
-                        holding.value = edge.node.totalValue; // fix
-                        holding.closingPrice = (useHoldingValue / holding.quantity);
-                    } else {
-                        if(useHoldingValue == 0) useHoldingValue = holding.quantity * holding.closingPrice;
-                    }
-                    let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
-                    let useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(skipRec == false) {
+                        if(holding.typeDisplay == 'Cryptocurrency') holding.typeDisplay = 'Crypto';
                         MTP = [];
                         MTP.UID = holding.id;
                         if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;}
@@ -2166,12 +2184,7 @@ async function MenuReportsInvestmentsGo() {
                         MTFlexRow[MTFlexCR][MTFields+3] = useAccount;
                         MTFlexRow[MTFlexCR][MTFields+4] = useSubType;
                         MTFlexRow[MTFlexCR][MTFields+5] = holding.typeDisplay;
-                        if(edge.node.lastSyncedAt == null) {
-                            const up = useHoldingValue / holding.quantity;
-                            MTFlexRow[MTFlexCR][MTFields+6] = up;
-                        } else {
-                            MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
-                        }
+                        MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
                         MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
                         MTFlexRow[MTFlexCR][MTFields+8] = useHoldingValue;
                         MTFlexRow[MTFlexCR][MTFields+9] = useCostBasis;
@@ -2199,12 +2212,6 @@ async function MenuReportsInvestmentsGo() {
                                 }
                             }
                         }
-                    }
-                    const account = accQueue.find(acc => acc.id === holding.account.id);
-                    if (account) { account.holdingBalance += useHoldingValue;} else {
-                        accQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
-                                       "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
-                                       "accountName": useAccount,"accountSubtype": useSubType,});
                     }
                 }
                 RRN++;
@@ -3428,7 +3435,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
-  //  MenuDisplay_Input('Recalculate holding and account value with most recent ticker price','MT_InvestmentCurrentPrice','checkbox');
+    MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
     MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
     MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
@@ -3951,7 +3958,7 @@ async function MenuTickerDrawer(inP) {
         topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
         MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund','Cryptocurrency']) > 0) {
+        if(inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund','Crypto']) > 0) {
             MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
             MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
             MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
@@ -4352,6 +4359,8 @@ function getDates(InValue,InDate) {
         case 'd_StartofNextMonthLY':month+=1;d.setMonth(month);d.setDate(1);d.setYear(year-1);return d;
         case 'd_EndofNextMonthLY':month+=1;day = daysInMonth(month,year); d.setMonth(month);d.setDate(day);d.setYear(year-1);return d;
         case 'd_StartofYear':d.setDate(1);d.setMonth(0);return d;
+        case 's_YMD':
+            return year + '-' + String(month+1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
         case 's_FullDate':return(getMonthName(month,true) + ' ' + day + ', ' + year );
         case 's_ShortDate':return(getMonthName(month,true) + ' ' + day);
         case 's_MidDate':return(getMonthName(month,true) + ' ' + year);
