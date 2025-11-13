@@ -2,9 +2,10 @@
 
 * **Up Next**
     - NEW: Reports / Net Income cards
+    - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement can show Positions Balance and Cash Balance.
-    - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
+    - ENHANCEMENT: Reports / Investments can recalculate institution & holding values with Current Stock Price
     - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds in addition to Stock and ETFs.
     - FIX: Change CSS for Reports sub-menu for reduced screen widths.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
