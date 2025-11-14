@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.8
+// @version      4.13.9
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.8';
+const version = '4.13.9';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
+const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
 let glo = {pathName: '', spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
@@ -105,7 +106,7 @@ function MM_Init() {
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px !important;}');
     addStyle('.MTFlexImage {border-radius: 100%; width: 21px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; height: 21px;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 26px; height: 26px; font-size: 17px; font-family: MonarchIcons, sans-serif; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; font-family: MonarchIcons, sans-serif; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
@@ -2006,7 +2007,7 @@ async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
     MTFlex.CanvasTitle = 'font-size: 13px;';
-    MTFlex.CanvasRow = 'font-size: 13.1px;  line-height: 20px; height: 20px;';
+    MTFlex.CanvasRow = 'font-size: 13.1px;  line-height: 26px; height: 26px;';
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
     MTFlex.TriggerEvents = true;
     MF_SetupDates();
@@ -2110,7 +2111,7 @@ async function MenuReportsInvestmentsGo() {
                     hld++;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
-                    if(MTFlex.Button2 == 2) { if (inList(holding.type,['equity','mutual_fund','cryptocurrency','etf']) == 0) continue; }
+                    if(MTFlex.Button2 == 2) { if (inList(holding.type,eqTypes) == 0) continue; }
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
                     let skipRec = false;
 
@@ -2126,13 +2127,14 @@ async function MenuReportsInvestmentsGo() {
                                            "accountName": useAccount,"accountSubtype": useSubType,});
                         }
                     }
-
-                    if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
-                        if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
-                        holding.closingPrice = currentStockPrice;
-                        holding.closingPriceUpdatedAt = getDates('s_YMD');
-                        holding.value = holding.quantity * holding.closingPrice;
-                        holding.value = +holding.value.toFixed(2);
+                    if(inList(holding.type,eqTypes) > 0) {
+                        if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
+                            if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
+                            holding.closingPrice = currentStockPrice;
+                            holding.closingPriceUpdatedAt = getDates('s_YMD');
+                            holding.value = holding.quantity * holding.closingPrice;
+                            holding.value = +holding.value.toFixed(2);
+                        }
                     }
 
                     let useHoldingValue = Number(holding.value);
@@ -3342,7 +3344,7 @@ function MenuSettingsDisplay(inDiv) {
     let qs = inDiv;
     if(!qs) {
         qs = document.querySelector('[class*="SettingsCard__StyledCard-sc-189f681"]');
-        if (!qs) {glo.spawnProcess = 11;return;}
+        if (!qs) {console.log('here!');glo.spawnProcess = 11;return;}
         qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
     } else {
         qs = cec('span','MTSideDrawerHeader',qs);
@@ -3853,6 +3855,7 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
         cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
         if(dataType == 'expense') {useAmt = rec.amount * -1;} else {useAmt = rec.amount;}
         if(useAmt < 0) {useColor = css.red;} else {useColor = '';}
+        if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
         cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
     }
 }
@@ -3939,7 +3942,7 @@ async function MenuTickerDrawer(inP) {
         topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
         MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].type,['equity','etf','mutual_fund','crypto']) > 0) {
+        if(inList(hld[p2].type,eqTypes) > 0) {
             MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
             MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
             MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
