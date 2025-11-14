@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.13.7
+// @version      4.13.8
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.13.7';
+const version = '4.13.8';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
@@ -34,10 +34,10 @@ function MM_Init() {
     const sidepanelBackground = 'background: ' + ['#e0f5fd;','#373736;'][a];
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
-    const lineForground = ['#e4e1de','#363532'][a];
     const accentColor = '#ff692d;';
     const bdr = 'border: 1px solid ' + ['#e4e1de;','#62605D;'][a];
     const bdrb = 'border-bottom: 1px solid ' + ['#e4e1de;','#62605D;'][a];
+    const bdrb2 = 'border-bottom: 1px solid ' + ['#e4e1de;','#363532;'][a];
     const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px; border-radius:';
 
     css.header = getCookie('MT_ColorHigh',false);
@@ -84,9 +84,9 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 34px;}');
-    addStyle('.MTFlexSpacer, .MTFlexSpacer3, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
-    addStyle('.MTFlexGridItem { font-size: 13.5px; height: 30px;}');
+    addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 30px;}');
+    addStyle('.MTFlexSpacer {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
+    addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
@@ -95,7 +95,7 @@ function MM_Init() {
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;}');
     addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 34px;' + standardText + ' font-weight: 600; }');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexError {text-align: center;  font-weight: bold; width: 525px; margin: auto;margin-bottom: auto; margin-bottom: 20px;border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig {font-size: 20px;' + standardText + 'font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
@@ -113,7 +113,7 @@ function MM_Init() {
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, sans-serif, "Oracle" !important;' + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerItem { margin-top: 5px; place-content: stretch space-between; display: flex; ');
-    addStyle('.MTSideDrawerItem2 { line-height: 20.5px; place-content: stretch space-between; display: flex;');
+    addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px; }');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
     addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; font-family: MonarchIcons, sans-serif !important; }');
@@ -130,6 +130,7 @@ function MM_Init() {
     addStyle('.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none; margin-bottom: 14px; padding: 12px; min-width: 278px; ' + bdr + bs + '8px ; z-index: 1;}');
     addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
     addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
+    addStyle('.MTSpacerClass {width: 100%;  margin-top: 9px; margin-bottom: 9px; ' + bdrb2 + '}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
     addStyle('.MTBudget2 {float: right;}');
@@ -225,7 +226,7 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return 'Displays all your holdings, grouped different ways.';
                 case 1: return 'Displays all your holdings with same holdings combined, grouped different ways.';
-                case 2: return 'Displays your Stock, ETF, and Mutual Fund holdings with price performance over time.';
+                case 2: return 'Displays your Stock, ETF, Mutual Fund & Crypto holdings with price performance over time.';
             }
             break;
         case 'MTTrends':
@@ -1950,7 +1951,7 @@ async function MenuAccountsSummary() {
         }
         let snapshotData = await getAccountsData();
         for (let i = 0; i < snapshotData.accounts.length; i++) {
-            if(snapshotData.accounts[i].hideFromList == false) {
+            if(snapshotData.accounts[i].hideFromList == false && snapshotData.accounts[i].includeInNetWorth == true) {
                 let AccountGroupFilter = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
                 MenuAccountSummaryUpdate(AccountGroupFilter, snapshotData.accounts[i].isAsset, snapshotData.accounts[i].displayBalance,snapshotData.accounts[i].displayName);
             }
@@ -2004,9 +2005,8 @@ async function MenuAccountsSummary() {
 async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
-
-    MTFlex.CanvasTitle = 'font-size: 13.1px;';
-    MTFlex.CanvasRow = 'height: 20px;';
+    MTFlex.CanvasTitle = 'font-size: 13px;';
+    MTFlex.CanvasRow = 'font-size: 13.1px;  line-height: 20px; height: 20px;';
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
     MTFlex.TriggerEvents = true;
     MF_SetupDates();
@@ -2102,15 +2102,15 @@ async function MenuReportsInvestmentsGo() {
                 const holdings = edge.node.holdings;
                 let CardShown = false,fixEntry = false,hld=0;
 
-                let currentStockPrice = edge.node.totalValue / edge.node.quantity;
-                currentStockPrice = +currentStockPrice.toFixed(3);
+                let currentStockPrice = edge.node.security?.currentPrice ?? 0;
                 if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT'; fixEntry = true;}
 
                 for (const holding of holdings) {
                     let useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
                     hld++;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
-                    if(MTFlex.Button2 == 2) { if (inList(holding.typeDisplay,['Stock','ETF','Mutual Fund','Crypto']) == 0) continue; }
+                    if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
+                    if(MTFlex.Button2 == 2) { if (inList(holding.type,['equity','mutual_fund','cryptocurrency','etf']) == 0) continue; }
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
                     let skipRec = false;
 
@@ -2128,12 +2128,12 @@ async function MenuReportsInvestmentsGo() {
                     }
 
                     if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
+                        if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                         holding.closingPrice = currentStockPrice;
                         holding.closingPriceUpdatedAt = getDates('s_YMD');
                         holding.value = holding.quantity * holding.closingPrice;
-                        holding.value = holding.value.toFixed(2);
+                        holding.value = +holding.value.toFixed(2);
                     }
-
 
                     let useHoldingValue = Number(holding.value);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
@@ -3069,32 +3069,19 @@ async function MenuPlanRefresh() {
 function MenuPlanBudgetReorder() {
     const budgetGrid = document.querySelector('[class*="Plan__SectionsContainer"]');
     const separator = document.querySelector('[class*="PlanSectionFooter__Separator"]');
-
     if(budgetGrid && separator && !budgetGrid.dataset.mtInit === true) {
         const defaultOrder = [0, 1, 2];
         let order = getCookie("MT_BudgetOrder");
-        if(!order) {
-            setCookie("MT_BudgetOrder", JSON.stringify(defaultOrder));
-            order = defaultOrder;
-        } else {
-            order = JSON.parse(order);
-        }
-
+        if(!order) {setCookie("MT_BudgetOrder", JSON.stringify(defaultOrder));order = defaultOrder;} else {order = JSON.parse(order);}
         budgetGrid.style.cssText += "display:flex;flex-direction:column;";
         const budgetSections = budgetGrid.children;
         if(budgetSections.length > 1) {
-            Array.from(budgetSections).forEach((el, idx) => {
-                el.id = `budget-section-${idx}`;
-                el.style.cssText += `order:${order.at(idx) ?? 0}`;
-            });
+            Array.from(budgetSections).forEach((el, idx) => { el.id = `budget-section-${idx}`;el.style.cssText += `order:${order.at(idx) ?? 0}`;});
             budgetGrid.dataset.mtInit = true;
         }
-
         const budgetTotal = separator.nextElementSibling;
-        separator.style.cssText += "order:100;";
-        budgetTotal.style.cssText += "order:101;";
-        budgetGrid.appendChild(separator);
-        budgetGrid.appendChild(budgetTotal);
+        separator.style.cssText += "order:100;";budgetTotal.style.cssText += "order:101;";
+        budgetGrid.appendChild(separator);budgetGrid.appendChild(budgetTotal);
     }
 }
 
@@ -3118,7 +3105,6 @@ function MTUpdateAccountPartner() {
         div3.type = 'checkbox';
         div3.setAttribute('act',p[3]);
         if(getCookie('MTAccountDashboard:' + p[3],true) == true) {div3.checked = 'true';}
-
         cec('div','MTInputTitle',div,'Account Group - (MM Tweaks)');
         div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
         p = glo.pathName.split('/');
@@ -3131,10 +3117,7 @@ function MM_FixCalendarYears() {
     if(elements) {
         for (const li of elements) {
             if(li.getAttribute('hacked') != 'true') {
-                if(li.name == 'year') {
-                    MM_FixCalendarDropdown(li);
-                    li.setAttribute('hacked','true');
-                }
+                if(li.name == 'year') { MM_FixCalendarDropdown(li);li.setAttribute('hacked','true');}
             }
         }
     }
@@ -3360,7 +3343,6 @@ function MenuSettingsDisplay(inDiv) {
     let qs = inDiv;
     if(!qs) {
         qs = document.querySelector('[class*="SettingsCard__StyledCard-sc-189f681"]');
-        console.log('menu here>>>>>>>>',qs,event);
         if (!qs) {glo.spawnProcess = 11;return;}
         qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
     } else {
@@ -3767,7 +3749,7 @@ function onClickUpdateTicker() {
 
 function onClickMTFlexConfig() {
     let topDiv = MF_SidePanelOpen('','', null, MTFlex.Title1 + ' Settings' );
-    MenuSettingsDisplay(topDiv)
+    MenuSettingsDisplay(topDiv);
     let div = cec('span','MTSideDrawerHeader',topDiv);
     cec('button','MTInputButton',div,'Close','','float:right;');
     cec('button','MTInputButton',div,'Reload','','float:right;');
@@ -3853,9 +3835,9 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
     }
 
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 91px;','datatype','date');
+    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 94px;','datatype','date');
     td.setAttribute('columnindex','0');
-    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','width:240px;','datatype','alpha');
+    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','width:236px;','datatype','alpha');
     td.setAttribute('columnindex','1');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Category','','width:136px;','datatype','alpha');
     td.setAttribute('columnindex','2');
@@ -3958,7 +3940,7 @@ async function MenuTickerDrawer(inP) {
         topDiv = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         topDiv2 = cec('span','MTSideDrawerHeader',topDiv,'','','','id','SideDrawerHeader');
         MenuTickerDrawerLine('Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund','Crypto']) > 0) {
+        if(inList(hld[p2].type,['equity','etf','mutual_fund','crypto']) > 0) {
             MenuTickerDrawerLine('52-Week Closing Range','','MTYTDPriceChange');
             MenuTickerDrawerLine('20-Day Moving Average','','MTMoveAvg20');
             MenuTickerDrawerLine('50-Day / 200-Day Moving Average','','MTMoveAvg50');
@@ -4014,14 +3996,9 @@ async function MenuTickerDrawer(inP) {
         MenuTickerDrawerLine('Account',hld[p2].account.displayName,'','margin-top:20px;');
         if(hld[p2].account.institution != null) {MenuTickerDrawerLine('Institution',hld[p2].account.institution.name);}
     }
-
-    if(hld[p2].account.institution == null) {
-        MenuTickerDrawerLine('Price',getDollarValue(allValue / allQty,false));
-    } else {
-        MenuTickerDrawerLine('Price',getDollarValue(hld[p2].closingPrice,false),'','','','Price Updated ' + getDates('s_CompleteDate',hld[p2].closingPriceUpdatedAt));
-    }
+    MenuTickerDrawerLine('Price',getDollarValue(hld[p2].closingPrice,false));
     MenuTickerDrawerLine('Current Value',getDollarValue(allValue,false));
-    MenuTickerDrawerLine('Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + hld[p2].name) + ')';
+    MenuTickerDrawerLine('Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + hld[p2].name + ')');
 
     let useGainLoss = allValue - allCost;
     let useGainLossPct = ((useGainLoss / allCost) * 100);
@@ -4040,9 +4017,7 @@ async function MenuTickerDrawer(inP) {
         let useName = hld[h].account.displayName;
         if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(hld[h].account.id)) {useName += ' (Outside ' + MTFlexAccountFilter.name + ')';} }
         MenuTickerDrawerLine(useName,getDollarValue(hld[h].value),'','',hld[h].account.logoUrl);
-        if(hld[h].account.institution != null) {
-            MenuTickerDrawerLine(hld[h].account.institution.name,hld[h].quantity.toLocaleString('en-US') + ' shares',null,'font-size:13px;margin-bottom:12px;');
-        }
+        MenuTickerDrawerLine(hld[h].account?.institution?.name,hld[h].quantity.toLocaleString('en-US') + ' shares',null,'font-size:13px;margin-bottom:12px;');
     }
 
     if(reload == null) {
@@ -4780,7 +4755,7 @@ async function getPortfolio(startDate,endDate,inAccounts) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
