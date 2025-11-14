@@ -9,6 +9,7 @@
     - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds in addition to Stock and ETFs.
     - CHANGE: Reports / Investments accounts marked as **Exclude account balance** will be excluded when **All Groups** is selected.  Allows you to create a Account Group "Watchlist" and have a watchlist of tickers.
     - CHANGE: Accounts marked as **Exclude account balance** will be excluded from Accounts Summary breakdown.
+    - FIX: Reports / Trends side drawer expand history will now show hidden transactions as crossed out.
     - FIX: Change Reports sub-menu css for reduced screen widths.
     - FIX: Reports / Investments ticker column was not a good width when splitting Ticker and Description.
     - FIX: Reports / Investments will show a better stock price for manually entered holdings.
