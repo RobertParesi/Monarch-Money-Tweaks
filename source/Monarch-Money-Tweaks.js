@@ -2076,7 +2076,7 @@ async function MenuReportsInvestmentsGo() {
             MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP,);
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
-        if(MTFlex.Button1 == 4) { MTFlexTitle[12].Title = 'Type %';}
+        if(MTFlex.Button1 == 4 && MTFlex.Button2 < 2) { MTFlexTitle[12].Title = 'Type %';}
         if(MTFlex.Button1 == 5) { MTFlexTitle[3].IsHidden = true; MTFlexTitle[5].IsHidden = true;}
         portfolioData = await getPortfolio(lowerDate, higherDate);
 
@@ -3219,13 +3219,12 @@ function MenuCategories(OnFocus) {
 
 function MenuPlan(OnFocus) {
     if (glo.pathName.startsWith('/plan') || glo.pathName.startsWith('/dashboard')) {
-      //  if(OnFocus == false) { removeAllSections('div.MTFlexContainerPanel');}
         if(OnFocus == true) {
-            if(glo.pathName.startsWith('/dashboard')) MenuDashboardAccounts();
             const urlParams = new URLSearchParams(window.location.search);
             const name = urlParams.get('debug');
             if (name) {setCookie('MT_Log', name == 'on' ? 1 : 0);glo.debug = getCookie('MT_Log',true);}
             glo.spawnProcess = 3;
+            if(glo.pathName.startsWith('/dashboard')) MenuDashboardAccounts();
         }
     }
 }
@@ -3234,10 +3233,10 @@ async function MenuDashboardAccounts() {
 
     let ds = document.getElementById('MTFlexDashboardAccounts');
     if(ds) return;
+    let snapshotData = await getAccountsData();
+    let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
     if(ds) {
-        let snapshotData = await getAccountsData();
-        let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
         let newDiv = null;
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const aa = snapshotData.accounts[i].id;
