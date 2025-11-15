@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Up Next**
+* **Version 4.13 (November 15, 2025)**
     - NEW: Reports / Net Income cards
     - ENHANCEMENT: Reports settings can now be accessed directly from report grid rather than going to Settings / Display.
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement cards now show percentage in addition to amount.
