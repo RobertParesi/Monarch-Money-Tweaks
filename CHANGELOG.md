@@ -10,7 +10,7 @@
     - ENHANCEMENT: Reports / Accounts / Brokerage Statement can show Positions Balance and Cash Balance.
     - ENHANCEMENT: Reports / Investments will now recalculate institution & holding values with Current Stock Price
     - ENHANCEMENT: Reports / Investments will now show chart for Crypto & Mutual Funds in addition to Stock and ETFs.
-    - CHANGE: Reports / Investments accounts marked as **Exclude account balance** will be excluded when **All Groups** is selected.  Allows you to create a manual Asset/Investment account with an Account Group name (ie: Waitlist) and add manual holdings in it.
+    - CHANGE: Reports / Investments accounts marked as **Exclude account balance** will be excluded when **All Groups** is selected.  Allows you to create a manual Asset/Investment account with an Account Group name (ie: Watchlist) and add manual holdings in it.
     - CHANGE: Accounts marked as **Exclude account balance** will be excluded from Accounts Summary breakdown.
     - FIX: Reports / Trends side drawer expand history will now show hidden transactions as crossed out.
     - FIX: Change Reports sub-menu css for reduced screen widths.
