@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Up next**
-    - NEW: Reports / Accounts side drawer (charts, detail drill down, more)
+    - NEW: Reports / Accounts side drawer (Chart & Transfer details)
   
 * **Version 4.14 (November 17, 2025)**
     - NEW: Reports / Net Income cards
