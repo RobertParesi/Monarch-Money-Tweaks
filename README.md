@@ -4,11 +4,13 @@
 
 Visit the Extensions area for your browser using the following links: 
 
-🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.14 (November 17, 2025)
+Version 4.14 (November 17, 2025)
 
-🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259) - Version 4.14 (November 17, 2025)
+🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn)  
 
-🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/) - Version 4.14 (November 17, 2025)
+🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259)  
+
+🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/)  
 
 To run on **Microsoft Edge**, Enable "Allow extensions from other stores" in the **Edge extensions settings**, then navigate to the Chrome Web Store in Edge, find Monarch Money Tweaks extension, and click "Get" and then "Add extension" to install it.
 
