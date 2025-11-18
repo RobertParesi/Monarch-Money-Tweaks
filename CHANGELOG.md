@@ -1,7 +1,8 @@
 # Change Log (Version History)
 
 * **Up next**
-    - Reports / Accounts side drawer (History Chart & transaction details)
+    - Reports / Accounts side drawer (History Chart)
+    - Reports / Accounts side drawer (Transaction details/summary and Transfer details)
     - Reports / Accounts - Better paths to the data to try and make all reports fast
   
 * **Version 4.14 (November 17, 2025)**
