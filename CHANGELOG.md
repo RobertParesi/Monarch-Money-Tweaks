@@ -1,7 +1,8 @@
 # Change Log (Version History)
 
 * **Up next**
-    - NEW: Reports / Accounts side drawer (Chart & Transfer details)
+    - Reports / Accounts side drawer (History Chart & Transfer transaction details)
+    - Reports / Accounts - Better paths to the data to try and make all reports fast
   
 * **Version 4.14 (November 17, 2025)**
     - NEW: Reports / Net Income cards
