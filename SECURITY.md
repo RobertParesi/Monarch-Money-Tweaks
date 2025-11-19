@@ -1,14 +1,18 @@
 ##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Security & Privacy Policy 
 
-Thanks for using Monarch Money Tweaks. I want to assure you that this extension respects your privacy and data security.
+Thanks for using Monarch Money Tweaks. I want to assure you that this extension respects your privacy and data security. I am committed to maintaining the highest standards of security and privacy.  
 
 ### Security and Privacy
 
-We are committed to maintaining the highest standards of security and privacy. This extension utilizes the Monarch Money GraphQL API, which is developed by Monarch Money and integrated into their web app and mobile framework, report graphs, and other features. The extension uses this **same security token stored by Monarch Money**, guaranteeing it's using the same methods for accessing your data that they designed.  
+This extension utilizes the Monarch Money graphQL functions, which are developed by Monarch Money for Monarch Money.  This is their own API (Appliction Program Interface) and integrated into their web app and mobile apps.  The extension also uses this **same security token stored by Monarch Money**, guaranteeing it's using the same methods (token & API) for accessing your data in the way they designed.  
 
-The extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
+When this extension runs, it makes additional calls to their API using their Security Token and adds additional functionality to the Monarch Money web application.   
 
-Extensions are designed to request only the data and permissions necessary for their functionality. During installation, users are informed of these requests. I am pleased to say that **the extension's manifest requests no permissions beyond access within Monarch Money's application domain** and has **no background processes at all**, ensuring that your financial information remains secure and confined within its intended boundaries.  You can confirm both of these  policies in the details tab of the extension.
+This extension is designed to request only the data and permissions necessary for their functionality.  The extension's manifest **requests no permissions beyond access within Monarch Money's application domain** and has **no background processes at all**, ensuring that your financial information remains secure and confined within its intended boundaries - you and Monarch.  
+
+The extensions **source code is public** and available for anyone to review. It has been around for two years now, and I am a moderator in the Monarch Money Reddit community forum.   Currently, there are over 1,500 active users using this extension.
+
+Finally, the extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
 
 ### Data Collection and Modification
 
