@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Up next**
-    - ENHANCEMENT: Better section spacing in report grid.
+    - ENHANCEMENT: Better section header spacing in report grid.
     - Reports / Accounts side drawer (History Chart)
     - Reports / Accounts side drawer (Transaction details/summary and Transfer details)
     - Reports / Accounts - Better paths to the data to try and make all reports fast
