@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.14
+// @version      4.15.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.14';
+const version = '4.15.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -81,11 +81,11 @@ function MM_Init() {
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 20px 20px 20px; border-spacing: 0px;}');
     addStyle('.MTFlexGrid th, td { padding-right: 6px; padding-left: 6px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
-    addStyle('.MTFlexGridTitleRow { font-weight: 600; height: 40px; position: sticky; top: 0; left: 1; ' + panelBackground + '}');
+    addStyle('.MTFlexGridTitleRow { font-size: 15.1px; font-weight: 600; height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 30px;}');
+    addStyle('.MTFlexGridRow { font-size: 15.1px; font-weight: 600; height: 30px;}');
     addStyle('.MTFlexSpacer {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
     addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
@@ -311,7 +311,7 @@ function MT_GridDrawDetails() {
     MT_GridDrawTitles();
     for (RowI = 0; RowI < MTFlexRow.length; RowI++) {
         MT_GridDrawRow(false);
-        if (RowI == MTFlexRow.length -1) { MT_GridDrawRow(true);} else if (MTFlexRow[RowI].Section != MTFlexRow[RowI+1].Section || MTFlexRow[RowI].PK != MTFlexRow[RowI+1].PK ) {
+        if (RowI == MTFlexRow.length -1) { MT_GridDrawRow(true);} else if (MTFlexRow[RowI].Section != MTFlexRow[RowI+1].Section || MTFlexRow[RowI].PK != MTFlexRow[RowI+1].PK) {
             if(RecsInc > 0) {MT_GridDrawRow(true);}
             MT_GridDrawClear();
         }
@@ -533,9 +533,15 @@ function MT_GridDrawDetails() {
         }
         function MT_GridDrawLine() {
             let h = 'height: 3px;';
-            if(MTFlex.HideDetails) h = '';
+            if(useRow.IsHeader == false) {
+                if((MTFlex.Subtotals && isSubTotal) || (!MTFlex.Subtotals)) {
+                    if (RowI < MTFlexRow.length -1 && MTFlexRow[RowI].Section != MTFlexRow[RowI+1].Section) {
+                        h = 'height: 20px; vertical-align: top;';
+                    }
+                }
+            }
             let el2 = cec('tr','',Header,'','',h,'MTsection',useRow.Section);
-            el2 = cec('td','',el2,'','','padding: 0px;','colspan',MTFlexTitle.length);
+            el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
             if(useRow.IsHeader == false) {cec('div','MTFlexSpacer',el2,'','',hide);}
             if(isSubTotal == true && MTFlex.HideDetails != true) {cec('tr','',Header,'','','height: 4px;','MTsection',useRow.Section);}
         }
@@ -4807,20 +4813,10 @@ async function getPortfolio(startDate,endDate,inAccounts) {
         .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getPortfolio2() {
-
-    const filters = { };
-    const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n holdings { \n id \n value \n account {\n id } }}}}}}\n"});
-       return fetch(graphql, options)
-        .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
-}
-
-async function getPortfolioHolding() {
+async function getPortfolioHolding(startDate,endDate,inAccounts) {
 
     const accountSums = {};
-    portfolioData = await getPortfolio2();
+    portfolioData = await getPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
             const accountId = holding.account.id;
