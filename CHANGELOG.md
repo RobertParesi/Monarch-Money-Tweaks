@@ -2,9 +2,7 @@
 
 * **Up next**
     - ENHANCEMENT: Better font & section header spacing in report grid.
-    - Reports / Accounts side drawer (History Chart)
-    - Reports / Accounts side drawer (Transaction details/summary and Transfer details)
-    - Reports / Accounts - Better paths to the data to try and make all reports fast
+    - ENHANCEMENT: Reports / Account side drawer will break down all Income, Expenses and Transfers by Month.
   
 * **Version 4.14 (November 17, 2025)**
     - NEW: Reports / Net Income cards
