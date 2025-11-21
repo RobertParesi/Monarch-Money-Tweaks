@@ -3,6 +3,7 @@
 * **Up next**
     - ENHANCEMENT: Better font & section header spacing in report grid.
     - ENHANCEMENT: Reports / Account side drawer will break down all Income, Expenses and Transfers by Month.
+    - ENHANCEMENT: Reports / Account side drawer will show All Time or Period chart.
   
 * **Version 4.14 (November 17, 2025)**
     - NEW: Reports / Net Income cards
