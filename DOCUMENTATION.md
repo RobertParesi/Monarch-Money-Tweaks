@@ -95,6 +95,9 @@ All four reports use the same flex-grid, structure and options:
 **Monarch Tweaks Reports / Investments**
 ![Settings](/images/MT_Invest02.png)
 
+**Monarch Tweaks Reports / Investments Detail**
+![Settings](/images/MT_Invest03.png)
+
 ### Other Monarch Money Tweaks non-report options:
 
 **Monarch Tweaks Split Transaction 50/50**
