@@ -4,7 +4,7 @@
     - NEW: Reports / Account side drawer will break down all Income, Expenses and Transfers by Month.
     - NEW: Reports / Account side drawer will show Account Balance chart.
     - ENHANCEMENT: Better font & section header spacing in report grid.
-    - ENHANCEMENT: Better colummn spacing in side drawer Transaction Detail. 
+    - ENHANCEMENT: Better column spacing in side drawer Transaction Detail. 
   
 * **Version 4.14 (November 17, 2025)**
     - NEW: Reports / Net Income cards
