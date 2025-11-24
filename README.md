@@ -7,7 +7,7 @@ Visit the Extensions area for your browser using the following links:
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn)  
 
-🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259)  
+🍏  [Apple Safari browser](https://apps.apple.com/app/monarch-money-tweaks/id6753774259)   (Pending 4.15 update)
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/)  
 
