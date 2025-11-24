@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.15.3
+// @version      4.15
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.15.3';
+const version = '4.15';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1084,15 +1084,10 @@ function MF_DrawChart(inLocation) {
     if(!div) return;
     let grpID = div.getAttribute('groupid');
     let grpType = div.getAttribute('grouptype');
-    let grpSubtype = div.getAttribute('groupsubtype');
-    const timeLit = getCookie(MTFlex.Name + 'StockSelect',false)
+    const timeLit = getCookie(MTFlex.Name + 'StockSelect',false);
 
-    switch(MTFlex.Name) {
-        case 'MTInvestments':
-            drawChartInvestments();break;
-        case 'MTAccounts':
-            drawChartAccounts();break;
-    }
+    if(MTFlex.Name == 'MTInvestments') drawChartInvestments();
+    if(MTFlex.Name == 'MTAccounts') drawChartAccounts();
     drawChart();
     drawChartTips();
 
@@ -1198,17 +1193,12 @@ function MF_DrawChart(inLocation) {
     function drawChart() {
 
         const ctx = topChart.getContext('2d');
-        ctx.clearRect(0, 0, topChart.width, topChart.height);
-        const minPrice = Math.min(...xAxis);
-        const maxPrice = Math.max(...xAxis);
-        const midPrice = (minPrice + maxPrice) / 2;
-        const midHPrice = (midPrice + maxPrice) / 2;
-        const midLPrice = (minPrice + midPrice) / 2;
-        const paddingLeft = 50;
-        const chartHeight = topChart.height - 100;
-        const a = isDarkMode();
-        const standardText = ['#333333','#cccccc'][a];
+        const minPrice = Math.min(...xAxis),maxPrice = Math.max(...xAxis);
+        const midPrice = (minPrice + maxPrice) / 2,midHPrice = (midPrice + maxPrice) / 2,midLPrice = (minPrice + midPrice) / 2;
+        const paddingLeft = 50,chartHeight = topChart.height - 100;
+        const standardText = ['#333333','#cccccc'][isDarkMode()];
 
+        ctx.clearRect(0, 0, topChart.width, topChart.height);
         points = [];
 
         ctx.strokeStyle = standardText;ctx.lineWidth = 1.0;
@@ -1223,6 +1213,18 @@ function MF_DrawChart(inLocation) {
         ctx.fillText(drawChartFormatY(midHPrice), paddingLeft - 2, 24 + (chartHeight/4));
         ctx.fillText(drawChartFormatY(midPrice), paddingLeft - 2, 24 + (chartHeight/2));
         ctx.fillText(drawChartFormatY(midLPrice), paddingLeft - 2, 24 + (chartHeight/2) + (chartHeight/4));
+
+        if(minPrice < 0 && maxPrice > 0 && midLPrice != 0) {
+            const zeroY = 20 + ((maxPrice - 0) / (maxPrice - minPrice)) * chartHeight;
+            ctx.setLineDash([5, 3]);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(paddingLeft, zeroY);
+            ctx.lineTo(topChart.width, zeroY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillText(drawChartFormatY(0), paddingLeft - 2,4+zeroY);
+        }
 
         const numberOfGridLines = 5;
         const gap = (chartHeight) / (numberOfGridLines - 1);
@@ -1242,7 +1244,6 @@ function MF_DrawChart(inLocation) {
         ctx.beginPath();
 
         let useStyle = '';
-        let extended = false;
         xAxis.forEach((p, i) => {
             const x = paddingLeft + ((topChart.width - paddingLeft - 5 ) * i) / (xAxis.length - 1);
             const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
@@ -1265,7 +1266,6 @@ function MF_DrawChart(inLocation) {
         });
 
         // Draw dots
-        //ctx.fillStyle = '#ff692d';
         points.forEach(pt => { ctx.beginPath();ctx.fillStyle = pt.style; ctx.arc(pt.x, pt.y, 4, 0, Math.PI*2);ctx.fill(); });
 
         // X - All date labels
@@ -1293,16 +1293,9 @@ function MF_DrawChart(inLocation) {
         let newV = inV;
         if(inV > 999 || inV < -999) {
             newV = Math.trunc(inV);
-            if(newV > 999999) {
-                newV = newV / 1000000;newV = newV.toFixed(2)
-                return '$' + newV + 'M';
-            }
-            newV = newV / 1000;newV = newV.toFixed(1)
-            if(inV < 0) return '-$' + newV + 'K';
-            return '$' + newV + 'K';
-        } else {
-            return getDollarValue(inV,false);
-        }
+            if(newV > 999999) {newV = newV / 1000000;newV = newV.toFixed(2);return '$' + newV + 'M';}
+            newV = newV / 1000;newV = newV.toFixed(1);return '$' + newV + 'K';
+        } else { return getDollarValue(inV,false); }
     }
 
     function drawChartTips() {
@@ -1524,12 +1517,9 @@ async function MenuReportsNetIncomeGo() {
             useTitle = TagsGetAccountName(TagCol.NAME);
         } else {
             switch(TagCol.NAME) {
-                case '':
-                    useTitle = 'Untagged';break;
-                case '*':
-                    useTitle = 'Multiple';break;
-                default:
-                    useTitle = TagCol.NAME;
+                case '': useTitle = 'Untagged';break;
+                case '*': useTitle = 'Multiple';break;
+                default: useTitle = TagCol.NAME;
             }
         }
         totalCol++;
@@ -1685,7 +1675,7 @@ async function MenuReportsAccountsGo() {
         MTFlex.RequiredCols = [4,5,6,7,8,9,10,11,12,13,14,15,16];
         MTP.IsHidden = false;
         MF_QueueAddTitle(16,getDates('s_ShortDate',MTFlexDate2),MTP);
-        MF_QueueAddTitle(17,'Average',MTP);
+        MF_QueueAddTitle(17,'Avg',MTP);
         accountsData = await getAccountsData();
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < accountsData.accounts.length; i++) {
@@ -4006,7 +3996,12 @@ async function MenuAccountsDrawer(inP) {
     const acc = accountsData.accounts[p1];
     let transQueue = [],incs=0,exps=0,trns=0,tots=0;
 
-    let topDiv = MF_SidePanelOpen(acc.type.group,acc.type.display, null , 'Account Summary',acc.type.display,acc.displayName,'',acc.id, '',acc.logoUrl);
+    let topDiv = MF_SidePanelOpen(acc.type.group,acc.type.display, null , 'Account Summary',acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
+    if(transData == null) {
+        document.body.style.cursor = "wait";
+        transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
+        document.body.style.cursor = "";
+    }
 
     let topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
     MenuDrawerLine(topDiv2,'Current Balance',getDollarValue(acc.displayBalance));
@@ -4086,7 +4081,7 @@ async function MenuAccountsDrawer(inP) {
             case 'expense':
                 inAmt = -inAmt; transQueue[idx].exp += inAmt;return;
             case 'transfer':
-                transQueue[idx].trn += inAmt;return
+                transQueue[idx].trn += inAmt;return;
         }
     }
 }
@@ -4515,7 +4510,7 @@ function getDates(InValue,InDate) {
             d.setDate(d.getDate() + 1);
             return d;
         case 'd_Minus1Year':d.setDate(1);d.setFullYear(d.getFullYear() - 1);return d;
-        case 'd_Minus1HYear':d.setDate(d.getDate()-548);;return d;
+        case 'd_Minus1HYear':d.setDate(d.getDate()-548);return d;
         case 'd_Minus2Years':d.setDate(1);d.setFullYear(d.getFullYear() - 2);return d;
         case 'd_Minus3Years':d.setDate(1);d.setFullYear(d.getFullYear() - 3);return d;
         case 'd_Minus4Years':d.setDate(1);d.setFullYear(d.getFullYear() - 4);return d;
