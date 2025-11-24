@@ -56,7 +56,7 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
      - Show a Personal New Worth Statement
      - Show a Brokerage Statement
      - Display by any date range or show Monthly, Quarterly and Yearly balances.
-     - Display Income, Expenses and Transfers on the Account level.
+     - Display Income, Expenses and Transfers on the Account level with transaction drill-down.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort history data by any column.
      - Export to Excel or Numbers.
