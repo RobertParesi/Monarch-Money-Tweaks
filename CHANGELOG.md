@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.15 (November 23, 2025 Firefox)**
+* **Version 4.15 (November 24, 2025)**
     - NEW: Reports / Account side drawer will break down all Income, Expenses and Transfers by Month.
     - NEW: Reports / Account side drawer will show Account Balance chart.
     - ENHANCEMENT: Better font & section header spacing in report grid.
