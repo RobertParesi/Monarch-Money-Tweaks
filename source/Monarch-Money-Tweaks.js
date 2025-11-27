@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.15
+// @version      4.16
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.15';
+const version = '4.16';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -17,7 +17,7 @@ let portfolioData = null, performanceData=null, accountsData = null, transData=n
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
-const MTFields = 13;
+const MTFields = 0;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
@@ -1609,7 +1609,7 @@ async function MenuReportsAccountsGo() {
     await MF_GridInit('MTAccounts', 'Accounts');
     MTFlex.SortSeq = ['1','2','3','4','5','6','7'];
     if(MTFlex.Button2 == 0 || MTFlex.Button2 == 2) { MTFlex.DateEvent = 2;} else { MTFlex.DateEvent = 3; }
-    MTFlex.TriggerEvents = true;
+    if(MTFlex.Button2 != 1) MTFlex.TriggerEvents = true;
     MF_SetupDates();
     MF_GridOptions(1,['by Class','by Account Type','by Account Subtype','by Account Group']);
     MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by Quarter']);
@@ -1797,10 +1797,10 @@ async function MenuReportsAccountsGo() {
                 MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
                 MF_QueueAddTitle(12,'Projected',MTP);
             }
-            transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null,cats);
         }
 
         accountsData = await getAccountsData();
+        transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null,cats);
         snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate1));
         pendingData = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
