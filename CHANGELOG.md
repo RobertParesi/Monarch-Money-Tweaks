@@ -1,8 +1,11 @@
 # Change Log (Version History)
 
+* **Version 4.16 (November 26, 2025)**
+    - FIX: Reports / Accounts could fail if selecting or defaulting to Personal Statement. 
+
 * **Version 4.15 (November 24, 2025)**
-    - NEW: Reports / Account side drawer will break down all Income, Expenses and Transfers by Month.
-    - NEW: Reports / Account side drawer will show Account Balance chart.
+    - NEW: Reports / Accounts side drawer will break down all Income, Expenses and Transfers by Month.
+    - NEW: Reports / Accounts side drawer will show Account Balance chart.
     - ENHANCEMENT: Better font & section header spacing in report grid.
     - ENHANCEMENT: Better column spacing in side drawer Transaction Detail. 
   
