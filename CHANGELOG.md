@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Version 4.17 (December 1, 2025)**
+    - NEW: Expanding drill down history transaction shows a new sub-window.
+    - FIX: Reports / Trends would show invalid next month (Jan 24 vs Jan 25)
+    
 * **Version 4.16 (November 26, 2025)**
     - FIX: Reports / Accounts could fail if selecting or defaulting to Personal Statement. 
 
