@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Up Next**
-    - NEW: Compress transaction grid logic more dynamic to stop regressions when Money Money makes changes.
+    - NEW: Compress transaction grid logic more dynamic to stop regressions when Monarch Money makes changes.
     
 
 * **Version 4.17 (December 1, 2025)**
