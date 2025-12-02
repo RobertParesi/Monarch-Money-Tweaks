@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Up Next**
+    - NEW: Compress transaction grid logic more dynamic to stop regressions when Money Money makes changes.
+    
+
 * **Version 4.17 (December 1, 2025)**
     - NEW: Expanding drill down history transaction shows a new sub-window.
     - FIX: Reports / Trends would show invalid next month (Jan 24 vs Jan 25)
