@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Up Next**
-    - NEW: Compress transaction grid logic more dynamic to stop regressions when Monarch Money makes changes.
+    - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
     - Added "Disclaimer" to software license.
     
 
