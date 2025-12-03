@@ -2,6 +2,7 @@
 
 * **Up Next**
     - NEW: Compress transaction grid logic more dynamic to stop regressions when Monarch Money makes changes.
+    - Added "Disclaimer" to software license.
     
 
 * **Version 4.17 (December 1, 2025)**
