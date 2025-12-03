@@ -5034,16 +5034,16 @@ async function getPortfolio(startDate,endDate,inAccounts) {
 
 async function getPortfolioHolding(startDate,endDate,inAccounts) {
 
-    const accountSums = {};
+    const as = {};
     portfolioData = await getPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
-            const accountId = holding.account.id;
-            const totalValue = holding.value;
-            if (accountSums[accountId]) { accountSums[accountId] += totalValue; } else { accountSums[accountId] = totalValue; }
+            const a = holding.account.id;
+            const t = holding.value;
+            if (as[a]) { as[a] += t; } else { as[a] = t; }
         });
     });
-    return accountSums;
+    return as;
 }
 
 async function getPerformance(startDate,endDate,securityIds) {
@@ -5119,12 +5119,12 @@ function rtnPendingBalance(inData) {
 
 async function rtnNoteTagList() {
     const snapshotData = await getTransactionNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
-    let rv = [], useTag = '';
+    let rv = [], t = '';
     for (let i = 0; i < snapshotData.allTransactions.results.length; i++) {
-        useTag = snapshotData.allTransactions.results[i].notes;
-        if(useTag.startsWith('*')) {
-            useTag = getStringPart(useTag.slice(2).split('\n')[0]);
-            if (!rv.includes(useTag)) {rv.push(useTag); }
+        t = snapshotData.allTransactions.results[i].notes;
+        if(t.startsWith('*')) {
+            t = getStringPart(t.slice(2).split('\n')[0]);
+            if (!rv.includes(t)) {rv.push(t); }
         }
     }
     rv.sort();return rv;
