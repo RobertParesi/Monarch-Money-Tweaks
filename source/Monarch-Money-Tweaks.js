@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.1
+// @version      4.18.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.1';
+const version = '4.18.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -283,7 +283,7 @@ function MF_GridOptions(Num,Options) {
     if(Num == 4) {
         if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
             MTFlexAccountFilter.name = getAccountGroupFilter();
-            MTFlexAccountFilter.filter = getAccountGroupInfo(MTFlexAccountFilter.name,false);
+            MTFlexAccountFilter.filter = getAccountGroupInfo(MTFlexAccountFilter.name);
         }
     }
 }
@@ -302,7 +302,7 @@ function MF_GridDraw(inRedraw) {
 
 function MT_GridDrawDetails() {
     let el = null, elx = null, Header = null, SubHeader = false;
-    let useDesc = '', useStyle = '', useStyle2 = '', useValue = 0, useValue2 = '';
+    let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '';
     let rowVal = 0, rowI = 0, rowsInc = 0, rowIs = MTFlexRow.length -1;
     let Grouptotals = [];
     let FontFamily = getCookie('MT_MonoMT',false);
@@ -333,13 +333,13 @@ function MT_GridDrawDetails() {
         el = cec('tr','MTFlexGridTitleRow',Header,'','',MTFlex.CanvasTitle);
         for (rowI = 0; rowI < MTFlexTitle.length; rowI++) {
             if(MTFlexTitle[rowI].IsHidden != true) {
-                if(MTFlexTitle[rowI].ShowPercent == null && MTFlexTitle[rowI].Format < 1) {useStyle = 'MTFlexGridTitleCell'; } else {useStyle = 'MTFlexGridTitleCell2'; }
+                if(MTFlexTitle[rowI].ShowPercent == null && MTFlexTitle[rowI].Format < 1) {S1 = 'MTFlexGridTitleCell'; } else {S1 = 'MTFlexGridTitleCell2'; }
                 if(MTFlexTitle[rowI].Indicator != null) {
-                    elx = cec('td',useStyle,el,'','','','Column',rowI.toString());
+                    elx = cec('td',S1,el,'','','','Column',rowI.toString());
                     cec('div','MTFlexGridTitleInd',elx,'','','background-color: ' + MTFlexTitle[rowI].Indicator + ';');
-                    cec('div',useStyle,elx,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','display: inline-block; border-bottom: 0px;','Column',rowI.toString());
+                    cec('div',S1,elx,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','display: inline-block; border-bottom: 0px;','Column',rowI.toString());
                 } else {
-                    elx = cec('td',useStyle,el,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','','Column',rowI.toString());
+                    elx = cec('td',S1,el,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','','Column',rowI.toString());
                 }
                 if(MTFlexTitle[rowI].Width != '') {elx.style = 'width: ' + MTFlexTitle[rowI].Width;}
             }
@@ -376,7 +376,7 @@ function MT_GridDrawDetails() {
                 if(useRow.IsHeader) {
                     if(useRow.SummaryOnly) { el = cec('tr','MTFlexGridRow',Header);useDesc = '  ' + useDesc;
                                                    } else { el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);useDesc = ' ' + useDesc;}
-                    useStyle = 'MTFlexGridHCell';
+                    S1 = 'MTFlexGridHCell';
                 } else {
                     if(MTFlex.HideDetails) glo.cecIgnore = true;
                     if(SubHeader == false && MTFlex.Subtotals == true) {
@@ -386,16 +386,16 @@ function MT_GridDrawDetails() {
                         SubHeader = true;
                     }
                     el = cec('tr','MTFlexGridItem',Header,'','',MTFlex.CanvasRow,'MTsection',useRow.Section);
-                    useStyle = 'MTFlexGridDCell';
+                    S1 = 'MTFlexGridDCell';
                     if(useRow.Icon) {useDesc = useRow.Icon + ' ' + useDesc;}
                 }
                 if(MTFlexTitle[0].IsHidden != true) {
                     if(useRow.SKHRef) {
-                        elx = cec('td',useStyle,el,'','',HeaderStyle);
+                        elx = cec('td',S1,el,'','',HeaderStyle);
                         if(useRow.SKlogoUrl) {cec('td','MTFlexImage',elx,'','','background-image: url("' + useRow.SKlogoUrl + '");');}
-                        cec('a',useStyle,elx,useDesc,useRow.SKHRef);
+                        cec('a',S1,elx,useDesc,useRow.SKHRef);
                     } else {
-                        elx = cec('td', useRow.IsHeader ? 'MThRefClass2' : useStyle, el, useDesc,'',HeaderStyle);
+                        elx = cec('td', useRow.IsHeader ? 'MThRefClass2' : S1, el, useDesc,'',HeaderStyle);
                     }
                     if(useRow.IsHeader && MTFlex.SpanHeaderColumns > 0) {elx.setAttribute('colspan',MTFlex.SpanHeaderColumns);}
                 }
@@ -421,7 +421,7 @@ function MT_GridDrawDetails() {
                     }
                     if(MTFlex.SpanHeaderColumns > 0) {elx.setAttribute('colspan',MTFlex.SpanHeaderColumns);}
                 }
-                MTFlex.HideDetails == true ? useStyle = 'MTFlexGridDCell' : useStyle = 'MTFlexGridSCell';
+                MTFlex.HideDetails == true ? S1 = 'MTFlexGridDCell' : S1 = 'MTFlexGridSCell';
             }
             return true;
         }
@@ -429,7 +429,7 @@ function MT_GridDrawDetails() {
         function MT_GridDrawRowDetail() {
             if(useRow.IsHeader == true) {HeaderStyle = css.header;}
             if (useDesc) {if(useDesc.startsWith('')) useDesc = useDesc.slice(2);}
-            useStyle = useStyle + '2';
+            S1 = S1 + '2';
             if (useRow.IsHeader == true || isSubTotal == true) {if(MTFlex.SpanHeaderColumns > 0) {skipColumns = MTFlex.SpanHeaderColumns -1;}}
             for (let j = 1; j < MTFlexTitle.length; j++) {
                 const thisTitle = MTFlexTitle[j];
@@ -441,9 +441,9 @@ function MT_GridDrawDetails() {
                             HeaderStyle = 'border-radius: 0px 10px 10px 0px;' + css.header;
                         }
                     }
-                    useValue = useRow[j];
-                    useValue2 = MT_GetFormattedValue(thisTitle.Format,useValue);
-                    useStyle2 = '';
+                    V1 = useRow[j];
+                    V2 = MT_GetFormattedValue(thisTitle.Format,V1);
+                    S2 = '';
 
                     // Calc Percentages
                     if((thisTitle.ShowPercent != null)) {
@@ -474,30 +474,30 @@ function MT_GridDrawDetails() {
                                     } else {
                                         w1 = MF_GridGetValue(useRow.BasedOn,thisTitle.ShowPercent.Col1);
                                     }
-                                    useValue = useRow[thisTitle.ShowPercent.Col1];
+                                    V1 = useRow[thisTitle.ShowPercent.Col1];
                                 } else {
                                     w1 = MF_GridGetValue(useRow.BasedOn,j);
                                 }
-                                w2 = useValue;
+                                w2 = V1;
                                 break;
                             default:
                                 return;
                         }
                         let pct = MT_GridPercent(w1,w2,thisTitle.ShowPercentShade, thisTitle.ShowPercent.Type == 'Row' ? 1 : 2,useRow.IgnoreShade);
-                        useValue2 = useValue2 + ' ' + pct[0];
-                        useStyle2 = pct[1];
+                        V2 = V2 + ' ' + pct[0];
+                        S2 = pct[1];
                     }
                     if(useRow.IsHeader == true || isSubTotal == true) {
-                        if(thisTitle.IgnoreTotals == true) { useValue = ''; useValue2 = ''; }
+                        if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }
                     }
 
                     // Write Detail
                     if(thisTitle.ShowPercent == null && thisTitle.Format < 1) {
-                        cec('td', isSubTotal ? useStyle : 'MTFlexGridD3Cell', el, useValue2,'',HeaderStyle);
+                        cec('td', isSubTotal ? S1 : 'MTFlexGridD3Cell', el, V2,'',HeaderStyle);
                     } else {
-                        if(useStyle2 == '') { useStyle2 = MT_GridDrawEmbed(useRow.Section,j,useValue,useDesc);}
-                        if(useStyle2) {elx = cec('td',useStyle,el,useValue2,'',useStyle2+HeaderStyle);} else {elx = cec('td',useStyle,el,useValue2,'',HeaderStyle);}
-                        if(useRow[j] != null) { Grouptotals[j-1] += useValue; }
+                        if(S2 == '') { S2 = MT_GridDrawEmbed(useRow.Section,j,V1,useDesc);}
+                        if(S2) {elx = cec('td',S1,el,V2,'',S2+HeaderStyle);} else {elx = cec('td',S1,el,V2,'',HeaderStyle);}
+                        if(useRow[j] != null) { Grouptotals[j-1] += V1; }
                     }
 
                     // Write Cards
@@ -511,7 +511,7 @@ function MT_GridDrawDetails() {
                             if(runCard == true) {
                                 MTP.Col = 1 + (MTFlexCard.length+1);
                                 if(isSubTotal == true || MTFlex.AutoCard.Section == -1) {MTP.Subtitle = useDesc;} else {MTP.Subtitle = MTFlex.AutoCard.Title;}
-                                if(MTFlex.AutoCard.Chop != undefined) {MTP.Title = useValue2.slice(0,MTFlex.AutoCard.Chop);} else {MTP.Title = useValue2;}
+                                if(MTFlex.AutoCard.Chop != undefined) {MTP.Title = V2.slice(0,MTFlex.AutoCard.Chop);} else {MTP.Title = V2;}
                                 if(MTFlex.AutoCard.Split == true) {MTP.Title = MTP.Title.replace(' ','\n');}
                                 if(MTP.Title[0] == '-') {MTP.Style = css.red;} else {MTP.Style = css.green;}
                                 MF_QueueAddCard(MTP);
@@ -965,6 +965,12 @@ function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
 function MF_GridGetValue(inSection,inCol) {
     for (let i = 0; i < MTFlexRow.length; i++) {if(MTFlexRow[i].Section == inSection) {return MTFlexRow[i][inCol];}}
     return 0;
+}
+
+function MF_GridPKUIDs(inPK) {
+    let a = [];
+    for (let i = 0; i < MTFlexRow.length; i++) {if(MTFlexRow[i].PK == inPK) {a.push(MTFlexRow[i].UID);}}
+    return a;
 }
 
 function MF_GridGroupByPK() {
@@ -1897,8 +1903,10 @@ async function MenuReportsAccountsGo() {
                             }
                             MTFlexRow[MTFlexCR][10] = parseFloat(MTFlexRow[MTFlexCR][10].toFixed(2));
                             if(MTFlex.Button2 == 2) {
-                                MTFlexRow[MTFlexCR][11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
-                                MTFlexRow[MTFlexCR][12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
+                                if(portfolioData[MTP.UID] != undefined) {
+                                    MTFlexRow[MTFlexCR][11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
+                                    MTFlexRow[MTFlexCR][12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
+                                }
                             } else {
                                 MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
                                 MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
@@ -2003,6 +2011,7 @@ async function MenuReportsAccountsGo() {
                 case 3:MTP.PK = accountName;break;
                 default:MTP.PK = MTP.BasedOn.toString();
             }
+            MTP.PKTriggerEvent = 'Group|' + MTP.PK;
         }
         return accountName;
     }
@@ -4103,24 +4112,25 @@ function onClickCloseDrawer() {
 
 async function MenuAccountsDrawer(inP) {
 
+    let transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,topDiv = null, topDiv2 = null;
     const p1 = inP[0];
-    const acc = accountsData.accounts[p1];
-    let transQueue = [],incs=0,exps=0,trns=0,tots=0;
-
-    let topDiv = MF_SidePanelOpen(acc.type.group,acc.type.display, null , 'Account Summary',acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
-    if(transData == null) {
-        document.body.style.cursor = "wait";
-        transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
-        document.body.style.cursor = "";
-    }
-
-    let topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
-    MenuDrawerLine(topDiv2,'Current Balance',getDollarValue(acc.displayBalance));
-    let cl = acc.dataProviderCreditLimit;
-    if(acc.limit != null) cl = acc.limit;
-    if(cl) {
-        MenuDrawerLine(topDiv2,'Credit Limit',getDollarValue(cl));
-        MenuDrawerLine(topDiv2,'Credit Remaining',getDollarValue(cl-acc.displayBalance));
+    if(p1 == 'Group') {
+        accts = MF_GridPKUIDs(inP[1]);
+        topDiv = MF_SidePanelOpen('Group',inP[1].display, null , 'Account Summary','(Combined)',inP[1].slice(2));
+        topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
+        MenuDrawerLine(topDiv2,'Current Balance','','MTCurrentBalance');
+    } else {
+        const acc = accountsData.accounts[p1];
+        accts.push(acc.id);
+        topDiv = MF_SidePanelOpen(acc.type.group,acc.type.display, null , 'Account Summary',acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
+        topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
+        MenuDrawerLine(topDiv2,'Current Balance',getDollarValue(acc.displayBalance));
+        let cl = acc.dataProviderCreditLimit;
+        if(acc.limit != null) cl = acc.limit;
+        if(cl) {
+            MenuDrawerLine(topDiv2,'Credit Limit',getDollarValue(cl));
+            MenuDrawerLine(topDiv2,'Credit Remaining',getDollarValue(cl-acc.displayBalance));
+        }
     }
 
     const div = cec('span','',topDiv2,'','','display:flex;float:right;margin-top: 12px;');
@@ -4145,8 +4155,13 @@ async function MenuAccountsDrawer(inP) {
     div2 = cec('div','MTSideDrawerItem',topDiv2);
     cec('span','MTFlexSpacer',div2);
 
+    if(transData == null) {
+        document.body.style.cursor = "wait";
+        transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
+        document.body.style.cursor = "";
+    }
     transData.allTransactions.results.forEach(t => {
-        if(t.account.id == acc.id) {
+        if(accts.includes(t.account.id)) {
             MenuAccountsDrawerUpdate(t.date,t.amount,t.category.group.type);
         }
     });
