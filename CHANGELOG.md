@@ -2,6 +2,7 @@
 
 * **Up Next**
     - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
+    - FIX: Reports / Accounts could fail if you had a manual brokerage account with no holdings in it.
     - Added "Disclaimer" to software license.
     
 
