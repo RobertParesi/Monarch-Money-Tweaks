@@ -1153,7 +1153,6 @@ function MF_DrawChart(inLocation) {
                         if(pd.type.group == 'liability') {useV = -useV;}
                         useY = getDates('s_YMD',thisDate);
                         let x = yAxis.indexOf(useY);
-                        useY = getDates('s_YMD',thisDate);
                         if(x < 0) { xAxis.unshift(useV);yAxis.unshift(useY); } else { xAxis[x] += useV;}
                         if(curCnt == 0) useBal+=useV;
                     }
