@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.5
+// @version      4.18.6
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.5';
+const version = '4.18.6';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -4379,13 +4379,13 @@ function MenuTickerUpdate(inT) {
 
 function MenuDrawerLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
     let div = cec('span','MTSideDrawerItem',inDiv,'','',stl,'id',inId);
-    if(url) { cec('span','MTFlexImage',div,'','','background-image: url("' + url + '");');}
-    cec('span','MTSideDrawerDetails',div,inA,'',url != null ? 'width:450px;' : '');
-    if(ttl) {
-        cecTip('span','MTSideDrawerDetails',div,inB,ttl);
-    } else {
-        div = cec('span','MTSideDrawerDetails',div,inB,'',fStl);
+    let div2 = div;
+    if(url) {
+        div2 = cec('div','',div);
+        cec('span','MTFlexImage',div2,'','','background-image: url("' + url + '");');
     }
+    cec('span','MTSideDrawerDetails',div2,inA);
+    if(ttl) {cecTip('span','MTSideDrawerDetails',div,inB,ttl);} else {div = cec('span','MTSideDrawerDetails',div,inB,'',fStl);}
 }
 
 function MenuDrawerSpacer(inDiv) {
