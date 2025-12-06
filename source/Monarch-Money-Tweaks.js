@@ -1,19 +1,19 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.3
+// @version      4.18.4
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.3';
+const version = '4.18.4';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
-let portfolioData = null, performanceData=null, accountsData = null, transData=null;
+let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
@@ -115,7 +115,7 @@ function MM_Init() {
     addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; font-family: MonarchIcons, sans-serif; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
-    addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
+    addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, sans-serif, "Oracle" !important;' + standardText + ' padding: 8px; }');
@@ -212,7 +212,7 @@ async function MF_GridInit(inName, inDesc) {
 
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-    portfolioData = null; performanceData = null;
+    portfolioData = null; performanceData = null, performanceDataType = null;
     accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
@@ -1106,14 +1106,14 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let topDiv = null, topChart = null, tooltip = null,extendedRange = false;
+    let topDiv = null, topChart = null, tooltip = null,chartExtended = false;
 
     if(inLocation != null) {
         topDiv = document.createElement('div');
         topDiv.className = 'MTChartContainer';
         topDiv.id = 'MTChartCanvas';
         topDiv = inLocation.insertAdjacentElement('afterend', topDiv);
-        topChart = cec('canvas','',topDiv,'','','','id','MTChart');topChart.width = 600; topChart.height = 400;
+        topChart = cec('canvas','',topDiv,'','','','id','MTChart');topChart.width = 678; topChart.height = 400;
         tooltip = cec('div','',topDiv,'','','position: absolute;background: #000000; color: #fff; padding: 4px 8px; border-radius: 4px; pointer-events: none; font-size: 14px; font-weight: 600; display: none;','id','MTChartTip');
     } else {
         topDiv = document.getElementById('MTChartCanvas');
@@ -1125,6 +1125,7 @@ function MF_DrawChart(inLocation) {
     if(!div) return;
     let grpID = div.getAttribute('groupid');
     let grpType = div.getAttribute('grouptype');
+    let grpSubtype = div.getAttribute('groupsubtype');
     const timeLit = getCookie(MTFlex.Name + 'StockSelect',false);
 
     if(MTFlex.Name == 'MTInvestments') drawChartInvestments();
@@ -1133,26 +1134,54 @@ function MF_DrawChart(inLocation) {
     drawChartTips();
 
     function drawChartAccounts() {
-
-        let currentD = getDates('d_Today');
-        let extendedD = getDates('d_Minus1HYear');
-        let useV = 0;
+        let useV = 0, useBal = 0, filterAct = [],lowDate = null;
+        if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
+        let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
+        let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
+        chartExtended = true;
         for (let i = 0; i < performanceData.accounts.length; i++) {
-            if(performanceData.accounts[i].id == grpID) {
-                const recBal = performanceData.accounts[i].recentBalances;
-                const timeNdx = inList(timeLit,['YTD','1Y','2Y','3Y','All'],true) -1;
-                let lowDate = null;
-                if(timeLit != 'All') lowDate = getDates(['d_StartofYear','d_Minus1Year','d_Minus2Years','d_Minus3Years'][timeNdx]);
+            let pd = performanceData.accounts[i];
+            if(filterAct.includes(pd.id)) {
+                let currentD = getDates('d_Today'), extendedD = getDates('d_Minus1HYear');
+                let recBal = pd.recentBalances;
+                let curMonth = getDates('n_CurMonth');
+                let curYear = getDates('n_CurYear');
+                let curDay = getDates('n_CurDay');
+                let curCnt = 0;
+                let thisDate = getDates('d_Today');
+                let useY = '';
                 for (let j = recBal.length - 1; j > -1; j--) {
-                    if(lowDate) {if(currentD < lowDate) break;}
-                    useV = recBal[j];if(grpType == 'liability') {useV = -useV;}
-                    xAxis.unshift(useV);yAxis.unshift(formatQueryDate(currentD));
-                    if(j == 0) {currentD = getDates('d_StartofWeek');
-                    } else {currentD.setDate(currentD.getDate() - 7);}
-                    if(extendedRange == false && currentD < extendedD) {extendedRange = true;}
+                    if(curCnt == 0 || (performanceDataType != 0 || thisDate.getDay() == 0)) {
+                        useV = recBal[j];
+                        if(pd.type.group == 'liability') {useV = -useV;}
+                        useY = getDates('s_YMD',thisDate);
+                        let x = yAxis.indexOf(useY);
+                        useY = getDates('s_YMD',thisDate);
+                        if(x < 0) { xAxis.unshift(useV);yAxis.unshift(useY); } else { xAxis[x] += useV;}
+                        if(curCnt == 0) useBal+=useV;
+                    }
+                    switch(performanceDataType) {
+                        case 0:
+                            thisDate.setDate(thisDate.getDate() - 1);
+                            break;
+                        case 1:
+                            if(curCnt == 0 && thisDate.getDay() != 0) {thisDate = getDates('d_StartofWeek');} else {thisDate.setDate(thisDate.getDate() - 7);}
+                            break;
+                        case 2:
+                            if(curCnt == 0 && thisDate.getDate() != 1) {thisDate = getDates('d_StartofMonth');} else {
+                                curMonth = thisDate.getMonth();
+                                curYear = thisDate.getFullYear();
+                                curMonth -=1;
+                                if (curMonth < 0) {curMonth = 11;thisDate.setFullYear(curYear - 1);}
+                                thisDate.setMonth(curMonth);
+                            }
+                    }
+                    curCnt++;
+                    if(thisDate < timeFrame) break;
                 }
             }
         }
+        updateChartDetail('MTCurrentBalance','',getDollarValue(useBal));
     }
 
     function drawChartInvestments() {
@@ -1311,7 +1340,7 @@ function MF_DrawChart(inLocation) {
 
         // X - All date labels
         let dpMod = 1;
-        if(points.length > 11) { dpMod = Math.ceil(points.length / 11); }
+        if(points.length > 12) { dpMod = Math.ceil(points.length / 12); }
         ctx.fillStyle = standardText; ctx.font = '12px Helvetica';ctx.textAlign = 'center';
         let dpS = 0,firstPass = false;
         yAxis.forEach((d, i) => {
@@ -1322,7 +1351,7 @@ function MF_DrawChart(inLocation) {
                 } else {
                     let x = paddingLeft + ((topChart.width - paddingLeft ) * i) / (yAxis.length - 1);
                     if(i == yAxis.length-1) x-=19;
-                    let dr = extendedRange == true ? getMonthName(d, 4) : d.slice(5,10);
+                     let dr = chartExtended == true ? getMonthName(d, 4) : d.slice(5,10);
                     ctx.fillText(dr, x, topChart.height - 31);
                     dpS=0;firstPass = true;
                 }
@@ -4000,7 +4029,9 @@ async function onClickExpandSidePanelDetail(useTarget) {
 async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
 
     const groupIDs = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
-    let filterType = '',filterAct='';
+    const grouptype = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('grouptype');
+    const groupSubtype = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupsubtype');
+    let filterType = '',filterAct = [];
     let ldR = formatQueryDate(getDates('d_StartofLastMonth'));
     let hdR = formatQueryDate(getDates('d_Today'));
     if(inData[1] != null) {
@@ -4018,7 +4049,7 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
             break;
         default:
             filterType = inData[0];
-            filterAct = groupIDs;
+            if(grouptype == 'Group') {filterAct = MF_GridPKUIDs(groupSubtype);} else {filterAct.push(groupIDs);}
     }
 
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
@@ -4030,15 +4061,15 @@ async function SidePanelDetailTransactions(useTarget,newDiv,inData) {
     td.setAttribute('columnindex','2');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Amount','','','datatype','amount');
     td.setAttribute('columnindex','3');
-
     let rec = null, useDate = null,useAmt = 0,useColor = '';
     for (let j = 0; j < transData.allTransactions.results.length; j++) {
         rec = transData.allTransactions.results[j];
         if(filterType) { if(rec.category.group.type != filterType) continue; }
         if(filterType == '') { if(rec.category.group.type == 'transfer') continue; }
-        if(filterAct) {
-            if(rec.account.id != filterAct) continue;
+        if(filterAct.length > 0) {
+            if(filterAct.includes(rec.account.id) == false) continue;
             if(rec.date < ldR || rec.date > hdR) continue;
+            if(rec.pending == true) continue;
         }
 
         newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
@@ -4116,7 +4147,7 @@ async function MenuAccountsDrawer(inP) {
     const p1 = inP[0];
     if(p1 == 'Group') {
         accts = MF_GridPKUIDs(inP[1]);
-        topDiv = MF_SidePanelOpen('Group',inP[1].display, null , 'Account Summary','(Combined)',inP[1].slice(2));
+        topDiv = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1].slice(2),null);
         topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
         MenuDrawerLine(topDiv2,'Current Balance','','MTCurrentBalance');
     } else {
@@ -4137,11 +4168,11 @@ async function MenuAccountsDrawer(inP) {
     let dSelect = getCookie(MTFlex.Name + 'StockSelect',false),dCurrent = '';
     if(dSelect == '') dSelect = 'YTD';
     for (let s = 0; s < 5; s++) {
-        dCurrent = ['YTD','1Y','2Y','3Y','All'][s];
+        dCurrent = ['1Y','2Y','3Y','4Y','5Y'][s];
         cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent );
     }
 
-    if(performanceData == null) {performanceData = await getAccountsBalance(formatQueryDate(getDates('d_Minus3Years'))); }
+    if(performanceData == null) performanceDataType = await setupAccountBalances();
     MF_DrawChart(div);
 
     topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
@@ -4160,9 +4191,12 @@ async function MenuAccountsDrawer(inP) {
         transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
     }
+
     transData.allTransactions.results.forEach(t => {
         if(accts.includes(t.account.id)) {
-            MenuAccountsDrawerUpdate(t.date,t.amount,t.category.group.type);
+            if(t.pending == false) {
+                MenuAccountsDrawerUpdate(t.date,t.amount,t.category.group.type);
+            }
         }
     });
     transQueue.sort((a, b) => a.date.localeCompare(b.date));
@@ -4256,7 +4290,7 @@ async function MenuTickerDrawer(inP) {
                 dCurrent = ['1W','1M','3M','6M','YTD','1Y'][s];
                 cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent);
             }
-            performanceData = await getPerformance(formatQueryDate(getDates('d_LastYear')),formatQueryDate(getDates('d_Today')),edg.id);
+            performanceData = await getPerformance(formatQueryDate(getDates('d_Minus3Years')),formatQueryDate(getDates('d_Today')),edg.id);
             MF_DrawChart(div);
         } else if (hld[p2].type == 'fixed_income') {
             if(bondInfo[1] != '') {
@@ -4627,6 +4661,12 @@ function getDates(InValue,InDate) {
             d.setFullYear(d.getFullYear() - 1);
             d.setDate(d.getDate() + 1);
             return d;
+        case 'd_Minus367':
+            d.setDate(d.getDate() - 367);
+            return d;
+        case 'd_Minus710':
+            d.setDate(d.getDate() - 710);
+            return d;
         case 'd_Minus1Year':d.setDate(1);d.setFullYear(d.getFullYear() - 1);return d;
         case 'd_Minus1HYear':d.setDate(d.getDate()-548);return d;
         case 'd_Minus2Years':d.setDate(1);d.setFullYear(d.getFullYear() - 2);return d;
@@ -4925,12 +4965,14 @@ function sortTableByColumn(inEvent) {
         const secondRowClassName = 'tr.' + table.childNodes[1].className;
         const rows = Array.from(document.querySelectorAll(secondRowClassName));
         const sortedRows = rows.sort((a, b) => {
-            const aText = a.children[columnIndex].innerText.trim();
-            const bText = b.children[columnIndex].innerText.trim();
-            switch (datatype) {
-                case 'date':return (new Date(aText) - new Date(bText)) * dirModifier;
-                case 'amount':return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
-                default:return aText.localeCompare(bText) * dirModifier;
+            if(a.children[columnIndex] != undefined) {
+                const aText = a.children[columnIndex].innerText.trim();
+                const bText = b.children[columnIndex].innerText.trim();
+                switch (datatype) {
+                    case 'date':return (new Date(aText) - new Date(bText)) * dirModifier;
+                    case 'amount':return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
+                    default:return aText.localeCompare(bText) * dirModifier;
+                }
             }
         });
         rows.forEach(row => row.remove());
@@ -5078,12 +5120,22 @@ async function getDisplayBalanceAtDateData(date) {
     .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getAccountsBalance(startDate) {
-    const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate, },
-         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n recentBalances(startDate: $startDate)}}"});
+async function getAccountsBalances(startDate) {
+    const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
+         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
    return fetch(graphql, options)
     .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getAccountsBalance',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getAccountsBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function setupAccountBalances() {
+
+    performanceData = await getAccountsBalances(formatQueryDate(getDates('d_Minus5Years')));
+    let dt = await getDisplayBalanceAtDateData(formatQueryDate(getDates('d_Minus710')));
+    for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 2;} // month
+    dt = await getDisplayBalanceAtDateData(formatQueryDate(getDates('d_Minus367')));
+    for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 1;} // week
+    return 0; // day
 }
 
 async function getAccountsData(inID) {
