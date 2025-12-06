@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.4
+// @version      4.18.5
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.4';
+const version = '4.18.5';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1138,7 +1138,6 @@ function MF_DrawChart(inLocation) {
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
-        chartExtended = true;
         for (let i = 0; i < performanceData.accounts.length; i++) {
             let pd = performanceData.accounts[i];
             if(filterAct.includes(pd.id)) {
@@ -1351,7 +1350,7 @@ function MF_DrawChart(inLocation) {
                 } else {
                     let x = paddingLeft + ((topChart.width - paddingLeft ) * i) / (yAxis.length - 1);
                     if(i == yAxis.length-1) x-=19;
-                     let dr = chartExtended == true ? getMonthName(d, 4) : d.slice(5,10);
+                     let dr = performanceDataType > 0 ? getMonthName(d, 4) : d.slice(5,10);
                     ctx.fillText(dr, x, topChart.height - 31);
                     dpS=0;firstPass = true;
                 }
