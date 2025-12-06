@@ -212,7 +212,7 @@ async function MF_GridInit(inName, inDesc) {
 
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-    portfolioData = null; performanceData = null, performanceDataType = null;
+    portfolioData = null; performanceData = null; performanceDataType = null;
     accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
