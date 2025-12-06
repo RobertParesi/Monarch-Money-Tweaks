@@ -1106,7 +1106,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let topDiv = null, topChart = null, tooltip = null,chartExtended = false;
+    let topDiv = null, topChart = null, tooltip = null;
 
     if(inLocation != null) {
         topDiv = document.createElement('div');
@@ -1134,18 +1134,16 @@ function MF_DrawChart(inLocation) {
     drawChartTips();
 
     function drawChartAccounts() {
-        let useV = 0, useBal = 0, filterAct = [],lowDate = null;
+        let useV = 0, useBal = 0, filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
         for (let i = 0; i < performanceData.accounts.length; i++) {
             let pd = performanceData.accounts[i];
             if(filterAct.includes(pd.id)) {
-                let currentD = getDates('d_Today'), extendedD = getDates('d_Minus1HYear');
                 let recBal = pd.recentBalances;
                 let curMonth = getDates('n_CurMonth');
                 let curYear = getDates('n_CurYear');
-                let curDay = getDates('n_CurDay');
                 let curCnt = 0;
                 let thisDate = getDates('d_Today');
                 let useY = '';
