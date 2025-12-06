@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.6
+// @version      4.18.7
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.6';
+const version = '4.18.7';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1134,7 +1134,7 @@ function MF_DrawChart(inLocation) {
     drawChartTips();
 
     function drawChartAccounts() {
-        let useV = 0, useBal = 0, filterAct = [];
+        let useV = 0, useBal = 0, useActs = '', filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
@@ -1144,9 +1144,8 @@ function MF_DrawChart(inLocation) {
                 let recBal = pd.recentBalances;
                 let curMonth = getDates('n_CurMonth');
                 let curYear = getDates('n_CurYear');
-                let curCnt = 0;
                 let thisDate = getDates('d_Today');
-                let useY = '';
+                let curCnt = 0, useY = '';
                 for (let j = recBal.length - 1; j > -1; j--) {
                     if(curCnt == 0 || (performanceDataType != 0 || thisDate.getDay() == 0)) {
                         useV = recBal[j];
@@ -1154,7 +1153,7 @@ function MF_DrawChart(inLocation) {
                         useY = getDates('s_YMD',thisDate);
                         let x = yAxis.indexOf(useY);
                         if(x < 0) { xAxis.unshift(useV);yAxis.unshift(useY); } else { xAxis[x] += useV;}
-                        if(curCnt == 0) useBal+=useV;
+                        if(curCnt == 0) {useBal+=useV; useActs += pd.name + '\n';}
                     }
                     switch(performanceDataType) {
                         case 0:
@@ -1177,7 +1176,7 @@ function MF_DrawChart(inLocation) {
                 }
             }
         }
-        updateChartDetail('MTCurrentBalance','',getDollarValue(useBal));
+        updateChartDetail('MTCurrentBalance','',getDollarValue(useBal),null,useActs);
     }
 
     function drawChartInvestments() {
@@ -3124,15 +3123,16 @@ function MenuTrendsHistoryDraw() {
 function MenuTrendsHistoryExport() {
 
     const c = ',';
+    const lc = MTFlex.Name == 'MTAccounts' ? 'Transfers' : 'Average';
     let csvContent = '',j = 0,Cols = 0;
     const spans = document.querySelectorAll('span.MTSideDrawerDetail,span.MTSideDrawerDetailS,span.MTSideDrawerSummaryTag' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
     spans.forEach(span => {
         j=j+1;
-        if(Cols == 0) { if(span.innerText.startsWith('Average')) { Cols = j;}}
+        if(Cols == 0) { if(span.innerText.startsWith(lc)) { Cols = j;}}
         csvContent = csvContent + getCleanValue(span.innerText,2);
         if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + c;}
     });
-    downloadFile('Monarch Trends History ' + getDates('s_FullDate'),csvContent);
+    downloadFile('Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'),csvContent);
 }
 
 // [ Budgets ]
@@ -4222,7 +4222,7 @@ async function MenuAccountsDrawer(inP) {
     cec('span','MTSideDrawerDetail3',div2);
     cec('span','MTSideDrawerDetail',div2,getDollarValue(trns));
     div2 = cec('span','MTSideDrawerHeader',topDiv);
-    cec('button','MTInputButton',div2,'Close','','float:right;');
+    cec('div','MTPanelLink',div2,'Download CSV','','padding: 0px; display:block; text-align:center;');
 
     function MenuAccountsDrawerUpdate(inDate,inAmt,inType) {
         let ud = inDate.substring(0, 7);
