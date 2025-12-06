@@ -3,11 +3,11 @@
 * **Up Next**
     - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
     - NEW: Reports / Accounts can now combine, display and graph group of accounts (ie: Credit Cards, Investments, etc.)
-    - FIX: Reports / Accounts side drawer chart regression with bad data.
+    - NEW: Reports / Accounts side drawer summary data can be exported.
+    - FIX: Reports / Accounts side drawer chart plotting rewrite / correction.
     - FIX: Reports / Accounts could fail if you had a manual brokerage account with no holdings in it.
     - Added "Disclaimer" to software license.
     
-
 * **Version 4.17 (December 1, 2025)**
     - NEW: Expanding drill down history transaction shows a new sub-window.
     - FIX: Reports / Trends would show invalid next month (Jan 24 vs Jan 25)
