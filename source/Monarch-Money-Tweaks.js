@@ -1784,22 +1784,24 @@ async function MenuReportsAccountsGo() {
             let used = false;
             if(useEOM == true) {workDate = getDates('d_EndofMonth',useDate);} else {workDate = useDate;}
             snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(workDate));
-            for (let j = 0; j < snapshotData3.accounts.length; j++) {
-                MF_GridUpdateUID(snapshotData3.accounts[j].id,i+4,snapshotData3.accounts[j].displayBalance,false);
-                if(snapshotData3.accounts[j].displayBalance != null) {used = true;}
-            }
-            if(MTFlex.Button2 == 6) {
-                if(used == false) {MTFlexTitle[i+4].IsHidden = true;}
-                CurMonth+=3;
-                if(CurMonth > 11) {CurMonth=0;CurYear++;}
-                useDate.setFullYear(CurYear,CurMonth,1);
-            } else {
-                CurMonth++;
-                if(CurMonth == 12) {
-                    CurMonth=0;
-                    useDate.setFullYear(useDate.getFullYear() + 1);
+            if(snapshotData3) {
+                for (let j = 0; j < snapshotData3.accounts.length; j++) {
+                    MF_GridUpdateUID(snapshotData3.accounts[j].id,i+4,snapshotData3.accounts[j].displayBalance,false);
+                    if(snapshotData3.accounts[j].displayBalance != null) {used = true;}
                 }
-                useDate.setMonth(CurMonth);
+                if(MTFlex.Button2 == 6) {
+                    if(used == false) {MTFlexTitle[i+4].IsHidden = true;}
+                    CurMonth+=3;
+                    if(CurMonth > 11) {CurMonth=0;CurYear++;}
+                    useDate.setFullYear(CurYear,CurMonth,1);
+                } else {
+                    CurMonth++;
+                    if(CurMonth == 12) {
+                        CurMonth=0;
+                        useDate.setFullYear(useDate.getFullYear() + 1);
+                    }
+                    useDate.setMonth(CurMonth);
+                }
             }
         }
         if(MTFlex.Button2 == 5 && CurMonth == 0) {MTFlexTitle[4].IsHidden = false;}
@@ -3179,15 +3181,16 @@ async function MenuPlanRefresh() {
     let noBudget=true;
     let snapshotData = await getAccountsData();
     let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
-
-    for (let i = 0; i < snapshotData.accounts.length; i++) {
-        if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
-            if(snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'checking') {
-                bCK+=Number(snapshotData.accounts[i].displayBalance);
-            } else if (snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'savings') {
-                bSV+=Number(snapshotData.accounts[i].displayBalance);
-            } else if (snapshotData.accounts[i].isAsset == false && snapshotData.accounts[i].subtype.name == 'credit_card') {
-                bCC+=Number(snapshotData.accounts[i].displayBalance);
+    if(snapshotData) {
+        for (let i = 0; i < snapshotData.accounts.length; i++) {
+            if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
+                if(snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'checking') {
+                    bCK+=Number(snapshotData.accounts[i].displayBalance);
+                } else if (snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'savings') {
+                    bSV+=Number(snapshotData.accounts[i].displayBalance);
+                } else if (snapshotData.accounts[i].isAsset == false && snapshotData.accounts[i].subtype.name == 'credit_card') {
+                    bCC+=Number(snapshotData.accounts[i].displayBalance);
+                }
             }
         }
     }
@@ -3770,6 +3773,7 @@ window.onclick = function(event) {
                 if(event.target.innerText.trim() == 'Split') { glo.spawnProcess = 7;}
                 break;
             case 'MTGeneralLink':
+                onClickMTDropdownRelease();
                 cn = event.target.getAttribute('link').split('|');
                 onClickOpenWindow(cn);return;
             case 'MTWindowButton':
@@ -3805,6 +3809,7 @@ window.onclick = function(event) {
             case 'MTSettingsButton':
                 onClickMTSettings();return;
             case 'MTFlexBig':
+                onClickMTDropdownRelease();
                 onClickMTFlexBig();return;
             case 'MThRefClass2':
                 onClickMTFlexExpand(0);return;
