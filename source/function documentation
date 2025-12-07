@@ -1,32 +1,59 @@
-1. **addStyle**: `aCss`
-2. **cec**: `e`, `c`, `p`, `it`, `hr`, `st`, `a1`, `a2`, `isAfter`
-3. **cecTip**: `e`, `c`, `p`, `it`, `tip`
-4. **daysBetween**: `date1`, `date2`, `asLit`
-5. **daysInMonth**: `iMonth`, `iYear`
-6. **flipCookie**: `inCookie`, `spin`
-7. **formatQueryDate**: `date`
-8. **getAccountGroupFilter**: None
-9. **getAccountGroupInfo**: `inName`
-10. **getAccountSubGroupInfo**: `inId`, `inName`
-11. **getAccountsData**: `inID`
-12. **getCategoryData**: None
-13. **getCleanValue**: `inValue`, `inDec`
-14. **getDates**: `InValue`, `InDate`
-15. **getDollarValue**: `InValue`, `ignoreCents`
-16. **getGraphqlToken**: None
-17. **getInvestmentPK**: `inIns`, `inAcc`, `inSub`, `inType`
-18. **getPortfolio**: `startDate`, `endDate`, `inAccounts`
-19. **getTransactions**: `startDate`, `endDate`, `offset`, `isPending`, `inAccounts`, `inHideReports`, `inNotes`, `inGoals`, `inCat`
-20. **isDarkMode**: None
-21. **MM_FixCalendarDropdown**: `calItems`
-22. **MM_FixCalendarYears**: None
-23. **MM_GridDraw**: `inRedraw`
-24. **MM_hideElement**: `qList`, `InValue`, `inStartsWith`
-25. **MenuAccountsDrawer**: `inP`
-26. **MenuDashboardAccounts**: `OnFocus`
-27. **MenuReports**: `OnFocus`
-28. **replaceBetweenWith**: `InValue`, `InStart`, `InEnd`, `InReplaceWith`
-29. **rtnCategoryGroup**: `InId`
-30. **rtnCategoryGroupList**: `InId`, `InType`, `InAsArray`
-31. **setupAccountBalances**: None
-32. **uploadfileSettings**: None
+**Functions and Parameters:**
+
+**addStyle**: `aCss`  
+**cec**: `e`, `c`, `p`, `it`, `hr`, `st`, `a1`, `a2`, `isAfter`  
+**cecTip**: `e`, `c`, `p`, `it`, `tip`  
+**daysBetween**: `date1`, `date2`, `asLit`  
+**daysInMonth**: `iMonth`, `iYear`  
+**flipCookie**: `inCookie`, `spin`  
+**formatQueryDate**: `date`  
+**getAccountGroupFilter**: None  
+**getAccountGroupInfo**: `inName`  
+**getAccountSubGroupInfo**: `inId`, `inName`  
+**getAccountsData**: `inID`  
+**getCategoryData**: None  
+**getCleanValue**: `inValue`, `inDec`  
+**getDates**: `InValue`, `InDate`  
+**getDollarValue**: `InValue`, `ignoreCents`  
+**getGraphqlToken**: None  
+**getInvestmentPK**: `inIns`, `inAcc`, `inSub`, `inType`  
+**getPortfolio**: `startDate`, `endDate`, `inAccounts`  
+**getTransactions**: `startDate`, `endDate`, `offset`, `isPending`, `inAccounts`, `inHideReports`, `inNotes`, `inGoals`, `inCat`  
+**getTransactionNotes**: `startDate`, `endDate`  
+**isDarkMode**: None  
+**MM_FixCalendarDropdown**: `calItems`  
+**MM_FixCalendarYears**: None  
+**MM_GridDraw**: `inRedraw`  
+**MM_hideElement**: `qList`, `InValue`, `inStartsWith`  
+**MM_MenuFix**: None  
+**MM_ModelWindowOpen**: `t`, `d`, `b`  
+**MenuAccountsDrawer**: `inP`  
+**MenuDashboardAccounts**: `OnFocus`  
+**MenuReports**: `OnFocus`  
+**replaceBetweenWith**: `InValue`, `InStart`, `InEnd`, `InReplaceWith`  
+**rtnCategoryGroup**: `InId`  
+**rtnCategoryGroupList**: `InId`, `InType`, `InAsArray`  
+**setupAccountBalances**: None  
+**uploadfileSettings**: None  
+**MenuPlanRefresh**: None  
+**MenuTickerDrawer**: `inP`  
+**onClickCloseDrawer**: None  
+**onClickMTSettings**: None  
+**onClickExpandSidePanelDetail**: `useTarget`  
+**onClickGridSort**: None  
+**onClickMTFlexExpand**: `inAll`  
+**MF_GridUpdateUID**: `inUID`, `inCol`, `inValue`, `addMissing`, `increment`  
+**MenuReportsTrendsGo**: None  
+**MenuReportsAccountsGoStd**: None  
+**MenuDrawerLine**: `inDiv`, `inA`, `inB`, `inId`, `stl`, `url`, `ttl`, `fStl`  
+**MenuDrawerSpacer**: `inDiv`  
+**onClickContainer**: None  
+**onClickNoteTagButton**: None  
+**onClickNoteTagDropdown**: None  
+**MenuHistoryDrawer**: `inType`, `inID`  
+**MenuTrendsHistoryExport**: None  
+**WriteCompareData**: None  
+**WriteByMonthData**: None  
+**BuildTrendData**: `inCol`, `inGrouping`, `inPeriod`, `lowerDate`, `higherDate`, `inID`, `inAccounts`  
+**Trend_UpdateQueue**: `useID`, `useAmount`, `inCol`  
+**MenuPlanBudgetReorder**: None  
