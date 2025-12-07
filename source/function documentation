@@ -1,0 +1,32 @@
+1. **addStyle**: `aCss`
+2. **cec**: `e`, `c`, `p`, `it`, `hr`, `st`, `a1`, `a2`, `isAfter`
+3. **cecTip**: `e`, `c`, `p`, `it`, `tip`
+4. **daysBetween**: `date1`, `date2`, `asLit`
+5. **daysInMonth**: `iMonth`, `iYear`
+6. **flipCookie**: `inCookie`, `spin`
+7. **formatQueryDate**: `date`
+8. **getAccountGroupFilter**: None
+9. **getAccountGroupInfo**: `inName`
+10. **getAccountSubGroupInfo**: `inId`, `inName`
+11. **getAccountsData**: `inID`
+12. **getCategoryData**: None
+13. **getCleanValue**: `inValue`, `inDec`
+14. **getDates**: `InValue`, `InDate`
+15. **getDollarValue**: `InValue`, `ignoreCents`
+16. **getGraphqlToken**: None
+17. **getInvestmentPK**: `inIns`, `inAcc`, `inSub`, `inType`
+18. **getPortfolio**: `startDate`, `endDate`, `inAccounts`
+19. **getTransactions**: `startDate`, `endDate`, `offset`, `isPending`, `inAccounts`, `inHideReports`, `inNotes`, `inGoals`, `inCat`
+20. **isDarkMode**: None
+21. **MM_FixCalendarDropdown**: `calItems`
+22. **MM_FixCalendarYears**: None
+23. **MM_GridDraw**: `inRedraw`
+24. **MM_hideElement**: `qList`, `InValue`, `inStartsWith`
+25. **MenuAccountsDrawer**: `inP`
+26. **MenuDashboardAccounts**: `OnFocus`
+27. **MenuReports**: `OnFocus`
+28. **replaceBetweenWith**: `InValue`, `InStart`, `InEnd`, `InReplaceWith`
+29. **rtnCategoryGroup**: `InId`
+30. **rtnCategoryGroupList**: `InId`, `InType`, `InAsArray`
+31. **setupAccountBalances**: None
+32. **uploadfileSettings**: None
