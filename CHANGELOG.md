@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.18 (Firefox Pre-release)**
+* **Version 4.18-4.19 (Firefox Pre-release)**
     - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
     - NEW: Reports / Accounts can now combine, display and graph group of accounts (ie: Credit Cards, Investments, etc.)
     - NEW: Reports / Accounts side drawer summary data can be exported.
