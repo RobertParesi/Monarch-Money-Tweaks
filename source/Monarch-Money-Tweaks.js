@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.9
+// @version      4.18
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.9';
+const version = '4.18';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1142,7 +1142,7 @@ function MF_DrawChart(inLocation) {
     function drawChartAccounts() {
         let useV = 0, useBal = 0, filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
-        let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
+        let timeNdx = inList(timeLit,['1Y','2Y'],true) -1;
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
         for (let i = 0; i < performanceData.accounts.length; i++) {
             let pd = performanceData.accounts[i];
@@ -4179,7 +4179,7 @@ async function MenuAccountsDrawer(inP) {
     const p1 = inP[0];
     if(p1 == 'Group') {
         accts = MF_GridPKUIDs(inP[1]);
-        topDiv = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1],'!CombinedAccounts|' + inP[1]);
+        topDiv = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1].slice(2),'!CombinedAccounts|' + inP[1]);
         topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
         MenuDrawerLine(topDiv2,'Current Balance','','MTCurrentBalance');
     } else {
@@ -4199,8 +4199,8 @@ async function MenuAccountsDrawer(inP) {
     const div = cec('span','',topDiv2,'','','display:flex;float:right;margin-top: 12px;');
     let dSelect = getCookie(MTFlex.Name + 'StockSelect',false),dCurrent = '';
     if(dSelect == '') dSelect = 'YTD';
-    for (let s = 0; s < 5; s++) {
-        dCurrent = ['1Y','2Y','3Y','4Y','5Y'][s];
+    for (let s = 0; s < 2; s++) {
+        dCurrent = ['1Y','2Y'][s];
         cec('span',dSelect == dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect',div,dCurrent );
     }
 
