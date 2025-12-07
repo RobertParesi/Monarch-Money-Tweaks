@@ -4,6 +4,7 @@
     - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
     - NEW: Reports / Accounts can now combine, display and graph group of accounts (ie: Credit Cards, Investments, etc.)
     - NEW: Reports / Accounts side drawer summary data can be exported.
+    - NEW: Reports / Accounts has new setting to select all accounts regardless of activity or no balance.
     - FIX: Reports / Accounts side drawer chart data rewrite.
     - FIX: Reports / Accounts could fail if you had a manual brokerage account with no holdings in it.
     - Added "Disclaimer" to software license.
