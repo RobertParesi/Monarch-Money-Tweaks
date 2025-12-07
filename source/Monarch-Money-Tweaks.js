@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.18.8
+// @version      4.18.9
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.18.8';
+const version = '4.18.9';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -897,13 +897,13 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
         cec('div','MTFlexSmall',div, inSmall,'','float:right;');
         if(inLogo) {cec('div','MTFlexImage',div,'','','margin-right: 7px;margin-top: 2px;background-image: url("' + inLogo + '");');}
         if(inURL) {
-            if(inURL.startsWith('#')) {
+            if(inURL.startsWith('!')) {
                 cec('a','MTGeneralLink',div,inURLText,'','','link',inURL);
             } else {
                 cec('a','MTFlexGridDCell',div,inURLText,inURL,'','target','_blank');
             }
-            return div4;
         }
+        return div4;
     }
 }
 
@@ -1140,7 +1140,7 @@ function MF_DrawChart(inLocation) {
     drawChartTips();
 
     function drawChartAccounts() {
-        let useV = 0, useBal = 0, useActs = '', filterAct = [];
+        let useV = 0, useBal = 0, filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeNdx = inList(timeLit,['1Y','2Y','3Y','4Y','5Y'],true) -1;
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][timeNdx]);
@@ -1161,7 +1161,7 @@ function MF_DrawChart(inLocation) {
                         useY = getDates('s_YMD',thisDate);
                         let x = yAxis.indexOf(useY);
                         if(x < 0) { xAxis.unshift(useV);yAxis.unshift(useY); } else { xAxis[x] += useV;}
-                        if(curCnt == 0) {useBal+=useV; useActs += pd.name + '\n';}
+                        if(curCnt == 0) {useBal+=useV;}
                     }
                     switch(performanceDataType) {
                         case 0:
@@ -1184,7 +1184,7 @@ function MF_DrawChart(inLocation) {
                 }
             }
         }
-        updateChartDetail('MTCurrentBalance','',getDollarValue(useBal),null,useActs);
+        updateChartDetail('MTCurrentBalance','',getDollarValue(useBal));
     }
 
     function drawChartInvestments() {
@@ -1713,6 +1713,7 @@ async function MenuReportsAccountsGo() {
     }
     let skipHidden = getCookie('MT_AccountsHidden',true);
     let skipHidden2 = getCookie('MT_AccountsHidden2',true);
+    let skipHidden3 = getCookie('MT_AccountsHidden3',true);
     let AccountGroupFilter = getAccountGroupFilter();
     let snapshotData5 = null;
     if(MTFlex.Button2 > 2) {await MenuReportsAccountsGoExt();} else {await MenuReportsAccountsGoStd();}
@@ -1747,7 +1748,7 @@ async function MenuReportsAccountsGo() {
                 CurMonth++; if(CurMonth == 12) {CurMonth = 0;}
             }
         }
-        MTFlex.RequiredCols = [4,5,6,7,8,9,10,11,12,13,14,15,16];
+        if(skipHidden3 == 0) MTFlex.RequiredCols = [4,5,6,7,8,9,10,11,12,13,14,15,16];
         MTP.IsHidden = false;
         MF_QueueAddTitle(16,getDates('s_ShortDate',MTFlexDate2),MTP);
         MF_QueueAddTitle(17,'Avg',MTP);
@@ -1834,7 +1835,7 @@ async function MenuReportsAccountsGo() {
         } else {
             MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
             MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
-            MTFlex.RequiredCols = [5,9,11,12];
+            if(skipHidden3 == 0) MTFlex.RequiredCols = [5,9,11,12];
         }
 
         if(getCookie('MT_AccountsHideUpdated',true) == 1) {MTP.IsHidden = true;}
@@ -1891,16 +1892,16 @@ async function MenuReportsAccountsGo() {
                 aSelected = true;
                 if(ad.hideFromList == false || skipHidden == 0) {
                     if(ad.includeInNetWorth == true || skipHidden2 == 0) {
-                        MTP = [];
-                        MTP.IsHeader = false;
-                        MTP.UID = ad.id;
-                        MTP.SKTriggerEvent = i;
                         if(isToday == true) { useBalance = Number(ad.displayBalance);
-                        } else { useBalance = getAccountPrevBalance(MTP.UID); }
+                        } else { useBalance = getAccountPrevBalance(ad.id); }
                         if(useBalance == null) {useBalance = 0;}
-                        pastBalance = getAccountBalance(MTP.UID);
+                        pastBalance = getAccountBalance(ad.id);
                         if(pastBalance == null) {pastBalance = 0;}
                         if(MTFlex.Button2 == 1 || useBalance !=0 || pastBalance != 0 || getAccountUsed(MTP.UID) == true ) {
+                            MTP = [];
+                            MTP.IsHeader = false;
+                            MTP.UID = ad.id;
+                            MTP.SKTriggerEvent = i;
                             useSubType = getCookie('MTAccountsSub:' + ad.id,false);
                             if(!useSubType) {useSubType = ad.subtype.display;}
                             let accountName = getAccountPrimaryKey(ad.isAsset,ad.type.display,useSubType,ad.logoUrl);
@@ -1987,6 +1988,7 @@ async function MenuReportsAccountsGo() {
         }
 
         function getAccountUsed(inId) {
+            if(skipHidden2 == 1) return true;
             for (let k = 0; k < transData.allTransactions.results.length; k++) {
                 if(transData.allTransactions.results[k].account.id == inId) { return true; }
             }
@@ -3557,6 +3559,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
     MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
     MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
+    MenuDisplay_Input('Show all accounts, regardless of activity and no balance','MT_AccountsHidden3','checkbox');
     MenuDisplay_Input('Hide Last Updated column','MT_AccountsHideUpdated','checkbox');
     MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
     MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
@@ -3918,7 +3921,24 @@ window.onclick = function(event) {
 };
 
 function onClickOpenWindow(cn) {
-    if(cn[0] = 'transdata') {
+    if(cn[0] == '!CombinedAccounts') {
+        let d = [], p = [], rrn = cn[1],tot=0;
+        p = MF_GridPKUIDs(rrn);
+        d.push({field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
+        p.forEach(item => {
+            for (let i = 0; i < accountsData.accounts.length; i ++) {
+                let ad = accountsData.accounts[i];
+                if(ad.id == item) {
+                    d.push({field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance), style2: ''});
+                    tot+=ad.displayBalance;
+                    break;
+                }
+            }
+        });
+        d.push({field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;'});
+        MF_ModelWindowOpen({width: 480, name: cn[0], id: rrn},d,[]);
+    };
+    if(cn[0] == 'transdata') {
         let d = [], b = [], rrn = cn[1];
         let t = transData.allTransactions.results[rrn];
         let useAmt = t.amount, useLit = 'Amount', useColor = '';
@@ -3929,6 +3949,7 @@ function onClickOpenWindow(cn) {
             if(useAmt < 0) useColor = css.red;
         }
         d.push({field1: useLit, style1: '', field2: getDollarValue(useAmt), style2: useColor});
+        if(t.pending == true) {d.push({field1: 'Status', style1: '', field2: 'Pending', style2: ''});}
         d.push({field1: 'Account', style1: '', field2: t.account.name, style2: ''});
         d.push({field1: 'Merchant', style1: '', field2: t.merchant.name, style2: ''});
         d.push({field1: 'Date', style1: '', field2: getMonthName(t.date,2), style2: ''});
@@ -3939,7 +3960,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Tags', style1: '', field2: t.tags.length == 0 ? '(None)' : getTags(t.tags), style2: ''});
         d.push({field1: t.notes, style1: '', field2: null, style2: ''});
         b.push({name: 'Edit', id: 'TransEdit'});
-        MF_ModelWindowOpen({width: 480, name: 'TransDetail', id: t.id},d,b);
+        MF_ModelWindowOpen({width: 480, name: cn[0], id: t.id},d,b);
     }
 }
 function getTags(tags) {
@@ -4153,7 +4174,7 @@ async function MenuAccountsDrawer(inP) {
     const p1 = inP[0];
     if(p1 == 'Group') {
         accts = MF_GridPKUIDs(inP[1]);
-        topDiv = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1],'#CombinedAccounts|' + inP[1]);
+        topDiv = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1],'!CombinedAccounts|' + inP[1]);
         topDiv2 = cec('div','MTSideDrawerHeader',topDiv);
         MenuDrawerLine(topDiv2,'Current Balance','','MTCurrentBalance');
     } else {
@@ -4591,6 +4612,7 @@ function addStyle(aCss) {
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra])
 function cec(e, c, p, it, hr, st, a1, a2,isAfter) {
     if(glo.cecIgnore == true) return;
+    if(!p) alert('Invalid Cec');
     const div = document.createElement(e);
     if (c) div.className = c;
     if (it) div.innerText = it;
