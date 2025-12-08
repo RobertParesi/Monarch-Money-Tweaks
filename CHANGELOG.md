@@ -8,6 +8,7 @@
     - NEW: Reports / Accounts has new "All Years" report.
     - FIX: Reports / Accounts side drawer chart data rewrite.
     - FIX: Reports / Accounts could fail if you had a manual brokerage account with no holdings in it.
+    - FIX: Exporting fields with commas would export incorrectly.
     - Added "Disclaimer" to software license.
     
 * **Version 4.17 (December 1, 2025)**
