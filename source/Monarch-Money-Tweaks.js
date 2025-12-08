@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.1
+// @version      4.20.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.1';
+const version = '4.20.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -561,7 +561,7 @@ function MT_GetFormattedValue(inType,inValue,inRaw = false) {
             if(inValue != null) {v = inRaw == true ? inValue.toFixed(2) : inValue.toLocaleString('en-US') + '%';}
             break;
     }
-    if(inRaw == true && v == null) v = '';
+    if(inRaw == true) {if(v == null) v = '';}
     return v;
 }
 
@@ -737,6 +737,7 @@ function MT_GridExport() {
                     if(MTFlex.Subtotals == true && j == 0) {
                         if(MTFlexRow[i].IsHeader == false) { csvContent += MTFlexRow[i].PK.slice(MTFlex.PKSlice) + c; }
                     }
+                    if(v.includes(',')) v = '"' + v + '"';
                     csvContent += v + c;
                     if(MTFlex.Subtotals == true && j == 0) {
                         if(MTFlexRow[i].IsHeader == true) { csvContent += ' ' + c; }
