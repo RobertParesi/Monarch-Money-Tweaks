@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.19
+// @version      4.20.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.19';
+const version = '4.20.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -3065,6 +3065,15 @@ async function AccountsDrawer(inP) {
     MF_DrawChart(div);
 
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
+
+    if(transData == null) {
+        let divWait = cec('div','MTWait MTWait2 p',divTop2,'Please Wait\n\n Gathering summary data ...','','width: 350px;text-align: center;');
+        document.body.style.cursor = "wait";
+        transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
+        document.body.style.cursor = "";
+        divWait.remove();
+    }
+
     let div2 = cec('div','MTSideDrawerItem',divTop2,'','','font-weight: 600;text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,'Income');
@@ -3074,12 +3083,6 @@ async function AccountsDrawer(inP) {
     cec('span','MTSideDrawerDetail',div2,'Transfers');
     div2 = cec('div','MTSideDrawerItem',divTop2);
     cec('span','MTFlexSpacer',div2);
-
-    if(transData == null) {
-        document.body.style.cursor = "wait";
-        transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
-        document.body.style.cursor = "";
-    }
 
     transData.allTransactions.results.forEach(t => {
         if(accts.includes(t.account.id)) {
@@ -4659,11 +4662,11 @@ function getDates(InValue,InDate) {
             d.setFullYear(d.getFullYear() - 1);
             d.setDate(d.getDate() + 1);
             return d;
-        case 'd_Minus367':
-            d.setDate(d.getDate() - 367);
+        case 'd_MinusByDay':
+            d.setDate(d.getDate() - 366);
             return d;
-        case 'd_Minus710':
-            d.setDate(d.getDate() - 710);
+        case 'd_MinusByWeek':
+            d.setDate(d.getDate() - 731);
             return d;
         case 'd_Minus1Year':d.setDate(1);d.setFullYear(d.getFullYear() - 1);return d;
         case 'd_Minus1HYear':d.setDate(d.getDate()-548);return d;
@@ -5152,9 +5155,9 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
 
 async function buildAccountBalances() {
     performanceData = await dataAccountBalances(formatQueryDate(getDates('d_Minus5Years')));
-    let dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_Minus710')));
+    let dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_MinusByWeek')));
     for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 2;} // month
-    dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_Minus367')));
+    dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_MinusByDay')));
     for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 1;} // week
     return 0; // day
 }
