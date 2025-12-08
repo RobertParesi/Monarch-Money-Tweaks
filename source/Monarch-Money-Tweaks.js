@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.19.1
+// @version      4.19.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.19.1';
+const version = '4.19.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -40,18 +40,14 @@ function MM_Init() {
     const bdrb2 = 'border-bottom: 1px solid ' + ['#e4e1de;','#363532;'][a];
     const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;';
 
-    css.header = getCookie('MT_ColorHigh',false);
-    css.subtotal = getCookie('MT_ColorLow',false);
+    css.header = getCookie('MT_ColorHigh',false);css.subtotal = getCookie('MT_ColorLow',false);
 
     if(css.header == '') {css.header = ['#e6e4e0','rgb(68,68,68)'][a];}
     if(css.subtotal == '') {css.subtotal = ['#f9f6f3','rgb(48,48,48)'][a];}
-    css.header = 'background-color:' + css.header + ';';
-    css.subtotal = 'background-color:' + css.subtotal + ';';
+    css.header = 'background-color:' + css.header + ';';css.subtotal = 'background-color:' + css.subtotal + ';';
 
-    css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';
-    css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';
-    css.greenRaw = ['#2a7e3b','#3dd68c'][a];
-    css.redRaw = ['#d8543a','#f9918e'][a];
+    css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';css.greenRaw = ['#2a7e3b','#3dd68c'][a];
+    css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';css.redRaw = ['#d8543a','#f9918e'][a];
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
@@ -167,7 +163,7 @@ function MM_MenuFix() {
 
 function MM_RefreshAll() {
     if (getCookie('MT:LastRefresh',false) != getDates('s_FullDate')) {
-        if(getCookie('MT_RefreshAll',true) == 1) {refreshAccountsData();}}}
+        if(getCookie('MT_RefreshAll',true) == 1) {dataRefreshAccounts();}}}
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
 function MF_SetupDates() {
@@ -427,11 +423,8 @@ function MT_GridDrawDetails() {
                 const thisTitle = MTFlexTitle[j];
                 if(thisTitle.IsHidden != true) {
                     if(skipColumns > 0) { skipColumns -=1;continue;}
-
                     if(useRow.IsHeader == true) {
-                        if(j == MTFlexTitle.length -1 && MTFlex.TriggerEvents < 1) {
-                            HeaderStyle = 'border-radius: 0px 10px 10px 0px;' + css.header;
-                        }
+                        if(j == MTFlexTitle.length -1 && MTFlex.TriggerEvents < 1) {HeaderStyle = 'border-radius: 0px 10px 10px 0px;' + css.header;}
                     }
                     V1 = useRow[j];
                     V2 = MT_GetFormattedValue(thisTitle.Format,V1);
@@ -445,17 +438,13 @@ function MT_GridDrawDetails() {
                                 for (let k = 0; k < thisTitle.ShowPercent.Col1.length; k++) {
                                     rowVal = useRow[thisTitle.ShowPercent.Col1[k]];
                                     if(rowVal != null) {
-                                        if(k == 0) {w1 = rowVal;} else {
-                                            w1 += (thisTitle.ShowPercent.Operand == '+') ? rowVal : -rowVal;
-                                        }
+                                        if(k == 0) {w1 = rowVal;} else { w1 += (thisTitle.ShowPercent.Operand == '+') ? rowVal : -rowVal;}
                                     }
                                 }
                                 for (let k = 0; k < thisTitle.ShowPercent.Col2.length; k++) {
                                     rowVal = useRow[thisTitle.ShowPercent.Col2[k]];
                                     if(rowVal != null) {
-                                        if(k == 0) {w2 = rowVal;} else {
-                                            w2 += (thisTitle.ShowPercent.Operand == '+') ? rowVal : -rowVal;
-                                        }
+                                        if(k == 0) {w2 = rowVal;} else {w2 += (thisTitle.ShowPercent.Operand == '+') ? rowVal : -rowVal;}
                                     }
                                 }
                                 break;
@@ -467,9 +456,7 @@ function MT_GridDrawDetails() {
                                         w1 = MF_GridGetValue(useRow.BasedOn,thisTitle.ShowPercent.Col1);
                                     }
                                     V1 = useRow[thisTitle.ShowPercent.Col1];
-                                } else {
-                                    w1 = MF_GridGetValue(useRow.BasedOn,j);
-                                }
+                                } else { w1 = MF_GridGetValue(useRow.BasedOn,j);}
                                 w2 = V1;
                                 break;
                             default:
@@ -479,9 +466,7 @@ function MT_GridDrawDetails() {
                         V2 = V2 + ' ' + pct[0];
                         S2 = pct[1];
                     }
-                    if(useRow.IsHeader == true || isSubTotal == true) {
-                        if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }
-                    }
+                    if(useRow.IsHeader == true || isSubTotal == true) {if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }}
 
                     // Write Detail
                     if(thisTitle.ShowPercent == null && thisTitle.Format < 1) {
@@ -1542,9 +1527,9 @@ async function MenuReportsNetIncomeGo() {
         case 3:
             HiddenFilter = null; hasNotes = true;break;
         case 4:
-            snapshotData = await getAccountsData();break;
+            snapshotData = await dataGetAccounts();break;
         case 5:
-            snapshotData4 = await getGoals();
+            snapshotData4 = await dataGoals();
             for (let i = 0; i < snapshotData4.goalsV2.length; i++) {hasGoals.push(snapshotData4.goalsV2[i].id);}
             if(hasGoals.length == 0) {glo.spawnProcess = 1;return;}
             break;
@@ -1555,7 +1540,7 @@ async function MenuReportsNetIncomeGo() {
     let recIdx = 0, recCnt = 0,useTag = '';
     do {
         recCnt = 0;
-        snapshotData4 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,MTFlexAccountFilter.filter,HiddenFilter,hasNotes,hasGoals);
+        snapshotData4 = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,MTFlexAccountFilter.filter,HiddenFilter,hasNotes,hasGoals);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt++;recIdx++;
@@ -1693,7 +1678,7 @@ async function MenuReportsAccountsGo() {
     if(MTFlex.Button2 != 1) MTFlex.TriggerEvents = true;
     MF_SetupDates();
     MF_GridOptions(1,['by Class','by Account Type','by Account Subtype','by Account Group']);
-    MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by Quarter']);
+    MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years']);
     MF_GridOptions(4,customGroupInfo());
     if(MTFlex.Button1 > 0) MTFlex.Subtotals = true;
     if(MTFlex.Button1 == 1 || MTFlex.Button1 == 2 || MTFlex.Button2 == 1) MTFlex.PKSlice = 2;
@@ -1732,7 +1717,6 @@ async function MenuReportsAccountsGo() {
         let NumMonths = (MTFlex.Button2 == 3) ? 6 : 12;
         let useDate = getDates('d_Minus1Year',MTFlexDate2);
         let isToday = getDates('isToday',MTFlexDate2);
-        MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate',MTFlexDate2);
         const useEOM = getCookie('MT_AccountsEOM',true);
 
         if (MTFlex.Button2 == 6) {
@@ -1746,7 +1730,21 @@ async function MenuReportsAccountsGo() {
                 CurMonth+=3; if(CurMonth == 12) {CurMonth = 0;CurYear++;}
             }
             CurMonth = useDate.getMonth();CurYear = useDate.getFullYear();
+        } else if (MTFlex.Button2 == 7) {
+            MTFlex.Title2 = 'All Years (Beginning of Year)';
+            CurYear = getDates('n_CurYear');
+            useDate = getCookie('MT_LowCalendarYear',true);
+            if(useDate < CurYear-11) useDate = CurYear-11;
+            for (let i = 0; i < 12; i++) {
+                MTP.IsSortable = 2;MTP.Format = 2;
+                if(useDate > CurYear) MTP.IsHidden = true;
+                MF_QueueAddTitle(i+4,useDate,MTP);
+                useDate++;
+            }
+            useDate = getCookie('MT_LowCalendarYear',true);
+            if(useDate < CurYear-11) useDate = CurYear-11;
         } else {
+            MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate',MTFlexDate2);
             if(MTFlex.Button2 == 5) { NumMonths = CurMonth;MTFlex.Title2 = 'This year as of ' + getDates('s_FullDate',MTFlexDate2); }
             for (let i = 0; i < 12; i++) {
                 if(i < (12-NumMonths)) {MTP.IsHidden = true;} else {MTP.IsHidden = false;}
@@ -1754,12 +1752,12 @@ async function MenuReportsAccountsGo() {
                 CurMonth++; if(CurMonth == 12) {CurMonth = 0;}
             }
         }
-        if(skipHidden3 == 0) MTFlex.RequiredCols = [4,5,6,7,8,9,10,11,12,13,14,15,16];
+        if(skipHidden3 != 1 && MTFlex.Button2 < 6) MTFlex.RequiredCols = [4,5,6,7,8,9,10,11,12,13,14,15,16];
         MTP.IsHidden = false;
         MF_QueueAddTitle(16,getDates('s_ShortDate',MTFlexDate2),MTP);
         MF_QueueAddTitle(17,'Avg',MTP);
-        accountsData = await getAccountsData();
-        if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
+        accountsData = await dataGetAccounts();
+        if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < accountsData.accounts.length; i++) {
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + accountsData.accounts[i].id,false)) {
                 aSelected = true;
@@ -1788,14 +1786,20 @@ async function MenuReportsAccountsGo() {
         let workDate = null;
         for (let i = 0; i < 12; i++) {
             let used = false;
-            if(useEOM == true) {workDate = getDates('d_EndofMonth',useDate);} else {workDate = useDate;}
-            snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(workDate));
+            if(MTFlex.Button2 == 7) {
+                workDate = getDates('d_Today',useDate + '-01-01');
+            } else {
+                if(useEOM == true) {workDate = getDates('d_EndofMonth',useDate);} else {workDate = useDate;}
+            }
+            snapshotData3 = await dataDisplayBalanceAt(formatQueryDate(workDate));
             if(snapshotData3) {
                 for (let j = 0; j < snapshotData3.accounts.length; j++) {
                     MF_GridUpdateUID(snapshotData3.accounts[j].id,i+4,snapshotData3.accounts[j].displayBalance,false);
                     if(snapshotData3.accounts[j].displayBalance != null) {used = true;}
                 }
-                if(MTFlex.Button2 == 6) {
+                if(MTFlex.Button2 == 7) {
+                    useDate+=1;
+                } else if(MTFlex.Button2 == 6) {
                     if(used == false) {MTFlexTitle[i+4].IsHidden = true;}
                     CurMonth+=3;
                     if(CurMonth > 11) {CurMonth=0;CurYear++;}
@@ -1867,7 +1871,7 @@ async function MenuReportsAccountsGo() {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                portfolioData = await getPortfolioHolding();
+                portfolioData = await buildPortfolioHoldings();
                 MTP.ShowPercent = null;
                 if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MF_QueueAddTitle(11,'Positions',MTP);
@@ -1883,16 +1887,16 @@ async function MenuReportsAccountsGo() {
             }
         }
 
-        accountsData = await getAccountsData();
+        accountsData = await dataGetAccounts();
         let txLen = -1;
         if(MTFlex.Button2 != 1) {
-            transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
-            let txLen = transData.allTransactions.results.length;
-            if(txLen > 3648) {MTFlex.ErrorMsg = 'The date range is too extensive to display Income & Expenses.\nPlease shorten the date range or select "All years by year".';return;}
+            transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
+            txLen = transData.allTransactions.results.length;
+            if(txLen > 3648) {MTFlex.ErrorMsg = 'The date range is too extensive to display Income & Expenses by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
         }
-        snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate1));
-        pendingData = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
-        if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
+        snapshotData3 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate1));
+        pendingData = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
+        if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < 5; i++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
         for (let i = 0; i < accountsData.accounts.length; i ++) {
             let ad = accountsData.accounts[i];
@@ -1922,10 +1926,10 @@ async function MenuReportsAccountsGo() {
                             MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
                             MTFlexRow[MTFlexCR][9] = useBalance;
                             if(MTFlex.Button2 != 1 && ad.hideTransactionsFromReports == false) {
-                                let tE = 0, tI = 0, tT = 0, accountId = ad.id;
+                                let tE = 0, tI = 0, tT = 0;
                                 for (let j = 0; j < txLen; j++) {
                                     let tx = transData.allTransactions.results[j];
-                                    if (!tx.hideFromReports && tx.account.id === accountId) {
+                                    if (!tx.hideFromReports && tx.account.id === ad.id) {
                                         switch (tx.category.group.type) {
                                             case 'expense':tE += tx.amount; break;
                                             case 'income':tI += tx.amount;break;
@@ -2130,7 +2134,7 @@ async function MenuReportsInvestmentsGo() {
         }
         if(MTFlex.Button1 == 4 && MTFlex.Button2 < 2) { MTFlexTitle[12].Title = 'Type %';}
         if(MTFlex.Button1 == 5) { MTFlexTitle[3].IsHidden = true; MTFlexTitle[5].IsHidden = true;}
-        portfolioData = await getPortfolio(lowerDate, higherDate);
+        portfolioData = await dataPortfolio(lowerDate, higherDate);
 
         await InvestmentHoldings();
         await InvestmentCash();
@@ -2735,8 +2739,8 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
     if(inID) { useType = rtnCategoryGroup(inID).TYPE; retCats = rtnCategoryGroupList(inID,'',true); }
     inGrouping = Number(inGrouping);
 
-    if(inGrouping == 0) {snapshotData = await getMonthlySnapshotData(firstDate,lastDate,inPeriod,inAccounts,retCats);} else {
-        snapshotData = await getMonthlySnapshotData2(firstDate,lastDate,inPeriod,inAccounts,retCats);}
+    if(inGrouping == 0) {snapshotData = await dataMonthlySnapshotGroup(firstDate,lastDate,inPeriod,inAccounts,retCats);} else {
+        snapshotData = await dataMonthlySnapshot(firstDate,lastDate,inPeriod,inAccounts,retCats);}
     let useDate = null,yy = null,mm=null,ndx=null,useAmount=null;
     for (const ss of snapshotData.aggregates) {
         switch(inGrouping) {
@@ -2836,7 +2840,7 @@ async function HistoryDrawer(inType,inID) {
     TrendQueue2 = []; TrendPending = [0,0];
     let ld = getDates('d_StartofLastMonth'),hd = getDates('d_Today');
     ld = formatQueryDate(ld);hd = formatQueryDate(hd);
-    const snapshotData4 = await getTransactions(ld,hd,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(useGroupId,'',true));
+    const snapshotData4 = await dataTransactions(ld,hd,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(useGroupId,'',true));
     TrendPending = rtnPendingBalance(snapshotData4);
     TrendsBuildData('hs',inGroup,'month',lowerDate,higherDate,inID,MTFlexAccountFilter.filter);
 }
@@ -3057,7 +3061,7 @@ async function AccountsDrawer(inP) {
     let dSelect = getCookie(MTFlex.Name + 'StockSelect', false) || 'YTD';
     ['1Y', '2Y','3Y','4Y','5Y'].forEach(dCurrent => {cec('span', dSelect === dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect', div, dCurrent);});
 
-    if(performanceData == null) performanceDataType = await setupAccountBalances();
+    if(performanceData == null) performanceDataType = await buildAccountBalances();
     MF_DrawChart(div);
 
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
@@ -3073,7 +3077,7 @@ async function AccountsDrawer(inP) {
 
     if(transData == null) {
         document.body.style.cursor = "wait";
-        transData = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
+        transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
     }
 
@@ -3171,7 +3175,7 @@ async function InvestmentsDrawer(inP) {
             const div = cec('span','',divTop2,'','','display:flex;float:right;margin-top: 12px;');
             let dSelect = getCookie(MTFlex.Name + 'StockSelect', false) || '1W';
             ['1W','1M','3M','6M','YTD','1Y'].forEach(dCurrent => {cec('span', dSelect === dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect', div, dCurrent);});
-            performanceData = await getPerformance(formatQueryDate(getDates('d_Minus3Years')),formatQueryDate(getDates('d_Today')),edg.id);
+            performanceData = await dataPerformance(formatQueryDate(getDates('d_Minus3Years')),formatQueryDate(getDates('d_Today')),edg.id);
             MF_DrawChart(div);
         } else if (hld[p2].type == 'fixed_income') {
             if(bondInfo[1] != '') {
@@ -3262,6 +3266,71 @@ function InvestmentsDrawerRefresh(inT) {
     MenuReportsGo(MTFlex.Name);return;
 }
 
+async function TransactionsDrawer(inTarget,inDiv,inData) {
+
+    const groupIDs = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
+    const grouptype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('grouptype');
+    const groupSubtype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupsubtype');
+    let filterType = '',filterAct = [];
+    let ldR = formatQueryDate(getDates('d_StartofLastMonth'));
+    let hdR = formatQueryDate(getDates('d_Today'));
+    if(inData[1] != null) {
+        ldR = inData[1] + '-' + inData[2] + '-01';
+        hdR = inData[1] + '-' + inData[2] + '-' + String(daysInMonth((Number(inData[2])-1),inData[1])).padStart(2, '0');
+    }
+    switch(inData[0]) {
+        case 'pending':
+            if(groupIDs == undefined) return;
+            transData = await dataTransactions(ldR,hdR,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
+            break;
+        case 'range':
+            if(groupIDs == undefined) return;
+            transData = await dataTransactions(ldR,hdR,0,false,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
+            break;
+        default:
+            filterType = inData[0];
+            if(grouptype == 'Group') {filterAct = MF_GridPKUIDs(groupSubtype);} else {filterAct.push(groupIDs);}
+    }
+
+    let newRow = cec('tr','MTSideDrawerSummaryTableTH',inDiv);
+    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 105px;','datatype','date');
+    td.setAttribute('columnindex','0');
+    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','','datatype','alpha');
+    td.setAttribute('columnindex','1');
+    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Category','','','datatype','alpha');
+    td.setAttribute('columnindex','2');
+    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Amount','','','datatype','amount');
+    td.setAttribute('columnindex','3');
+    let rec = null, useDate = null,useAmt = 0,useColor = '';
+    for (let j = 0; j < transData.allTransactions.results.length; j++) {
+        rec = transData.allTransactions.results[j];
+        if(filterType) { if(rec.category.group.type != filterType) continue; }
+        if(filterType == '') { if(rec.category.group.type == 'transfer') continue; }
+        if(filterAct.length > 0) {
+            if(filterAct.includes(rec.account.id) == false) continue;
+            if(rec.date < ldR || rec.date > hdR) continue;
+            if(rec.pending == true) continue;
+        }
+
+        newRow = cec('tr','MTSideDrawerSummaryRow',inDiv);
+        useDate = unformatQueryDate(rec.date);
+        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','transdata|' + j);
+        cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name);
+        cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
+        useColor = '';
+        if(rec.category.group.type == 'expense') {
+            useAmt = rec.amount * -1;
+            if(useAmt < 0) useColor = css.green;
+        } else {
+            useAmt = rec.amount;
+            if(useAmt < 0) useColor = css.red;
+        }
+        if(rec.category.group.type == 'income') {useColor = css.green;}
+        if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
+        cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
+    }
+}
+
 function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
     let div = cec('span','MTSideDrawerItem',inDiv,'','',stl,'id',inId);
     let div2 = div;
@@ -3307,7 +3376,7 @@ async function MenuAccountsSummary() {
                 divc.childNodes[2].style = 'display:none;';
             }
         }
-        let snapshotData = await getAccountsData();
+        let snapshotData = await dataGetAccounts();
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             if(snapshotData.accounts[i].hideFromList == false && snapshotData.accounts[i].includeInNetWorth == true) {
                 let AccountGroupFilter = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
@@ -3390,8 +3459,8 @@ async function MenuPlanRefresh() {
 
     let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,BRLit = 'Budget Remaining',LTSLit = 'Left to Spend';
     let noBudget=true;
-    let snapshotData = await getAccountsData();
-    let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
+    let snapshotData = await dataGetAccounts();
+    let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     if(snapshotData) {
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
@@ -3610,8 +3679,8 @@ async function MenuDashboardAccounts() {
 
     let ds = document.getElementById('MTFlexDashboardAccounts');
     if(ds) return;
-    let snapshotData = await getAccountsData();
-    let snapshotData4 = await getTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
+    let snapshotData = await dataGetAccounts();
+    let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
     if(ds) {
         let newDiv = null;
@@ -4264,73 +4333,8 @@ async function onClickExpandSidePanelDetail(inTarget) {
         div.className = 'MTSideDrawerSummary';
         div = pn.insertAdjacentElement('afterend', div);
         div = cec('table','MTSideDrawerSummaryTable',div,'','','','TableName','AccountDetailSummary');
-        await SidePanelDetailTransactions(event.target,div,data);
+        await TransactionsDrawer(event.target,div,data);
         sortTableByColumn(div);
-    }
-}
-
-async function SidePanelDetailTransactions(inTarget,inDiv,inData) {
-
-    const groupIDs = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
-    const grouptype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('grouptype');
-    const groupSubtype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupsubtype');
-    let filterType = '',filterAct = [];
-    let ldR = formatQueryDate(getDates('d_StartofLastMonth'));
-    let hdR = formatQueryDate(getDates('d_Today'));
-    if(inData[1] != null) {
-        ldR = inData[1] + '-' + inData[2] + '-01';
-        hdR = inData[1] + '-' + inData[2] + '-' + String(daysInMonth((Number(inData[2])-1),inData[1])).padStart(2, '0');
-    }
-    switch(inData[0]) {
-        case 'pending':
-            if(groupIDs == undefined) return;
-            transData = await getTransactions(ldR,hdR,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
-            break;
-        case 'range':
-            if(groupIDs == undefined) return;
-            transData = await getTransactions(ldR,hdR,0,false,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
-            break;
-        default:
-            filterType = inData[0];
-            if(grouptype == 'Group') {filterAct = MF_GridPKUIDs(groupSubtype);} else {filterAct.push(groupIDs);}
-    }
-
-    let newRow = cec('tr','MTSideDrawerSummaryTableTH',inDiv);
-    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 105px;','datatype','date');
-    td.setAttribute('columnindex','0');
-    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','','datatype','alpha');
-    td.setAttribute('columnindex','1');
-    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Category','','','datatype','alpha');
-    td.setAttribute('columnindex','2');
-    td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData2',newRow,'Amount','','','datatype','amount');
-    td.setAttribute('columnindex','3');
-    let rec = null, useDate = null,useAmt = 0,useColor = '';
-    for (let j = 0; j < transData.allTransactions.results.length; j++) {
-        rec = transData.allTransactions.results[j];
-        if(filterType) { if(rec.category.group.type != filterType) continue; }
-        if(filterType == '') { if(rec.category.group.type == 'transfer') continue; }
-        if(filterAct.length > 0) {
-            if(filterAct.includes(rec.account.id) == false) continue;
-            if(rec.date < ldR || rec.date > hdR) continue;
-            if(rec.pending == true) continue;
-        }
-
-        newRow = cec('tr','MTSideDrawerSummaryRow',inDiv);
-        useDate = unformatQueryDate(rec.date);
-        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','transdata|' + j);
-        cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name);
-        cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
-        useColor = '';
-        if(rec.category.group.type == 'expense') {
-            useAmt = rec.amount * -1;
-            if(useAmt < 0) useColor = css.green;
-        } else {
-            useAmt = rec.amount;
-            if(useAmt < 0) useColor = css.red;
-        }
-        if(rec.category.group.type == 'income') {useColor = css.green;}
-        if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
-        cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
     }
 }
 
@@ -5016,7 +5020,7 @@ function callGraphQL(data) {
         body: JSON.stringify(data),
     };
 }
-async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts, inCat) {
+async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
     if(inCat == undefined || inCat == null) inCat = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
@@ -5025,10 +5029,10 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
      });
     return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts, inCat) {
+async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
     if(inCat == undefined || inCat == null) inCat = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
@@ -5037,10 +5041,10 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     });
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
+async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
     const limit = 3650;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     if(inGoals == undefined || inGoals == null) inGoals = [];
@@ -5051,10 +5055,10 @@ async function getTransactions(startDate,endDate, offset, isPending, inAccounts,
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','getTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
 }
 
-async function getTransactionNotes(startDate,endDate) {
+async function dataTransactionsNotes(startDate,endDate) {
     const limit = 3650, offset = 0;
     const filters = {startDate: startDate, endDate: endDate, hasNotes: true};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
@@ -5065,7 +5069,7 @@ async function getTransactionNotes(startDate,endDate) {
         .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
 }
 
-async function getGoals() {
+async function dataGoals() {
     const options = callGraphQL({operationName: 'Web_GoalsV2', variables: { },
           query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"});
     return fetch(graphql, options)
@@ -5073,20 +5077,69 @@ async function getGoals() {
         .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
 }
 
-async function getPortfolio(startDate,endDate,inAccounts) {
+async function dataPortfolio(startDate,endDate,inAccounts) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
           query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getPortfolioHolding(startDate,endDate,inAccounts) {
+async function dataPerformance(startDate,endDate,securityIds) {
+    const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
+    const options = callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
+    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n  securityHistoricalPerformance(input: $input) {\n security {\n id\n  __typename\n    }\n historicalChart {\n date\n returnPercent\n value\n __typename\n }\n __typename\n  }\n}"});
+       return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
 
+async function dataDisplayBalanceAt(date) {
+    const options = callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
+          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
+  return fetch(graphql, options)
+    .then((response) => response.json())
+    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function dataAccountBalances(startDate) {
+    const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
+         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
+   return fetch(graphql, options)
+    .then((response) => response.json())
+        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function dataGetAccounts(inID) {
+    const options = callGraphQL({ operationName: 'GetAccounts',variables: { },
+          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
+  return fetch(graphql, options)
+    .then((response) => response.json())
+    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function dataRefreshAccounts() {
+ const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
+         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
+    return fetch(graphql, options)
+    .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
+    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
+}
+
+async function dataGetCategories() {
+    const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
+          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
+    return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(version,error); });
+}
+
+// Build Query functions
+async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
     const as = {};
-    portfolioData = await getPortfolio(startDate,endDate,inAccounts);
+    portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
@@ -5097,69 +5150,18 @@ async function getPortfolioHolding(startDate,endDate,inAccounts) {
     return as;
 }
 
-async function getPerformance(startDate,endDate,securityIds) {
-    const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
-    const options = callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
-    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n  securityHistoricalPerformance(input: $input) {\n security {\n id\n  __typename\n    }\n historicalChart {\n date\n returnPercent\n value\n __typename\n }\n __typename\n  }\n}"});
-       return fetch(graphql, options)
-        .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
-}
-
-async function getDisplayBalanceAtDateData(date) {
-    const options = callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
-          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
-  return fetch(graphql, options)
-    .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
-}
-
-async function getAccountsBalances(startDate) {
-    const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
-         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
-   return fetch(graphql, options)
-    .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getAccountsBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
-}
-
-async function setupAccountBalances() {
-
-    performanceData = await getAccountsBalances(formatQueryDate(getDates('d_Minus5Years')));
-    let dt = await getDisplayBalanceAtDateData(formatQueryDate(getDates('d_Minus710')));
+async function buildAccountBalances() {
+    performanceData = await dataAccountBalances(formatQueryDate(getDates('d_Minus5Years')));
+    let dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_Minus710')));
     for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 2;} // month
-    dt = await getDisplayBalanceAtDateData(formatQueryDate(getDates('d_Minus367')));
+    dt = await dataDisplayBalanceAt(formatQueryDate(getDates('d_Minus367')));
     for (let i = 0; i < dt.accounts.length; i++) {if(dt.accounts[i].displayBalance != null) return 1;} // week
     return 0; // day
 }
 
-async function getAccountsData(inID) {
-    const options = callGraphQL({ operationName: 'GetAccounts',variables: { },
-          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
-  return fetch(graphql, options)
-    .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','getAccountsData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
-}
-
-async function refreshAccountsData() {
- const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
-         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
-    return fetch(graphql, options)
-    .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
-}
-
-async function getCategoryData() {
-    const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
-          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
-    return fetch(graphql, options)
-        .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','getCategoryData',null,data.data);return data.data;}).catch((error) => { console.error(version,error); });
-}
-
 async function buildCategoryGroups() {
-
     if(accountGroups.length == 0) {
-        const categoryData = await getCategoryData();
+        const categoryData = await dataGetCategories();
         let isFixed = '';
         for (let i = 0; i < categoryData.categories.length; i++) {
             isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
@@ -5169,32 +5171,27 @@ async function buildCategoryGroups() {
     }
 }
 
+// Return Query functions
+
 function rtnIsAccountUsed(inId,inOver) {
     if(inOver == 1) return true;
-    for (let k = 0; k < transData.allTransactions.results.length; k++) {
-        if(transData.allTransactions.results[k].account.id == inId) { return true; }
-    }
+    for (let k = 0; k < transData.allTransactions.results.length; k++) {if(transData.allTransactions.results[k].account.id == inId) { return true; }}
     return false;
 }
 
 function rtnPendingBalance(inData) {
     let amt = 0,cnt = 0;
     inData.allTransactions.results.forEach(transaction => {
-        if (transaction.amount !== 1) {
-            if(transaction.category.group.type == 'expense') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}
-    });
+        if (transaction.amount !== 1) {if(transaction.category.group.type == 'expense') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}});
     return [amt, cnt];
 }
 
 async function rtnNoteTagList() {
-    const snapshotData = await getTransactionNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
+    const snapshotData = await dataTransactionsNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
     let rv = [], t = '';
     for (let i = 0; i < snapshotData.allTransactions.results.length; i++) {
         t = snapshotData.allTransactions.results[i].notes;
-        if(t.startsWith('*')) {
-            t = getStringPart(t.slice(2).split('\n')[0]);
-            if (!rv.includes(t)) {rv.push(t); }
-        }
+        if(t.startsWith('*')) {t = getStringPart(t.slice(2).split('\n')[0]);if (!rv.includes(t)) {rv.push(t); }}
     }
     rv.sort();return rv;
 }
