@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.3
+// @version      4.20.4
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.3';
+const version = '4.20.4';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -166,6 +166,13 @@ function MM_RefreshAll() {
         if(getCookie('MT_RefreshAll',true) == 1) {dataRefreshAccounts();}}}
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
+function MF_PleaseWait(inDiv,inDesc) {
+    let div = cec('div','MTWaitContainer',inDiv);
+    div = cec('div','MTWait',div);
+    div = cec('div','MTWait2',div,'Please Wait');
+    return cec('p','',div, inDesc );
+}
+
 function MF_SetupDates() {
     let ckd = getCookie(MTFlex.Name + 'LowerDate', false);
     ckd = ckd || (MTFlex.DateEvent == 2 ? 'd_StartofMonth' : '');
@@ -202,9 +209,7 @@ async function MF_GridInit(inName, inDesc) {
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     let div = document.querySelector('[class*="Scroll__Root-sc"]');
     if(div) {
-        div = cec('div','MTWait',div);
-        div = cec('div','MTWait2',div,'Please Wait');
-        MTFlex.Loading = cec('p','',div,' Loading ' + inDesc + ' ...');
+        MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');
     }
     glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
@@ -274,7 +279,7 @@ function MF_GridOptions(Num,Options) {
 }
 
 function MF_GridDraw(inRedraw) {
-    removeAllSections('div.MTWait');
+    removeAllSections('div.MTWaitContainer');
     removeAllSections(['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]);
     if(inRedraw == false) {MT_GridDrawContainer();}
     if(MTFlex.ErrorMsg == undefined) {
@@ -3063,12 +3068,13 @@ async function AccountsDrawer(inP) {
     ['1Y', '2Y','3Y','4Y','5Y'].forEach(dCurrent => {cec('span', dSelect === dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect', div, dCurrent);});
 
     if(transData == null || performanceData == null) {
-        let divWait = DrawerPleaseWait(divTop2,'Gathering summary data ...');
+        const divWait = MF_PleaseWait(divTop2,' Loading chart data ...');
         document.body.style.cursor = "wait";
         if(performanceData == null) performanceDataType = await buildAccountBalances();
+        divWait.innerText = ' Loading summary data ...';
         if(transData == null) transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
-        divWait.remove();
+        removeAllSections('div.MTWaitContainer');
     }
     MF_DrawChart(div);
 
@@ -3330,15 +3336,6 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
         if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
         cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
     }
-}
-
-function DrawerPleaseWait(inDiv,inDesc) {
-
-    let divTop = cec('inDiv','MTSideDrawerHeader',inDiv);
-    let div = cec('div','MTWait',divTop);
-    div = cec('div','MTWait2',div,'Please Wait');
-    cec('p','',div,' ' + inDesc + ' ...');
-    return divTop;
 }
 
 function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
@@ -4670,10 +4667,10 @@ function getDates(InValue,InDate) {
             d.setDate(d.getDate() + 1);
             return d;
         case 'd_MinusByDay':
-            d.setDate(d.getDate() - 366);
+            d.setDate(d.getDate() - 365);
             return d;
         case 'd_MinusByWeek':
-            d.setDate(d.getDate() - 731);
+            d.setDate(d.getDate() - 730);
             return d;
         case 'd_Minus1Year':d.setDate(1);d.setFullYear(d.getFullYear() - 1);return d;
         case 'd_Minus1HYear':d.setDate(d.getDate()-548);return d;
