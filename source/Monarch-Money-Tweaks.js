@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.4
+// @version      4.20.5
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.4';
+const version = '4.20.5';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1268,13 +1268,11 @@ function MF_DrawChart(inLocation) {
         ctx.beginPath();ctx.moveTo(paddingLeft, chartHeight + 20);ctx.lineTo(divChart.width, chartHeight + 20); ctx.stroke();
         // Y labels
         ctx.fillStyle = standardText;ctx.font = '600 12.8px Helvetica'; ctx.textAlign = 'right';
-        ctx.fillText(drawChartformatY(maxPrice), paddingLeft - 2, 22);
-        ctx.fillText(drawChartformatY(minPrice), paddingLeft - 2, 24 + chartHeight);
-
-        ctx.font = '12.8px Helvetica';
-        ctx.fillText(drawChartformatY(midHPrice), paddingLeft - 2, 24 + (chartHeight/4));
-        ctx.fillText(drawChartformatY(midPrice), paddingLeft - 2, 24 + (chartHeight/2));
-        ctx.fillText(drawChartformatY(midLPrice), paddingLeft - 2, 24 + (chartHeight/2) + (chartHeight/4));
+        ctx.fillText(drawChartformatY(maxPrice), paddingLeft - 6, 22);
+        ctx.fillText(drawChartformatY(minPrice), paddingLeft - 6, 24 + chartHeight);
+        ctx.fillText(drawChartformatY(midHPrice), paddingLeft - 6, 24 + (chartHeight/4));
+        ctx.fillText(drawChartformatY(midPrice), paddingLeft - 6, 24 + (chartHeight/2));
+        ctx.fillText(drawChartformatY(midLPrice), paddingLeft - 6, 24 + (chartHeight/2) + (chartHeight/4));
 
         if(minPrice < 0 && maxPrice > 0 && midLPrice != 0) {
             const zeroY = 20 + ((maxPrice - 0) / (maxPrice - minPrice)) * chartHeight;
@@ -1365,6 +1363,7 @@ function MF_DrawChart(inLocation) {
         let newV = inV;
         if(inV > 999 || inV < -999) {
             newV = Math.trunc(inV);
+            if(newV > 9999999) {newV = newV / 1000000;newV = newV.toFixed(1);return '$' + newV + 'M';}
             if(newV > 999999) {newV = newV / 1000000;newV = newV.toFixed(2);return '$' + newV + 'M';}
             newV = newV / 1000;newV = newV.toFixed(1);return '$' + newV + 'K';
         } else { return getDollarValue(inV,false); }
@@ -3090,9 +3089,7 @@ async function AccountsDrawer(inP) {
 
     transData.allTransactions.results.forEach(t => {
         if(accts.includes(t.account.id)) {
-            if(t.pending == false) {
-                AccountsDrawerUpdate(t.date,t.amount,t.category.group.type);
-            }
+            if(t.pending == false) { AccountsDrawerUpdate(t.date,t.amount,t.category.group.type);}
         }
     });
     transQueue.sort((a, b) => a.date.localeCompare(b.date));
@@ -3106,10 +3103,7 @@ async function AccountsDrawer(inP) {
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(tot),'','','data','|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
         cec('span','MTSideDrawerDetail3',div2);
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].trn),'','','data','transfer|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
-        incs+=transQueue[m].inc;
-        exps+=transQueue[m].exp;
-        tots+=tot;
-        trns+=transQueue[m].trn;
+        incs+=transQueue[m].inc;exps+=transQueue[m].exp;tots+=tot;trns+=transQueue[m].trn;
     }
     div2 = cec('div','MTSideDrawerItem',divTop2);
     cec('span','MTFlexSpacer',div2);
@@ -3132,12 +3126,9 @@ async function AccountsDrawer(inP) {
             idx = transQueue.length-1;
         }
         switch(inType) {
-            case 'income':
-                transQueue[idx].inc += inAmt;return;
-            case 'expense':
-                inAmt = -inAmt; transQueue[idx].exp += inAmt;return;
-            case 'transfer':
-                transQueue[idx].trn += inAmt;return;
+            case 'income':transQueue[idx].inc += inAmt;return;
+            case 'expense':inAmt = -inAmt; transQueue[idx].exp += inAmt;return;
+            case 'transfer':transQueue[idx].trn += inAmt;return;
         }
     }
 }
