@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.2
+// @version      4.20.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.2';
+const version = '4.20.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -54,8 +54,8 @@ function MM_Init() {
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
-    addStyle('.MTWait {width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
+    addStyle('.MTWait {width: 400px; margin-left: auto; margin-top: 100px; margin-right: auto;justify-content: center; align-items: center;}');
+    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 600; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -3062,18 +3062,15 @@ async function AccountsDrawer(inP) {
     let dSelect = getCookie(MTFlex.Name + 'StockSelect', false) || 'YTD';
     ['1Y', '2Y','3Y','4Y','5Y'].forEach(dCurrent => {cec('span', dSelect === dCurrent ? 'MTSideDrawerTickerSelectA' : 'MTSideDrawerTickerSelect', div, dCurrent);});
 
-    if(performanceData == null) performanceDataType = await buildAccountBalances();
-    MF_DrawChart(div);
-
-    divTop2 = cec('div','MTSideDrawerHeader',divTop);
-
-    if(transData == null) {
-        let divWait = cec('div','MTWait MTWait2 p',divTop2,'Please Wait\n\n Gathering summary data ...','','width: 350px;text-align: center;');
+    if(transData == null || performanceData == null) {
+        let divWait = DrawerPleaseWait(divTop2,'Gathering summary data ...');
         document.body.style.cursor = "wait";
-        transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
+        if(performanceData == null) performanceDataType = await buildAccountBalances();
+        if(transData == null) transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
         divWait.remove();
     }
+    MF_DrawChart(div);
 
     let div2 = cec('div','MTSideDrawerItem',divTop2,'','','font-weight: 600;text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
@@ -3333,6 +3330,15 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
         if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
         cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
     }
+}
+
+function DrawerPleaseWait(inDiv,inDesc) {
+
+    let divTop = cec('inDiv','MTSideDrawerHeader',inDiv);
+    let div = cec('div','MTWait',divTop);
+    div = cec('div','MTWait2',div,'Please Wait');
+    cec('p','',div,' ' + inDesc + ' ...');
+    return divTop;
 }
 
 function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
