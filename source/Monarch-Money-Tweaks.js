@@ -1365,6 +1365,7 @@ function MF_DrawChart(inLocation) {
             newV = Math.trunc(inV);
             if(newV > 9999999) {newV = newV / 1000000;newV = newV.toFixed(1);return '$' + newV + 'M';}
             if(newV > 999999) {newV = newV / 1000000;newV = newV.toFixed(2);return '$' + newV + 'M';}
+            if(newV > 99999) {newV = newV / 1000;newV = newV.toFixed(0);return '$' + newV + 'K';}
             newV = newV / 1000;newV = newV.toFixed(1);return '$' + newV + 'K';
         } else { return getDollarValue(inV,false); }
     }
