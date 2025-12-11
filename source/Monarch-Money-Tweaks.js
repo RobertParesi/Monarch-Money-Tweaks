@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.1
+// @version      4.20.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.1';
+const version = '4.20.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
-let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
+let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
@@ -3363,19 +3363,16 @@ function MenuHistoryExport() {
 
 // [ Dashboard Accounts ]
 async function MenuAccountsSummary() {
+
     const divTop = document.querySelector('div.MTAccountSummary');
     if(divTop) return;
+    if(getCookie('MT_Ownership',true) == 1 && glo.owners == false) {
+        let cls = getFullClassName('OwnershipAvatar');
+        if(cls) {addStyle('.' + cls + ' {display:none;}');glo.owners = true;}
+    }
     let aSummary = [];
     const elements = document.querySelectorAll('[class*="AccountSummaryCardGroup__CardSection"]');
     if(elements.length > 1) {
-        if(getCookie('MT_Ownership',true) == 1) {
-            const divc = document.querySelector('[class*="Controls-sc-1"]');
-            if(divc && divc.childNodes.length > 3) {
-                divc.childNodes[0].style = 'display:none;';
-                divc.childNodes[1].style = 'display:none;';
-                divc.childNodes[2].style = 'display:none;';
-            }
-        }
         let snapshotData = await dataGetAccounts();
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             if(snapshotData.accounts[i].hideFromList == false && snapshotData.accounts[i].includeInNetWorth == true) {
@@ -4592,6 +4589,17 @@ function removeAllSections(inDiv) {
 function hideAllSections(qList,InValue,inStartsWith) {
     const els = document.querySelectorAll(qList);
     for (const el of els) { if(inStartsWith == null || el.innerText.startsWith(inStartsWith)) {InValue == 1 ? el.style.display = 'none' : el.style.display = '';}}
+}
+function getFullClassName(a) {
+    let el = document.querySelector('[class*=' + a + ']');
+    if(el) {
+        for (let i = 0; i < el.classList.length; i++) {
+            if(el.classList[i]) {
+                if(el.classList[i].startsWith(a)) return el.classList[i];
+            }
+        }
+    }
+    return '';
 }
 
 function inputTwoFields(InSelector,InValue1,InValue2) {
