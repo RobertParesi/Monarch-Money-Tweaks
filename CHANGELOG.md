@@ -1,7 +1,8 @@
 # Change Log (Version History)
 
-* **Version 4.20.1 (December 11, 2025)**    
+* **Version 4.21 (December 11, 2025)**    
      - REGRESSION: Goals would not be hidden if selected to be hidden.
+     - REGRESSION: Owners would not be hidden if selected to be hidden.
 
 * **Version 4.20 (December 9, 2025)**
     - NEW: Compress transaction grid logic more dynamic to try and avoid regressions when Monarch Money makes changes.
