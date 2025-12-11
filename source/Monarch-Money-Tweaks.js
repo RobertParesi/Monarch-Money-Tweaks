@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.5
+// @version      4.20.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.5';
+const version = '4.20.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -25,7 +25,6 @@ let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 function MM_Init() {
 
     MM_RefreshAll();
-
     const a = isDarkMode();
     if(a == null) {css.reload = true;return;}
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
@@ -151,14 +150,18 @@ function MM_Init() {
 }
 
 function MM_MenuFix() {
-    const wbs = ['/advice','/investments','/objectives','/recurring','/plan'];
-    const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget'];
-    const divs = document.querySelectorAll('[class*="NavBarLink-sc"]');
-    glo.debug = getCookie('MT_Log',true);
-    for (const div of divs) {
-        let j = startsInList(div.pathname,wbs);
-        if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
+    const wbs = ['/advice','/recurring','/plan','/investments','/goals','/objectives'];
+    const cks = ['MT_Advice','MT_Recurring','MT_Budget','MT_Investments','MT_Goals','MT_Goals'];
+    let divs = document.querySelectorAll('[class*="NavBarLink-sc"]');
+    if(divs.length > 10) {
+        for (const div of divs) {
+            if(div.pathname) {
+                let j = startsInList(div.pathname,wbs);
+                if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
+            }
+        }
     }
+    glo.debug = getCookie('MT_Log',true);
 }
 
 function MM_RefreshAll() {
@@ -1112,7 +1115,6 @@ function MF_DrawChart(inLocation) {
         divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 664; divChart.height = 400;
         divTooltip = cec('div','',divTop,'','','position: absolute;background: #000000; color: #fff; padding: 4px 8px; border-radius: 4px; pointer-events: none; font-size: 14px; font-weight: 600; display: none;','id','MTChartTip');
     } else {
-        let divTop = document.getElementById('MTChartCanvas');
         divChart = document.getElementById('MTChart');
         divTooltip = document.getElementById('MTChartTip');
     }
@@ -1335,7 +1337,6 @@ function MF_DrawChart(inLocation) {
         if (points.length > 12) { dpMod = Math.ceil(points.length / 12); }
         ctx.fillStyle = standardText; ctx.font = '12px Helvetica'; ctx.textAlign = 'center';
         let dpS = 0, firstPass = false;
-        const angle = -Math.PI / 6;
 
         yAxis.forEach((d, i) => {
             dpS++;
@@ -3975,13 +3976,10 @@ function MenuFirstTimeUser() {
 
 // Function calls which need waits and retries ...
 function MenuCheckSpawnProcess() {
-
     if(glo.compressTx === 2) {
         if(MenuCheckSpawnProcessCl('Transaction__Root-','padding-top: 1px !important; padding-bottom: 1px !important;font-size: 13.5px !important;}',0)) {
            if(MenuCheckSpawnProcessCl('FullScreenSelect__SelectTrigger','font-size: 13.5px;}',0)) {
-               if(MenuCheckSpawnProcessCl('TransactionLinkButton__Children','font-size: 13.5px;}')) {
-                   glo.compressTx = true;
-               }
+               if(MenuCheckSpawnProcessCl('TransactionLinkButton__Children','font-size: 13.5px;}')) {glo.compressTx = true;}
            }
         }
     }
@@ -4006,16 +4004,14 @@ function MenuCheckSpawnProcess() {
                 if(getCookie('MT_MerAssist',true)) {onClickContainer();}
                 break;
             case 7:
-                MM_SplitTransaction();
-                break;
+                MM_SplitTransaction();break;
             case 8:
                 break;
             case 9:
                 if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag();}
                 break;
             case 11:
-                MenuSettings();
-                break;
+                MenuSettings(); break;
         }
     }
     function MenuCheckSpawnProcessCl(a,b,c) {
@@ -4392,8 +4388,7 @@ function onClickDumpDebug(inNode) {
     let divs = portfolioData.portfolio.aggregateHoldings.edges[inNode];
     let jsonString = JSON.stringify(divs, null, 2);
     jsonString = 'Monarch Money Tweaks - Version: ' + version + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
-    navigator.clipboard.writeText(jsonString);
-    alert('Debug copied to keyboard. (node=' + inNode + ')');
+    navigator.clipboard.writeText(jsonString);alert('Debug copied to keyboard. (node=' + inNode + ')');
 }
 
 function onClickCloseDrawer2() {
@@ -4498,9 +4493,7 @@ function onClickMTSettings() {
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             const value = localStorage.getItem(key);
-            if(key.startsWith('MT')) {
-                csvContent = csvContent + key + '||' + value + CRLF;
-            }
+            if(key.startsWith('MT')) {csvContent = csvContent + key + '||' + value + CRLF;}
         }
         downloadFile('Monarch Money Tweaks Settings',csvContent);
     }
@@ -4576,7 +4569,6 @@ function addStyle(aCss) {
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra])
 function cec(e, c, p, it, hr, st, a1, a2,isAfter) {
     if(glo.cecIgnore == true) return;
-    if(!p) alert('Invalid Cec');
     const div = document.createElement(e);
     if (c) div.className = c;
     if (it) div.innerText = it;
