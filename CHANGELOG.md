@@ -3,7 +3,7 @@
 * **Version 4.22 (December 13, 2025)**    
      - FIX: Export could fail on some numeric fields.
      - FIX: Export could fail with # data.
-     - FIX: Investments Cash Cost Basis changed to Cash Value.
+     - FIX: Investments Cash cost basis changed to Cash value.
      
 * **Version 4.21 (December 11, 2025)**    
      - REGRESSION: Goals would not be hidden if selected to be hidden.
