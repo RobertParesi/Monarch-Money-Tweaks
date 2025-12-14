@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.20.2
+// @version      4.22
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.20.2';
+const version = '4.22';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -745,7 +745,7 @@ function MT_GridExport() {
                     if(MTFlex.Subtotals == true && j == 0) {
                         if(MTFlexRow[i].IsHeader == false) { csvContent += MTFlexRow[i].PK.slice(MTFlex.PKSlice) + c; }
                     }
-                    if(v.includes(',')) v = '"' + v + '"';
+                    if(String(v).includes(',')) v = '"' + v + '"';
                     csvContent += v + c;
                     if(MTFlex.Subtotals == true && j == 0) {
                         if(MTFlexRow[i].IsHeader == true) { csvContent += ' ' + c; }
@@ -1460,14 +1460,16 @@ function MenuReportsCustom() {
 
 function MenuReportsCustomUpdate(inValue) {
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
-    for (let i = 0; i < FlexOptions.length + 3; i++) {
-        let useClass = div.childNodes[i].className;
-        if(inValue == i) {
-            if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
-        } else {useClass = useClass.replace(' tab-nav-item-active','');}
-        div.childNodes[i].className = useClass;
+    if(div) {
+        for (let i = 0; i < FlexOptions.length + 3; i++) {
+            let useClass = div.childNodes[i].className;
+            if(inValue == i) {
+                if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
+            } else {useClass = useClass.replace(' tab-nav-item-active','');}
+            div.childNodes[i].className = useClass;
+        }
+        if(inValue < 3) {MTFlex = [];}
     }
-    if(inValue < 3) {MTFlex = [];}
 }
 
 function MenuReportsPanels(inType) {
@@ -2175,6 +2177,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,eqTypes) == 0) continue; }
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
+                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = Number(holding.value);}
                     let skipRec = false;
 
                     let useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
@@ -4883,8 +4886,14 @@ function getDollarValue(InValue,ignoreCents) {
 }
 
 function downloadFile(inTitle,inData) {
-    const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + inData);
-    const link = cec('a','',document.body,'',encodedUri,'','download',inTitle + '.csv');
+    const blob = new Blob([inData], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", inTitle + ".csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+
     link.click();
     document.body.removeChild(link);
 }
@@ -5123,9 +5132,8 @@ async function dataRefreshAccounts() {
  const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
     return fetch(graphql, options)
-    .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
-}
+    .then((response) => {setCookie('MT:LastRefresh', getDates('s_FullDate'));return response.json();})
+    .then((data) => {return data.data;}).catch((error) => {console.error(version, error);});
 
 async function dataGetCategories() {
     const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
