@@ -4217,7 +4217,7 @@ function onClickOpenWindow(cn) {
         });
         d.push({field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;'});
         MF_ModelWindowOpen({width: 480, name: cn[0], id: rrn},d,[]);
-    };
+    }
     if(cn[0] == 'transdata') {
         let d = [], b = [], rrn = cn[1];
         let t = transData.allTransactions.results[rrn];
@@ -5132,8 +5132,9 @@ async function dataRefreshAccounts() {
  const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
     return fetch(graphql, options)
-    .then((response) => {setCookie('MT:LastRefresh', getDates('s_FullDate'));return response.json();})
-    .then((data) => {return data.data;}).catch((error) => {console.error(version, error);});
+    .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
+    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
+}
 
 async function dataGetCategories() {
     const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
