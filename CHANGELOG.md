@@ -1,5 +1,10 @@
 # Change Log (Version History)
 
+* **Up Next**    
+     - Trends/Net Income Graphs
+     - Trends Compare by budget
+
+
 * **Version 4.22 (December 13, 2025)**    
      - FIX: Export could fail on some numeric fields.
      - FIX: Export could fail with # data.
