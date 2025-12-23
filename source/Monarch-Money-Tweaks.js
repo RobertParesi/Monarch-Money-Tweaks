@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.23.1
+// @version      4.23.2
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.23.1';
+const version = '4.23.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2185,14 +2185,14 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
 
-                    if(!fixEntry) {
-                        const account = accQueue.find(acc => acc.id === holding.account.id);
-                        if (account) { account.holdingBalance += holding.value;} else {
-                            accQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
-                                           "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
-                                           "accountName": useAccount,"accountSubtype": useSubType,});
-                        }
+                    // Original price
+                    const account = accQueue.find(acc => acc.id === holding.account.id);
+                    if (account) { account.holdingBalance += holding.value;account.accountHoldings+=1;} else {
+                        accQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
+                                       "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
+                                       "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1});
                     }
+                    // New price
                     if(inList(holding.type,eqTypes) > 0) {
                         if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
                             if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
@@ -2202,6 +2202,7 @@ async function MenuReportsInvestmentsGo() {
                             holding.value = +holding.value.toFixed(2);
                         }
                     }
+
 
                     let useHoldingValue = Number(holding.value);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
