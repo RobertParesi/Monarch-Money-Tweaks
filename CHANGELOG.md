@@ -1,9 +1,8 @@
 # Change Log (Version History)
 
-* **Up Next**    
-     - Trends/Net Income Graphs
-     - Trends Compare by budget
-
+* **Version 4.23 (Beta)**     
+     - FIX: Accounts refresh would work fine, but return error under the covers.
+     - FIX: Cost Basis could be incorrect for some Fixed Income holdings. (ie: T Bills)
 
 * **Version 4.22 (December 13, 2025)**    
      - FIX: Export could fail on some numeric fields.
