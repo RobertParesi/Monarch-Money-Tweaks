@@ -4,6 +4,7 @@
      - FIX: Accounts refresh would work fine, but return error under the covers.
      - FIX: Cost Basis could be incorrect for some Fixed Income holdings. (ie: T Bills)
      - FIX: CASH/CASH MONEY MARKET value be wrong if you had the same holding in a manual account.
+     - CHANGE: Increase transData response.
 
 * **Version 4.22 (December 13, 2025)**    
      - FIX: Export could fail on some numeric fields.
