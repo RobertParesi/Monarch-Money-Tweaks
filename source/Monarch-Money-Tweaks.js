@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.22
+// @version      4.23.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
-const version = '4.22';
+
+const version = '4.23.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1270,11 +1271,11 @@ function MF_DrawChart(inLocation) {
         ctx.beginPath();ctx.moveTo(paddingLeft, chartHeight + 20);ctx.lineTo(divChart.width, chartHeight + 20); ctx.stroke();
         // Y labels
         ctx.fillStyle = standardText;ctx.font = '600 12.8px Helvetica'; ctx.textAlign = 'right';
-        ctx.fillText(drawChartformatY(maxPrice), paddingLeft - 6, 22);
-        ctx.fillText(drawChartformatY(minPrice), paddingLeft - 6, 24 + chartHeight);
-        ctx.fillText(drawChartformatY(midHPrice), paddingLeft - 6, 24 + (chartHeight/4));
-        ctx.fillText(drawChartformatY(midPrice), paddingLeft - 6, 24 + (chartHeight/2));
-        ctx.fillText(drawChartformatY(midLPrice), paddingLeft - 6, 24 + (chartHeight/2) + (chartHeight/4));
+        ctx.fillText(drawChartformatY(maxPrice), paddingLeft - 4, 22);
+        ctx.fillText(drawChartformatY(minPrice), paddingLeft - 4, 24 + chartHeight);
+        ctx.fillText(drawChartformatY(midHPrice), paddingLeft - 4, 24 + (chartHeight/4));
+        ctx.fillText(drawChartformatY(midPrice), paddingLeft - 4, 24 + (chartHeight/2));
+        ctx.fillText(drawChartformatY(midLPrice), paddingLeft - 4, 24 + (chartHeight/2) + (chartHeight/4));
 
         if(minPrice < 0 && maxPrice > 0 && midLPrice != 0) {
             const zeroY = 20 + ((maxPrice - 0) / (maxPrice - minPrice)) * chartHeight;
@@ -2176,7 +2177,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,eqTypes) == 0) continue; }
-                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity);
+                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,holding.value);
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = Number(holding.value);}
                     let skipRec = false;
 
@@ -3203,7 +3204,7 @@ async function InvestmentsDrawer(inP) {
         if(hld[h].account.institution != null) {
             allQty+=hld[h].quantity;
             allValue+=hld[h].value;
-            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity);
+            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity,hld[h].value);
         }
     }
 
@@ -3218,7 +3219,7 @@ async function InvestmentsDrawer(inP) {
     if(getCookie('MTInvestments_SidePanel',true) == 0) {
         allQty = hld[p2].quantity;
         allValue = hld[p2].value;
-        allCost = getCostBasis(hld[p2].costBasis,hld[p2].type,hld[p2].quantity);
+        allCost = getCostBasis(hld[p2].costBasis,hld[p2].type,hld[p2].quantity,hld[p2].value);
         DrawerDrawLine(divTop2,'Account',hld[p2].account.displayName,'','margin-top:20px;');
         if(hld[p2].account.institution != null) {DrawerDrawLine(divTop2,'Institution',hld[p2].account.institution.name);}
     }
@@ -4865,10 +4866,16 @@ function getBondPieces(inVal) {
     return [newStr,usePct,useDate, useXtro,useAMT,useOID];
 }
 
-function getCostBasis(inVal,inType,inQty) {
+function getCostBasis(inCost,inType,inQty,inVal) {
 
     let useCostBasis = 0;
-    if(inType == 'fixed_income') {useCostBasis = inVal * 0.01;} else {useCostBasis = inVal;}
+    if(inType == 'fixed_income') {
+        useCostBasis = inCost * 0.01;
+        const diffPer = ((inVal - useCostBasis) / useCostBasis) * 100;
+        if(diffPer < -80 || diffPer > 1000) useCostBasis = inCost;
+    } else {
+        useCostBasis = inCost;
+    }
     if(useCostBasis > 1100000 && inQty > 0) {
         useCostBasis = useCostBasis / inQty;
         useCostBasis = +useCostBasis.toFixed(2);
@@ -5133,7 +5140,7 @@ async function dataRefreshAccounts() {
          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
     return fetch(graphql, options)
     .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
+    .then((data) => {return '';}).catch((error) => { console.error(version,error); });
 }
 
 async function dataGetCategories() {
