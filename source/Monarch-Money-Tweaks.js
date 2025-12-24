@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.23.2
+// @version      4.23
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.23.2';
+const version = '4.23';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1902,7 +1902,7 @@ async function MenuReportsAccountsGo() {
         if(MTFlex.Button2 != 1) {
             transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
             txLen = transData.allTransactions.results.length;
-            if(txLen > 3648) {MTFlex.ErrorMsg = 'The date range is too extensive to display Income & Expenses by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
+            if(txLen > 4999) {MTFlex.ErrorMsg = 'The date range is too extensive to display Income & Expenses by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
         }
         snapshotData3 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate1));
         pendingData = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
@@ -5061,7 +5061,7 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
-    const limit = 3650;
+    const limit = 5000;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     if(inGoals == undefined || inGoals == null) inGoals = [];
     if(inCat == undefined || inCat == null) inCat = [];
