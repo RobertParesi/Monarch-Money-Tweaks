@@ -1,7 +1,7 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks - Web Extension 
 
 ### ⚙️ Installing Monarch Money Tweaks 
-#### Version 4.22 (December 13, 2025)
+#### Version 4.23 (December 24, 2025)
 
 Visit the Extensions area for your browser using the following links: 
 
