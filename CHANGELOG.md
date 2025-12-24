@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.23 (Beta)**     
+* **Version 4.23 (December 24, 2025)**     
      - FIX: Accounts refresh would work fine, but return error under the covers.
      - FIX: Cost Basis could be incorrect for some Fixed Income holdings. (ie: T Bills)
      - FIX: CASH/CASH MONEY MARKET value be wrong if you had the same holding in a manual account.
