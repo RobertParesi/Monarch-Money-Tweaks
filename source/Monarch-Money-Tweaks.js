@@ -1778,7 +1778,7 @@ async function MenuReportsAccountsGo() {
                         MTP.IsHeader = false;
                         MTP.UID = ad.id;
                         MTP.SKTriggerEvent = i;
-                        let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,ad.subtype.display,ad.logoUrl,ad.displayName);
+                        let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,ad.subtype.display,ad.logoUrl);
                         MF_QueueAddRow(MTP);
                         MTFlexRow[MTFlexCR][0] = ad.displayName;
                         MTFlexRow[MTFlexCR][1] = ad.type.display;
@@ -1928,7 +1928,7 @@ async function MenuReportsAccountsGo() {
                             MTP.SKTriggerEvent = i;
                             useSubType = getCookie('MTAccountsSub:' + ad.id,false);
                             if(!useSubType) {useSubType = ad.subtype.display;}
-                            let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,useSubType,ad.logoUrl,ad.displayName);
+                            let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,useSubType,ad.logoUrl);
                             MF_QueueAddRow(MTP);
                             MTFlexRow[MTFlexCR][0] = ad.displayName;
                             MTFlexRow[MTFlexCR][1] = ad.type.display;
@@ -2035,7 +2035,7 @@ async function MenuReportsAccountsGo() {
         return 0;
     }
 
-    function AccountsGetPrimaryKey(inAsset,inDisplay,inSubDisplay,inlogoUrl,inDesc) {
+    function AccountsGetPrimaryKey(inAsset,inDisplay,inSubDisplay,inlogoUrl) {
         if(inAsset == true) {
             MTP.BasedOn = 1; MTP.Section = 2;
         } else {
@@ -2055,15 +2055,21 @@ async function MenuReportsAccountsGo() {
                 case 1:
                     MTP.PK = inDisplay;
                     MTP.PK = (MTP.PK.startsWith('Other ')) ? '02' + MTP.PK : '01' + MTP.PK;
+                    MTP.PKTriggerEvent = 'Group|' + inDisplay + '|' + MTP.PK;
                     break;
                 case 2:
                     MTP.PK = inSubDisplay;
                     MTP.PK = (MTP.PK.startsWith('Other ')) ? '02' + MTP.PK : '01' + MTP.PK;
+                    MTP.PKTriggerEvent = 'Group|' + inSubDisplay + '|' + MTP.PK;
                     break;
-                case 3:MTP.PK = accountName;break;
-                default:MTP.PK = MTP.BasedOn.toString();
+                case 3:
+                    MTP.PK = accountName;
+                    MTP.PKTriggerEvent = 'Group|' + accountName + '|' + MTP.PK;
+                    break;
+                default:
+                    MTP.PK = MTP.BasedOn.toString();
+                    MTP.PKTriggerEvent = 'Group|' + MTP.PK + '|' + MTP.PK;
             }
-            MTP.PKTriggerEvent = 'Group|' + inDesc + '|' + MTP.PK;
         }
         return accountName;
     }
