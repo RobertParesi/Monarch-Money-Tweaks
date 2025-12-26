@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.23
+// @version      4.24.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.23';
+const version = '4.24.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1769,22 +1769,23 @@ async function MenuReportsAccountsGo() {
         accountsData = await dataGetAccounts();
         if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < accountsData.accounts.length; i++) {
-            if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + accountsData.accounts[i].id,false)) {
+            let ad = accountsData.accounts[i];
+            if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + ad.id,false)) {
                 aSelected = true;
-                if(accountsData.accounts[i].hideFromList == false || skipHidden == 0) {
-                    if(accountsData.accounts[i].includeInNetWorth == true || skipHidden2 == 0) {
+                if(ad.hideFromList == false || skipHidden == 0) {
+                    if(ad.includeInNetWorth == true || skipHidden2 == 0) {
                         MTP = [];
                         MTP.IsHeader = false;
-                        MTP.UID = accountsData.accounts[i].id;
+                        MTP.UID = ad.id;
                         MTP.SKTriggerEvent = i;
-                        let accountName = AccountsGetPrimaryKey(accountsData.accounts[i].isAsset,accountsData.accounts[i].type.display,accountsData.accounts[i].subtype.display,accountsData.accounts[i].logoUrl);
+                        let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,ad.subtype.display,ad.logoUrl,ad.displayName);
                         MF_QueueAddRow(MTP);
-                        MTFlexRow[MTFlexCR][0] = accountsData.accounts[i].displayName;
-                        MTFlexRow[MTFlexCR][1] = accountsData.accounts[i].type.display;
-                        MTFlexRow[MTFlexCR][2] = accountsData.accounts[i].subtype.display;
+                        MTFlexRow[MTFlexCR][0] = ad.displayName;
+                        MTFlexRow[MTFlexCR][1] = ad.type.display;
+                        MTFlexRow[MTFlexCR][2] = ad.subtype.display;
                         MTFlexRow[MTFlexCR][3] = accountName;
                         if(isToday == true) {
-                             MTFlexRow[MTFlexCR][16] = Number(accountsData.accounts[i].displayBalance);
+                             MTFlexRow[MTFlexCR][16] = Number(ad.displayBalance);
                         } else {
                             MTFlexRow[MTFlexCR][16] = AccountsGetTodayBalance(MTP.UID);
                         }
@@ -1927,7 +1928,7 @@ async function MenuReportsAccountsGo() {
                             MTP.SKTriggerEvent = i;
                             useSubType = getCookie('MTAccountsSub:' + ad.id,false);
                             if(!useSubType) {useSubType = ad.subtype.display;}
-                            let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,useSubType,ad.logoUrl);
+                            let accountName = AccountsGetPrimaryKey(ad.isAsset,ad.type.display,useSubType,ad.logoUrl,ad.displayName);
                             MF_QueueAddRow(MTP);
                             MTFlexRow[MTFlexCR][0] = ad.displayName;
                             MTFlexRow[MTFlexCR][1] = ad.type.display;
@@ -2034,7 +2035,7 @@ async function MenuReportsAccountsGo() {
         return 0;
     }
 
-    function AccountsGetPrimaryKey(inAsset,inDisplay,inSubDisplay,inlogoUrl) {
+    function AccountsGetPrimaryKey(inAsset,inDisplay,inSubDisplay,inlogoUrl,inDesc) {
         if(inAsset == true) {
             MTP.BasedOn = 1; MTP.Section = 2;
         } else {
@@ -2062,7 +2063,7 @@ async function MenuReportsAccountsGo() {
                 case 3:MTP.PK = accountName;break;
                 default:MTP.PK = MTP.BasedOn.toString();
             }
-            MTP.PKTriggerEvent = 'Group|' + MTP.PK;
+            MTP.PKTriggerEvent = 'Group|' + inDesc + '|' + MTP.PK;
         }
         return accountName;
     }
@@ -3051,8 +3052,8 @@ async function AccountsDrawer(inP) {
     let transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null;
     const p1 = inP[0];
     if(p1 == 'Group') {
-        accts = MF_GridPKUIDs(inP[1]);
-        divTop = MF_SidePanelOpen('Group',inP[1], null , 'Account Summary','(Combined)',inP[1].slice(2),'!CombinedAccounts|' + inP[1]);
+        accts = MF_GridPKUIDs(inP[2]);
+        divTop = MF_SidePanelOpen('Group',inP[2], null , 'Account Summary','(Combined)',inP[1],'!CombinedAccounts|' + inP[2]);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Current Balance','','MTCurrentBalance');
     } else {
@@ -3861,8 +3862,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
+    MenuDisplay_Input('Hide Stock Description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
-    MenuDisplay_Input('Show Ticker symbol without description in cards','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
