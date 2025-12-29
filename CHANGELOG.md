@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Version 4.24 (Beta)**
+     - FIX: Sidebar group total description had first two characters cut off.
+     - FIX: Investments rounding error when stock price closed with a fractional price (ex: $42.309)    
+
 * **Version 4.23 (December 24, 2025)**     
      - FIX: Accounts refresh would work fine, but return error under the covers.
      - FIX: Cost Basis could be incorrect for some Fixed Income holdings. (ie: T Bills)
