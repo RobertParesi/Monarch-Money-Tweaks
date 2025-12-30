@@ -1,6 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.24 (Beta)**
+     - NEW: Hide AI Assistant menu option.
      - FIX: Sidebar group total description had first two characters cut off.
      - REPORTED: Investments rounding error when stock price closed with a fractional price (ex: $42.309)    (Monarch bug?) 
 
