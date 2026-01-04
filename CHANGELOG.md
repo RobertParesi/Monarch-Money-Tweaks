@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.25 (beta)**   
+     - FIX: Reports / Trends would highlight when both current and last year were negative. 
+
 * **Version 4.24 (January 4, 2026)**   
      - NEW: Hide AI Assistant menu option.
      - FIX: Sidebar group total description had first two characters cut off.
