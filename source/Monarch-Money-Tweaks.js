@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.24.1
+// @version      4.24
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.24.1';
+const version = '4.24';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -160,6 +160,10 @@ function MM_MenuFix() {
                 let j = startsInList(div.pathname,wbs);
                 if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
             }
+        }
+        if(getCookie('MT_Assistant',true) == 1) {
+            divs = document.querySelector('[class*="SideBarDefaultContent__PersistentAssistant"]');
+            if(divs) divs.style.display = 'none';
         }
     }
     glo.debug = getCookie('MT_Log',true);
@@ -2201,7 +2205,8 @@ async function MenuReportsInvestmentsGo() {
                     }
                     // New price
                     if(inList(holding.type,eqTypes) > 0) {
-                        if(fixEntry || Number(holding.value) == 0 || skipCalc == false) {
+                        console.log(holding,skipCalc,fixEntry);
+                        if(fixEntry || Number(holding.value) == 0 || skipCalc == 0) {
                             if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                             holding.closingPrice = currentStockPrice;
                             holding.closingPriceUpdatedAt = getDates('s_YMD');
@@ -2297,6 +2302,7 @@ async function MenuReportsInvestmentsGo() {
 
             if(MTFlex.Button2 == 2) return;
             if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
+            console.log(accQueue);
             for (const acc of accQueue) {
                 sumPortfolio += acc.portfolioBalance;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
@@ -3821,6 +3827,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
     MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
     MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
+    MenuDisplay_Input('Hide AI Assistant','MT_Assistant','checkbox');
     MenuDisplay_Input('Accounts','','spacer');
     MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
     MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
@@ -3846,7 +3853,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
     MenuDisplay_Input('Reports / Net Income Report','','spacer');
     MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
-    MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
+    MenuDisplay_Input('Show Note Tags drop-down on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
     MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
@@ -4694,6 +4701,8 @@ function getDates(InValue,InDate) {
             if(month == 11) {month = 0;day=31;year+=1;} else {month+=1;day = daysInMonth(month,year);}
             d.setMonth(month);d.setDate(day);d.setYear(year-1);return d;
         case 'd_StartofYear':d.setDate(1);d.setMonth(0);return d;
+        case 'd_StartofLastYear':d.setDate(1);d.setMonth(0);d.setYear(year-1);return d;
+        case 'd_EndofLastYear':d.setMonth(11);d.setDate(31);d.setYear(year-1);return d;
         case 's_YMD':
             return year + '-' + String(month+1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
         case 's_FullDate':return(getMonthName(month,true) + ' ' + day + ', ' + year );
