@@ -3,7 +3,6 @@
 * **Version 4.24 (Beta)**
      - NEW: Hide AI Assistant menu option.
      - FIX: Sidebar group total description had first two characters cut off.
-     - NEW: Added "Last Year" to sidedrawer calendar.
 
 * **Version 4.23 (December 24, 2025)**     
      - FIX: Accounts refresh would work fine, but return error under the covers.
