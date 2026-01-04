@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.24 (Beta)**
+* **Version 4.24 (January 4, 2026)**   
      - NEW: Hide AI Assistant menu option.
      - FIX: Sidebar group total description had first two characters cut off.
 
