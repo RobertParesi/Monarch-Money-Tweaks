@@ -4,7 +4,7 @@
      - NEW: Reports / Investments manual holdings will now be designated with "Manual Entry" icon.
      - CHANGE: Reports / Investments accounts with manual holdings will skip creating the Cash/Money Market entries.
      - FIX: Reports / Trends would highlight when both current and last year were negative.
-     - REGRESSION: Reports / Trends & Reports / Net Icome stopped linking to Income & Spending reports.
+     - REGRESSION: Reports / Trends & Reports / Net Income stopped linking to Income & Spending reports.
 
 * **Version 4.24 (January 4, 2026)**   
      - NEW: Hide AI Assistant menu option.
