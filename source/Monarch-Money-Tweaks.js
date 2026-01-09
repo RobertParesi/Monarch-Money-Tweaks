@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.24
+// @version      4.25.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.24';
+const version = '4.25.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -306,8 +306,8 @@ function MT_GridDrawDetails() {
     let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '';
     let rowVal = 0, rowI = 0, rowsInc = 0, rowIs = MTFlexRow.length -1;
     let Grouptotals = [];
-    let FontFamily = getCookie('MT_MonoMT',false);
-    if(FontFamily && FontFamily != 'System') {FontFamily = 'font-family: ' + FontFamily + ';';}
+    let FontFamily = getCookie('MT_MonoMT', false) || 'System';
+    if(FontFamily == 'System') {FontFamily = 'font-family: Oracle, sans-serif, MonarchIcons;';} else {FontFamily = 'font-family: ' + FontFamily + ', MonarchIcons;';}
     if(MTFlex.TableStyle) FontFamily = FontFamily + MTFlex.TableStyle;
 
     let hide = getChecked(MTFlex.Button3,'');
@@ -705,6 +705,7 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
     if(isNaN(inB)) {inB = 0;}
 
     if (inA === 0 && inB === 0) return p;
+    if (inB < 0) return p;
 
     p[0] = inA > 0 ? (inPercent === 1 ? (inB - inA) / inA : Math.max(inB / inA, 0)) : 1;
     p[0] = Math.round(p[0] * 1000) / 10;
@@ -2180,7 +2181,7 @@ async function MenuReportsInvestmentsGo() {
                 let CardShown = false,fixEntry = false,hld=0;
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
-                if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT'; fixEntry = true;}
+                if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT';fixEntry = true;}
 
                 for (const holding of holdings) {
                     let useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
@@ -2198,20 +2199,21 @@ async function MenuReportsInvestmentsGo() {
 
                     // Original price
                     const account = accQueue.find(acc => acc.id === holding.account.id);
-                    if (account) { account.holdingBalance += holding.value;account.accountHoldings+=1;} else {
+                    if (account) { account.holdingBalance += holding.value;account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
                         accQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
-                                       "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1});
+                                       "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
                     }
                     // New price
-                    if(inList(holding.type,eqTypes) > 0) {
-                        console.log(holding,skipCalc,fixEntry);
-                        if(fixEntry || Number(holding.value) == 0 || skipCalc == 0) {
-                            if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
-                            holding.closingPrice = currentStockPrice;
-                            holding.closingPriceUpdatedAt = getDates('s_YMD');
-                            holding.value = holding.quantity * holding.closingPrice;
-                            holding.value = +holding.value.toFixed(2);
+                    if(skipCalc == 0) {
+                        if(inList(holding.type,eqTypes) > 0) {
+                            if(fixEntry || Number(holding.value) == 0) {
+                                if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
+                                holding.closingPrice = currentStockPrice;
+                                holding.closingPriceUpdatedAt = getDates('s_YMD');
+                                holding.value = holding.quantity * holding.closingPrice;
+                                holding.value = +holding.value.toFixed(2);
+                            }
                         }
                     }
 
@@ -2250,6 +2252,7 @@ async function MenuReportsInvestmentsGo() {
                         if(holding.typeDisplay == 'Cryptocurrency') holding.typeDisplay = 'Crypto';
                         MTP = [];
                         MTP.UID = holding.id;
+                        if(holding.isManual == true) {MTP.Icon = '';}
                         if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;}
                         MTP.RRN = RRN;
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
@@ -2302,9 +2305,9 @@ async function MenuReportsInvestmentsGo() {
 
             if(MTFlex.Button2 == 2) return;
             if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
-            console.log(accQueue);
             for (const acc of accQueue) {
                 sumPortfolio += acc.portfolioBalance;
+                if(acc.isManual == true) continue;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
                 if(cashValue > 0) {
                     sumCash+=cashValue;
@@ -4173,7 +4176,7 @@ window.onclick = function(event) {
             case 'MTFlexGridDCell':
             case 'MTSideDrawerDetail4':
                 cn = event.target.hash;
-                if(cn.length == 0) {
+                if(cn.length > 0) {
                     if(cn.startsWith('#') == true) {
                         event.stopImmediatePropagation();
                         event.stopPropagation();
@@ -4513,7 +4516,7 @@ function onClickMTSettings() {
         }
         downloadFile('Monarch Money Tweaks Settings',csvContent);
     }
-    if(bt == 'Restore Settings') { uploadfileSettings(); }
+    if(bt == 'Restore Settings') { uploadfileSettings('.csv'); }
 }
 
 function onClickMTFlexBig() {
@@ -4922,10 +4925,10 @@ function downloadFile(inTitle,inData) {
     document.body.removeChild(link);
 }
 
-function uploadfileSettings() {
+function uploadfileSettings(inType) {
     const link = cec('input','',document.body,'','','display:none;','type','file');
     const cf = 'Monarch Money Tweaks Configuration File';
-    link.setAttribute('accept','.csv');
+    link.setAttribute('accept',inType);
     link.addEventListener('change', (event) => {
         const file = event.target.files[0];
         let csvContent = [];
@@ -5113,7 +5116,7 @@ async function dataPortfolio(startDate,endDate,inAccounts) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
