@@ -1,6 +1,8 @@
 # Change Log (Version History)
 
-* **Version 4.25 (beta)**   
+* **Version 4.25 (beta)**
+     - NEW: Reports / Investments manual holdings will now be designated with "Manual Entry" icon.
+     - CHANGE: Reports / Investments accounts with manual holdings will skip the Cash/Money Market entries.
      - FIX: Reports / Trends would highlight when both current and last year were negative. 
 
 * **Version 4.24 (January 4, 2026)**   
