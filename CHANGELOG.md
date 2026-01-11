@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Version 4.26 (Beta)**
+     - NEW: Reports / Trends and Reports / Net Income side drawer has Month Chart.
+     - CHANGE: Reports / Accounts side drawer clearly shows Summary date range.
+
 * **Version 4.25 (January 9, 2026)**
      - NEW: Reports / Investments manual holdings will now be designated with "Manual Entry" icon.
      - CHANGE: Reports / Investments accounts with manual holdings will skip creating the Cash/Money Market entries.
