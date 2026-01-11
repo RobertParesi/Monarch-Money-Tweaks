@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.25
+// @version      4.26.1
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.25';
+const version = '4.26.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -115,7 +115,7 @@ function MM_Init() {
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, sans-serif, "Oracle" !important;' + standardText + ' padding: 8px; }');
-    addStyle('.MTSideDrawerItem { margin-top: 5px; place-content: stretch space-between; display: flex; ');
+    addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
@@ -1110,7 +1110,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 // [ Chart Canvas ]
 function MF_DrawChart(inLocation) {
 
-    let xAxis = [], yAxis = [], points = [];
+    let xAxis = [], yAxis = [], colors = [], points = [];
     let divChart = null, divTooltip = null, chartGroup = '', chartMixed = false;
 
     if(inLocation != null) {
@@ -1132,9 +1132,29 @@ function MF_DrawChart(inLocation) {
     let grpSubtype = div.getAttribute('groupsubtype');
     const timeLit = getCookie(MTFlex.Name + 'StockSelect',false);
 
-    if(MTFlex.Name == 'MTInvestments') MF_DrawChartInvestments();
-    if(MTFlex.Name == 'MTAccounts') MF_DrawChartAccounts();
+    switch(MTFlex.Name) {
+        case 'MTInvestments':
+            MF_DrawChartInvestments();break;
+        case 'MTAccounts':
+            MF_DrawChartAccounts();break;
+        default:
+            MF_DrawChartTrends();
+    }
     drawChart();
+
+    function MF_DrawChartTrends() {
+
+        let amt = 0,Yr = getDates('n_CurYear');
+        for (let i = 0; i < 12; i++) {
+            if(i > getDates('n_CurMonth')) {xAxis.push(null);} else {xAxis.push(HistoryDrawerUpdate(i+1,Yr));}
+            yAxis.push('     ' + getMonthName(i,true));
+        }
+        colors.push('#00a2c7');
+        for (let i = 0; i < 12; i++) {xAxis.push(HistoryDrawerUpdate(i+1,Yr-1));}
+        colors.push('#30a46c');
+        for (let i = 0; i < 12; i++) {xAxis.push(HistoryDrawerUpdate(i+1,Yr-2));}
+        colors.push('#ffc53d');
+    }
 
     function MF_DrawChartAccounts() {
         let useV = 0, useBal = 0, filterAct = [];
@@ -1291,7 +1311,7 @@ function MF_DrawChart(inLocation) {
             ctx.lineTo(divChart.width, zeroY);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillText(drawChartformatY(0), paddingLeft - 2,4+zeroY);
+            ctx.fillText(drawChartformatY(0), paddingLeft - 4,10+zeroY);
         }
 
         const numberOfGridLines = 5;
@@ -1311,11 +1331,14 @@ function MF_DrawChart(inLocation) {
         ctx.lineWidth = 1.8;
         ctx.beginPath();
 
-        let useStyle = '';
-        xAxis.forEach((p, i) => {
-            const x = paddingLeft + ((divChart.width - paddingLeft - 5 ) * i) / (xAxis.length - 1);
+        let useStyle = '',i=0, j=0;
+        xAxis.forEach((p) => {
+            if(p != null) {
+            const x = paddingLeft + ((divChart.width - paddingLeft - 5 ) * i) / (yAxis.length - 1);
             const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
-            if(chartMixed == true) {
+            if(colors.length > 0) {
+                useStyle = colors[j];
+            } else if(chartMixed == true) {
                 useStyle = '#00a2c7';
             } else if(chartGroup == 'liability') {
                 useStyle = p > 0 ? css.redRaw : css.greenRaw;
@@ -1333,6 +1356,8 @@ function MF_DrawChart(inLocation) {
                 ctx.beginPath();
                 ctx.moveTo(x, y);
             }
+            }
+            i++;if(i === yAxis.length) { i=0; j++}
         });
 
         // Draw dots
@@ -1340,7 +1365,7 @@ function MF_DrawChart(inLocation) {
 
         // X - All date labels
         let dpMod = 1;
-        if (points.length > 12) { dpMod = Math.ceil(points.length / 12); }
+        if (yAxis.length > 12) { dpMod = Math.ceil(yAxis.length / 12); }
         ctx.fillStyle = standardText; ctx.font = '12px Helvetica'; ctx.textAlign = 'center';
         let dpS = 0, firstPass = false;
 
@@ -2897,17 +2922,22 @@ function HistoryDrawerDraw() {
         if(grouptype == 'category-groups') { inGroup = 2;}
         if(groupsubtype == 'income') { c_g = 'red'; c_r = 'green'; }
 
+        if(startYear < getCookie('MT_LowCalendarYear',false)) {skiprow = true;}
+        let colors = [],cntRows=0;
+        for (let j = startYear; j <= curYear; j++) {if(skiprow == false || j > startYear) {colors.unshift(['#00a2c7;','#30a46c;','#ffc53d;'][cntRows]);cntRows++;}}
+
+        div = cec('div','MTSideDrawerHeader',divTop);
+        MF_DrawChart(div);
         div = cec('div','MTSideDrawerHeader',divTop,'','',FontFamily);
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": HistoryDrawerUpdate(i+1,startYear),"YR2": HistoryDrawerUpdate(i+1,startYear + 1),"YR3": HistoryDrawerUpdate(i+1,startYear + 2)});
         }
 
-        if(startYear < getCookie('MT_LowCalendarYear',false)) {skiprow = true;}
-
-        div2 = cec('div','MTSideDrawerItem',div);
+        div2 = cec('div','MTSideDrawerMonth',div);
         div3 = cec('span','MTSideDrawerDetail',div2,'Month','',titleLStyle + titleStyle);
+        let k=0;
         for (let j = startYear; j <= curYear; j++) {
-            if(skiprow == false || j > startYear) { div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);}
+            if(skiprow == false || j > startYear) { div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);cec('span','',div3,' ●','','font-size: 20px; color: ' + colors[k]);k++;}
         }
         div3 = cec('span','MTSideDrawerDetail3',div2);
         div3 = cec('span','MTSideDrawerDetail',div2,'Average','',titleStyle);
@@ -3010,17 +3040,6 @@ function HistoryDrawerDraw() {
         }
     }
 
-    function HistoryDrawerUpdate(inMonth,inYear) {
-
-        let ms = '0' + inMonth.toString();ms = ms.slice(-2);
-        let ys = inYear.toString();
-        let amt = 0.00;
-        for (let i = 0; i < TrendQueue2.length; i++) {
-            if(TrendQueue2[i].MONTH == ms && TrendQueue2[i].YEAR == ys) {amt = amt + TrendQueue2[i].AMOUNT;}
-        }
-        return amt;
-    }
-
     function HistoryDrawerDetail(inMonth,inDiv) {
 
         let ms = '0' + inMonth.toString();ms = ms.slice(-2);
@@ -3062,19 +3081,33 @@ function HistoryDrawerDraw() {
         return detailQue.length-1;
     }
 }
+
+function HistoryDrawerUpdate(inMonth,inYear) {
+
+    let ms = '0' + inMonth.toString();ms = ms.slice(-2);
+    let ys = inYear.toString();
+    let amt = 0.00;
+    for (let i = 0; i < TrendQueue2.length; i++) {
+        if(TrendQueue2[i].MONTH == ms && TrendQueue2[i].YEAR == ys) {amt = amt + TrendQueue2[i].AMOUNT;}
+    }
+    return amt;
+}
+
 async function AccountsDrawer(inP) {
 
     let transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null;
     const p1 = inP[0];
+    let acts = 'Account';
     if(p1 == 'Group') {
+        acts = 'Accounts';
         accts = MF_GridPKUIDs(inP[2]);
-        divTop = MF_SidePanelOpen('Group',inP[2], null , 'Account Summary','(Combined)',inP[1],'!CombinedAccounts|' + inP[2]);
+        divTop = MF_SidePanelOpen('Group',inP[2], null , acts,'(Combined)',inP[1],'!CombinedAccounts|' + inP[2]);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Current Balance','','MTCurrentBalance');
     } else {
         const acc = accountsData.accounts[p1];
         accts.push(acc.id);
-        divTop = MF_SidePanelOpen(acc.type.group,acc.type.display, null , 'Account Summary',acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
+        divTop = MF_SidePanelOpen(acc.type.group,acc.type.display, null , acts,acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Current Balance',getDollarValue(acc.displayBalance));
         let cl = acc.dataProviderCreditLimit;
@@ -3093,13 +3126,15 @@ async function AccountsDrawer(inP) {
         const divWait = MF_PleaseWait(divTop2,' Loading chart data ...');
         document.body.style.cursor = "wait";
         if(performanceData == null) performanceDataType = await buildAccountBalances();
-        divWait.innerText = ' Loading summary data ...';
+        divWait.innerText = ' Loading ' + acts + ' Summary data ...';
         if(transData == null) transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
         removeAllSections('div.MTWaitContainer');
     }
     MF_DrawChart(div);
 
+    cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','margin-top:10px;text-align: left;')
+    cec('div','MTFlexLittle',divTop2,MTFlex.Title2)
     let div2 = cec('div','MTSideDrawerItem',divTop2,'','','font-weight: 600;text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,'Income');
