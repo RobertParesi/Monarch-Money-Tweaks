@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.26 (Beta)**
-     - NEW: Reports / Trends and Reports / Net Income side drawer has Month Chart.
+     - NEW: Reports / Trends and Reports / Net Income side drawer has Month & Step Chart .
      - CHANGE: Reports / Accounts side drawer clearly shows Summary date range.
 
 * **Version 4.25 (January 9, 2026)**
