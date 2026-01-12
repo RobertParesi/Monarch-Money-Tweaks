@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.26.2
+// @version      4.26.3
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.26.2';
+const version = '4.26.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1334,13 +1334,14 @@ function MF_DrawChart(inLocation) {
         ctx.lineWidth = 1.8;
         ctx.beginPath();
 
-        let useStyle = '',i=0, j=0;
+        let useStyle = '',useLeg='',i=0, j=0;
         xAxis.forEach((p) => {
             if(p != null) {
                 const x = paddingLeft + ((divChart.width - paddingLeft - 5 ) * i) / (yAxis.length - 1);
                 const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
+                useLeg = 2;
                 if(MTFlex.ChartColors != undefined) {
-                    useStyle = MTFlex.ChartColors[j];
+                    useStyle = MTFlex.ChartColors[j];useLeg = j;
                 } else if(chartMixed == true) {
                     useStyle = '#00a2c7';
                 } else if(chartGroup == 'liability') {
@@ -1348,7 +1349,7 @@ function MF_DrawChart(inLocation) {
                 } else {
                     useStyle = (i > 0 && xAxis[i] < xAxis[0]) ? css.redRaw : css.greenRaw;
                 }
-                points.push({x, y, price: p, date: yAxis[i], legend: j, style: useStyle});
+                points.push({x, y, price: p, date: yAxis[i], legend: useLeg, style: useStyle});
                 if (i === 0) {
                     ctx.moveTo(x, y);
                 } else {
@@ -1364,7 +1365,7 @@ function MF_DrawChart(inLocation) {
         });
 
         // Draw dots
-        points.forEach(pt => { ctx.beginPath();ctx.fillStyle = pt.style; ctx.arc(pt.x, pt.y, 4, 0, Math.PI*2);ctx.fill(); });
+        points.forEach(pt => { ctx.beginPath();ctx.fillStyle = pt.style; ctx.arc(pt.x, pt.y, 6-pt.legend, 0, Math.PI*2);ctx.fill(); });
 
         // X - All date labels
         let dpMod = 1;
@@ -2947,7 +2948,7 @@ function HistoryDrawerDraw() {
         for (let j = startYear; j <= curYear; j++) {
             if(skiprow == false || j > startYear) {
                 div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);
-                cec('span','',div3,' ●','','font-size: 20px; color: ' + MTFlex.ChartColors[curYear-j]);
+                cec('span','',div3,' ●','','font-size: ' + (24-((curYear-j)*2)) + 'px; color: ' + MTFlex.ChartColors[curYear-j]);
                 MTFlex.ChartLegend.unshift(j);
             }
         }
@@ -3230,7 +3231,7 @@ async function InvestmentsDrawer(inP) {
         divTop = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
         DrawerDrawLine(divTop2,'Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].type,eqTypes) > 0) {
+        if(inList(hld[p2].type,eqTypes) > 0 && hld[p2].closingPrice != 1) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
             DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
             DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
