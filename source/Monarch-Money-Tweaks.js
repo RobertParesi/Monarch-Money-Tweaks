@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
-// @version      4.26.3
+// @version      4.26
 // @description  Monarch Money Tweaks
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.26.3';
+const version = '4.26';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1146,18 +1146,18 @@ function MF_DrawChart(inLocation) {
 
     function MF_DrawChartTrends() {
 
-        let Yr = getDates('n_CurYear'),cTot = 0;
-        for (let i = 0; i < 12; i++) {
-            if(i > getDates('n_CurMonth')) {xAxis.push(null);} else {xAxis.push(gv(i,Yr));}
-            yAxis.push('*    ' + getMonthName(i,true));
-        }
-        cTot=0;for (let i = 0; i < 12; i++) { xAxis.push(gv(i,Yr-1));}
-        cTot=0;for (let i = 0; i < 12; i++) { xAxis.push(gv(i,Yr-2));}
-
-        function gv(m,y) {
-            if(MTFlex.ChartIndex == 0) {cTot=0;};
-            cTot+= HistoryDrawerUpdate(m+1,y);
-            return cTot;
+        let Yr = getDates('n_CurYear');
+        for (let h = 0; h < 3; h++) {
+            let cTot = 0;
+            for (let i = 0; i < 12; i++) {
+                if(h==0) {
+                    yAxis.push('*    ' + getMonthName(i,true));
+                    if(i > getDates('n_CurMonth')) {xAxis.push(null);continue;}
+                }
+                if(MTFlex.ChartIndex == 0) {cTot=0;};
+                cTot+= HistoryDrawerUpdate(i+1,Yr-h);
+                xAxis.push(cTot);
+            }
         }
     }
 
@@ -2948,7 +2948,7 @@ function HistoryDrawerDraw() {
         for (let j = startYear; j <= curYear; j++) {
             if(skiprow == false || j > startYear) {
                 div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);
-                cec('span','',div3,' ●','','font-size: ' + (24-((curYear-j)*2)) + 'px; color: ' + MTFlex.ChartColors[curYear-j]);
+                cec('span','',div3,' ●','','font-size: ' + (27-((curYear-j)*3)) + 'px; color: ' + MTFlex.ChartColors[curYear-j]);
                 MTFlex.ChartLegend.unshift(j);
             }
         }
