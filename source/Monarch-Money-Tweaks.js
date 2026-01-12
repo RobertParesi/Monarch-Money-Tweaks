@@ -1154,7 +1154,7 @@ function MF_DrawChart(inLocation) {
                     yAxis.push('*    ' + getMonthName(i,true));
                     if(i > getDates('n_CurMonth')) {xAxis.push(null);continue;}
                 }
-                if(MTFlex.ChartIndex == 0) {cTot=0;};
+                if(MTFlex.ChartIndex == 0) {cTot=0;}
                 cTot+= HistoryDrawerUpdate(i+1,Yr-h);
                 xAxis.push(cTot);
             }
@@ -1361,7 +1361,7 @@ function MF_DrawChart(inLocation) {
                     ctx.moveTo(x, y);
                 }
             }
-            i++;if(i === yAxis.length) { i=0; j++}
+            i++;if(i === yAxis.length) { i=0; j++;}
         });
 
         // Draw dots
@@ -1466,6 +1466,7 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
     if(MTFlex.Name == 'MTNet_Income') {startDate = formatQueryDate(MTFlexDate1); endDate = formatQueryDate(MTFlexDate2);}
+    if(MTFlex.Name == 'MTTrends') {endDate = formatQueryDate(MTFlexDate2);}
     let useCats = '';
     let useHidden = '';
     if(inHidden) {useHidden = ',\\"hideFromReports\\":' + inHidden;}
@@ -3146,8 +3147,8 @@ async function AccountsDrawer(inP) {
     }
     MF_DrawChart(divTop2);
 
-    cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','margin-top:10px;text-align: left;')
-    cec('div','MTFlexLittle',divTop2,MTFlex.Title2)
+    cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','margin-top:10px;text-align: left;');
+    cec('div','MTFlexLittle',divTop2,MTFlex.Title2);
     let div2 = cec('div','MTSideDrawerItem',divTop2,'','','font-weight: 600;text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,'Income');
