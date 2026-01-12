@@ -1420,16 +1420,21 @@ function MF_DrawChart(inLocation) {
                 const dy = mouseY - pt.y;
                 let tt='',mX=0, nd='';
                 if (dx * dx + dy * dy <= 64) {
+                    tt = '<div>';
                     mX = mouseX - 48;
                     if(mX > half) mX = half-10;
                     divTooltip.style.left = mX + 'px';
                     divTooltip.style.top = (e.clientY + 10) + 'px';
-                    if(pt.date.startsWith('*')) {tt = pt.date.slice(5);} else {
+                    if(MTFlex.ChartColors != undefined) {
+                        tt+= '<span style="font-size: 24px; color: ' + pt.style + '">● </span>';
+                    }
+                    tt+='<span>';
+                    if(pt.date.startsWith('*')) {tt+= pt.date.slice(5);} else {
                         nd = new Date(pt.date + 'T00:00:00');
-                        tt = getDates('s_FullDate',nd);
+                        tt+= getDates('s_FullDate',nd);
                     }
                     if(MTFlex.ChartLegend != undefined) tt+= ' ' + MTFlex.ChartLegend[pt.legend];
-                    tt += '<br/>' + getDollarValue(pt.price) + '<br/>';
+                    tt += '</span></div>' + getDollarValue(pt.price) + '<br/>';
                     if(half == 420 && x > 0) {
                         let p = MF_DrawChartgetPriceDiff(x,x-1, true);
                         tt+= '<div style="' + p[2] + '">Day Change: ' + getDollarValue(p[0]) + ' (' + p[1] + '%)</div>';
