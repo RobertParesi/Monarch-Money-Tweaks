@@ -1,17 +1,17 @@
 // ==UserScript==
-// @name         Monarch Money Tweaks
-// @version      4.27
-// @description  Monarch Money Tweaks
+// @name         MM-Tweaks for Monarch Money
+// @version      4.28.1
+// @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.27';
+const version = '4.28.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
-let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: ''};
+let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
@@ -1340,8 +1340,8 @@ function MF_DrawChart(inLocation) {
                 const x = paddingLeft + ((divChart.width - paddingLeft - 5 ) * i) / (yAxis.length - 1);
                 const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
                 useLeg = 2;
-                if(MTFlex.ChartColors != undefined) {
-                    useStyle = MTFlex.ChartColors[j];useLeg = j;
+                if(xAxis.length > yAxis.length) {
+                    useStyle = css.legend[j];useLeg = j;
                 } else if(chartMixed == true) {
                     useStyle = '#00a2c7';
                 } else if(chartGroup == 'liability') {
@@ -1425,7 +1425,7 @@ function MF_DrawChart(inLocation) {
                     if(mX > half) mX = half-10;
                     divTooltip.style.left = mX + 'px';
                     divTooltip.style.top = (e.clientY + 10) + 'px';
-                    if(MTFlex.ChartColors != undefined) {
+                    if(xAxis.length > yAxis.length) {
                         tt+= '<span style="font-size: 24px; color: ' + pt.style + '">● </span>';
                     }
                     tt+='<span>';
@@ -1566,7 +1566,6 @@ async function MenuReportsNetIncomeGo() {
     MF_GridOptions(4,customGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.ChartOptions = ['Month','Step'];
-    MTFlex.ChartColors = ['#00a2c7','#30a46c','#ffc53d'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP = [];MTP.IsSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(0,['Group','Category','Group/Category'][MTFlex.Button1],MTP);
@@ -2220,10 +2219,10 @@ async function MenuReportsInvestmentsGo() {
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 secPercent = edge.node.securityPriceChangePercent;
                 const holdings = edge.node.holdings;
-                let CardShown = false,fixEntry = false,hld=0;
+                let CardShown = false,hld=0;
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
-                if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT';fixEntry = true;}
+                if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT';}
 
                 for (const holding of holdings) {
                     let useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
@@ -2249,13 +2248,11 @@ async function MenuReportsInvestmentsGo() {
                     // New price
                     if(skipCalc == 0) {
                         if(inList(holding.type,eqTypes) > 0) {
-                            if(fixEntry || Number(holding.value) == 0) {
-                                if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
-                                holding.closingPrice = currentStockPrice;
-                                holding.closingPriceUpdatedAt = getDates('s_YMD');
-                                holding.value = holding.quantity * holding.closingPrice;
-                                holding.value = +holding.value.toFixed(2);
-                            }
+                            if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
+                            holding.closingPrice = currentStockPrice;
+                            holding.closingPriceUpdatedAt = getDates('s_YMD');
+                            holding.value = holding.quantity * holding.closingPrice;
+                            holding.value = +holding.value.toFixed(2);
                         }
                     }
 
@@ -2445,7 +2442,6 @@ async function MenuReportsTrendsGo() {
     MF_GridOptions(4,customGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','3','3'];
     MTFlex.ChartOptions = ['Month','Step'];
-    MTFlex.ChartColors = ['#00a2c7','#30a46c','#ffc53d'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MTFlex.Title1 = 'Trends Report';
 
@@ -2955,10 +2951,8 @@ function HistoryDrawerDraw() {
         for (let j = startYear; j <= curYear; j++) {
             if(skiprow == false || j > startYear) {
                 div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);
-                if(MTFlex.ChartColors != undefined) {
-                    cec('span','',div3,' ●','','font-size: ' + (27-((curYear-j)*3)) + 'px; color: ' + MTFlex.ChartColors[curYear-j]);
-                    MTFlex.ChartLegend.unshift(j);
-                }
+                cec('span','',div3,' ●','','font-size: ' + (27-((curYear-j)*3)) + 'px; color: ' + css.legend[curYear-j]);
+                MTFlex.ChartLegend.unshift(j);
             }
         }
         div3 = cec('span','MTSideDrawerDetail3',div2);
@@ -3866,7 +3860,7 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
-    const p = MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','text','font-size: 18px; font-weight: 500;');
+    const p = MenuDisplay_Input('MM-Tweaks for Monarch Money - ' + version,'','text','font-size: 18px; font-weight: 500;');
     MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button');
@@ -4216,6 +4210,7 @@ window.onclick = function(event) {
                 break;
             case 'MTHistoryButton':
                 MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
+                MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step'];
                 cn = glo.pathName.slice(1);cn = cn.replace('/','|');
                 onClickMTFlexArrow(cn); return;
             case 'MTFlexGridDCell2':
