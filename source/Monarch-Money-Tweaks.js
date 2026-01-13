@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.28.1
+// @version      4.28
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.28.1';
+const version = '4.28';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
