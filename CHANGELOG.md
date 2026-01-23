@@ -2,7 +2,7 @@
 
 * **Version 4.29 (beta)**
      - NEW: Reports / Trends & Reports / Net Income added chart for Income, Fixed, Flexible and Spending categories.
-     - CHANGE: Reports chart control visual improvements.
+     - CHANGE: Report chart control visual improvements.
 
 * **Version 4.26-4.28 (January 13, 2026)**
      - NEW: Reports / Trends and Reports / Net Income side drawer has Month & Step Chart.
