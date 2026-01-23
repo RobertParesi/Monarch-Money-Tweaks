@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.29.3
+// @version      4.29.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.29.3';
+const version = '4.29.4';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1705,10 +1705,10 @@ async function MenuReportsNetIncomeGo() {
             MTFlexRow[MTFlexCR][ii+1] = Tag.Amt;
         }
     }
-    MF_GridRollup(1,2,1,'Income');
-    MF_GridRollup(3,4,3,'Fixed Spending');
-    MF_GridRollup(5,6,5,'Flexible Spending');
-    MF_GridRollDifference(7,3,5,1,'Spending','Add');
+    MF_GridRollup(1,2,1,'Income','section|income|Income');
+    MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending',);
+    MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
+    MF_GridRollDifference(7,3,5,1,'Spending','Add','section|Spending|Spending');
     MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(totalCol,1, totalCol-1,'Add');
     MF_GridCardAddAll(7,1,MTFlexTitle.length-2,8,MTFlexTitle.length-1,css.red,css.green);
@@ -2696,10 +2696,10 @@ async function TrendsDataExtended() {
         for(let i = 1; i <= 12; i++){ if(i < lowestMonth) {MTFlexTitle[i].IsHidden = true;}}
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
     }
-    MF_GridRollup(1,2,1,'Income');
-    MF_GridRollup(3,4,3,'Fixed Spending');
-    MF_GridRollup(5,6,5,'Flexible Spending');
-    MF_GridRollDifference(7,3,5,1,'Spending','Add');
+    MF_GridRollup(1,2,1,'Income','section|income|Income');
+    MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending');
+    MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
+    MF_GridRollDifference(7,3,5,1,'Spending','Add','section|Spending|Spending');
     MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(13,1,12,'Add');
 
@@ -3450,7 +3450,11 @@ function MenuHistoryExport() {
     spans.forEach(span => {
         j=j+1;
         if(Cols == 0) { if(span.innerText.startsWith(lc)) { Cols = j;}}
-        csvContent = csvContent + getCleanValue(span.innerText,2);
+        if(span.childNodes[0]?.data) {
+            csvContent = csvContent + getCleanValue(span.childNodes[0].data,2);
+        } else {
+            csvContent = csvContent + getCleanValue(span.innerText,2);
+        }
         if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + c;}
     });
     downloadFile('Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'),csvContent);
