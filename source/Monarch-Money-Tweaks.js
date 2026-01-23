@@ -31,7 +31,7 @@ function MM_Init() {
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
-    const sidepanelBackground = 'background: ' + ['#e0f5fd;','#373736;'][a];
+    const sidepanelBackground = 'background: ' + ['#eef9fd;','#373736;'][a];
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
     const accentColor = '#ff692d;';
@@ -55,8 +55,8 @@ function MM_Init() {
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
     addStyle('.MTWait {width: 400px; margin-left: auto; margin-top: 100px; margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 600; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
-    addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
+    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 600; font: Oracle, sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
+    addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, Oracle, sans-serif !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
@@ -74,7 +74,7 @@ function MM_Init() {
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, Oracle, sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
@@ -97,7 +97,7 @@ function MM_Init() {
     addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;}');
-    addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
+    addStyle('.MThRefClass2 {font-family: MonarchIcons, Oracle, sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
@@ -115,7 +115,7 @@ function MM_Init() {
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
-    addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, sans-serif, "Oracle" !important;' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, Oracle, sans-serif !important;' + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
