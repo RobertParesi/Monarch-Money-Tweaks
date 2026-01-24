@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.29.4
+// @version      4.29
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.29.4';
+const version = '4.29';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2981,7 +2981,7 @@ function HistoryDrawerDraw() {
                 if(j == curYear) {
                     cec('span','',div3,' o','','font-weight: 900; font-size: 21px; color: ' + css.legend[curYear-j]);
                 } else {
-                    cec('span','',div3,' ●','','font-size: ' + (27-((curYear-j)*3)) + 'px; color: ' + css.legend[curYear-j]);
+                    cec('span','',div3,' ●','','color: ' + css.legend[curYear-j]);
                 }
                 MTFlex.ChartLegend.unshift(j);
             }
