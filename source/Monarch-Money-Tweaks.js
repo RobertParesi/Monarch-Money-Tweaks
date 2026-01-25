@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.29
+// @version      4.29.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.29';
+const version = '4.29.6';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -48,6 +48,7 @@ function MM_Init() {
 
     css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';css.greenRaw = ['#2a7e3b','#3dd68c'][a];
     css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';css.redRaw = ['#d8543a','#f9918e'][a];
+    css.gGreen = 'color: #3dd68c;'; css.gRed = 'color: #f9918e;';
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
@@ -697,6 +698,28 @@ function MT_GridDrawCards() {
         }
     }
 }
+
+function MF_FormatPercentDiff(x, y, s) {
+
+    if (isNaN(x) || isNaN(y)) return '';
+    if (x === y) return '0.0%';
+
+    let c = ((x - y) / Math.abs(y)) * 100;
+    if (y === 0) c = 100;
+    let v = (c > 0 ? '+' : '') + c.toFixed(1) + '%';
+
+    if (s === 1) {
+        if (c > 0) return '<div style="' + css.gRed + '">' + v + '</div>';
+        if (c < 0) return '<div style="' + css.gGreen + '">' + v + '</div>';
+    }
+    if (s === 2) {
+        if (c < 0) return '<div style="' + css.gRed + '">' + v + '</div>';
+        if (c > 0) return '<div style="' + css.gGreen + '">' + v + '</div>';
+    }
+    return v;
+}
+
+
 function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 
     let p = ['', '',0]; // x%, color, x
@@ -707,7 +730,6 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 
     if (inA === 0 && inB === 0) return p;
     if (inB < 0) return p;
-
     p[0] = inA > 0 ? (inPercent === 1 ? (inB - inA) / inA : Math.max(inB / inA, 0)) : 1;
     p[0] = Math.round(p[0] * 1000) / 10;
     p[2] = p[0];
@@ -1149,7 +1171,7 @@ function MF_DrawChart(inLocation) {
     function MF_DrawChartTrends() {
 
         let Yr = getDates('n_CurYear');
-        chartHalf = 478;
+        chartHalf = 420;
         for (let h = 0; h < 3; h++) {
             let cTot = 0;
             for (let i = 0; i < 12; i++) {
@@ -1265,7 +1287,7 @@ function MF_DrawChart(inLocation) {
         let df2 = (df / xAxis[inY]) * 100;
         df = df.toFixed(2);df2 = df2.toFixed(1);
         let uc = '';
-        if(tt == true) { uc = (df > 0) ? 'color: #3dd68c;' : (df < 0 ? 'color: #f9918e;' : ''); } else { uc = (df > 0) ? css.green : (df < 0 ? css.red : ''); }
+        if(tt == true) { uc = (df > 0) ? css.gGreen : (df < 0 ? css.gRed : ''); } else { uc = (df > 0) ? css.green : (df < 0 ? css.red : ''); }
         return([df,df2,uc]);
     }
     function MF_DrawChartgetPriceDetail(inE) {
@@ -1444,17 +1466,21 @@ function MF_DrawChart(inLocation) {
                     let tt='<table>';
                     if(xAxis.length > yAxis.length) {
                         const Mth = pt.date.slice(2,4);
+                        let legs = [],leg=0, xMth ='';
                         for (let k = 0; k < points.length; k++) {
                             pt = points[k];
-                            let xMth = pt.date.slice(2,4);
+                            xMth = pt.date.slice(2,4);
                             if(Mth == xMth) {
                                 tt+= '<tr>';
                                 tt+= '<td style="font-size: 13px; width: 13px; color: ' + pt.style + '">●</td>';
-                                tt+= '<td style="width: 80px;"> ' + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend] + '</td>';
-                                tt+= '<td style="width: 80px; text-align: right; font-weight: 100;">' + getDollarValue(pt.price) + '</td>';
+                                tt+= '<td style="width: 85px;"> ' + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend] + '</td>';
+                                tt+= '<td style="width: 90px; text-align: right; font-weight: 100;">' + getDollarValue(pt.price) + '</td>';
+                                tt+= '<td style="width: 60px; text-align: right; font-weight: 100;">[' + leg + ']</td>';
                                 tt+= '</tr>';
+                                legs[leg] = pt.price;leg++;
                             }
                         }
+                        for (let k = 0; k < leg; k++) {tt = tt.replace('[' + k + ']',MF_FormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2));}
                     } else {
                         tt='<div  style="display: flex;">';
                         tt+= '<span">';
@@ -5340,7 +5366,7 @@ async function rtnNoteTagList() {
 }
 
 function rtnCategoryGroupList(InId, InType, InAsArray) {
-    let cl = '',cla = [],u = false;
+    let cl = '',cla = [];
     buildCategoryGroups();
     for (const grp of accountGroups) {
         const { TYPE, ISFIXED, GROUP, ID } = grp;
