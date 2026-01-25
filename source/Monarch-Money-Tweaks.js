@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.29.6
+// @version      4.29
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.29.6';
+const version = '4.29';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1135,7 +1135,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let divChart = null, divTooltip = null, chartGroup = '', chartMixed = false, chartHalf = 0;
+    let divChart = null, divTooltip = null, chartGroup = '', chartMixed = false;
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
     if(inLocation != null) {
@@ -1171,7 +1171,6 @@ function MF_DrawChart(inLocation) {
     function MF_DrawChartTrends() {
 
         let Yr = getDates('n_CurYear');
-        chartHalf = 420;
         for (let h = 0; h < 3; h++) {
             let cTot = 0;
             for (let i = 0; i < 12; i++) {
@@ -1188,7 +1187,6 @@ function MF_DrawChart(inLocation) {
 
     function MF_DrawChartAccounts() {
         let useV = 0, useBal = 0, filterAct = [];
-        chartHalf = 580;
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.ChartIndex]);
         for (let i = 0; i < performanceData.accounts.length; i++) {
@@ -1239,7 +1237,6 @@ function MF_DrawChart(inLocation) {
         const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
         const xLen = chart.length;
         let moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
-        chartHalf = 435;
         for (let i = 0; i < xLen; i++) {
             const { date: useDate, value: useAmt } = chart[i];
             const dateS = new Date(useDate);
@@ -1459,8 +1456,7 @@ function MF_DrawChart(inLocation) {
                 const dx = mouseX - pt.x;
                 const dy = mouseY - pt.y;
                 if (dx * dx + dy * dy <= 64) {
-                    let mX = mouseX - 48;
-                    if(mX > chartHalf) mX = chartHalf-10;
+                    const mX = Math.min(mouseX - 48, 400);
                     divTooltip.style.left = mX + 'px';
                     divTooltip.style.top = (e.clientY + 10) + 'px';
                     let tt='<table>';
@@ -1482,20 +1478,17 @@ function MF_DrawChart(inLocation) {
                         }
                         for (let k = 0; k < leg; k++) {tt = tt.replace('[' + k + ']',MF_FormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2));}
                     } else {
-                        tt='<div  style="display: flex;">';
-                        tt+= '<span">';
+                        tt+='<tr><td style="width: 130px;">';
                         if(pt.date.startsWith('*')) {tt+= pt.date.slice(5);} else {
                             let nd = new Date(pt.date + 'T00:00:00');
                             tt+= getDates('s_FullDate',nd);
                         }
-                        tt+= '</div><div><span style="font-weight: 100;">' + getDollarValue(pt.price);
-                        tt+= '</span></div>';
+                        tt+= '</td><td style="width: 110px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
                         if((MTFlex.Name === 'MTInvestments') && i > 0) {
                             let p = MF_DrawChartgetPriceDiff(i,i-1, true);
-                            const w='text-align: right; width: 120px; ';
-                            tt+= '<div style="margin-top: 10px; display: flex;"><span style="width: 110px;">Day Change:</span><span style="' + w + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</span></div>';
+                            tt+= '<tr><td style="padding-top: 12px;">Day Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</td></tr>';
                             p = MF_DrawChartgetPriceDiff(i,0, true);
-                            tt+= '<div style="display: flex;"><span style="width: 110px;">Period Change:</span><span style="' + w + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</span></div>';
+                            tt+= '<tr><td>Period Change:</td><td style="text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</td></tr>';
                         }
                     }
                     tt+='</table>';
