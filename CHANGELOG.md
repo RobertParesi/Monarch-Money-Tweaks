@@ -3,7 +3,7 @@
 * **Version 4.29 (January 25, 2026)**
      - NEW: Reports / Trends & Reports / Net Income added chart for Income, Fixed, Flexible and Spending categories.
      - CHANGE: Report chart control visual improvements.
-     - CHANGE: Prioritize Monarch fonts (san serif vs Oracle font)
+     - CHANGE: Prioritize Monarch fonts (Oracle vs san serif font)
      - CHANGE: Prettied up & enhanced chart tooltips.
 
 * **Version 4.26-4.28 (January 13, 2026)**
