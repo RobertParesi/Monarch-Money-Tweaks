@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.30 (beta)**
+     - CHANGE: Unprioritize Monarch fonts - number of users asking to put it back to old way.
+
 * **Version 4.29 (January 25, 2026)**
      - NEW: Reports / Trends & Reports / Net Income added chart for Income, Fixed, Flexible and Spending categories.
      - CHANGE: Report chart control visual improvements.
