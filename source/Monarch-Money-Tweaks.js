@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.29
+// @version      4.30.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.29';
+const version = '4.30.1';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -56,8 +56,8 @@ function MM_Init() {
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
     addStyle('.MTWait {width: 400px; margin-left: auto; margin-top: 100px; margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 600; font: Oracle, sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
-    addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, Oracle, sans-serif !important; font-size: 15px; font-weight: 200;}');
+    addStyle('.MTWait2 {font-size: 16px; color:' + accentColor + 'font-weight: 600; font: sans-serif, Oracle; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
+    addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, Oracle !important; font-size: 15px; font-weight: 500;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
@@ -116,12 +116,12 @@ function MM_Init() {
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
-    addStyle('.MTSideDrawerHeader { font-family:  MonarchIcons, Oracle, sans-serif !important;' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeader { font-family: MonarchIcons, sans-serif !important;' + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
-    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; font-family: MonarchIcons, sans-serif !important;}');
+    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; }');
     addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor: pointer; color: rgb(50, 170, 240) !important;');
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 200px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white; font-weight: bold;}');
@@ -140,7 +140,7 @@ function MM_Init() {
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
     addStyle('.MTBudget2 {float: right;}');
-    addStyle('.MTChartContainer { border: 0px }');
+    addStyle('.MTChartContainer { border: 0px; font-family: Oracle, MonarchIcons, sans-serif}');
     addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;font-weight: 600;margin-left: 10px;cursor:pointer;}');
     addStyle('.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}');
     addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
