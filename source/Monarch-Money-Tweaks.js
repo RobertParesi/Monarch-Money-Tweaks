@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.30.1
+// @version      4.30.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.30.1';
+const version = '4.30.2';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -76,7 +76,7 @@ function MM_Init() {
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
     addStyle('.MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, Oracle, sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
-    addStyle('.MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
+    addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -3475,24 +3475,33 @@ function DrawerDrawSpacer(inDiv) {
     cec('span','MTFlexSpacer',inDiv,'','','display: block;height:20px;margin-bottom:20px;');
 }
 
-function MenuHistoryExport() {
+function MenuHistoryExport(inType,inFile) {
 
-    const c = ',';
-    const lc = MTFlex.Name == 'MTAccounts' ? 'Transfers' : 'Average';
-    let csvContent = '',j = 0,Cols = 0;
-    const spans = document.querySelectorAll('span.MTSideDrawerDetail,span.MTSideDrawerDetailS,span.MTSideDrawerSummaryTag' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
+    const C = ',';
+    let q='',csvField = '',csvContent = '',j = 0,Cols = 0,lc=null,spans=null;
+    if(inType == 'Summary') {
+        lc = MTFlex.Name == 'MTAccounts' ? 'Transfers' : 'Average';
+        spans = document.querySelectorAll('span.MTSideDrawerDetail,span.MTSideDrawerDetailS,span.MTSideDrawerSummaryTag' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
+    } else {
+        lc = 'Amount';
+        spans = document.querySelectorAll('td.MTGeneralLink,td.MTSideDrawerSummaryData,td.MTSideDrawerSummaryData2');
+    }
     spans.forEach(span => {
-        j=j+1;
-        if(Cols == 0) { if(span.innerText.startsWith(lc)) { Cols = j;}}
+        j++;
+        if(Cols > 0 && inType == 'Detail' && j < 3 ) {q = '"';}
         if(span.childNodes[0]?.data) {
-            csvContent = csvContent + getCleanValue(span.childNodes[0].data,2);
+            csvField = getCleanValue(span.childNodes[0].data,2);
         } else {
-            csvContent = csvContent + getCleanValue(span.innerText,2);
+            csvField = getCleanValue(span.innerText,2);
         }
-        if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + c;}
+        csvContent = csvContent + q + csvField + q;q='';
+        if(Cols == 0) { if(span.innerText.startsWith(lc)) { Cols = j;}}
+        if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + C;}
     });
-    downloadFile('Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'),csvContent);
+    downloadFile(inFile,csvContent);
 }
+
+
 
 // [ Dashboard Accounts ]
 async function MenuAccountsSummary() {
@@ -4211,12 +4220,21 @@ window.onclick = function(event) {
                 if(MTFlex.Name =='MTInvestments') InvestmentsDrawer(null);
                 return;
             case 'MTPanelLink':
-                MenuHistoryExport();return;
+                MenuHistoryExport('Summary','Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'));return;
+            case 'MTSideExport':
+                MenuHistoryExport('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + getDates('s_FullDate'));return;
             case 'MTSettingsButton':
                 onClickMTSettings();return;
             case 'MTFlexBig':
                 onClickMTDropdownRelease();
                 onClickMTFlexBig();return;
+            case 'MTSideExpand':
+                cn = document.querySelector('div.MTSideDrawerSummary');
+                if(cn) {
+                    if(cn.style.height == '' || cn.style.height == '200px') {cn.style.height = 'auto';
+                    } else { cn.style.height = '200px';}
+                }
+                return;
             case 'MThRefClass2':
                 onClickMTFlexExpand(0);return;
             case 'MTFlexExpand':
@@ -4447,9 +4465,7 @@ function onClickMTFlexExpand(inAll) {
 async function onClickExpandSidePanelDetail(inTarget) {
 
     removeAllSections('div.MTSideDrawerSummary');
-    if(inTarget.className == 'MTSideDrawerSummaryTag') {
-        inTarget.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');return;
-    }
+    if(inTarget.className == 'MTSideDrawerSummaryTag') {inTarget.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');return;}
     const oldDiv = document.querySelector('span.MTSideDrawerSummaryTag');
     if(oldDiv) oldDiv.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');
     inTarget.classList.replace('MTSideDrawerDetailS', 'MTSideDrawerSummaryTag');
@@ -4458,8 +4474,13 @@ async function onClickExpandSidePanelDetail(inTarget) {
         const pn = inTarget.parentNode;
         let div = document.createElement('div');
         div.className = 'MTSideDrawerSummary';
-        div = pn.insertAdjacentElement('afterend', div);
-        div = cec('table','MTSideDrawerSummaryTable',div,'','','','TableName','AccountDetailSummary');
+        let divTop = pn.insertAdjacentElement('afterend', div);
+        div = cec('div','MTFlexContainerHeader',divTop,'','','padding: 4px 0px 0px 4px;');
+        let divE = cec('div','',div,'','','display: flex; gap: 6px;');
+        cec('span','MTSideExpand',divE,'','','','title','Collapse / Expand');
+        divE = cec('div','',div);
+        cec('span','MTSideExport',divE,'','','margin-right: 6px;','title','Export to CSV');
+        div = cec('table','MTSideDrawerSummaryTable',divTop,'','','','TableName','AccountDetailSummary');
         await TransactionsDrawer(event.target,div,data);
         sortTableByColumn(div);
     }
