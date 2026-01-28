@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.30.2
+// @version      4.30.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.30.2';
+const version = '4.30.3';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1960,7 +1960,7 @@ async function MenuReportsAccountsGo() {
         if(MTFlex.Button2 != 1) MTP.IsHidden = false;
         MTP.IsSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];
         if(MTFlex.Button2 == 2) MTP.ShowPercent = {Type: 'Column'};
-        MF_QueueAddTitle(5,'Beg Balance',MTP);
+        MF_QueueAddTitle(5,'Beg balance',MTP);
         if(MTFlex.Button2 == 2) {MTP.IsHidden = true;}
         MTP.ShowPercent = null;
         MF_QueueAddTitle(6,'Income',MTP);
@@ -1974,18 +1974,18 @@ async function MenuReportsAccountsGo() {
         if(MTFlex.Button2 != 1) {
             if(MTFlex.Button2 == 2) {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
-                MF_QueueAddTitle(10,'Net Change',MTP);
+                MF_QueueAddTitle(10,'Net change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
                 portfolioData = await buildPortfolioHoldings();
                 MTP.ShowPercent = null;
                 if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MF_QueueAddTitle(11,'Positions',MTP);
                 if(getCookie('MT_AccountsHideBSCash',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MF_QueueAddTitle(12,'Cash Balance',MTP);
+                MF_QueueAddTitle(12,'Cash balance',MTP);
             } else {
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 if(getCookie('MT_AccountsHidePer1',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MF_QueueAddTitle(10,'Net Change',MTP);
+                MF_QueueAddTitle(10,'Net change',MTP);
                 if(getCookie('MT_AccountsHidePending',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
                 MF_QueueAddTitle(12,'Projected',MTP);
@@ -2231,9 +2231,9 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '80px';MTP.Format = 3;MTP.IgnoreTotals = true; MF_QueueAddTitle(7,'Qty',MTP);
         MTP.Width = '105px';MTP.Format = getCookie('MT_InvestmentsNoDecimals',true) + 1;MTP.IgnoreTotals = false;MF_QueueAddTitle(8,'Value',MTP);
         MTP = [];MTP.IsSortable = 2;
-        MTP.Width = '106px';MTP.Format = getCookie('MT_InvestmentsNoDecimals',true) + 1;MF_QueueAddTitle(9,'Cost Basis',MTP);
-        MTP.Width = '106px';MF_QueueAddTitle(10,'Gain/Loss $',MTP);
-        MTP.Width = '108px';MTP.Format = 4;MF_QueueAddTitle(11,'Gain/Loss %',MTP);
+        MTP.Width = '106px';MTP.Format = getCookie('MT_InvestmentsNoDecimals',true) + 1;MF_QueueAddTitle(9,'Cost basis',MTP);
+        MTP.Width = '106px';MF_QueueAddTitle(10,'Gain/loss $',MTP);
+        MTP.Width = '108px';MTP.Format = 4;MF_QueueAddTitle(11,'Gain/loss %',MTP);
         if(MTFlex.Button2 < 2) {
             MTP.Width = '85px';MF_QueueAddTitle(12,'Acct %',MTP);
             MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,);
@@ -4222,7 +4222,8 @@ window.onclick = function(event) {
             case 'MTPanelLink':
                 MenuHistoryExport('Summary','Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'));return;
             case 'MTSideExport':
-                MenuHistoryExport('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + getDates('s_FullDate'));return;
+                cn = event.target.getAttribute('data');
+                MenuHistoryExport('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + cn);return;
             case 'MTSettingsButton':
                 onClickMTSettings();return;
             case 'MTFlexBig':
@@ -4477,9 +4478,10 @@ async function onClickExpandSidePanelDetail(inTarget) {
         let divTop = pn.insertAdjacentElement('afterend', div);
         div = cec('div','MTFlexContainerHeader',divTop,'','','padding: 4px 0px 0px 4px;');
         let divE = cec('div','',div,'','','display: flex; gap: 6px;');
-        cec('span','MTSideExpand',divE,'','','','title','Collapse / Expand');
+        cec('span','MTSideExpand',divE,'','','','title','Compressed / Full Height');
         divE = cec('div','',div);
-        cec('span','MTSideExport',divE,'','','margin-right: 6px;','title','Export to CSV');
+        div = cec('span','MTSideExport',divE,'','','margin-right: 6px;','title','Export to CSV');
+        div.setAttribute('data',data[2] + '-' + data[1]);
         div = cec('table','MTSideDrawerSummaryTable',divTop,'','','','TableName','AccountDetailSummary');
         await TransactionsDrawer(event.target,div,data);
         sortTableByColumn(div);
