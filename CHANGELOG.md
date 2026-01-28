@@ -1,6 +1,8 @@
 # Change Log (Version History)
 
 * **Version 4.30 (beta)**
+     - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized
+     - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV
      - CHANGE: Unprioritize Monarch fonts (san serif vs Oracle font) - number of users asking to put it back to old way.
 
 * **Version 4.29 (January 25, 2026)**
