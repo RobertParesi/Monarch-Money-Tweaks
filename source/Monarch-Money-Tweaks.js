@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.30.4
+// @version      4.30
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.30.4';
+const version = '4.30', mName = 'MM-Tweaks';
 const Currency = 'USD', CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarch.com/graphql';
 const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -218,9 +218,7 @@ async function MF_GridInit(inName, inDesc) {
     accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     let div = document.querySelector('[class*="Scroll__Root-sc"]');
-    if(div) {
-        MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');
-    }
+    if(div) {MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');}
     glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
@@ -299,7 +297,7 @@ function MF_GridDraw(inRedraw) {
         if(inRedraw == false) {MT_GridDrawCards();}
     }
     if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);}
-    if(glo.debug == 1) console.log('MM-Tweaks','FlexGrid',MTFlex,MTFlexTitle,MTFlexRow);
+    if(glo.debug == 1) console.log(mName,'FlexGrid',MTFlex,MTFlexTitle,MTFlexRow);
     document.body.style.cursor = "";
 }
 
@@ -528,9 +526,7 @@ function MT_GridDrawDetails() {
             let h = 'trH';
             if(useRow.IsHeader == false) {
                 if((MTFlex.Subtotals && isSubTotal) || (!MTFlex.Subtotals)) {
-                    if (rowI < rowIs && MTFlexRow[rowI].Section != MTFlexRow[rowI+1].Section) {
-                        h = 'trH2';
-                    }
+                    if (rowI < rowIs && MTFlexRow[rowI].Section != MTFlexRow[rowI+1].Section) {h = 'trH2';}
                 }
             }
             let el2 = cec('tr',h,Header,'','','','MTsection',useRow.Section);
@@ -539,14 +535,15 @@ function MT_GridDrawDetails() {
             if(isSubTotal == true && MTFlex.HideDetails != true) {cec('tr','trH',Header,'','','','MTsection',useRow.Section);}
         }
 
-        function MT_GridDrawRowSub(inColumn,inStart,inEnd) {
-            let v = 0,useCols = 0;
-            for ( let j = inStart; j <= inEnd; j++) {
-                if(MTFlexTitle[j].IsHidden == false && useRow[j] != null ) {
-                    useCols++; v = v + useRow[j];
-                }
+        function MT_GridDrawRowSub(inColumn, inStart, inEnd) {
+            const titles = MTFlexTitle;
+            let sum = 0, count = 0, t = null, val = null;
+            for (let j = inStart; j <= inEnd; ++j) {
+                t = titles[j];
+                val = useRow[j];
+                if (!t.IsHidden && val != null) { sum += val; ++count; }
             }
-            if(useCols > 0) {useRow[inColumn] = v / (useCols);} else {useRow[inColumn] = 0;}
+            useRow[inColumn] = count ? (sum / count) : 0;
         }
     }
 }
@@ -834,6 +831,7 @@ function MT_GetInput(inputs) {
         cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
         let div3 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
         div3.value = inputs[i].VALUE;
+        if(inputs[i].ID) {div3.id = inputs[i].ID;}
         if(i == inputs.length-1) {
             div2 = cec('div','MTdropdown',div2);
             div2 = cec('label','',div2,"Always use today's date",'','margin-top: 10px; font-size: 14px; font-weight: 600; display: inline-block;','htmlFor','TodayDate');
@@ -1135,7 +1133,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let divChart = null, divTooltip = null, chartGroup = '', chartMixed = false;
+    let divChart = null, divTooltip = null, chartGroup = '', chartTip = '', chartTipB = '',chartMixed = false;
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
     if(inLocation != null) {
@@ -1189,6 +1187,7 @@ function MF_DrawChart(inLocation) {
         let useV = 0, useBal = 0, filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.ChartIndex]);
+        chartTip = 'Month';chartTipB = '<br>';
         for (let i = 0; i < performanceData.accounts.length; i++) {
             let pd = performanceData.accounts[i];
             if(filterAct.includes(pd.id)) {
@@ -1237,6 +1236,7 @@ function MF_DrawChart(inLocation) {
         const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
         const xLen = chart.length;
         let moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
+        chartTip = 'Day';
         for (let i = 0; i < xLen; i++) {
             const { date: useDate, value: useAmt } = chart[i];
             const dateS = new Date(useDate);
@@ -1282,7 +1282,7 @@ function MF_DrawChart(inLocation) {
         if(inX == null) {inY = 0; inX = xAxis.length-1;}
         let df = xAxis[inX] - xAxis[inY];
         let df2 = (df / xAxis[inY]) * 100;
-        df = df.toFixed(2);df2 = df2.toFixed(1);
+        df = +df.toFixed(2);df2 = +df2.toFixed(1);
         let uc = '';
         if(tt == true) { uc = (df > 0) ? css.gGreen : (df < 0 ? css.gRed : ''); } else { uc = (df > 0) ? css.green : (df < 0 ? css.red : ''); }
         return([df,df2,uc]);
@@ -1484,11 +1484,11 @@ function MF_DrawChart(inLocation) {
                             tt+= getDates('s_FullDate',nd);
                         }
                         tt+= '</td><td style="width: 110px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
-                        if((MTFlex.Name === 'MTInvestments') && i > 0) {
+                        if(i > 0 && chartTip) {
                             let p = MF_DrawChartgetPriceDiff(i,i-1, true);
-                            tt+= '<tr><td style="padding-top: 12px;">Day Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</td></tr>';
+                            tt+= '<tr style="vertical-align: top;"><td style="padding-top: 12px;">' + chartTip + ' Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB +' (' + p[1] + '%)</td></tr>';
                             p = MF_DrawChartgetPriceDiff(i,0, true);
-                            tt+= '<tr><td>Period Change:</td><td style="text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + ' (' + p[1] + '%)</td></tr>';
+                            tt+= '<tr style="vertical-align: top;"><td>Period Change:</td><td style="text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB + ' (' + p[1] + '%)</td></tr>';
                         }
                     }
                     tt+='</table>';
@@ -1936,7 +1936,7 @@ async function MenuReportsAccountsGo() {
 
     async function MenuReportsAccountsGoStd(){
 
-        let snapshotData3 = null, pendingData = null, aSelected = false;
+        let snapshotData3 = null, manualHoldData = null, pendingData = null, aSelected = false;
         let cards = 0,acard=[0,0,0,0,0],cats = [];
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
@@ -1978,13 +1978,12 @@ async function MenuReportsAccountsGo() {
 
         switch(MTFlex.Button2) {
             case 3:
-                MTP.ShowPercent = null;MF_QueueAddTitle(10,'Pending',MTP);
                 break;
             case 2:
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Row', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                portfolioData = await buildPortfolioHoldings();
+                [portfolioData, manualHoldData] = await buildPortfolioHoldings();
                 MTP.ShowPercent = null;
                 if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MF_QueueAddTitle(11,'Positions',MTP);
@@ -2072,11 +2071,15 @@ async function MenuReportsAccountsGo() {
                                     if(MTFlex.Button2 == 2) {
                                         if(portfolioData[MTP.UID] != undefined) {
                                             MTFlexRow[MTFlexCR][11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
-                                            MTFlexRow[MTFlexCR][12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
+                                            if (manualHoldData?.[MTP.UID] != null) {
+                                                MTFlexRow[MTFlexCR][12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
+                                            }
                                         }
                                     } else {
                                         MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
-                                        MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
+                                        if (manualHoldData?.[MTP.UID] != null) {
+                                            MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
+                                        }
                                     }
                             }
                             if(ad.subtype.name == 'checking') {acard[0] += useBalance;}
@@ -3203,7 +3206,6 @@ async function AccountsDrawer(inP) {
     let transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null;
     const p1 = inP[0];
     let acts = 'Account';
-    let ni = 'Net Income';
     if(p1 == 'Group') {
         acts = 'Accounts';
         accts = MF_GridPKUIDs(inP[2]);
@@ -3964,7 +3966,7 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
-    const p = MenuDisplay_Input('MM-Tweaks for Monarch Money - ' + version,'','text','font-size: 18px; font-weight: 500;');
+    const p = MenuDisplay_Input(mName + ' for Monarch Money - ' + version,'','text','font-size: 18px; font-weight: 500;');
     MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button');
@@ -4126,7 +4128,7 @@ function MenuSettingsDisplay(inDiv) {
 }
 
 function MenuFirstTimeUser() {
-    const a = confirm('Welcome to MM-Tweaks for Monarch Money!\n\nWould you like to set up the default configuration now to get started?');
+    const a = confirm('Welcome to ' + mName + ' for Monarch Money!\n\nWould you like to set up the default configuration now to get started?');
     if(a) {
         setCookie('MT_RefreshAll',1);setCookie('MT_MerAssist',1);setCookie('MT_MonoMT','Arial');
         setCookie('MT_TrendHidePer1',1);setCookie('MT_TrendCard1',1);setCookie('MT_NoDecimals','1');
@@ -4197,7 +4199,7 @@ window.onclick = function(event) {
     let cn = event.target.className;
     if(typeof cn === 'object') {MM_MenuFix();return;}
     if(typeof cn === 'string') {
-        if(glo.debug == 1) console.log('MM-Tweaks',cn,event.target);
+        if(glo.debug == 1) console.log(mName,cn,event.target);
         cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
@@ -4222,6 +4224,12 @@ window.onclick = function(event) {
                 MF_ModelWindowExecute(cn);return;
             case 'MTSortTableByColumn':
                 sortTableByColumn(event.target);
+                return;
+            case 'MTInputClass':
+                if(event.target?.id == 'MTEndDate') {
+                    cn = document.getElementById('TodayDate');
+                    if(cn) {cn.checked = false;}
+                }
                 return;
             case 'DateInput_input':
                 MM_FixCalendarYears();return;
@@ -4262,6 +4270,8 @@ window.onclick = function(event) {
                     } else { cn.style.height = '200px';}
                 }
                 return;
+            case 'MTDateCheckbox':
+                onClickFixDate();return;
             case 'MThRefClass2':
                 onClickMTFlexExpand(0);return;
             case 'MTFlexExpand':
@@ -4430,6 +4440,15 @@ function getTags(tags) {
     return rtnV;
 }
 
+function onClickFixDate() {
+
+    if(event.target.checked == true) {
+        const mtID = document.getElementById('MTEndDate');
+        if(mtID) {mtID.value = getDates('s_YMD');}
+    }
+
+}
+
 function onClickUpdateTicker() {
     const element = event.target;
     const pElement = event.target.parentNode;
@@ -4568,7 +4587,7 @@ function onClickDumpDebug(inNode) {
 
     let divs = portfolioData.portfolio.aggregateHoldings.edges[inNode];
     let jsonString = JSON.stringify(divs, null, 2);
-    jsonString = 'MM-Tweaks for Monarch Money - Version: ' + version + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
+    jsonString = mName + ' for Monarch Money - Version: ' + version + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
     navigator.clipboard.writeText(jsonString);alert('Debug copied to keyboard. (node=' + inNode + ')');
 }
 
@@ -4690,10 +4709,10 @@ function onClickMTFlexBig() {
             MenuReportsGo(MTFlex.Name);break;
         case 2:
             inputs.push({'NAME': 'Lower Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate1)});
-            inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
+            inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2), 'ID': 'MTEndDate'});
             MT_GetInput(inputs);break;
         case 3:
-            inputs.push({'NAME': 'As of Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
+            inputs.push({'NAME': 'As of Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2),'ID': 'MTEndDate'});
             MT_GetInput(inputs);break;
     }
 }
@@ -5228,7 +5247,7 @@ async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts,
      });
     return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(glo.debug == 1) console.log(mName,'dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -5241,7 +5260,7 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
     });
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(glo.debug == 1) console.log(mName,'dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -5256,7 +5275,7 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {if(glo.debug == 1) console.log(mName,'dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function dataFixCats(inCat) {
@@ -5295,7 +5314,7 @@ async function dataPortfolio(startDate,endDate,inAccounts) {
           query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(mName,'dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataPerformance(startDate,endDate,securityIds) {
@@ -5304,7 +5323,7 @@ async function dataPerformance(startDate,endDate,securityIds) {
     query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n  securityHistoricalPerformance(input: $input) {\n security {\n id\n  __typename\n    }\n historicalChart {\n date\n returnPercent\n value\n __typename\n }\n __typename\n  }\n}"});
        return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(mName,'dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataDisplayBalanceAt(date) {
@@ -5312,7 +5331,7 @@ async function dataDisplayBalanceAt(date) {
           query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(glo.debug == 1) console.log(mName,'dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataAccountBalances(startDate) {
@@ -5320,7 +5339,7 @@ async function dataAccountBalances(startDate) {
          query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
    return fetch(graphql, options)
     .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(mName,'dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataGetAccounts(inID) {
@@ -5328,7 +5347,7 @@ async function dataGetAccounts(inID) {
           query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log('MM-Tweaks','dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(glo.debug == 1) console.log(mName,'dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function dataRefreshAccounts() {
@@ -5344,21 +5363,22 @@ async function dataGetCategories() {
           query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log('MM-Tweaks','dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(version,error); });
+        .then((data) => {if(glo.debug == 1) console.log(mName,'dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(version,error); });
 }
 
 // Build Query functions
 async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
-    const as = {};
+    const as = {}, mn = []; // holding value, has manual holdings
     portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
             const t = holding.value;
             if (as[a]) { as[a] += t; } else { as[a] = t; }
+            if(holding.isManual == true) mn[a] = true;
         });
     });
-    return as;
+    return [as, mn];
 }
 
 async function buildAccountBalances() {
