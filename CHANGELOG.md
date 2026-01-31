@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.30 (beta)**
+* **Version 4.30 (January 31, 2026)**
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV.
      - NEW: Reports / Accounts [Credit Card Statement] added to help with reconcilliation.
