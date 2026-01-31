@@ -3,7 +3,7 @@
 * **Version 4.30 (January 31, 2026)**
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV.
-     - NEW: Reports / Accounts [Credit Card Statement] added to help with reconcilliation.
+     - NEW: Reports / Accounts [Credit Card Statement] added to help with reconciliation.
      - CHANGE: Unprioritize Monarch fonts (san serif vs Oracle font) - number of users asking to put it back to old way.
      - CHANGE: Reports / Accounts "Cash Balance" will now appear as 0.00 if there are manual holdings in the account.
      - CHANGE: Better user control when changing dates from side panel.
