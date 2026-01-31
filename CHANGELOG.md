@@ -3,7 +3,7 @@
 * **Version 4.30 (beta)**
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV.
-     - NEW: Reports / Accounts [Credit Card Statement] added for reconcilliation.
+     - NEW: Reports / Accounts [Credit Card Statement] added to help with reconcilliation.
      - CHANGE: Unprioritize Monarch fonts (san serif vs Oracle font) - number of users asking to put it back to old way.
 
 * **Version 4.29 (January 25, 2026)**
