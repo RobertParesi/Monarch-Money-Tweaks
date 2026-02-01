@@ -3,6 +3,7 @@
 * **Version 4.31 (beta)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
      - FIX: Reports Chart Tips would have issues with 0 values (Infinity, NaN) - corrected.
+     - FIX: Step chart labels more clearer what the data is. (Jan - Feb 2024)
      
 
 * **Version 4.30 (January 31, 2026)**
