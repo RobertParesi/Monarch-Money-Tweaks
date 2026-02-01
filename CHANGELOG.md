@@ -1,5 +1,10 @@
 # Change Log (Version History)
 
+* **Version 4.31 (beta)**
+     - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
+     - FIX: Reports Chart Tips would have issues with 0 values (Infinity, NaN) - corrected.
+     
+
 * **Version 4.30 (January 31, 2026)**
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV.
