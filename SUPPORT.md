@@ -1,6 +1,6 @@
 ### Monarch Money Tweaks - Support
 
-For help with the product, please see the DOCUMENTATION file first.   
+For help with the product, please see the [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) file first.   
 
 Next, if you need additional help, please see the **Discussions** option at the top of this GitHub or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/).
 
