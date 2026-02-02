@@ -2,7 +2,7 @@
 
 **📣 Over 2,300 active users!**
 
-Thanks for using Monarch Money Tweaks. I want to assure you that this extension respects your privacy and data security. I am committed to maintaining the highest standards of security and privacy.  
+Thanks for checking out Monarch Money Tweaks. I want to assure you that this extension respects your privacy and data security. I am committed to maintaining the highest standards of security and privacy.  
 
 ### Security and Privacy
 
