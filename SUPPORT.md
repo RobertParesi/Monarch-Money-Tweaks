@@ -1,10 +1,12 @@
 ### Monarch Money Tweaks — Support
 
-📚 For product help, please check the [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) file first.
+📚 For product help, please see [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) 
 
-🔖 If you think you've found a bug, check the [CHANGE LOG](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md) notes.
+🔖 If you think you've found a bug, please see first the [CHANGE LOG](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
-👨‍💻 If you need further assistance, try the DISCUSSIONS tab at the top of this GitHub repository or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/new/).
+👨‍💻 If you need further assistance, see DISCUSSIONS tab at the top of this GitHub repository
+
+🛣️ Or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/new/)
 
 ### Monarch Money Tweaks — Ideas
 
