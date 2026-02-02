@@ -1,17 +1,18 @@
-### Monarch Money Tweaks - Support
+### Monarch Money Tweaks — Support
 
-📚 For help with the product, please see the [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) file first.  
+📚 For product help, please check the DOCUMENTATION file first.
 
-🔖 If there is a bug issue, check the [latest release notes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md). 
+🔖 If you think you've found a bug, check the latest release notes.
 
-👨‍💻 Finally, if you need additional help, please see the **Discussions** option at the top of this GitHub or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/).
+👨‍💻 If you need further assistance, try the Discussions tab at the top of this GitHub repository or visit the Monarch Money forum on Reddit.
 
-### Monarch Money Tweaks - Ideas
+### Monarch Money Tweaks — Ideas
 
-This extension is primarily focused on Reports **(Trends, Net Income, Accounts, Investments)**.
+This extension focuses primarily on Reports (Trends, Net Income, Accounts, Investments).
 
-Please refrain from creating discussions about modifying Monarch's screens and features such as in Transactions, Snapshot, Budgets, Recurring, Goals, or Advice, any of Monarch's graphs or hiding money fields within Monarch. This extension has no connection to Monarch Money’s mobile apps (iPhone & Android).
+Please avoid creating discussions about modifying Monarch’s screens or features such as Transactions, Snapshot, Budgets, Recurring, Goals, Advice, Monarch’s graphs, or hiding money fields. This extension is not connected to Monarch Money’s mobile apps (iPhone & Android).
 
-Monarch Money has its own roadmap and dedicated development teams. What I am offering here is my hobby project to the Monarch Money communinity, done for fun and free of charge. While I’m happy to help within this scope, I kindly ask for your respect my time and effort. 
+Monarch Money has its own roadmap and dedicated development teams. This project is a hobby effort I’m sharing with the Monarch Money community, done for fun and free of charge. I’m happy to help within this scope, and I kindly ask that you respect my time and effort.
 
 Thank you for your understanding.
+
