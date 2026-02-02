@@ -6,7 +6,7 @@
 
 👨‍💻 If you need further assistance, see DISCUSSIONS tab at the top of this GitHub repository
 
-🛣️ Or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/new/)
+🛣️ Visit and post on the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/new/)
 
 ### Monarch Money Tweaks — Ideas
 
