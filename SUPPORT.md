@@ -1,8 +1,12 @@
 ### Monarch Money Tweaks - Support
 
-For help with the product, please see the [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) file first.   
+📚 For help with the product, please see the [DOCUMENTATION](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md) file first.  
 
-Next, if you need additional help, please see the **Discussions** option at the top of this GitHub or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/).
+🔖 If there is a bug issue, check the [latest release notes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md). 
+
+👨‍💻 Finally, if you need additional help, please see the **Discussions** option at the top of this GitHub or visit the [Monarch Money forum on Reddit](https://www.reddit.com/r/MonarchMoney/).
+
+### Monarch Money Tweaks - Ideas
 
 This extension is primarily focused on Reports **(Trends, Net Income, Accounts, Investments)**.
 
