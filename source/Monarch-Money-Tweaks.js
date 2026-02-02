@@ -1,16 +1,24 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.30
+// @version      4.31.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
 
-const version = '4.30', mName = 'MM-Tweaks';
-const Currency = 'USD', CRLF = String.fromCharCode(13,10);
-const graphql = 'https://api.monarch.com/graphql';
-const eqTypes = ['equity','mutual_fund','cryptocurrency','etf'];
+// Usage License and Restrictions
+// ------------------------------
+// This source code is provided strictly for personal, private use only.
+// You may not reproduce, distribute, or publicly display this source code or
+// any derivative works without explicit written permission from the author.
+// Any unauthorized use, reproduction, or distribution is strictly prohibited.
+
+const VERSION = '4.31.2';
+const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
+const GRAPHQL = 'https://api.monarch.com/graphql';
+const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
+
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
@@ -83,7 +91,7 @@ function MM_Init() {
     addStyle('.MTFlexContainerHeader { display: flex; justify-content: space-between;  padding: 16px 24px;');
     addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 20px 20px 20px; border-spacing: 0px;}');
-    addStyle('.MTFlexGrid th, td { padding-right: 6px; padding-left: 6px;}');
+    addStyle('.MTFlexGrid th,.MTFlexGrid td { padding-right: 6px; padding-left: 6px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 15.1px; font-weight: 600; height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
@@ -214,8 +222,7 @@ async function MF_GridInit(inName, inDesc) {
 
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-    portfolioData = null; performanceData = null; performanceDataType = null;
-    accountsData = null; transData=null;
+    portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     let div = document.querySelector('[class*="Scroll__Root-sc"]');
     if(div) {MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');}
@@ -297,17 +304,16 @@ function MF_GridDraw(inRedraw) {
         if(inRedraw == false) {MT_GridDrawCards();}
     }
     if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);}
-    if(glo.debug == 1) console.log(mName,'FlexGrid',MTFlex,MTFlexTitle,MTFlexRow);
+    if(glo.debug == 1) console.log(MNAME,'FlexGrid',MTFlex,MTFlexTitle,MTFlexRow);
     document.body.style.cursor = "";
 }
 
 function MT_GridDrawDetails() {
     let el = null, elx = null, Header = null, SubHeader = false;
-    let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '';
+    let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '',Grouptotals = [];
     let rowVal = 0, rowI = 0, rowsInc = 0, rowIs = MTFlexRow.length -1;
-    let Grouptotals = [];
     let FontFamily = getCookie('MT_MonoMT', false) || 'System';
-    if(FontFamily == 'System') {FontFamily = 'font-family: Oracle, sans-serif, MonarchIcons;';} else {FontFamily = 'font-family: ' + FontFamily + ', MonarchIcons;';}
+    FontFamily = 'font-family: ' + (FontFamily == 'System' ? 'Oracle' : FontFamily) + ', sans-serif, MonarchIcons;';
     if(MTFlex.TableStyle) FontFamily = FontFamily + MTFlex.TableStyle;
 
     let hide = getChecked(MTFlex.Button3,'');
@@ -339,9 +345,7 @@ function MT_GridDrawDetails() {
                     elx = cec('td',S1,el,'','','','Column',rowI.toString());
                     cec('div','MTFlexGridTitleInd',elx,'','','background-color: ' + MTFlexTitle[rowI].Indicator + ';');
                     cec('div',S1,elx,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','display: inline-block; border-bottom: 0px;','Column',rowI.toString());
-                } else {
-                    elx = cec('td',S1,el,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','','Column',rowI.toString());
-                }
+                } else {elx = cec('td',S1,el,MTFlexTitle[rowI].Title + ' ' + MTFlexTitle[rowI].ShowSort,'','','Column',rowI.toString());}
                 if(MTFlexTitle[rowI].Width != '') {elx.style = 'width: ' + MTFlexTitle[rowI].Width;}
             }
         }
@@ -376,7 +380,7 @@ function MT_GridDrawDetails() {
                 useDesc = useRow[0];
                 if(useRow.IsHeader) {
                     if(useRow.SummaryOnly) { el = cec('tr','MTFlexGridRow',Header);useDesc = '  ' + useDesc;
-                                                   } else { el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);useDesc = ' ' + useDesc;}
+                                           } else { el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);useDesc = ' ' + useDesc;}
                     S1 = 'MTFlexGridHCell';
                 } else {
                     if(MTFlex.HideDetails) glo.cecIgnore = true;
@@ -539,8 +543,7 @@ function MT_GridDrawDetails() {
             const titles = MTFlexTitle;
             let sum = 0, count = 0, t = null, val = null;
             for (let j = inStart; j <= inEnd; ++j) {
-                t = titles[j];
-                val = useRow[j];
+                t = titles[j];val = useRow[j];
                 if (!t.IsHidden && val != null) { sum += val; ++count; }
             }
             useRow[inColumn] = count ? (sum / count) : 0;
@@ -579,8 +582,7 @@ function MT_GetFormattedValue(inType,inValue,inRaw = false) {
 
 function MT_GridDrawExpand() {
 
-    const trS = document.querySelectorAll('tr[MTsection]');
-    const cName = MF_GetSeqKey('Expand');
+    const trS = document.querySelectorAll('tr[MTsection]'),cName = MF_GetSeqKey('Expand');
     let x = null, cv = null;
     trS.forEach((tr) => {
         x = Number(tr.getAttribute('MTsection'));
@@ -747,11 +749,7 @@ function MT_GridExport() {
         if(Title.IsHidden == false) {
             Cols++;
             if(MTFlex.HideDetails != true) {
-                if(MTFlex.Subtotals == true && Cols == 1) {
-                    csvContent += '"Group"' + c + '"Category"' + c;
-                } else {
-                    csvContent += '"' + Title.Title + '"' + c;
-                }
+                if(MTFlex.Subtotals == true && Cols == 1) {csvContent += '"Group"' + c + '"Category"' + c;} else { csvContent += '"' + Title.Title + '"' + c;}
             }
         }
     }
@@ -816,7 +814,7 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
             if(inValue == 0) return '';
             if(MTFlex.Button2 == 2) {
                 if (inCol > 9 ) { return inValue < 0 ? css.red : css.green ;}
-            } else{
+            } else {
                 if (inCol == 10 || inCol == 11 ) { return inValue < 0 ? css.red : css.green ;}
             }
             break;
@@ -876,11 +874,12 @@ function MF_ModelWindowOpen(t,d,b) {
 }
 
 function MF_ModelWindowExecute(i) {
-    let div = document.querySelector('div.MTModelWindow');
-    let id = div.id;
+    let div = document.querySelector('div.MTModelWindow'),id = div.id;
     switch(i) {
        case 'TransEdit':
             window.location.replace('/transactions/' + id);return;
+        case 'TransEdit2':
+            window.open('/transactions/' + id, '_blank', 'noopener');
     }
     removeAllSections('div.MTModelContainer');
 }
@@ -1056,9 +1055,9 @@ function MF_GridCalcColPercent(inCol, inX, inOnTotal) {
 }
 
 function MF_GridCalcRowRange(inColumn,inStart,inEnd,inOp) {
-    let v = 0, useCols = 0;
+
     for (let i = 0; i < MTFlexRow.length; i++) {
-        v = 0;useCols = 0;
+        let v = 0, useCols = 0;
         for ( let j = inStart; j <= inEnd; j++) {
             if(MTFlexTitle[j].IsHidden == false && MTFlexRow[i][j] != null ) {
                 useCols++;
@@ -1144,7 +1143,7 @@ function MF_DrawChart(inLocation) {
         divTop.id = 'MTChartCanvas';
         divTop = div.insertAdjacentElement('afterend', divTop);
         divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 664; divChart.height = 400;
-        divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 12px; border-radius: 6px; pointer-events: none; font-size: 14px; font-weight: 600; display: none;','id','MTChartTip');
+        divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
     } else {
         divChart = document.getElementById('MTChart');
         divTooltip = document.getElementById('MTChartTip');
@@ -1282,7 +1281,12 @@ function MF_DrawChart(inLocation) {
         if(inX == null) {inY = 0; inX = xAxis.length-1;}
         let df = xAxis[inX] - xAxis[inY];
         let df2 = (df / xAxis[inY]) * 100;
-        df = +df.toFixed(2);df2 = +df2.toFixed(1);
+        if(xAxis[inY] == 0) {
+            if(df == 0) {df2 = 0;} else {df2 = 100;}
+        } else {
+            if(isNaN(df2)) df2 = 0;
+            df = +df.toFixed(2);df2 = +df2.toFixed(1);
+        }
         let uc = '';
         if(tt == true) { uc = (df > 0) ? css.gGreen : (df < 0 ? css.gRed : ''); } else { uc = (df > 0) ? css.green : (df < 0 ? css.red : ''); }
         return([df,df2,uc]);
@@ -1452,38 +1456,41 @@ function MF_DrawChart(inLocation) {
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
             for (let i = 0; i < points.length; i++) {
-                let pt = points[i];
+                let pt = points[i]
                 const dx = mouseX - pt.x;
                 const dy = mouseY - pt.y;
                 if (dx * dx + dy * dy <= 64) {
-                    const mX = Math.min(mouseX - 48, 400);
+                    const mX = Math.min(mouseX - 48, 380);
                     divTooltip.style.left = mX + 'px';
                     divTooltip.style.top = (e.clientY + 10) + 'px';
                     let tt='<table>';
                     if(xAxis.length > yAxis.length) {
                         const Mth = pt.date.slice(2,4);
+                        const Beg = points[0].date.slice(2,4);
+                        let ptDate = MTFlex.ChartIndex == 1 ? points[0]?.date.slice(5) + ' - ' : '';
                         let legs = [],leg=0, xMth ='';
                         for (let k = 0; k < points.length; k++) {
                             pt = points[k];
                             xMth = pt.date.slice(2,4);
                             if(Mth == xMth) {
                                 tt+= '<tr>';
-                                tt+= '<td style="font-size: 13px; width: 13px; color: ' + pt.style + '">●</td>';
-                                tt+= '<td style="width: 85px;"> ' + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend] + '</td>';
-                                tt+= '<td style="width: 90px; text-align: right; font-weight: 100;">' + getDollarValue(pt.price) + '</td>';
-                                tt+= '<td style="width: 60px; text-align: right; font-weight: 100;">[' + leg + ']</td>';
+                                tt+= '<td style="width: 18px; color: ' + pt.style + '">●</td>';
+                                if(k ==0) ptDate = '';
+                                tt+= '<td style="width: 105px;">' + ptDate + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend] + '</td>';
+                                tt+= '<td style="width: 100px; text-align: right; font-weight: 100;">' + getDollarValue(pt.price) + '</td>';
+                                tt+= '<td style="width: 65px; text-align: right; font-weight: 100;">[' + leg + ']</td>';
                                 tt+= '</tr>';
                                 legs[leg] = pt.price;leg++;
                             }
                         }
                         for (let k = 0; k < leg; k++) {tt = tt.replace('[' + k + ']',MF_FormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2));}
                     } else {
-                        tt+='<tr><td style="width: 130px;">';
+                        tt+='<tr><td style="width: 140px;">';
                         if(pt.date.startsWith('*')) {tt+= pt.date.slice(5);} else {
                             let nd = new Date(pt.date + 'T00:00:00');
                             tt+= getDates('s_FullDate',nd);
                         }
-                        tt+= '</td><td style="width: 110px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
+                        tt+= '</td><td style="width: 140px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
                         if(i > 0 && chartTip) {
                             let p = MF_DrawChartgetPriceDiff(i,i-1, true);
                             tt+= '<tr style="vertical-align: top;"><td style="padding-top: 12px;">' + chartTip + ' Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB +' (' + p[1] + '%)</td></tr>';
@@ -2305,7 +2312,7 @@ async function MenuReportsInvestmentsGo() {
                     hld++;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
-                    if(MTFlex.Button2 == 2) { if (inList(holding.type,eqTypes) == 0) continue; }
+                    if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,holding.value);
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = Number(holding.value);}
                     let skipRec = false;
@@ -2323,7 +2330,7 @@ async function MenuReportsInvestmentsGo() {
                     }
                     // New price
                     if(skipCalc == 0) {
-                        if(inList(holding.type,eqTypes) > 0) {
+                        if(inList(holding.type,EQTYPES) > 0) {
                             if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                             holding.closingPrice = currentStockPrice;
                             holding.closingPriceUpdatedAt = getDates('s_YMD');
@@ -3327,7 +3334,7 @@ async function InvestmentsDrawer(inP) {
         divTop = MF_SidePanelOpen('','', ['',''] , useTitle, hld[p2].typeDisplay,stockInfo[0],stockInfo[1],null,'Split/Combine Holdings');
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
         DrawerDrawLine(divTop2,'Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].type,eqTypes) > 0 && hld[p2].closingPrice != 1) {
+        if(inList(hld[p2].type,EQTYPES) > 0 && hld[p2].closingPrice != 1) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
             DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
             DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
@@ -3966,7 +3973,7 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
-    const p = MenuDisplay_Input(mName + ' for Monarch Money - ' + version,'','text','font-size: 18px; font-weight: 500;');
+    const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text','font-size: 18px; font-weight: 500;');
     MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button');
@@ -4128,7 +4135,7 @@ function MenuSettingsDisplay(inDiv) {
 }
 
 function MenuFirstTimeUser() {
-    const a = confirm('Welcome to ' + mName + ' for Monarch Money!\n\nWould you like to set up the default configuration now to get started?');
+    const a = confirm('Welcome to ' + MNAME + ' for Monarch Money!\n\nWould you like to set up the default configuration now to get started?');
     if(a) {
         setCookie('MT_RefreshAll',1);setCookie('MT_MerAssist',1);setCookie('MT_MonoMT','Arial');
         setCookie('MT_TrendHidePer1',1);setCookie('MT_TrendCard1',1);setCookie('MT_NoDecimals','1');
@@ -4199,7 +4206,7 @@ window.onclick = function(event) {
     let cn = event.target.className;
     if(typeof cn === 'object') {MM_MenuFix();return;}
     if(typeof cn === 'string') {
-        if(glo.debug == 1) console.log(mName,cn,event.target);
+        if(glo.debug == 1) console.log(MNAME,cn,event.target);
         cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
@@ -4427,6 +4434,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Tags', style1: '', field2: t.tags.length == 0 ? '(None)' : getTags(t.tags), style2: ''});
         d.push({field1: t.notes, style1: '', field2: null, style2: ''});
         b.push({name: 'Edit', id: 'TransEdit'});
+        b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
         MF_ModelWindowOpen({width: 480, name: cn[0], id: t.id},d,b);
     }
 }
@@ -4587,7 +4595,7 @@ function onClickDumpDebug(inNode) {
 
     let divs = portfolioData.portfolio.aggregateHoldings.edges[inNode];
     let jsonString = JSON.stringify(divs, null, 2);
-    jsonString = mName + ' for Monarch Money - Version: ' + version + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
+    jsonString = MNAME + ' for Monarch Money - Version: ' + VERSION + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
     navigator.clipboard.writeText(jsonString);alert('Debug copied to keyboard. (node=' + inNode + ')');
 }
 
@@ -5089,7 +5097,7 @@ function getDollarValue(InValue,ignoreCents) {
     if(InValue == null) {return '';}
     if(InValue === -0 || isNaN(InValue)) {InValue = 0;}
     if(ignoreCents == true) { InValue = Math.round(InValue);}
-    let v = InValue.toLocaleString("en-US", {style:"currency", currency:Currency});
+    let v = InValue.toLocaleString("en-US", {style: "currency", currency: CURRENCY});
     if(ignoreCents == true) { v = v.substring(0, v.length-3);}
     return v;
 }
@@ -5245,9 +5253,9 @@ async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts,
     const options = callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
           query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
      });
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log(mName,'dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(glo.debug == 1) console.log(MNAME,'dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -5258,9 +5266,9 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
     const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
     });
-  return fetch(graphql, options)
+  return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log(mName,'dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(glo.debug == 1) console.log(MNAME,'dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -5273,9 +5281,9 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log(mName,'dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {if(glo.debug == 1) console.log(MNAME,'dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
 
 async function dataFixCats(inCat) {
@@ -5294,17 +5302,17 @@ async function dataTransactionsNotes(startDate,endDate) {
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id \n notes }}}\n"
     });
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
 
 async function dataGoals() {
     const options = callGraphQL({operationName: 'Web_GoalsV2', variables: { },
           query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"});
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
 
 async function dataPortfolio(startDate,endDate,inAccounts) {
@@ -5312,58 +5320,58 @@ async function dataPortfolio(startDate,endDate,inAccounts) {
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
           query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
-       return fetch(graphql, options)
+       return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log(mName,'dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(MNAME,'dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataPerformance(startDate,endDate,securityIds) {
     const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
     const options = callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
     query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n  securityHistoricalPerformance(input: $input) {\n security {\n id\n  __typename\n    }\n historicalChart {\n date\n returnPercent\n value\n __typename\n }\n __typename\n  }\n}"});
-       return fetch(graphql, options)
+       return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log(mName,'dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(MNAME,'dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataDisplayBalanceAt(date) {
     const options = callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
           query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
-  return fetch(graphql, options)
+  return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) console.log(mName,'dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(glo.debug == 1) console.log(MNAME,'dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataAccountBalances(startDate) {
     const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
          query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
-   return fetch(graphql, options)
+   return fetch(GRAPHQL, options)
     .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) console.log(mName,'dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => { if(glo.debug == 1) console.log(MNAME,'dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataGetAccounts(inID) {
     const options = callGraphQL({ operationName: 'GetAccounts',variables: { },
           query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
-  return fetch(graphql, options)
+  return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) console.log(mName,'dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(glo.debug == 1) console.log(MNAME,'dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataRefreshAccounts() {
  const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
     .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return '';}).catch((error) => { console.error(version,error); });
+    .then((data) => {return '';}).catch((error) => { console.error(VERSION,error); });
 }
 
 async function dataGetCategories() {
     const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
           query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
-    return fetch(graphql, options)
+    return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) console.log(mName,'dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(version,error); });
+        .then((data) => {if(glo.debug == 1) console.log(MNAME,'dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(VERSION,error); });
 }
 
 // Build Query functions
