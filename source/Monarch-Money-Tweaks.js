@@ -9,10 +9,12 @@
 
 // Usage License and Restrictions
 // ------------------------------
-// This source code is provided strictly for personal, private use only.
-// You may not reproduce, distribute, or publicly display this source code or
-// any derivative works without explicit written permission from the author.
-// Any unauthorized use, reproduction, or distribution is strictly prohibited.
+// Copyright (c) Robert Paresi. All rights reserved.
+// THIS SOURCE CODE IS PROVIDED FOR PERSONAL, PRIVATE INSPECTION ONLY.
+// COPYING, REPRODUCTION, MODIFICATION, REDISTRIBUTION, PUBLIC DISPLAY,
+// OR ANY DERIVATIVE WORKS IS PROHIBITED WITHOUT PRIOR WRITTEN CONSENT
+// FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
+// FULLEST EXTENT OF APPLICABLE LAW.
 
 const VERSION = '4.31.2';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
