@@ -3,7 +3,7 @@
 
 **Monarch Money Tweaks** is an extension designed to enhance and customize your experience with Monarch Money web application. It offers various features and ideas aimed at improving functionality and personalization of your financial management tasks.
 
-The ideas behind this extension (the New features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. All rights are reserved.
+The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. All rights are reserved.
 
 THIS SOURCE CODE IS PROVIDED FOR PERSONAL, PRIVATE USE & INSPECTION ONLY.  COPYING, REPRODUCTION, MODIFICATION, REDISTRIBUTION, PUBLIC DISPLAY, OR ANY DERIVATIVE WORKS IS PROHIBITED WITHOUT PRIOR WRITTEN CONSENT FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE FULLEST EXTENT OF APPLICABLE LAW.
 
