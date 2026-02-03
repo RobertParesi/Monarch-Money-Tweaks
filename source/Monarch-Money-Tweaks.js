@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.31.2
+// @version      4.31.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -10,13 +10,13 @@
 // Usage License and Restrictions
 // ------------------------------
 // Copyright (c) Robert Paresi. All rights reserved.
-// THIS SOURCE CODE IS PROVIDED FOR PERSONAL, PRIVATE INSPECTION & USE ONLY.
+// THIS SOURCE CODE IS PROVIDED FOR PERSONAL, PRIVATE USE & INSPECTION ONLY.
 // COPYING, REPRODUCTION, MODIFICATION, REDISTRIBUTION, PUBLIC DISPLAY,
 // OR ANY DERIVATIVE WORKS IS PROHIBITED WITHOUT PRIOR WRITTEN CONSENT
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.31.2';
+const VERSION = '4.31.3';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2067,29 +2067,27 @@ async function MenuReportsAccountsGo() {
                             MTFlexRow[MTFlexCR][11] = AccountsGetPendingBalance(ad.id);
                             MTFlexRow[MTFlexCR][5] = begBalance;
                             MTFlexRow[MTFlexCR][5] = parseFloat(MTFlexRow[MTFlexCR][5].toFixed(2));
-                            switch(MTFlex.Button2) {
-                                case 3:
-                                    break;
-                                default:
-                                    if(MTFlex.Button2 == 2 && incTrans == 1 ) {
-                                        MTFlexRow[MTFlexCR][10] = useBalance - (MTFlexRow[MTFlexCR][5] + MTFlexRow[MTFlexCR][8]);
-                                    } else {
-                                        MTFlexRow[MTFlexCR][10] = useBalance - MTFlexRow[MTFlexCR][5];
+
+                            if(MTFlex.Button2 != 3) {
+                                if(MTFlex.Button2 == 2 && incTrans == 1 ) {
+                                    MTFlexRow[MTFlexCR][10] = useBalance - (MTFlexRow[MTFlexCR][5] + MTFlexRow[MTFlexCR][8]);
+                                } else {
+                                    MTFlexRow[MTFlexCR][10] = useBalance - MTFlexRow[MTFlexCR][5];
+                                }
+                                MTFlexRow[MTFlexCR][10] = parseFloat(MTFlexRow[MTFlexCR][10].toFixed(2));
+
+                                if(MTFlex.Button2 == 2) {
+                                    let pd = portfolioData[MTP.UID];
+                                    if(pd != undefined) {
+                                        pd = +pd.toFixed(2);
+                                        MTFlexRow[MTFlexCR][11] = pd;
+                                        if (manualHoldData?.[MTP.UID] != true) {MTFlexRow[MTFlexCR][12] = useBalance - pd;}
                                     }
-                                    MTFlexRow[MTFlexCR][10] = parseFloat(MTFlexRow[MTFlexCR][10].toFixed(2));
-                                    if(MTFlex.Button2 == 2) {
-                                        if(portfolioData[MTP.UID] != undefined) {
-                                            MTFlexRow[MTFlexCR][11] = parseFloat(portfolioData[MTP.UID].toFixed(2));
-                                            if (manualHoldData?.[MTP.UID] != null) {
-                                                MTFlexRow[MTFlexCR][12] = parseFloat((useBalance - portfolioData[MTP.UID]).toFixed(2));
-                                            }
-                                        }
-                                    } else {
-                                        MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
-                                        if (manualHoldData?.[MTP.UID] != null) {
-                                            MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
-                                        }
-                                    }
+                                } else {
+                                    MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
+                                    MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
+                                }
+
                             }
                             if(ad.subtype.name == 'checking') {acard[0] += useBalance;}
                             if(ad.subtype.name == 'savings') {acard[1] += useBalance;}
