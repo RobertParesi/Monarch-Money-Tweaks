@@ -110,8 +110,8 @@ function MM_Init() {
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexError {text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
-    addStyle('.MTFlexBig {font-size: 20px;' + standardText + 'font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
-    addStyle('.MTFlexCardBig {font-size: 20px;' + standardText + 'font-weight: 600; padding-top: 6px; text-align: center;}');
+    addStyle('.MTFlexBig {font-size: 18px; font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
+    addStyle('.MTFlexCardBig {font-size: 20px;font-weight: 600; padding-top: 6px; text-align: center;}');
     addStyle('.MTFlexText {font-size: 14px;' + panelText + 'font-weight: 600;}');
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px !important;}');
@@ -144,7 +144,6 @@ function MM_Init() {
     addStyle('.MTSpacerClass {width: 100%;  margin-top: 9px; margin-bottom: 9px; ' + bdrb2 + '}');
     addStyle('.trH {height: 4px;}');addStyle('.trH2 {height: 20px; vertical-align: top;}');
     addStyle('.show {display: block;}');
-
     addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;font-weight: 600;margin-left: 10px;cursor:pointer;}');
     addStyle('.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}');
     addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
@@ -3702,23 +3701,24 @@ function MTUpdateAccountPartner() {
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
 
-        cec('div','MTInputTitle',div,'Subtype free-form override - (' + MNAME + ')');
+        cec('div','MTInputTitle',div,'Subtype override - (' + MNAME + ')');
         let div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountSubGroupID');
         let p = glo.pathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccountsSub:' + p[3],false);}
 
+        cec('div','MTInputTitle',div,'Account Group - (' + MNAME + ')');
+        div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
+        p = glo.pathName.split('/');
+        if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
         div3 = cec('div','MTInputClass',div);
+
         cec('div','MTInputTitle',div3,'Accounts Dashboard - (' + MNAME + ')');
         div3 = cec('label','',div3,'Add to Accounts List on Dashboard','','','htmlFor','DashboardCheckbox');
         div3 = cec('input','MTDashboardCheckbox',div3,'','','float:left;','id','DashboardCheckbox');
         div3.type = 'checkbox';
         div3.setAttribute('act',p[3]);
         if(getCookie('MTAccountDashboard:' + p[3],true) == true) {div3.checked = 'true';}
-        cec('div','MTInputTitle',div,'Account Group - (' + MNAME + ')');
-        div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
-        p = glo.pathName.split('/');
-        if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
-   }
+    }
 }
 // [ Calendar ]
 function MM_FixCalendarYears() {
