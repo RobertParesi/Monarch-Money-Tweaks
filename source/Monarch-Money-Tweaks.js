@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.31.3
+// @version      4.31.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.31.3';
+const VERSION = '4.31.5';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -51,7 +51,6 @@ function MM_Init() {
     const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;';
 
     css.header = getCookie('MT_ColorHigh',false);css.subtotal = getCookie('MT_ColorLow',false);
-
     if(css.header == '') {css.header = ['#e6e4e0','rgb(68,68,68)'][a];}
     if(css.subtotal == '') {css.subtotal = ['#f9f6f3','rgb(48,48,48)'][a];}
     css.header = 'background-color:' + css.header + ';';css.subtotal = 'background-color:' + css.subtotal + ';';
@@ -63,12 +62,12 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
-    addStyle('.MTBub {margin-bottom: 12px;}');
-    addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 10px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
-    addStyle('.MTWait {width: 400px; margin-left: auto; margin-top: 100px; margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 16px; color:' + accentColor + 'font-weight: 600; font: sans-serif, Oracle; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
-    addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, Oracle !important; font-size: 15px; font-weight: 500;}');
-    addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
+
+    addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
+    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; font-family: sans-serif, MonarchIcons !important;}');
+    addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
+    addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
+    addStyle('.MTPanelLink a, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
@@ -77,15 +76,13 @@ function MM_Init() {
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 25%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
-    addStyle('.MTAccountSummaryDetail {font-weight: 100;}');
-    addStyle('.MTData {padding: 20px;}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
     addStyle('.MTField1 {width: 30%;}');addStyle('.MTField2 {width: 70%;}');
     addStyle('.MTButtons { padding-right: 20px; display: flex;justify-content: space-between; width: 100%;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, Oracle, sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: Oracle, sans-serif, MonarchIcons; font-size: 14px; font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
@@ -108,25 +105,24 @@ function MM_Init() {
     addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;}');
-    addStyle('.MThRefClass2 {font-family: MonarchIcons, Oracle, sans-serif;}');
+    addStyle('.MThRefClass2 {font-family: Oracle, sans-serif, MonarchIcons;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexError {text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig {font-size: 20px;' + standardText + 'font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
     addStyle('.MTFlexCardBig {font-size: 20px;' + standardText + 'font-weight: 600; padding-top: 6px; text-align: center;}');
-    addStyle('.MTFlexBig {font-size: 18px !important;}');
     addStyle('.MTFlexText {font-size: 14px;' + panelText + 'font-weight: 600;}');
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px !important;}');
     addStyle('.MTFlexImage {border-radius: 100%; width: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; height: 23px;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; font-family: MonarchIcons, sans-serif; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; font-family: sans-serif, MonarchIcons; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
-    addStyle('.MTSideDrawerHeader { font-family: MonarchIcons, sans-serif !important;' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
@@ -135,7 +131,7 @@ function MM_Init() {
     addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor: pointer; color: rgb(50, 170, 240) !important;');
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 200px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white; font-weight: bold;}');
-    addStyle('.MTSideDrawerSummaryTable {font-size: 13px;text-align: left; width: 100%;}');
+    addStyle('.MTSideDrawerSummaryTable {text-align: left; width: 100%;}');
     addStyle('.MTSideDrawerSummaryTableTH {font-weight:600; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTSideDrawerSummaryData {overflow: hidden; white-space: nowrap; text-overflow: ellipsis;max-width: 250px;}');
     addStyle('.MTSideDrawerSummaryData2 {text-align: right;}');
@@ -146,11 +142,9 @@ function MM_Init() {
     addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
     addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.MTSpacerClass {width: 100%;  margin-top: 9px; margin-bottom: 9px; ' + bdrb2 + '}');
-    addStyle('.trH {height: 4px;}');addStyle('.trH2 {height: 20px;vertical-align: top;}');
+    addStyle('.trH {height: 4px;}');addStyle('.trH2 {height: 20px; vertical-align: top;}');
     addStyle('.show {display: block;}');
-    addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
-    addStyle('.MTBudget2 {float: right;}');
-    addStyle('.MTChartContainer { border: 0px; font-family: Oracle, MonarchIcons, sans-serif}');
+
     addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;font-weight: 600;margin-left: 10px;cursor:pointer;}');
     addStyle('.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}');
     addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
@@ -160,6 +154,10 @@ function MM_Init() {
     addStyle('.tooltip .tooltiptext { width: 270px; font-size: 14px; font-weight: 600; text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
     addStyle('.tooltip .tooltiptext::after { position: absolute; top:100%; left: 50%; border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
+}
+function MM_GridFont() {
+    css.FontFamily = getCookie('MT_MonoMT', false) || 'System';
+    css.FontFamily = 'font-family: ' + (css.FontFamily == 'System' ? 'Oracle' : css.FontFamily) + ', sans-serif, MonarchIcons;';
 }
 
 function MM_MenuFix() {
@@ -222,6 +220,7 @@ function MF_QueueAddCard(p) {
 
 async function MF_GridInit(inName, inDesc) {
 
+    MM_GridFont();
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
@@ -314,10 +313,6 @@ function MT_GridDrawDetails() {
     let el = null, elx = null, Header = null, SubHeader = false;
     let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '',Grouptotals = [];
     let rowVal = 0, rowI = 0, rowsInc = 0, rowIs = MTFlexRow.length -1;
-    let FontFamily = getCookie('MT_MonoMT', false) || 'System';
-    FontFamily = 'font-family: ' + (FontFamily == 'System' ? 'Oracle' : FontFamily) + ', sans-serif, MonarchIcons;';
-    if(MTFlex.TableStyle) FontFamily = FontFamily + MTFlex.TableStyle;
-
     let hide = getChecked(MTFlex.Button3,'');
     MTFlexSum = [0,0];
 
@@ -337,7 +332,7 @@ function MT_GridDrawDetails() {
 
     function MT_GridDrawTitles() {
 
-        Header = cec('table','MTFlexGrid',MTFlexTable,'','',FontFamily);
+        Header = cec('table','MTFlexGrid',MTFlexTable,'','',css.FontFamily + MTFlex.TableStyle);
         if(MTFlex.HideDetails == true) return;
         el = cec('tr','MTFlexGridTitleRow',Header,'','',MTFlex.CanvasTitle);
         for (rowI = 0; rowI < MTFlexTitle.length; rowI++) {
@@ -664,7 +659,7 @@ function MT_GridDrawContainer() {
     div2.type = 'checkbox';if(MTFlex.Button3 == 1) {div2.checked = 'true';}
 
     cht = cec('div','MTFlexContainerHeader',MTFlexTable,'','','padding-top: 0px; padding-bottom: 0px;');
-    div2 = cec('div','',cht,'','','display:flex;gap:6px;');
+    div2 = cec('div','',cht,'','','display:flex; gap:6px;');
     cec('span','MTFlexExpand',div2,'','','','title','Collapse / Expand');
     cec('span','MTFlexText',div2, MF_GridTip(),'','margin-left: 12px;');
     div2 = cec('div','',cht);
@@ -856,7 +851,7 @@ function MF_ModelWindowOpen(t,d,b) {
     if(t.id) div.id = t.id;
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
-    div = cec('div','MTData',divTop);
+    div = cec('div','',divTop,'','','padding: 20px;');
     if(d.length > 0) {
         d.forEach(data => {
             let div2 = cec('div','MTRow',div);
@@ -893,10 +888,11 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
         let div = cec('div','MTHistoryPanel',divTop);
         let div2 = cec('div','MTSideDrawerRoot',div,'','','','tabindex','0');
         let div3 = cec('div','MTSideDrawerContainer',div2);
-        let div4 = cec('div','MTSideDrawerMotion',div3,'','','','grouptype',inType);
-        if(inType2) {
-            div4.setAttribute('groupsubtype',inType2);
-            div4.setAttribute('groupid',inGroupId);
+        let div4 = cec('div','MTSideDrawerMotion',div3,'','','','id','grouptypes');
+        if(inType || inType2) {
+            if(inType) div4.setAttribute('grouptype',inType);
+            if(inType2) div4.setAttribute('groupsubtype',inType2);
+            if(inGroupId) div4.setAttribute('groupid',inGroupId);
         }
         div = cec('span','MTSideDrawerHeader',div4);
         cec('button','MTTrendCellArrow',div,'','','float:right;');
@@ -1151,7 +1147,7 @@ function MF_DrawChart(inLocation) {
         divTooltip = document.getElementById('MTChartTip');
     }
 
-    let div = document.querySelector('div.MTSideDrawerMotion');
+    let div = document.getElementById('grouptypes');
     if(!div) return;
     let grpID = div.getAttribute('groupid');
     let grpType = div.getAttribute('grouptype');
@@ -3017,26 +3013,26 @@ function HistoryDrawerDraw() {
     const startYear = getDates('n_CurYear') - 2;
     const curYear = getDates('n_CurYear');
     const curMonth = getDates('n_CurMonth');
-    let grouptype = '',groupsubtype = '',groupid = '',inGroup = 1,c_r = 'red', c_g = 'green';
+    let grpType = '',grpSubtype = '',grpID = '',inGroup = 1,c_r = 'red', c_g = 'green';
     let curYears = 1,skiprow = false,useArrow = 0;
     let T = ['Total',0,0,0,0];
     let curSubTotal = 0;
     let div=null,div2 = null,div3=null;
-    let FontFamily = getCookie('MT_MonoMT',false);
-    if(FontFamily && FontFamily != 'System') {FontFamily = 'font-family: ' + FontFamily + ';';}
-    let divTop = document.querySelector('div.MTSideDrawerMotion');
+
+    let divTop = document.getElementById('grouptypes');
     if(divTop) {
-        grouptype = divTop.getAttribute("grouptype");
-        groupsubtype = divTop.getAttribute("groupsubtype");
-        groupid = divTop.getAttribute("groupid");
-        if(grouptype == 'category-groups') { inGroup = 2;}
-        if(groupsubtype == 'income') { c_g = 'red'; c_r = 'green'; }
+        grpID = divTop.getAttribute('groupid');
+        grpType = divTop.getAttribute('grouptype');
+        grpSubtype = divTop.getAttribute('groupsubtype');
+
+        if(grpType == 'category-groups') { inGroup = 2;}
+        if(grpSubtype == 'income') { c_g = 'red'; c_r = 'green'; }
 
         if(startYear < getCookie('MT_LowCalendarYear',false)) {skiprow = true;}
 
         div = cec('div','MTSideDrawerHeader',divTop);
         MF_DrawChart(div);
-        div = cec('div','MTSideDrawerHeader',divTop,'','',FontFamily);
+        div = cec('div','MTSideDrawerHeader',divTop,'','',css.FontFamily);
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": HistoryDrawerUpdate(i+1,startYear),"YR2": HistoryDrawerUpdate(i+1,startYear + 1),"YR3": HistoryDrawerUpdate(i+1,startYear + 2)});
         }
@@ -3172,7 +3168,7 @@ function HistoryDrawerDraw() {
 
         detailQue.sort((a, b) => b.YR3 - a.YR3 || b.YR2 - a.YR2);
         let useURL = '#|';
-        useURL += groupsubtype == 'expense' ? 'spending|' : 'income|';
+        useURL += grpSubtype == 'expense' ? 'spending|' : 'income|';
 
         for (let i = 0; i < detailQue.length; i++) {
             let div2 = cec('div','MTSideDrawerItem2',inDiv,'','',hideDetail);
@@ -3245,7 +3241,6 @@ async function AccountsDrawer(inP) {
 
     cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','margin-top:10px;text-align: left;');
     cec('div','MTFlexLittle',divTop2,MTFlex.Title2);
-    let div2 = cec('div','MTSideDrawerItem',divTop2,'','','font-weight: 600;text-align: right;');
 
     transData.allTransactions.results.forEach(t => {
         if(accts.includes(t.account.id)) {
@@ -3254,17 +3249,19 @@ async function AccountsDrawer(inP) {
     });
     transQueue.sort((a, b) => a.date.localeCompare(b.date));
 
+    let divTable = cec('div','MTSideDrawerHeader',divTop2,'','',css.FontFamily);
+    let div2 = cec('div','MTSideDrawerItem',divTable,'','','font-weight: 600;text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,accountFields[1]);
     cec('span','MTSideDrawerDetail',div2,accountFields[2]);
     cec('span','MTSideDrawerDetail',div2, accountFields[4]);
     cec('span','MTSideDrawerDetail3',div2);
     cec('span','MTSideDrawerDetail',div2,accountFields[3]);
-    div2 = cec('div','MTSideDrawerItem',divTop2);
+    div2 = cec('div','MTSideDrawerItem',divTable);
     cec('span','MTFlexSpacer',div2);
 
     for (let m = 0; m < transQueue.length; m++) {
-        div2 = cec('div','MTSideDrawerItem',divTop2);
+        div2 = cec('div','MTSideDrawerItem',divTable);
         cec('span','MTSideDrawerDetail',div2,getMonthName(transQueue[m].date,3),'','font-weight: 600;text-align: left;');
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].inc),'','','data','income|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].exp),'','','data','expense|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
@@ -3274,17 +3271,17 @@ async function AccountsDrawer(inP) {
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].trn),'','','data','transfer|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
         incs+=transQueue[m].inc;exps+=transQueue[m].exp;tots+=tot;trns+=transQueue[m].trn;
     }
-    div2 = cec('div','MTSideDrawerItem',divTop2);
-    cec('span','MTFlexSpacer',div2);
+    div2 = cec('div','MTSideDrawerItem',divTable);
+    cec('span','MTFlexSpacer',divTable);
 
-    div2 = cec('div','MTSideDrawerItem',divTop2);
+    div2 = cec('div','MTSideDrawerItem',divTable);
     cec('span','MTSideDrawerDetail',div2,'Totals','','font-weight: 600;text-align: left;');
     cec('span','MTSideDrawerDetail',div2,getDollarValue(incs));
     cec('span','MTSideDrawerDetail',div2,getDollarValue(exps));
     cec('span','MTSideDrawerDetail',div2,getDollarValue(tots));
     cec('span','MTSideDrawerDetail3',div2);
     cec('span','MTSideDrawerDetail',div2,getDollarValue(trns));
-    div2 = cec('span','MTSideDrawerHeader',divTop);
+    div2 = cec('span','MTSideDrawerHeader',divTop2);
     cec('div','MTPanelLink',div2,'Download CSV','','padding: 0px; display:block; text-align:center;');
 
     function AccountsDrawerUpdate(inDate,inAmt,inType) {
@@ -3432,9 +3429,12 @@ function InvestmentsDrawerRefresh(inT) {
 
 async function TransactionsDrawer(inTarget,inDiv,inData) {
 
-    const groupIDs = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
-    const grouptype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('grouptype');
-    const groupSubtype = inTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupsubtype');
+    let div = document.getElementById('grouptypes');
+    if(!div) return;
+    let grpID = div.getAttribute('groupid');
+    let grpType = div.getAttribute('grouptype');
+    let grpSubtype = div.getAttribute('groupsubtype');
+
     let filterType = '',filterAct = [];
     let ldR = formatQueryDate(getDates('d_StartofLastMonth'));
     let hdR = formatQueryDate(getDates('d_Today'));
@@ -3442,18 +3442,19 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
         ldR = inData[1] + '-' + inData[2] + '-01';
         hdR = inData[1] + '-' + inData[2] + '-' + String(daysInMonth((Number(inData[2])-1),inData[1])).padStart(2, '0');
     }
+
     switch(inData[0]) {
         case 'pending':
-            if(groupIDs == undefined) return;
-            transData = await dataTransactions(ldR,hdR,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
+            if(grpID == undefined) return;
+            transData = await dataTransactions(ldR,hdR,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(grpID,'',true));
             break;
         case 'range':
-            if(groupIDs == undefined) return;
-            transData = await dataTransactions(ldR,hdR,0,false,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,'',true));
+            if(grpID == undefined) return;
+            transData = await dataTransactions(ldR,hdR,0,false,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(grpID,'',true));
             break;
         default:
             filterType = inData[0];
-            if(grouptype == 'Group') {filterAct = MF_GridPKUIDs(groupSubtype);} else {filterAct.push(groupIDs);}
+            if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
     }
 
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',inDiv);
@@ -3571,7 +3572,7 @@ async function MenuAccountsSummary() {
         let divChild = null,tt='';
         for (let j = 0; j < aSummary.length; j++) {
             if((isAsset && aSummary[j].Asset != 0) || (!isAsset && aSummary[j].Liability !=0)) {
-                divChild = cec('div',cnClass,div,'','','margin-bottom: 5px;');
+                divChild = cec('div',cnClass,div,'','','margin-bottom: 5px;font-weight: 100;');
                 if(isAsset == true) {tt = aSummary[j].ToolTipAsset;} else {tt = aSummary[j].ToolTipLiability;}
                 cecTip('span','',divChild,aSummary[j].AccountGroup,tt);
                 cec('span','fs-exclude',divChild,isAsset == true ? getDollarValue(aSummary[j].Asset) : getDollarValue(aSummary[j].Liability));
@@ -3629,7 +3630,7 @@ async function MenuPlanRefresh() {
 
     let li = document.querySelector('div.MTBudget');
     if(li) return;
-    div = cec('div','MTBudget',div);
+    div = cec('div','MTBudget',div,'','','margin-top: 20px; font-size: 14px;');
 
     let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,BRLit = 'Budget Remaining',LTSLit = 'Left to Spend';
     let noBudget=true;
@@ -3669,8 +3670,8 @@ async function MenuPlanRefresh() {
 
     function writePlan(inDesc,inValue,inHref,inStyle,inStyle2,isSpace) {
         let div2 = cec('div','',div,'','',isSpace == true ? 'margin-top: 10px;' : '');
-        cec(inHref != '' ? 'a' : 'span','MTBudget1',div2,inDesc,inHref,inStyle);
-        cec('span','MTBudget2 fs-exclude',div2,inValue,'',inStyle + inStyle2);
+        cec(inHref != '' ? 'a' : 'span','',div2,inDesc,inHref,inStyle);
+        cec('span','MTBudget2 fs-exclude',div2,inValue,'','float: right;' + inStyle + inStyle2);
     }
 }
 // [ Budget Plan Reorder ]
@@ -3701,19 +3702,19 @@ function MTUpdateAccountPartner() {
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
 
-        cec('div','MTInputTitle',div,'Subtype free-form override - (MM Tweaks)');
+        cec('div','MTInputTitle',div,'Subtype free-form override - (' + MNAME + ')');
         let div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountSubGroupID');
         let p = glo.pathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccountsSub:' + p[3],false);}
 
         div3 = cec('div','MTInputClass',div);
-        cec('div','MTInputTitle',div3,'Accounts Dashboard - (MM Tweaks)');
+        cec('div','MTInputTitle',div3,'Accounts Dashboard - (' + MNAME + ')');
         div3 = cec('label','',div3,'Add to Accounts List on Dashboard','','','htmlFor','DashboardCheckbox');
         div3 = cec('input','MTDashboardCheckbox',div3,'','','float:left;','id','DashboardCheckbox');
         div3.type = 'checkbox';
         div3.setAttribute('act',p[3]);
         if(getCookie('MTAccountDashboard:' + p[3],true) == true) {div3.checked = 'true';}
-        cec('div','MTInputTitle',div,'Account Group - (MM Tweaks)');
+        cec('div','MTInputTitle',div,'Account Group - (' + MNAME + ')');
         div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
         p = glo.pathName.split('/');
         if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
@@ -3880,6 +3881,7 @@ async function MenuDashboardAccounts() {
         if(newDiv) sortTableByColumn(newDiv);
 
         function MenuDashboardAccountsHeader() {
+            MM_GridFont();
             newDiv = document.createElement('div');
             newDiv.className = 'MTFlexContainerPanel';
             newDiv.id = 'MTFlexDashboardAccounts';
@@ -3891,7 +3893,7 @@ async function MenuDashboardAccounts() {
             rowDiv = cec('div','',divTop);
             cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 5px 0px 5px 0px;');
 
-            newDiv = cec('table','MTSideDrawerSummaryTable',divTop,'','','font-size: 14px;','TableName','DashboardAccounts');
+            newDiv = cec('table','MTSideDrawerSummaryTable',divTop,'','',css.FontFamily + 'font-size: 15px;','TableName','DashboardAccounts');
             let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
             let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account','','','datatype','alpha');
             td.setAttribute('columnindex','0');
@@ -3947,7 +3949,7 @@ function MenuSetttingsCategory() {
         isExp = divs[i].parentNode.parentNode.parentNode;
         if(isExp && isExp.innerText.startsWith('Expenses')) {
             div = cec ('div','',divs[i],'','','flex:1;');
-            div = cec('label','',div,'Fixed Expense (MM Tweaks)','','font-size: 13px;float:right;','htmlFor','MTFixed');
+            div = cec('label','',div,'Fixed Expense (' + MNAME + ')','','font-size: 13px;float:right;','htmlFor','MTFixed');
             div = cec('input','MTFixedCheckbox',div,'','','margin-top: 2px;','id','MTFixed');
             div.setAttribute('grp',grp);
             div.type = 'checkbox';
@@ -4535,8 +4537,8 @@ async function onClickExpandSidePanelDetail(inTarget) {
         divE = cec('div','',div);
         div = cec('span','MTSideExport',divE,'','','margin-right: 6px;','title','Export to CSV');
         div.setAttribute('data',data[2] + '-' + data[1]);
-        div = cec('table','MTSideDrawerSummaryTable',divTop,'','','','TableName','AccountDetailSummary');
-        await TransactionsDrawer(event.target,div,data);
+        div = cec('table','MTSideDrawerSummaryTable',divTop,'','','font-size: 13px;','TableName','AccountDetailSummary');
+        await TransactionsDrawer(inTarget,div,data);
         sortTableByColumn(div);
     }
 }
@@ -4929,7 +4931,7 @@ function getDates(InValue,InDate) {
             if(getCookie('MT_CalendarEOM',true) == 1) {day = daysInMonth(month,year); }
             break;
         default:
-            alert('MT-Tweaks: Invalid Date in getDates: ' + InValue); return;
+            alert(MNAME + ': Invalid Date in getDates: ' + InValue); return;
     }
     month+=1;
     const FullDate = [("0" + month).slice(-2),("0" + day).slice(-2),year].join('/');
@@ -5128,7 +5130,7 @@ function uploadfileSettings(inType) {
                 const contents = e.target.result;
                 const lines = contents.split(/\r?\n/);
                 lines.forEach((line, index) => {csvContent.push(line);});
-                if(csvContent[0] == null || csvContent[0] != cf) {alert('MT-Tweaks: Invalid ' + cf);}
+                if(csvContent[0] == null || csvContent[0] != cf) {alert(MNAME + ': Invalid ' + cf);}
                 else {
                     for (let i = 1; i < csvContent.length; i++) {
                         const line = csvContent[i].split('||');
