@@ -2,6 +2,7 @@
 
 * **Version 4.31 (beta)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
+     - CHANGE: All MM-Tweaks grid data (FlexGrid, SideDrawer, Transaction Detail and Accounts Dashboard) will use MM-Tweaks Report Grid font.
      - FIX: Reports Chart Tips would have issues with 0 values (Infinity, NaN) - corrected.
      - FIX: Step chart labels clearer what the data is. (Jan - Feb 2024)
      
