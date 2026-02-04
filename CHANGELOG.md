@@ -2,6 +2,8 @@
 
 * **Version 4.31 (beta)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
+     - NEW: Added "Buys/Sells" and "Adjustments" to Reports / Accounts [Brokerage Statement] to make Transfers more accurate.
+     - NEW: Reports / Trends added ability to hide "Savings" line.
      - CHANGE: All grid data (FlexGrid, SideDrawer, Transaction Detail and Accounts Dashboard) will use Reports / **Report Grid font** setting.
      - FIX: Reports Chart Tips would have issues with 0 values (Infinity, NaN) - corrected.
      - FIX: Step chart labels clearer what the data is. (Jan - Feb 2024)
