@@ -1463,7 +1463,6 @@ function MF_DrawChart(inLocation) {
                     let tt='<table>';
                     if(xAxis.length > yAxis.length) {
                         const Mth = pt.date.slice(2,4);
-                        const Beg = points[0].date.slice(2,4);
                         let ptDate = MTFlex.ChartIndex == 1 ? points[0]?.date.slice(5) + ' - ' : '';
                         let legs = [],leg=0, xMth ='';
                         for (let k = 0; k < points.length; k++) {
@@ -5064,14 +5063,14 @@ function getCleanValue(inValue,inDec) {
     if(inValue.length > -1 && (inValue[0] === '$' || inValue[0] === '-' || inValue[0] === '+')) {
         inValue = inValue.split(" ")[0];
         inValue = replaceBetweenWith(inValue,'(',')','');
-        const AmtStr = inValue.replace(/[$,]+/g,"");
+        let AmtStr = inValue.replace(/[$,]+/g,"");
         let Amt = Number(AmtStr);
         if(inDec > 0) {Amt = Number(Amt.toFixed(inDec));}
         return Amt;
     } else {
         inValue = inValue.replace('%','');
         inValue = inValue.replace(',','');
-        return inValue
+        return inValue;
     }
 }
 
