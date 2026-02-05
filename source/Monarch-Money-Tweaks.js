@@ -67,7 +67,7 @@ function MM_Init() {
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; font-family: sans-serif, MonarchIcons !important;}');
     addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
-    addStyle('.MTPanelLink a, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
+    addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
