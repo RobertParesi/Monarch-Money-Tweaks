@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.31.5
+// @version      4.31
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.31.5';
+const VERSION = '4.31';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1958,6 +1958,7 @@ async function MenuReportsAccountsGo() {
 
         } else {
             if(MTFlex.Button2 == 3) {MF_GridOptions(1,[]); accountFields = ['Total Spend','Refunds','Charges','Payments', 'Total Spend'];}
+            if(MTFlex.Button2 == 2) { accountFields = ['Beg Balance','Buy/Sell','Adjustments','Transfers','Net Income'];}
             MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
             MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
             if(skipHidden3 == 0) MTFlex.RequiredCols = [5,9,11,12];
@@ -1969,7 +1970,6 @@ async function MenuReportsAccountsGo() {
         MTP.IsSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];
         if(MTFlex.Button2 == 2) MTP.ShowPercent = {Type: 'Column'};
         MF_QueueAddTitle(5,accountFields[0],MTP);
-        if(MTFlex.Button2 == 2) {MTP.IsHidden = true;}
         MTP.ShowPercent = null;
         MF_QueueAddTitle(6,accountFields[1],MTP);
         MF_QueueAddTitle(7,accountFields[2],MTP);
@@ -2015,7 +2015,7 @@ async function MenuReportsAccountsGo() {
         if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < 5; i++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
         for (let i = 0; i < accountsData.accounts.length; i ++) {
-            let ad = accountsData.accounts[i];
+            let ad = accountsData.accounts[i],wv=0;
             if(MTFlex.Button2 == 2) {if(ad.type.name != 'brokerage') continue;}
             if(MTFlex.Button2 == 3) {if(ad.subtype.name != 'credit_card') continue;}
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + ad.id,false)) {
@@ -2047,16 +2047,33 @@ async function MenuReportsAccountsGo() {
                                 for (let j = 0; j < txLen; j++) {
                                     let tx = transData.allTransactions.results[j];
                                     if (!tx.hideFromReports && tx.account.id === ad.id) {
-                                        switch (tx.category.group.type) {
-                                            case 'expense':tE += tx.amount; break;
-                                            case 'income':tI += tx.amount;break;
-                                            case 'transfer':tT += tx.amount;break;
+                                        if(MTFlex.Button2 == 2) {
+                                            if(tx.category.group.type == 'transfer') {
+                                                switch(tx.category.name) {
+                                                    case 'Buy':
+                                                    case 'Sell':
+                                                        tI += tx.amount;break;
+                                                        break;
+                                                    case 'Transfer':
+                                                    case 'Transfers':
+                                                        tT += tx.amount;break;
+                                                        break;
+                                                    default:
+                                                        tE += tx.amount;
+                                                }
+                                            }
+                                        } else {
+                                            switch (tx.category.group.type) {
+                                                case 'expense':tE -= tx.amount; break;
+                                                case 'income':tI += tx.amount;break;
+                                                case 'transfer':tT += tx.amount;break;
+                                            }
                                         }
                                     }
                                 }
-                                MTFlexRow[MTFlexCR][6] += tI;
-                                MTFlexRow[MTFlexCR][7] = +(-tE).toFixed(2);
-                                MTFlexRow[MTFlexCR][8] += tT;
+                                MTFlexRow[MTFlexCR][6] = parseFloat(tI.toFixed(2));
+                                MTFlexRow[MTFlexCR][7] = parseFloat(tE.toFixed(2));
+                                MTFlexRow[MTFlexCR][8] = parseFloat(tT.toFixed(2));
                             }
                             if(MTFlex.Button2 == 3) begBalance = MTFlexRow[MTFlexCR][6] + MTFlexRow[MTFlexCR][7];
                             MTFlexRow[MTFlexCR][11] = AccountsGetPendingBalance(ad.id);
@@ -2076,13 +2093,13 @@ async function MenuReportsAccountsGo() {
                                     if(pd != undefined) {
                                         pd = +pd.toFixed(2);
                                         MTFlexRow[MTFlexCR][11] = pd;
-                                        if (manualHoldData?.[MTP.UID] != true) {MTFlexRow[MTFlexCR][12] = useBalance - pd;}
+                                        if (manualHoldData?.[MTP.UID] != true) {wv = useBalance - pd;}
                                     }
                                 } else {
                                     MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
-                                    MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
+                                    wv = useBalance + MTFlexRow[MTFlexCR][11];
                                 }
-
+                                MTFlexRow[MTFlexCR][12] = parseFloat(wv.toFixed(2));
                             }
                             if(ad.subtype.name == 'checking') {acard[0] += useBalance;}
                             if(ad.subtype.name == 'savings') {acard[1] += useBalance;}
@@ -2763,7 +2780,7 @@ async function TrendsDataExtended() {
     MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending');
     MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
     MF_GridRollDifference(7,3,5,1,'Spending','Add','section|Spending|Spending');
-    MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+    if(getCookie('MT_TrendHide3',true) == 0) MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(13,1,12,'Add');
 
     lowestMonth = 12;
@@ -2844,7 +2861,7 @@ async function TrendsDataStd() {
     MF_GridRollup(3,4,1,'Fixed Spending','section|Fixed|Fixed Spending|');
     MF_GridRollup(5,6,1,'Flexible Spending','section|Flexible|Flexible Spending');
     MF_GridRollDifference(7,3,5,1,'Spending','Add','section|Spending|Spending');
-    MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+    if(getCookie('MT_TrendHide3',true) == 0) MF_GridRollDifference(8,1,7,1,'Savings','Sub');
 
     if(getCookie('MT_TrendCard1',true) == true) {
         let a_Income = MF_GridGetValue(1,5);
@@ -4011,6 +4028,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
     MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
     MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
+    MenuDisplay_Input('Hide Savings Summary','MT_TrendHide3','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
     MenuDisplay_Input('Reports / Net Income Report','','spacer');
     MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
@@ -4032,7 +4050,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
     MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
     MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
-    MenuDisplay_Input('Add Transfers to Net Change amount in Brokerage Statement','MT_AccountsNetTransfers','checkbox');
+    MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement (Simple Portfolio Performance)','MT_AccountsNetTransfers','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
@@ -4666,6 +4684,7 @@ function onClickLastNumber() {
 
 function onClickSumCells() {
     let x = Number(getCleanValue(event.target.textContent,2));
+
     if(event.target.id != 'selected') {
         event.target.style = 'border: 2px solid green;';event.target.id = 'selected';
         MTFlexSum[0]++; MTFlexSum[1] += x;
@@ -5041,15 +5060,19 @@ function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
 }
 
 function getCleanValue(inValue,inDec) {
-    if(inValue.startsWith('$') || inValue.startsWith('-') || inValue.startsWith('+')) {
+
+    if(inValue.length > -1 && (inValue[0] === '$' || inValue[0] === '-' || inValue[0] === '+')) {
         inValue = inValue.split(" ")[0];
         inValue = replaceBetweenWith(inValue,'(',')','');
         const AmtStr = inValue.replace(/[$,]+/g,"");
         let Amt = Number(AmtStr);
         if(inDec > 0) {Amt = Number(Amt.toFixed(inDec));}
         return Amt;
+    } else {
+        inValue = inValue.replace('%','');
+        inValue = inValue.replace(',','');
+        return inValue
     }
-    else { return inValue; }
 }
 
 function getBondPieces(inVal) {
