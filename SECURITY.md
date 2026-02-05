@@ -12,7 +12,7 @@ This extension is designed to request only the data and permissions necessary fo
 
 The extensions **source code is public** and available for anyone to review. It has been around for two years now, and I am a moderator in the Monarch Money Reddit community forum.   Currently, there are over 2,000 active users using this extension.
 
-Finally, the extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.
+Finally, this extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.  It follows the **same** distribution platform as the Monarch Money Retail extensions.
 
 ### Data Collection and Modification
 
