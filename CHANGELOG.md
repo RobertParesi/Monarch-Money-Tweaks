@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.31 (beta)**
+* **Version 4.31 (February 4, 2026)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
      - NEW: Added "Buys/Sells" and "Adjustments" to Reports / Accounts [Brokerage Statement] to make Transfers more accurate.
      - NEW: Reports / Trends added ability to hide "Savings" line.
