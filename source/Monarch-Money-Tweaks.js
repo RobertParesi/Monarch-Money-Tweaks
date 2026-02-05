@@ -3909,7 +3909,7 @@ async function MenuDashboardAccounts() {
             rowDiv = cec('div','',divTop);
             cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 5px 0px 5px 0px;');
 
-            newDiv = cec('table','MTSideDrawerSummaryTable',divTop,'','',css.FontFamily + 'font-size: 15px;','TableName','DashboardAccounts');
+            newDiv = cec('table','MTSideDrawerSummaryTable',divTop,'','',css.FontFamily + 'font-size: 14.5px;','TableName','DashboardAccounts');
             let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
             let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Account','','','datatype','alpha');
             td.setAttribute('columnindex','0');
