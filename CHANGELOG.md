@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.40 (beta)**
+* **Version 4.32 (beta)**
      - CHANGE: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions with MM changes.  Now use **Reports / Accounts / > / Edit Account**.
 
 * **Version 4.31 (February 4, 2026)**
