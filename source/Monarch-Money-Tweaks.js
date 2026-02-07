@@ -4003,8 +4003,8 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
     const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text','font-size: 18px; font-weight: 500;');
-    MenuDisplay_Input('• To change Fixed Spending & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
-    MenuDisplay_Input('• To add Account Groups, choose Accounts and Edit / Edit account.','','text','font-size: 16px;');
+    MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
+    MenuDisplay_Input('• For ' + MNAME + ' Account settings, choose Reports / Accounts / > / Edit Account.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button');
     MenuDisplay_Input(p,'Restore Settings', 'button');
     MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
