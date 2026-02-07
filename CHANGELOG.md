@@ -1,7 +1,8 @@
 # Change Log (Version History)
 
 * **Version 4.32 (beta)**
-     - CHANGE: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions with MM changes.  Now use **Reports / Accounts / > / Edit Account**.
+     - IMPORTANT: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions with MM changes.  Now use **Reports / Accounts / > / Edit Account**.
+     - CHANGE: Improved more compact CSS.
 
 * **Version 4.31 (February 4, 2026)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
