@@ -71,13 +71,13 @@ function MM_Init() {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
-    addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
+    addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
     addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 25%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + sidepanelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
-    addStyle('.MTField1 {width: 30%;}');addStyle('.MTField2 {width: 70%;}');
+    addStyle('.MTField1 {width: 35%;}');addStyle('.MTField2 {width: 65%;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
@@ -120,8 +120,6 @@ function MM_Init() {
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
-    addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
-    addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
@@ -821,7 +819,7 @@ function MT_GetInput(inputs) {
     let divTop = MF_SidePanelOpen('','', null, MTFlex.Title1);
     let div = cec('span','MTSideDrawerHeader',divTop);
     for (let i = 0; i < inputs.length; i++) {
-        let div2 = cec('div','MTInputDesc',div);
+        let div2 = cec('div','MTInputDesc',div,'','','padding-bottom: 20px; padding-top: 10px; display: grid;');
         cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
         let div3 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
         div3.value = inputs[i].VALUE;
@@ -919,7 +917,7 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
         let div = cec('div','MTHistoryPanel',divTop);
         let div2 = cec('div','MTSideDrawerRoot',div,'','','','tabindex','0');
         let div3 = cec('div','MTSideDrawerContainer',div2);
-        let div4 = cec('div','MTSideDrawerMotion',div3,'','','','id','grouptypes');
+        let div4 = cec('div','MTSideDrawerMotion',div3,'','','display: flex; flex-direction: column; transform:none;','id','grouptypes');
         if(inType || inType2) {
             if(inType) div4.setAttribute('grouptype',inType);
             if(inType2) div4.setAttribute('groupsubtype',inType2);
