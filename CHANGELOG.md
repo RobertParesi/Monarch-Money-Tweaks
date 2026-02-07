@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.40 (beta)**
+     - CHANGE: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions with MM changes.  Now use **Reports / Accounts** and then **>**.
+
 * **Version 4.31 (February 4, 2026)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
      - NEW: Added "Buys/Sells" and "Adjustments" to Reports / Accounts [Brokerage Statement] to make Transfers more accurate.
