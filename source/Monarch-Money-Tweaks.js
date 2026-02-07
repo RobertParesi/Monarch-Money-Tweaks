@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.31
+// @version      4.32.0
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.31';
+const VERSION = '4.32';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -69,16 +69,16 @@ function MM_Init() {
     addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox, .MTDashboardCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
+    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
     addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 25%;left: 35%; }');
-    addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
+    addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + sidepanelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
     addStyle('.MTField1 {width: 30%;}');addStyle('.MTField2 {width: 70%;}');
-    addStyle('.MTButtons { padding-right: 20px; display: flex;justify-content: space-between; width: 100%;}');
+    addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
@@ -102,7 +102,7 @@ function MM_Init() {
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
-    addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600;}');
+    addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600; padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;}');
     addStyle('.MThRefClass2 {font-family: Oracle, sans-serif, MonarchIcons;}');
@@ -844,21 +844,41 @@ function MT_GetInput(inputs) {
 }
 
 function MF_ModelWindowOpen(t,d,b) {
+
     let divTop = document.querySelector('div.MTHistoryPanel');
     let div = cec('div','MTModelContainer',divTop);
+    let ff = null;
     div = cec('div','MTModelWindow',div);
     if(t.id) div.id = t.id;
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
+    div = cec('div','MTHeader',divTop);
     div = cec('div','',divTop,'','','padding: 20px;');
     if(d.length > 0) {
         d.forEach(data => {
-            let div2 = cec('div','MTRow',div);
+            let div2 = cec('div','MTRow',div), div3 = null;
             if(Array.isArray(data.field2)) {
                 cec('span','MTField1',div2,data.field1,'',data.style1);
-                let div3 = cec('span','MTField2',div2,'','','justify-content: flex-end; align-items: center;display: flex;' + data.style2);
+                div3 = cec('span','MTField2',div2,'','','justify-content: flex-end; align-items: center;display: flex;' + data.style2);
                 for (let i = 0; i < data.field2.length; i++) {cec('div','',div3,data.field2[i].name,'',data.field2[i].style);}
-            } else if(data.field2 == null) {cec('div','MTField1',div2,data.field1,'','width: 100%;' + data.style1);} else {
+            } else if(data.field2 == null) {
+                if(data.type != undefined) {
+                    if(data.type == 'Input') {
+                        cec('div','MTInputTitle',div,data.field1);
+                        div3 = cec('input','MTInputClass',div,'','','width: 100%;','id',data.key);
+                        div3.value = getCookie(data.key,false);
+                        if(data.name) {div3.name = data.name;div3.autocomplete = "on";}
+                        if(data.uid) {div3.setAttribute('uid',data.uid); div3.setAttribute('uidcol',data.uidcol);}
+                    }
+                    if(data.type == 'Checkbox') {
+                        div3 = cec('label','',div,data.field1,'','','htmlFor',data.key);
+                        div3 = cec('input','MTCheckboxClass',div3,'','','float:left;','id',data.key);
+                        div3.type = 'checkbox';
+                        if(getCookie(data.key,true) == true) {div3.checked = 'true';}
+                    }
+                    if(ff == null) ff = div3;
+                } else {cec('div','MTField1',div2,data.field1,'','width: 100%;' + data.style1);}
+            } else {
                 cec('span','MTField1',div2,data.field1,'',data.style1);
                 cec('span','MTField2',div2,data.field2,'','text-align: right;' + data.style2);
             }
@@ -867,15 +887,27 @@ function MF_ModelWindowOpen(t,d,b) {
     div = cec('div','MTButtons',divTop);
     if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','id',but.id);});}
     cec('button','MTWindowButton',div,'Close','','','id',t.name);
+    if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
 }
 
 function MF_ModelWindowExecute(i) {
-    let div = document.querySelector('div.MTModelWindow'),id = div.id;
+    let divs = document.querySelector('div.MTModelWindow'),id = divs.id;
     switch(i) {
        case 'TransEdit':
             window.location.replace('/transactions/' + id);return;
         case 'TransEdit2':
-            window.open('/transactions/' + id, '_blank', 'noopener');
+            window.open('/transactions/' + id, '_blank', 'noopener');return;
+        default:
+            divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
+            for (const div of divs) {
+                if(div.type == 'checkbox') {
+                    if(div.checked == true) { setCookie(div.id,1);} else {setCookie(div.id,0);}
+                } else {
+                    setCookie(div.id,div.value.trim());
+                }
+                let ui = div.getAttribute('uid');
+                if(ui) {MF_GridUpdateUID(ui,div.getAttribute('uidcol'),div.value.trim());}
+            }
     }
     removeAllSections('div.MTModelContainer');
 }
@@ -926,6 +958,8 @@ function MF_GridUpdateUID(inUID,inCol,inValue,addMissing, increment) {
         if(Row.UID == inUID) {
             if(increment == true) {Row[inCol] += inValue;
             } else {Row[inCol] = inValue;}
+            let x = document.getElementById(inUID + '-' + inCol);
+            if(x) x.innerText = inValue;
             return true;
         }
     }
@@ -3222,8 +3256,7 @@ function HistoryDrawerUpdate(inMonth,inYear) {
 async function AccountsDrawer(inP) {
 
     let transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null;
-    const p1 = inP[0];
-    let acts = 'Account';
+    let p1 = inP[0],acc = null,acts = 'Account';
     if(p1 == 'Group') {
         acts = 'Accounts';
         accts = MF_GridPKUIDs(inP[2]);
@@ -3231,10 +3264,11 @@ async function AccountsDrawer(inP) {
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Current Balance','','MTCurrentBalance');
     } else {
-        const acc = accountsData.accounts[p1];
+        acc = accountsData.accounts[p1];
         accts.push(acc.id);
         divTop = MF_SidePanelOpen(acc.type.group,acc.type.display, null , acts,acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
+        DrawerDrawLine(divTop2,'Account Group', getCookie('MTAccounts:' + acc.id,false),null,null,null,null,null,acc.id + '-3');
         DrawerDrawLine(divTop2,'Current Balance',getDollarValue(acc.displayBalance));
         let cl = acc.dataProviderCreditLimit;
         if(acc.limit != null) cl = acc.limit;
@@ -3298,6 +3332,10 @@ async function AccountsDrawer(inP) {
     cec('span','MTSideDrawerDetail',div2,getDollarValue(trns));
     div2 = cec('span','MTSideDrawerHeader',divTop2);
     cec('div','MTPanelLink',div2,'Download CSV','','padding: 0px; display:block; text-align:center;');
+
+    divTop2 = cec('span','MTSideDrawerHeader',divTop);
+    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+    if(acc != null) {cec('button','MTInputButton',divTop2,'Edit Account','','','id','!Accounts|' + acc.id);}
 
     function AccountsDrawerUpdate(inDate,inAmt,inType) {
         let ud = inDate.substring(0, 7);
@@ -3511,7 +3549,7 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
     }
 }
 
-function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
+function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl,inId2) {
     let div = cec('span','MTSideDrawerItem',inDiv,'','',stl,'id',inId);
     let div2 = div;
     if(url) {
@@ -3519,7 +3557,10 @@ function DrawerDrawLine(inDiv,inA,inB,inId,stl,url,ttl,fStl) {
         cec('span','MTFlexImage',div2,'','','background-image: url("' + url + '");');
     }
     cec('span','MTSideDrawerDetails',div2,inA);
-    if(ttl) {cecTip('span','MTSideDrawerDetails',div,inB,ttl);} else {div = cec('span','MTSideDrawerDetails',div,inB,'',fStl);}
+    if(ttl) {cecTip('span','MTSideDrawerDetails',div,inB,ttl);} else {
+        div2 = cec('span','MTSideDrawerDetails',div,inB,'',fStl);
+        if(inId2) div2.id = inId2;
+    }
 }
 
 function DrawerDrawSpacer(inDiv) {
@@ -3709,33 +3750,6 @@ function MenuPlanBudgetReorder() {
     }
 }
 
-// [ Edit Account ]
-function MTUpdateAccountPartner() {
-    const li = document.querySelector('[class*="EditAccountForm__FormContainer"]');
-    if(li) {
-        let li2 = li.childNodes[4];
-        let div = document.createElement('div');
-        div = li.insertBefore(div, li2);
-
-        cec('div','MTInputTitle',div,'Subtype override - (' + MNAME + ')');
-        let div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountSubGroupID');
-        let p = glo.pathName.split('/');
-        if(p.length > 2) {div3.value = getCookie('MTAccountsSub:' + p[3],false);}
-
-        cec('div','MTInputTitle',div,'Account Group - (' + MNAME + ')');
-        div3 = cec('input','MTInputClass',div,'','','width: 100%;','id','accountGroupID');
-        p = glo.pathName.split('/');
-        if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
-        div3 = cec('div','MTInputClass',div);
-
-        cec('div','MTInputTitle',div3,'Accounts Dashboard - (' + MNAME + ')');
-        div3 = cec('label','',div3,'Add to Accounts List on Dashboard','','','htmlFor','DashboardCheckbox');
-        div3 = cec('input','MTDashboardCheckbox',div3,'','','float:left;','id','DashboardCheckbox');
-        div3.type = 'checkbox';
-        div3.setAttribute('act',p[3]);
-        if(getCookie('MTAccountDashboard:' + p[3],true) == true) {div3.checked = 'true';}
-    }
-}
 // [ Calendar ]
 function MM_FixCalendarYears() {
     const elements = document.querySelectorAll('select[name]');
@@ -3940,7 +3954,6 @@ function MenuLogin(OnFocus) {
 
 function MenuAccounts(OnFocus) {
     if(OnFocus == true) {
-        if (glo.pathName.startsWith('/accounts/details') && glo.pathName.endsWith('/edit') ) { MTUpdateAccountPartner(); }
         if (glo.pathName == '/accounts' ) { glo.spawnProcess = 4; }
     }
 }
@@ -4268,6 +4281,7 @@ window.onclick = function(event) {
             case 'MTTrendCellArrow':
             case 'MTInputButton':
                 if(onClickCloseDrawer() == true) {MenuReportsGo(MTFlex.Name);}
+                MF_GridDraw(1);
                 return;
             case 'MTSideDrawerDetailS':
             case 'MTSideDrawerSummaryTag':
@@ -4343,10 +4357,6 @@ window.onclick = function(event) {
                 cn = event.target.getAttribute('grp');
                 if(cn != '') flipCookie('MTGroupFixed:' + cn,1);
                 return;
-            case 'MTDashboardCheckbox':
-                cn = event.target.getAttribute('act');
-                if(cn != '') flipCookie('MTAccountDashboard:' + cn,1);
-                return;
             case 'MTFlexButtonExport':
                 MT_GridExport(); break;
             case 'MTSetupDropdown':
@@ -4385,22 +4395,6 @@ window.onclick = function(event) {
             MTFlexDate1 = getDates('d_Today');MTFlexDate2 = getDates('d_Today');
             MenuReportsGo(cn);return;
         }
-        if(event.target.className.includes('AbstractButton')) {
-            if(event.target.className.includes('EditAccountForm__StyledSubmitButton')) {
-                let li = document.getElementById("accountGroupID");
-                if(li) {
-                    let inputValue = li.value;
-                    let p = glo.pathName.split('/');
-                    if(p) {setCookie('MTAccounts:' + p[3],inputValue.trim());}
-                }
-                li = document.getElementById("accountSubGroupID");
-                if(li) {
-                    let inputValue = li.value;
-                    let p = glo.pathName.split('/');
-                    if(p) {setCookie('MTAccountsSub:' + p[3],inputValue.trim());}
-                }
-            }
-        }
         if(cn.startsWith('TabNavLink')) {
             if(event.target.pathname == window.location.pathname) {
                 removeAllSections('.MTFlexContainer');
@@ -4414,6 +4408,13 @@ window.onclick = function(event) {
 };
 
 function onClickOpenWindow(cn) {
+    if(cn[0] == '!Accounts') {
+        let d = [];
+        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', name: 'AccountGroups', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
+        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[1]});
+        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
+        MF_ModelWindowOpen({width: 480, name: cn[0], id: cn[1]},d,[]);return;
+    }
     if(cn[0] == '!CombinedAccounts') {
         let d = [], p = [], rrn = cn[1],tot=0;
         p = MF_GridPKUIDs(rrn);
@@ -4429,7 +4430,7 @@ function onClickOpenWindow(cn) {
             }
         });
         d.push({field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;'});
-        MF_ModelWindowOpen({width: 480, name: cn[0], id: rrn},d,[]);
+        MF_ModelWindowOpen({width: 480, name: cn[0], id: rrn},d,[]);return;
     }
     if(cn[0] == 'transdata') {
         let d = [], b = [], rrn = cn[1];
@@ -4454,7 +4455,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: t.notes, style1: '', field2: null, style2: ''});
         b.push({name: 'Edit', id: 'TransEdit'});
         b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
-        MF_ModelWindowOpen({width: 480, name: cn[0], id: t.id},d,b);
+        MF_ModelWindowOpen({width: 480, name: cn[0], id: t.id},d,b);return;
     }
 }
 function getTags(tags) {
@@ -4600,6 +4601,9 @@ function onClickCloseDrawer() {
             divs = event.target.getAttribute('id');
             InvestmentsDrawerRefresh(divs);
             break;
+        case 'Edit Account':
+            onClickOpenWindow(event.target.getAttribute('id').split('|'));
+            return;
         case 'Reload':
             returnV = true;
             break;
