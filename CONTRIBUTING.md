@@ -1,7 +1,7 @@
 ##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Contributing
 
 ### Beta Testers
-🐛🧪 If you are computer savy and/or still using the Tampermonkey script, contact me if you would like to be a Tweaks beta tester.
+🐛🧪 If you are computer savy, contact me if you would like to be a Tweaks beta tester.
 
 ### Source Contributions
 The Monarch Money Tweaks extension (source code/GitHub) is not configured as "open-source / community contributions". Factors such as security, code bloat, maintainability, consistency, App Store reviews, long-term support, and my available time influenced this choice.  Any forked GitHubs must be made PRIVATE.
