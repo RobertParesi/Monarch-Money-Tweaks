@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.32.1
+// @version      4.32.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -59,13 +59,14 @@ function MM_Init() {
     css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';css.greenRaw = ['#2a7e3b','#3dd68c'][a];
     css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';css.redRaw = ['#d8543a','#f9918e'][a];
     css.gGreen = 'color: #3dd68c;'; css.gRed = 'color: #f9918e;';
+    css.font = 'font-family: sans-serif, MonarchIcons;';
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
 
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
-    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; font-family: sans-serif, MonarchIcons !important;}');
+    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; ' + css.font + '}');
     addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
@@ -77,15 +78,14 @@ function MM_Init() {
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 25%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + sidepanelBackground + bs + '}');
-    addStyle('.MTHeader {height: 44px; border-top-left-radius: 8px; border-top-right-radius: 8px; font-weight: 600; ' + accentHeader + bdrb + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
     addStyle('.MTField1 {width: 35%;}');addStyle('.MTField2 {width: 65%;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: Oracle, sans-serif, MonarchIcons; font-size: 14px; font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
-    addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {font-family: MonarchIcons; margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
+    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {' + css.font + ' font-size: 14px; font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -108,7 +108,7 @@ function MM_Init() {
     addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600; padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis; max-width: 250px;}');
-    addStyle('.MThRefClass2 {font-family: Oracle, sans-serif, MonarchIcons;}');
+    addStyle('.MThRefClass2, .MTGeneralCell {' + css.font + '}');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexError {text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig {font-size: 18px; font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
@@ -116,11 +116,12 @@ function MM_Init() {
     addStyle('.MTFlexText {font-size: 14px;' + panelText + 'font-weight: 600;margin-left: 12px;}');
     addStyle('.MTFlexSmall {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexImage {border-radius: 100%; width: 23px; height: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; }');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; font-family: sans-serif, MonarchIcons; padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; ' + css.font + 'padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
-    addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
+    addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeaderMsg { color: #ffffff; background-color: ' + accentColor + ' padding-left: 12px;padding-top: 6px; height: 35px;font-weight: 600; border-radius: 6px; ' + css.font + '}');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
@@ -845,8 +846,7 @@ function MF_ModelWindowOpen(t,d,b) {
     if(t.id) div.id = t.id;
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
-    div = cec('div','MTHeader',divTop);
-    cec('div','',div,t.title,'','padding:10px');
+    cec('div','',divTop,t.title,'','padding-left:16px; padding-top: 12px; font-weight: 600; font-size: 18px;');
     div = cec('div','',divTop,'','','padding: 16px;');
     if(d.length > 0) {
         d.forEach(data => {
@@ -906,13 +906,14 @@ function MF_ModelWindowExecute(i) {
     removeAllSections('div.MTModelContainer');
 }
 
-function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL, inGroupId, inToggleTip , inLogo) {
+function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL, inGroupId, inToggleTip , inLogo, inHeader, inButton) {
     let divTop = document.getElementById('root');
     if(divTop) {
         divTop = divTop.childNodes[0];
         let div = cec('div','MTHistoryPanel',divTop);
         let div2 = cec('div','MTSideDrawerRoot',div,'','','','tabindex','0');
         let div3 = cec('div','MTSideDrawerContainer',div2);
+        if(inHeader) {cec('div','MTSideDrawerHeaderMsg',div3,inHeader);}
         let div4 = cec('div','MTSideDrawerMotion',div3,'','','display: flex; flex-direction: column; transform:none;','id','grouptypes');
         if(inType || inType2) {
             if(inType) div4.setAttribute('grouptype',inType);
@@ -926,6 +927,10 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
             useButton = inToggle[useButton];
             const a = cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',inToggle);
             a.setAttribute('title',inToggleTip);
+        }
+        if(inButton != null) {
+            const a = cec('button','MTGeneralCell',div,'','','float:right;margin-right: 16px;','link',inButton);
+            a.setAttribute('title','Edit');
         }
         cec('div','MTFlexCardBig',div,inBig,'','text-align: left;');
         div = cec('span','MTSideDrawerHeader',div4);
@@ -3260,9 +3265,12 @@ async function AccountsDrawer(inP) {
     } else {
         acc = accountsData.accounts[p1];
         accts.push(acc.id);
-        divTop = MF_SidePanelOpen(acc.type.group,acc.type.display, null , acts,acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl);
+        let gn = getCookie('MTAccounts:' + acc.id,false);
+        let gnMsg = '';
+        if(!gn) gnMsg = 'Use  button to edit ' + MNAME + ' Account settings and Account group.';
+        divTop = MF_SidePanelOpen(acc.type.group,acc.type.display, null , acts,acc.type.display,acc.displayName,'/accounts/details/' + acc.id,acc.id, '',acc.logoUrl,gnMsg,'!Accounts|' + acc.id + '|' + acc.displayName);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
-        DrawerDrawLine(divTop2,'Account Group', getCookie('MTAccounts:' + acc.id,false),null,null,null,null,null,acc.id + '-3');
+        DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
         DrawerDrawLine(divTop2,'Current Balance',getDollarValue(acc.displayBalance));
         let cl = acc.dataProviderCreditLimit;
         if(acc.limit != null) cl = acc.limit;
@@ -3282,7 +3290,7 @@ async function AccountsDrawer(inP) {
     }
     MF_DrawChart(divTop2);
 
-    cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','margin-top:10px;text-align: left;');
+    cec('div','MTFlexCardBig',divTop2,acts + ' Summary','','text-align: left;');
     cec('div','MTFlexSmall',divTop2,MTFlex.Title2,'','font-size: 10px;');
 
     transData.allTransactions.results.forEach(t => {
@@ -3327,8 +3335,8 @@ async function AccountsDrawer(inP) {
     cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;');
 
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
-    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
-    if(acc != null) {cec('button','MTInputButton',divTop2,'Edit Account','','','id','!Accounts|' + acc.id + '|' + acc.displayName);}
+   // cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+  //  if(acc != null) {cec('button','MTInputButton',divTop2,'Edit Account','','','id','!Accounts|' + acc.id + '|' + acc.displayName);}
 
     function AccountsDrawerUpdate(inDate,inAmt,inType) {
         let ud = inDate.substring(0, 7);
@@ -3999,7 +4007,6 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
     const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text','font-size: 18px; font-weight: 500;');
     MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
-    MenuDisplay_Input('• For ' + MNAME + ' Account settings, choose Reports / Accounts / > / Edit Account.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button');
     MenuDisplay_Input(p,'Restore Settings', 'button');
     MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
@@ -4248,6 +4255,7 @@ window.onclick = function(event) {
                 if(event.target.innerText.trim() == 'Split') { glo.spawnProcess = 7;}
                 break;
             case 'MTGeneralLink':
+            case 'MTGeneralCell':
                 onClickMTDropdownRelease();
                 cn = event.target.getAttribute('link').split('|');
                 onClickOpenWindow(cn);return;
@@ -4593,9 +4601,6 @@ function onClickCloseDrawer() {
             divs = event.target.getAttribute('id');
             InvestmentsDrawerRefresh(divs);
             break;
-        case 'Edit Account':
-            onClickOpenWindow(event.target.getAttribute('id').split('|'));
-            return;
         case 'Reload':
             returnV = true;
             break;
