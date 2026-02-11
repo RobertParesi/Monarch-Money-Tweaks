@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.32.2
+// @version      4.32.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -59,7 +59,7 @@ function MM_Init() {
     css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';css.greenRaw = ['#2a7e3b','#3dd68c'][a];
     css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';css.redRaw = ['#d8543a','#f9918e'][a];
     css.gGreen = 'color: #3dd68c;'; css.gRed = 'color: #f9918e;';
-    css.font = 'font-family: sans-serif, MonarchIcons;';
+    css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
@@ -84,7 +84,7 @@ function MM_Init() {
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto;}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {' + css.font + ' font-size: 14px; font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
@@ -642,9 +642,9 @@ function MT_GridDrawContainer() {
     div2 = cec('div','MTdropdown',tbs);
     div2 = cec('button','MTFlexButtonExport',div2,'Export ');
 
-    createDropdown('4',MTFlex.Button4Options,MTFlex.Button4);
-    createDropdown('1',MTFlex.Button1Options,MTFlex.Button1);
-    createDropdown('2',MTFlex.Button2Options,MTFlex.Button2);
+    MT_CreateDropdown(tbs,'4',MTFlex.Button4Options,MTFlex.Button4);
+    MT_CreateDropdown(tbs,'1',MTFlex.Button1Options,MTFlex.Button1);
+    MT_CreateDropdown(tbs,'2',MTFlex.Button2Options,MTFlex.Button2);
 
     div2 = cec('div','MTdropdown',tbs);
     div2 = cec('label','',div2,'Compress Grid','','margin-top: 6px; font-size: 14px; font-weight:500;display: inline-block;','htmlFor','CompressGrid');
@@ -659,14 +659,15 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexRestore',div2,'','','','title','Restore Favorite View');
     cec('span','MTFlexSave',div2,'','','','title','Save as Favorite View');
     cec('span','MTFlexConfig',div2,'','','margin-left:6px;','title',MTFlex.Title1 + ' Settings');
+}
 
-    function createDropdown(inName,inOpt,inBut) {
-        if(inOpt != null && inOpt.length > 0) {
-            div2 = cec('div','MTdropdown',tbs);
-            div2 = cec('button','MTFlexButton' + inName,div2,inOpt[inBut] + ' ');
-            let divContent = cec('div','MTFlexdown-content',div2,'','','','id','MTDropdown' + inName);
-            for (let i = 0; i < inOpt.length; i++) { div2 = cec('a','MTButton' + inName,divContent,inOpt[i],'','','MTOption',i); }
-        }
+function MT_CreateDropdown(tbs, inName,inOpt,inBut) {
+    if(inOpt != null && inOpt.length > 0) {
+        let div2 = cec('div','MTdropdown',tbs);
+        const label = inBut ? (inOpt[inBut] + ' ') : '';
+        div2 = cec('button', 'MTFlexButton' + inName, div2, label);
+        let divContent = cec('div','MTFlexdown-content',div2,'','','','id','MTDropdown' + inName);
+        for (let i = 0; i < inOpt.length; i++) { div2 = cec('a','MTButton' + inName,divContent,inOpt[i],'','','MTOption',i); }
     }
 }
 
@@ -837,7 +838,7 @@ function MT_GetInput(inputs) {
     cec('button','MTInputButton',div,'Apply','','float:right;');
 }
 
-function MF_ModelWindowOpen(t,d,b) {
+function MF_ModelWindowOpen(t,d,b,o) {
 
     let divTop = document.querySelector('div.MTHistoryPanel');
     let div = cec('div','MTModelContainer',divTop);
@@ -861,8 +862,8 @@ function MF_ModelWindowOpen(t,d,b) {
                         cec('div','MTInputTitle',div,data.field1);
                         div3 = cec('input','MTInputClass',div,'','','width: 100%;','id',data.key);
                         div3.value = getCookie(data.key,false);
-                        if(data.name) {div3.name = data.name;div3.autocomplete = "on";}
                         if(data.uid) {div3.setAttribute('uid',data.uid); div3.setAttribute('uidcol',data.uidcol);}
+                        div3.name = data.name;
                     }
                     if(data.type == 'Checkbox') {
                         div3 = cec('label','',div,data.field1,'','','htmlFor',data.key);
