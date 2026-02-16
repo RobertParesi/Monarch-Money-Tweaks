@@ -2,6 +2,7 @@
 
 * **Version 4.32 (beta)**
      - IMPORTANT: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions with MM changes.  Now use **Reports / Accounts / ...**
+     - ADD: Added ability to hide Forecast menu item.
      - CHANGE: Improved more compact CSS.
 
 * **Version 4.31 (February 4, 2026)**
