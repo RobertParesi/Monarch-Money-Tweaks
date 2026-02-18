@@ -10,7 +10,7 @@ When this extension runs, it makes additional calls to their API using their Sec
 
 This extension is designed to request only the data and permissions necessary for their functionality.  The extension's manifest **requests no permissions beyond access within Monarch Money's application domain** and has **no background processes at all**, ensuring that your financial information remains secure and confined within its intended boundaries - you and Monarch.  
 
-This extension follows the **same** API and distribution platform as the Monarch Money Retail extensions. It does not use **any** third-party API or third-party library. The extensions **source code is public** and available for anyone to review. It has been around for over two years now and I am a moderator in the Monarch Money Reddit community forum.   Currently, there are over 2,300 active users using this extension.
+This extension follows the **same** API and distribution platform as the Monarch Money Retail extensions. It does not use **any** third-party API or third-party library. It has been around for over two years now and I am a moderator in the Monarch Money Reddit community forum.   Currently, there are over 2,300 active users using this extension.
 
 ⭐ Finally, this extension undergoes a **thorough verification process by Google (Chrome), Mozilla (Firefox), and Apple (Safari) with every update**. Prior to being made available to the public, it is carefully reviewed by these platforms to identify potential threats and vulnerabilities, ensuring the extension's safety and security.  
 
