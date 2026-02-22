@@ -1,10 +1,11 @@
 # Change Log (Version History)
 
-* **Version 4.32 (beta)**
+* **Version 4.32 (February 22, 2026)**
      - IMPORTANT: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions.  Now use **Reports / Accounts**
      - ADD: Added ability to hide Forecast menu item.
      - ADD: Added Credit Limit, Utilitization and Remaining to Reports / Accounts [Credit Card Statement]
      - CHANGE: Improved more compact CSS.
+     - REGRESSION: Reports History Drawer would not include January 2024.
 
 * **Version 4.31 (February 4, 2026)**
      - NEW: Added "Edit in new tab" when editing transaction to not lose place in report.
