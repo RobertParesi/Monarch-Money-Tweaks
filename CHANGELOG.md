@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- **Version 4.33 (Beta)**
+* **Version 4.33 (Beta)**
      - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (uninvested & invested)
  
 * **Version 4.32 (February 22, 2026)**
