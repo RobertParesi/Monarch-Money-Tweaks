@@ -25,6 +25,8 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 
 You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Reports** and **Accounts** and select the **>** for each account to assign Account Group and other special MM- Tweaks settings.  Click on the **...** in the upper-right in the side-panel to access this screen.
 
+![Settings](/images/MTAccountSettings.png)
+
 Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
 
     * Personal vs Business - "Personal", "Business", "ABC Company"
