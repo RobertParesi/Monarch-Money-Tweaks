@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.1
+// @version      4.33.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2016,7 +2016,6 @@ async function MenuReportsAccountsGo() {
                 }
                 totV = pdV + cbV;
             }
-            console.log(ad,pdV,cbV,totV);
             if(skipHidden3 != 1 && totV == 0) continue;
 
             MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
