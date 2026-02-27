@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.33 (Beta)**
-     - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (uninvested & invested)
+     - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (Idle Cash & Cash Holdings)
  
 * **Version 4.32 (February 22, 2026)**
      - IMPORTANT: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions.  Now use **Reports / Accounts**
