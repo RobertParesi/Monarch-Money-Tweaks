@@ -8,7 +8,7 @@ It's recommended to start with the following steps, all explained further below:
 
 1. **Settings / Display** for initial Monarch Money Tweaks Settings.
 2. **Settings / Categories** to further setup Fixed vs Flexible Spending.
-3. **Accounts / Edit Account**  to setup Account Groups.
+3. **Reports / Accounts / use >**  to setup Account Groups.
 4. Check out **Reports / (Trends, Net Income, Accounts, Investments)**
 
 ### Monarch Money Tweaks - Settings
@@ -23,7 +23,7 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 
 ### Monarch Money Tweaks - Account Groups 
 
-You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Accounts** and **edit** each account to assign an Account Group in the **Account Group - (MM Tweaks)** field. 
+You can further specify Account Groups to organize your Accounts in to custom groups. To do this, go to **Reports** and **Accounts** and select the **>** for each account to assign Account Group and other special MM- Tweaks settings.  Click on the **...** in the upper-right in the side-panel to access this screen.
 
 Monarch Money users utilize them in various scenarios and combinations for the Monarch Money Tweaks reports:
 
@@ -40,10 +40,7 @@ Personally I did the following:
    * House, Cars, all other accounts: I put "Trust" or "Non Trust" depending on where it is titled.
 
 If you are simply separating your finances with your partner, you may want to either put your name, their name or "Both".
-
-![Settings](/images/MT_V3_11.png)
-
-
+MT
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
 All four reports use the same flex-grid, structure and options:
