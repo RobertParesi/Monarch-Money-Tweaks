@@ -1919,7 +1919,7 @@ async function MenuReportsAccountsGo() {
                         MTP.IsHeader = false;
                         MTP.UID = ad.id;
                         MTP.SKTriggerEvent = i;
-                        let accountName = AccountsGetPrimaryKey(ad);
+                        AccountsGetPrimaryKey(ad);
                         if(isToday == true) {
                              MTFlexRow[MTFlexCR][16] = Number(ad.displayBalance);
                         } else {
@@ -1976,7 +1976,6 @@ async function MenuReportsAccountsGo() {
     }
     async function MenuReportsAccountsGoCash(){
 
-        let isToday = getDates('isToday',MTFlexDate2);
         let manualHoldData = null,cashHoldData = null;
         MTFlex.DateEvent = 0;
 
@@ -2113,7 +2112,7 @@ async function MenuReportsAccountsGo() {
         if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < 5; i++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
         for (let i = 0; i < accountsData.accounts.length; i ++) {
-            let ad = accountsData.accounts[i],wv=0;
+            let ad = accountsData.accounts[i];
             if(MTFlex.Button2 == 2) {if(ad.type.name != 'brokerage') continue;}
             if(MTFlex.Button2 == 4) {if(ad.subtype.name != 'credit_card') continue;}
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + ad.id,false)) {
@@ -2127,7 +2126,7 @@ async function MenuReportsAccountsGo() {
                         }
                         if(MTFlex.Button2 == 1 || MTFlex.Button2 == 4 || useBalance !=0 || begBalance != 0 || rtnIsAccountUsed(MTP.UID,skipHidden3) == true ) {
                             MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
-                            let accountName = AccountsGetPrimaryKey(ad);
+                            AccountsGetPrimaryKey(ad);
                             MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
                             MTFlexRow[MTFlexCR][9] = useBalance;
                             if(MTFlex.Button2 != 1 && ad.hideTransactionsFromReports == false) {
@@ -2181,13 +2180,12 @@ async function MenuReportsAccountsGo() {
                                     if(pd != undefined) {
                                         pd = +pd.toFixed(2);
                                         MTFlexRow[MTFlexCR][11] = pd;
-                                        if (manualHoldData?.[MTP.UID] != true) {wv = useBalance - pd;}
+                                        if (manualHoldData?.[MTP.UID] != true) {MTFlexRow[MTFlexCR][12] = useBalance - pd;}
                                     }
                                 } else {
                                     MTFlexRow[MTFlexCR][11] = parseFloat(MTFlexRow[MTFlexCR][11].toFixed(2));
-                                    wv = useBalance + MTFlexRow[MTFlexCR][11];
+                                    MTFlexRow[MTFlexCR][12] = useBalance + MTFlexRow[MTFlexCR][11];
                                 }
-                                MTFlexRow[MTFlexCR][12] = parseFloat(wv.toFixed(2));
                             } else {MTFlexRow[MTFlexCR][10] = ad.limit;MTFlexRow[MTFlexCR][11] = ad.limit - useBalance;}
                             if(ad.subtype.name == 'checking') {acard[0] += useBalance;}
                             if(ad.subtype.name == 'savings') {acard[1] += useBalance;}
