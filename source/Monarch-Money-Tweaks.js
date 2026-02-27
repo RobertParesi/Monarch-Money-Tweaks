@@ -266,10 +266,12 @@ function MF_GridTip() {
                 case 0: return "Shows all assets and liabilities within a date range. Click on date to change the range.";
                 case 1: return "Shows a consolidated Personal Net Worth Statement for loans and other assets.";
                 case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs).  To exclude transfers from the Net Change amount, see Settings.";
-                case 3: return "Shows account balances for the last six months. Click on date range to select the last month.";
-                case 4: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
-                case 5: return "Shows account balances over time for this year. Click on date range for the last month.";
-                case 6: return "Shows account balances over time by quarter for the past three years. Click on date range for the last month.";
+                case 3: return "Shows overall cash, savings and investments categorized by ide-cash and invested-cash type holdings.";
+                case 4: return "Shows credit card spending, refunds and payments. Tip: Use Year-to-date range and verify same with your institition.";
+                case 5: return "Shows account balances for the last six months. Click on date range to select the last month.";
+                case 6: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
+                case 7: return "Shows account balances over time for this year. Click on date range for the last month.";
+                case 8: return "Shows account balances over time by quarter for the past three years. Click on date range for the last month.";
             }
             break;
     }
@@ -1983,42 +1985,50 @@ async function MenuReportsAccountsGo() {
         if(getCookie('MT_AccountsHideUpdated',true) == 1) {MTP.IsHidden = true;}
         MTP.Format = -1;MF_QueueAddTitle(4,'Updated',MTP);
         MTP.IsHidden = false;MTP.IsSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];
-        MF_QueueAddTitle(5,'UnInvested',MTP);
+        MF_QueueAddTitle(5,'Idle Cash',MTP);
         MF_QueueAddTitle(6,'Cash Holdings',MTP);
         MF_QueueAddTitle(7,'Total Cash',MTP);
         MTFlex.Title2 = 'As of ' + getDates('s_FullDate',MTFlexDate2);
         for (let i = 0; i < accountsData.accounts.length; i ++) {
-            let ad = accountsData.accounts[i],wv=0;
+            let ad = accountsData.accounts[i],pdV=0,cbV=0,totV = 0;
             if(ad.isAsset != true) continue;
             if(inList(ad.type.display,['Cash','Investments']) == 0) continue;
-            MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
-            let accountName = AccountsGetPrimaryKey(ad);
-            MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
+            if(skipHidden == 1 && ad.hideFromList == true) continue;
+            if(skipHidden2 == 1 && ad.includeInNetWorth == false) continue;
 
             if(ad.type.display == 'Cash') {
-                MTFlexRow[MTFlexCR][5] = ad.displayBalance;
-                MTFlexRow[MTFlexCR][7] = ad.displayBalance;
+                pdV = ad.displayBalance;
+                totV = ad.displayBalance;
             } else {
-                let pd = portfolioData[MTP.UID];
-                if(pd != undefined) {
+                let pd = portfolioData[ad.id];
+                if(pd !== undefined) {
                     pd = +pd.toFixed(2);
-                    if (manualHoldData?.[MTP.UID] != true) {
+                    if (manualHoldData?.[ad.id] != true) {
                         pd = ad.displayBalance - pd;
-                        if(+pd < 0) pd = 0;
-                        MTFlexRow[MTFlexCR][5] = pd;
+                        if(pd < 0) pd = 0;
+                        pdV = pd;
                     }
                 }
-                let cb = cashHoldData[MTP.UID];
-                if(cb != undefined) {
+                let cb = cashHoldData[ad.id];
+                if(cb !== undefined) {
                     cb = +cb.toFixed(2);
-                    MTFlexRow[MTFlexCR][6] = cb;
+                    cbV = cb;
                 }
-                MTFlexRow[MTFlexCR][7] = MTFlexRow[MTFlexCR][5] + MTFlexRow[MTFlexCR][6];
+                totV = pdV + cbV;
             }
+            console.log(ad,pdV,cbV,totV);
+            if(skipHidden3 != 1 && totV == 0) continue;
+
+            MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
+            AccountsGetPrimaryKey(ad);
+            MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
+            MTFlexRow[MTFlexCR][5] = pdV;
+            MTFlexRow[MTFlexCR][6] = cbV;
+            MTFlexRow[MTFlexCR][7] = totV;
         }
         MF_GridRollup(1,2,1,'Assets');
         MTFlexCard = [];
-        MF_GridCardAdd(1,5,5,'HV','Uninvested Cash','Uninvested Cash',css.green,css.red,'', '',0);
+        MF_GridCardAdd(1,5,5,'HV','Idle Cash','Overdrawn!',css.green,css.red,'', '',0);
         MTFlex.AutoCard = {Title: 'Total Cash', Section: 2, Column: 7, Split: true };
     }
     async function MenuReportsAccountsGoStd(){
@@ -2042,7 +2052,7 @@ async function MenuReportsAccountsGo() {
             MTFlex.Title2 = 'As of ' + getDates('s_FullDate',MTFlexDate2);
 
         } else {
-            if(MTFlex.Button2 == 4) {MTFlexTitle[1].IsHidden = true; MF_GridOptions(1,[]); accountFields = ['Spend','Refunds','Charges','Payments', 'Total Spend'];}
+            if(MTFlex.Button2 == 4) {MTFlexTitle[1].IsHidden = true; MF_GridOptions(1,[]); accountFields = ['Total Spend','Refunds','Charges','Payments', 'Total Spend'];}
             if(MTFlex.Button2 == 2) { accountFields = ['Beg Balance','Buy/Sell','Adjustments','Transfers','Net Income'];}
             MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
             if(skipHidden3 == 0) MTFlex.RequiredCols = [5,9,11,12];
@@ -4092,8 +4102,9 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
     MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
     MenuDisplay_Input('Assist & populate when Searching Merchants','MT_MerAssist','checkbox');
-    MenuDisplay_Input('Reports','','spacer');
+    MenuDisplay_Input('Monarch Money Reports','','spacer');
     MenuDisplay_Input('Hide the Difference Amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
+    MenuDisplay_Input(MNAME + ' Reports','','spacer');
     MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
     MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
     MenuDisplay_Input('Override Report Grid Header background-color','MT_ColorHigh','color','');
