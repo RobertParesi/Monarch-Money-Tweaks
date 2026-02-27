@@ -41,8 +41,7 @@ Personally I did the following:
    * Credit cards: I put "Credit Cards" so they are all grouped together.
    * House, Cars, all other accounts: I put "Trust" or "Non Trust" depending on where it is titled.
 
-If you are simply separating your finances with your partner, you may want to either put your name, their name or "Both".
-MT
+
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
 All four reports use the same flex-grid, structure and options:
