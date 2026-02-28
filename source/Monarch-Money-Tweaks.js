@@ -4689,8 +4689,9 @@ function onClickDumpDebug(inNode) {
     let jsonString = JSON.stringify(divs, null, 2);
     jsonString = MNAME + ' for Monarch Money - Version: ' + VERSION + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
     divs.node.holdings.forEach(holding => {
+        jsonString += CRLF + 'holding: ' + holding.account.id + ' ';
         let account = accountQueue.find(acc => acc.id === holding.account.id);
-        jsonString += CRLF + JSON.stringify(account, null, 2)
+        jsonString += JSON.stringify(account, null, 2);
     });
     navigator.clipboard.writeText(jsonString);
     MF_ModelWindowOpen({title: 'Debug'},'Debug copied to keyboard. (node=' + inNode + ')');
