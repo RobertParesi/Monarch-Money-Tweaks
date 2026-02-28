@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.4
+// @version      4.33.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2427,13 +2427,14 @@ async function MenuReportsInvestmentsGo() {
                     let useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
-
+                    if(holding.account.id == "161322662815405135") {console.log('HOLDING',holding);}
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
                     if (account) { account.holdingBalance += holding.value;account.holdingBalance = +account.holdingBalance.toFixed(2);account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
                         accountQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
+                        if(holding.account.id == "161322662815405135") {console.log('ACCOUNTQUEUE',accountQueue);}
                     }
                     // New price
                     if(skipCalc == 0) {
@@ -2445,7 +2446,6 @@ async function MenuReportsInvestmentsGo() {
                             holding.value = +holding.value.toFixed(2);
                         }
                     }
-
 
                     let useHoldingValue = Number(holding.value);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
