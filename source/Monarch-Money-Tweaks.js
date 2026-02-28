@@ -2428,7 +2428,7 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
                     // Original price
-                    const useHv = Number(holding.value.toFixed(2));
+                    const useHv = Number(holding.value?.toFixed(2) ?? 0);
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
                     if(holding.account.id == "161322662815405135") {console.log('HOLDING',useHv, holding);}
                     if (account) { account.holdingBalance += useHv;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
