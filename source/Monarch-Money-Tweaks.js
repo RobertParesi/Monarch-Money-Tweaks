@@ -830,7 +830,7 @@ function MT_GetInput(inputs) {
 
     }
     div = cec('span','MTSideDrawerHeader',divTop);
-    cec('button','MTInputButton',div,'Past week','','margin-left: 0px;',);
+    cec('button','MTInputButton',div,'Past week','','margin-left: 0px;');
     cec('button','MTInputButton',div,'Last month');
     cec('button','MTInputButton',div,'This month');
     cec('button','MTInputButton',div,'This quarter');
@@ -879,7 +879,7 @@ function MF_ModelWindowOpen(t,d,b,o) {
                 cec('span','MTField2',div2,data.field2,'','text-align: right;' + data.style2);
             }
         });
-    } else { let div2 = cec('div','MTRow',div), div3 = null;cec('div','MTField1',div2,d,'','width: 100%;'); }
+    } else { let div2 = cec('div','MTRow',div); cec('div','MTField1',div2,d,'','width: 100%;'); }
     div = cec('div','MTButtons',divTop);
     if(b != null) {
         if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','id',but.id);});}
@@ -1780,7 +1780,7 @@ async function MenuReportsNetIncomeGo() {
         }
     }
     MF_GridRollup(1,2,1,'Income','section|income|Income');
-    MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending',);
+    MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending');
     MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
     MF_GridRollDifference(7,3,5,1,'Spending','Add','section|Spending|Spending');
     MF_GridRollDifference(8,1,7,1,'Savings','Sub');
@@ -2377,12 +2377,12 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '108px';MTP.Format = 4;MF_QueueAddTitle(11,'Gain/loss %',MTP);
         if(MTFlex.Button2 < 2) {
             MTP.Width = '85px';MF_QueueAddTitle(12,'Acct %',MTP);
-            MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,);
+            MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP);
         } else {
             MTP.IgnoreTotals = true;
             MTP.ShowPercent = null;
             const db = daysBetween(MTFlexDate1,MTFlexDate2,true);
-            MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP,);
+            MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP);
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
         if(MTFlex.Button1 == 4 && MTFlex.Button2 < 2) { MTFlexTitle[12].Title = 'Type %';}
@@ -2421,9 +2421,9 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let skipRec = false;
-                    let useHv = Number(holding.value?.toFixed(2) ?? 0);
-                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHv);
-                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHv;}
+                    let useHoldingValue = Number(holding.value?.toFixed(2) ?? 0);
+                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHoldingValue);
+                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHoldingValue;}
 
                     let useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
@@ -2431,9 +2431,9 @@ async function MenuReportsInvestmentsGo() {
 
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
-                    if(holding.account.id == "161322662815405135") {console.log('HOLDING',useHv, holding);}
-                    if (account) { account.holdingBalance += useHv;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
-                        accountQueue.push({"id": holding.account.id, "holdingBalance": useHv,
+                    if(holding.account.id == "161322662815405135") {console.log('HOLDING',useHoldingValue, holding);}
+                    if (account) { account.holdingBalance += useHoldingValue;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
+                        accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
                         if(holding.account.id == "161322662815405135") {console.log('ACCOUNTQUEUE',accountQueue);}
@@ -2445,12 +2445,11 @@ async function MenuReportsInvestmentsGo() {
                             if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                             holding.closingPrice = currentStockPrice;
                             holding.closingPriceUpdatedAt = getDates('s_YMD');
-                            holding.value = holding.quantity * holding.closingPrice;
-                            holding.value = +holding.value.toFixed(2);
+                            useHoldingValue = holding.quantity * holding.closingPrice;
+                            useHoldingValue = Number(useHoldingValue.toFixed(2));
                         }
                     }
 
-                    let useHoldingValue = Number(holding.value);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
 
                     if (holding.ticker != null) {
