@@ -2421,8 +2421,8 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let skipRec = false;
-                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,holding.value);
                     let useHv = Number(holding.value?.toFixed(2) ?? 0);
+                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHv);
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHv;}
 
                     let useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
