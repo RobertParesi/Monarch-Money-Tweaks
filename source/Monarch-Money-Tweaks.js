@@ -2420,15 +2420,16 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
-                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,holding.value);
-                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = Number(holding.value);}
                     let skipRec = false;
+                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,holding.value);
+                    let useHv = Number(holding.value?.toFixed(2) ?? 0);
+                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHv;}
 
                     let useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
+
                     // Original price
-                    const useHv = Number(holding.value?.toFixed(2) ?? 0);
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
                     if(holding.account.id == "161322662815405135") {console.log('HOLDING',useHv, holding);}
                     if (account) { account.holdingBalance += useHv;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
