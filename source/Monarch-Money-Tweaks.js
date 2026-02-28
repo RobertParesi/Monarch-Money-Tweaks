@@ -2430,7 +2430,7 @@ async function MenuReportsInvestmentsGo() {
 
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
-                    if (account) { account.holdingBalance += holding.value;account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
+                    if (account) { account.holdingBalance += holding.value;account.holdingBalance = +account.holdingBalance.toFixed(2);account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
                         accountQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
