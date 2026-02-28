@@ -5474,7 +5474,7 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
-            const t = holding.value;
+            const t = Number(holding.value?.toFixed(2) ?? 0);
             if(holding.typeDisplay == 'Cash') {
                 if (cs[a]) { cs[a] += t; } else { cs[a] = t; }
             }
