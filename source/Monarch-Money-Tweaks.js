@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.2
+// @version      4.33.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -23,7 +23,7 @@ const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
-let accountGroups = [],accountFields = [],TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
+let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
@@ -849,7 +849,7 @@ function MF_ModelWindowOpen(t,d,b,o) {
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
     cec('div','',divTop,t.title,'','padding-left:16px; padding-top: 12px; font-weight: 600; font-size: 18px;');
     div = cec('div','',divTop,'','','padding: 16px;');
-    if(d.length > 0) {
+    if(typeof d !== 'string') {
         d.forEach(data => {
             let div2 = cec('div','MTRow',div), div3 = null;
             if(Array.isArray(data.field2)) {
@@ -879,9 +879,11 @@ function MF_ModelWindowOpen(t,d,b,o) {
                 cec('span','MTField2',div2,data.field2,'','text-align: right;' + data.style2);
             }
         });
-    }
+    } else { let div2 = cec('div','MTRow',div), div3 = null;cec('div','MTField1',div2,d,'','width: 100%;'); }
     div = cec('div','MTButtons',divTop);
-    if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','id',but.id);});}
+    if(b != null) {
+        if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','id',but.id);});}
+    }
     cec('button','MTWindowButton',div,'Close','','','id',t.name);
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
 }
@@ -2003,16 +2005,12 @@ async function MenuReportsAccountsGo() {
                 if(pd !== undefined) {
                     pd = +pd.toFixed(2);
                     if (manualHoldData?.[ad.id] != true) {
-                        pd = ad.displayBalance - pd;
-                        if(pd < 0) pd = 0;
-                        pdV = pd;
+                        pdV = ad.displayBalance - pd;
+                        if(pdV < 0) pdV = 0;
                     }
                 }
                 let cb = cashHoldData[ad.id];
-                if(cb !== undefined) {
-                    cb = +cb.toFixed(2);
-                    cbV = cb;
-                }
+                if(cb !== undefined) {cbV = +cb.toFixed(2);}
                 totV = pdV + cbV;
             }
             if(skipHidden3 != 1 && totV == 0) continue;
@@ -2335,8 +2333,9 @@ async function MenuReportsInvestmentsGo() {
 
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let sumPortfolio = 0, cashValue = 0, sumCash = 0, accQueue = [];
+    let sumPortfolio = 0, cashValue = 0, sumCash = 0;
     let tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
+    accountQueue = [];
 
     MTFlex.Title1 = 'Investments Report';
     if(MTFlex.Button2 < 2) {
@@ -2430,9 +2429,9 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
 
                     // Original price
-                    const account = accQueue.find(acc => acc.id === holding.account.id);
+                    const account = accountQueue.find(acc => acc.id === holding.account.id);
                     if (account) { account.holdingBalance += holding.value;account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
-                        accQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
+                        accountQueue.push({"id": holding.account.id, "holdingBalance": holding.value,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
                     }
@@ -2535,7 +2534,7 @@ async function MenuReportsInvestmentsGo() {
 
             if(MTFlex.Button2 == 2) return;
             if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
-            for (const acc of accQueue) {
+            for (const acc of accountQueue) {
                 sumPortfolio += acc.portfolioBalance;
                 if(acc.isManual == true) continue;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
@@ -4098,9 +4097,9 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
     MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
     MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
-    MenuDisplay_Input('Assist & populate when Searching Merchants','MT_MerAssist','checkbox');
+    MenuDisplay_Input('Assist & populate when searching merchants rather than starting as blank','MT_MerAssist','checkbox');
     MenuDisplay_Input('Monarch Money Reports','','spacer');
-    MenuDisplay_Input('Hide the Difference Amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
+    MenuDisplay_Input('Hide the Difference amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
     MenuDisplay_Input(MNAME + ' Reports','','spacer');
     MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
     MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
@@ -4113,11 +4112,11 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
     MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
     MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
-    MenuDisplay_Input('Hide Savings Total','MT_TrendHide3','checkbox');
+    MenuDisplay_Input('Hide Savings total','MT_TrendHide3','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
     MenuDisplay_Input('Reports / Net Income Report','','spacer');
-    MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
-    MenuDisplay_Input('Show Note Tags drop-down on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
+    MenuDisplay_Input('Sort column results by Tag/Account ranking rather than value','MT_NetIncomeRankOrder','checkbox');
+    MenuDisplay_Input('Show Note Tags drop-down on Transaction screen (Used if tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
     MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
@@ -4139,8 +4138,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
-    MenuDisplay_Input('Hide Stock Description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
-    MenuDisplay_Input('Split Ticker and Description into two columns','MT_InvestmentsSplitTicker','checkbox');
+    MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
+    MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
@@ -4689,7 +4688,12 @@ function onClickDumpDebug(inNode) {
     let divs = portfolioData.portfolio.aggregateHoldings.edges[inNode];
     let jsonString = JSON.stringify(divs, null, 2);
     jsonString = MNAME + ' for Monarch Money - Version: ' + VERSION + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
-    navigator.clipboard.writeText(jsonString);alert('Debug copied to keyboard. (node=' + inNode + ')');
+    divs.node.holdings.forEach(holding => {
+        let account = accountQueue.find(acc => acc.id === holding.account.id);
+        jsonString += CRLF + JSON.stringify(account, null, 2)
+    });
+    navigator.clipboard.writeText(jsonString);
+    MF_ModelWindowOpen({title: 'Debug'},'Debug copied to keyboard. (node=' + inNode + ')');
 }
 
 function onClickCloseDrawer2() {
@@ -5462,7 +5466,7 @@ async function dataGetCategories() {
 
 // Build Query functions
 async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
-    const as = {}, mn = {}, cs = {}; // holding value, has manual holdings
+    const as = {}, mn = {}, cs = {}; // holding value, has manual holdings, cash holdings value
     portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
