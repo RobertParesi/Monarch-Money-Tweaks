@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.6
+// @version      4.33.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2430,12 +2430,15 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
 
                     // Get new or crypto price
-                    if(inList(holding.type,EQTYPES) > 0) {
+                    let xx = inList(holding.type,EQTYPES);
+                    if(xx > 0) {
                         if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                         useNewValue = holding.quantity * holding.closingPrice;
                         useNewValue = Number(useNewValue.toFixed(2));
                         if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
                     }
+
+                    console.log(xx,holding.ticker,holding.type,holding.closingPrice,holding.quantity,holding.value,useNewValue,useHoldingValue);
 
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
