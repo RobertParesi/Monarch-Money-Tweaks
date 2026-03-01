@@ -2,6 +2,7 @@
 
 * **Version 4.33 (Beta)**
      - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (Idle Cash & Cash Holdings)
+     - FIX: Fixes for MONEY MARKET/CASH entries for accounts that have crypto-currency.
  
 * **Version 4.32 (February 22, 2026)**
      - IMPORTANT: Removed MM-Tweaks settings from Accounts / Edit to avoid regressions.  Now use **Reports / Accounts**
