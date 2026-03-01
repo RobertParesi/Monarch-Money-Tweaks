@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.7
+// @version      4.33.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2433,7 +2433,7 @@ async function MenuReportsInvestmentsGo() {
                     let xx = inList(holding.type,EQTYPES);
                     if(xx > 0) {
                         if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
-                        useNewValue = holding.quantity * holding.closingPrice;
+                        useNewValue = holding.quantity * currentStockPrice;
                         useNewValue = Number(useNewValue.toFixed(2));
                         if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
                     }
