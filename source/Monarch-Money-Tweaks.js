@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.9
+// @version      4.33.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5478,11 +5478,12 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
     const as = {}, mn = {}, cs = {}; // holding value, has manual holdings, cash holdings value
     portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
+        let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(2) ?? 0);
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
             let t = Number(holding.value?.toFixed(2) ?? 0);
             if(t == 0) {
-                t = holding.quantity * holding.closingPrice;
+                t = holding.quantity * currentPrice;
                 t = Number(t.toFixed(2));
             }
             if(holding.typeDisplay == 'Cash') {
