@@ -1988,6 +1988,7 @@ async function MenuReportsAccountsGo() {
         MTP.IsHidden = false;MTP.IsSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];
         MF_QueueAddTitle(5,'Idle Cash',MTP);
         MF_QueueAddTitle(6,'Cash Holdings',MTP);
+        MTP.ShowPercent = {Type: 'Column'}
         MF_QueueAddTitle(7,'Total Cash',MTP);
         MTFlex.Title2 = 'As of ' + getDates('s_FullDate',MTFlexDate2);
         for (let i = 0; i < accountsData.accounts.length; i ++) {
