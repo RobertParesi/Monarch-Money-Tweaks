@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.10
+// @version      4.33.11
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5478,21 +5478,21 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
     const as = {}, mn = {}, cs = {}; // holding value, has manual holdings, cash holdings value
     portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
-        let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(2) ?? 0);
+        let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(3) ?? 0);
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
-            let t = Number(holding.value?.toFixed(2) ?? 0);
+            let t = Number(holding.value?.toFixed(3) ?? 0);
             if(t == 0) {
-                let hp = Number(holding.closingPrice?.toFixed(2) ?? 0);
+                let hp = Number(holding.closingPrice?.toFixed(3) ?? 0);
                 if(hp == 0) hp = currentPrice;
                 t = holding.quantity * hp;
                 if(holding.type == 'fixed_income') t = t * .01;
-                t = Number(t.toFixed(2));
             }
+            t = Number(t.toFixed(2));
+            if(as[a] === undefined ) {as[a] = t;} else {as[a] = as[a] + t;as[a] = Number(as[a].toFixed(2));}
             if(holding.typeDisplay == 'Cash') {
-                if (cs[a]) { cs[a] += t; } else { cs[a] = t; }
+                if(cs[a] === undefined) {cs[a] = t;} else {cs[a] = cs[a] + t;cs[a] = Number(cs[a].toFixed(2));}
             }
-            if (as[a]) { as[a] += t; } else { as[a] = t; }
             if(holding.isManual == true) mn[a] = true;
         });
     });
