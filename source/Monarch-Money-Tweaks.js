@@ -2438,7 +2438,7 @@ async function MenuReportsInvestmentsGo() {
                         if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
                     }
 
-                    console.log(xx,holding.ticker,holding.type,holding.closingPrice,holding.quantity,holding.value,useNewValue,useHoldingValue);
+                    console.log(xx,holding.ticker,holding.type,holding.closingPrice,holding.quantity,holding.value,useNewValue,useHoldingValue,holding.closingPrice);
 
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
