@@ -5486,6 +5486,7 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
                 let hp = Number(holding.closingPrice?.toFixed(2) ?? 0);
                 if(hp == 0) hp = currentPrice;
                 t = holding.quantity * hp;
+                if(holding.type == 'fixed_income') t = t * .01;
                 t = Number(t.toFixed(2));
             }
             if(holding.typeDisplay == 'Cash') {
