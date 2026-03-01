@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.8
+// @version      4.33.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1996,31 +1996,32 @@ async function MenuReportsAccountsGo() {
             if(inList(ad.type.display,['Cash','Investments']) == 0) continue;
             if(skipHidden == 1 && ad.hideFromList == true) continue;
             if(skipHidden2 == 1 && ad.includeInNetWorth == false) continue;
-
-            if(ad.type.display == 'Cash') {
-                pdV = ad.displayBalance;
-                totV = ad.displayBalance;
-            } else {
-                let pd = portfolioData[ad.id];
-                if(pd !== undefined) {
-                    pd = +pd.toFixed(2);
-                    if (manualHoldData?.[ad.id] != true) {
-                        pdV = ad.displayBalance - pd;
-                        if(pdV < 0) pdV = 0;
+            if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + ad.id,false)) {
+                if(ad.type.display == 'Cash') {
+                    pdV = ad.displayBalance;
+                    totV = ad.displayBalance;
+                } else {
+                    let pd = portfolioData[ad.id];
+                    if(pd !== undefined) {
+                        pd = +pd.toFixed(2);
+                        if (manualHoldData?.[ad.id] != true) {
+                            pdV = ad.displayBalance - pd;
+                            if(pdV < 0) pdV = 0;
+                        }
                     }
+                    let cb = cashHoldData[ad.id];
+                    if(cb !== undefined) {cbV = +cb.toFixed(2);}
+                    totV = pdV + cbV;
                 }
-                let cb = cashHoldData[ad.id];
-                if(cb !== undefined) {cbV = +cb.toFixed(2);}
-                totV = pdV + cbV;
-            }
-            if(skipHidden3 != 1 && totV == 0) continue;
+                if(skipHidden3 != 1 && totV == 0) continue;
 
-            MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
-            AccountsGetPrimaryKey(ad);
-            MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
-            MTFlexRow[MTFlexCR][5] = pdV;
-            MTFlexRow[MTFlexCR][6] = cbV;
-            MTFlexRow[MTFlexCR][7] = totV;
+                MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
+                AccountsGetPrimaryKey(ad);
+                MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
+                MTFlexRow[MTFlexCR][5] = pdV;
+                MTFlexRow[MTFlexCR][6] = cbV;
+                MTFlexRow[MTFlexCR][7] = totV;
+            }
         }
         MF_GridRollup(1,2,1,'Assets');
         MTFlexCard = [];
@@ -2430,15 +2431,12 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
 
                     // Get new or crypto price
-                    let xx = inList(holding.type,EQTYPES);
-                    if(xx > 0) {
+                    if(inList(holding.type,EQTYPES) > 0) {
                         if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                         useNewValue = holding.quantity * currentStockPrice;
                         useNewValue = Number(useNewValue.toFixed(2));
                         if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
                     }
-
-                    console.log(xx,holding.ticker,holding.type,holding.closingPrice,holding.quantity,holding.value,useNewValue,useHoldingValue,holding.closingPrice);
 
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
@@ -5481,7 +5479,11 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         edge.node.holdings.forEach(holding => {
             const a = holding.account.id;
-            const t = Number(holding.value?.toFixed(2) ?? 0);
+            let t = Number(holding.value?.toFixed(2) ?? 0);
+            if(t == 0) {
+                t = holding.quantity * holding.closingPrice;
+                t = Number(t.toFixed(2));
+            }
             if(holding.typeDisplay == 'Cash') {
                 if (cs[a]) { cs[a] += t; } else { cs[a] = t; }
             }
