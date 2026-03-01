@@ -5475,12 +5475,12 @@ async function dataGetCategories() {
 
 // Build Query functions
 async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
-    const as = {}, mn = {}, cs = {}; // holding value, has manual holdings, cash holdings value
+    const totals = {}, manual = {}, cash = {};
     portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(3) ?? 0);
         edge.node.holdings.forEach(holding => {
-            const a = holding.account.id;
+            let a = holding.account.id;
             let t = Number(holding.value?.toFixed(3) ?? 0);
             if(t == 0) {
                 let hp = Number(holding.closingPrice?.toFixed(3) ?? 0);
@@ -5489,14 +5489,14 @@ async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
                 if(holding.type == 'fixed_income') t = t * .01;
             }
             t = Number(t.toFixed(2));
-            if(as[a] === undefined ) {as[a] = t;} else {as[a] = as[a] + t;as[a] = Number(as[a].toFixed(2));}
+            if(totals[a] === undefined ) {totals[a] = t;} else {totals[a] = totals[a] + t;totals[a] = Number(totals[a].toFixed(2));}
             if(holding.typeDisplay == 'Cash') {
-                if(cs[a] === undefined) {cs[a] = t;} else {cs[a] = cs[a] + t;cs[a] = Number(cs[a].toFixed(2));}
+                if(cash[a] === undefined) {cash[a] = t;} else {cash[a] = cash[a] + t;cash[a] = Number(cash[a].toFixed(2));}
             }
-            if(holding.isManual == true) mn[a] = true;
+            if(holding.isManual == true) manual[a] = true;
         });
     });
-    return [as, mn, cs];
+    return [totals, manual, cash];
 }
 
 async function buildAccountBalances() {
