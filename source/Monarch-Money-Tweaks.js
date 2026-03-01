@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.5
+// @version      4.33.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2421,7 +2421,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let skipRec = false;
-                    let useHoldingValue = Number(holding.value?.toFixed(2) ?? 0);
+                    let useHoldingValue = Number(holding.value?.toFixed(2) ?? 0),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHoldingValue);
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHoldingValue;}
 
@@ -2429,24 +2429,28 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
 
+                    // Get new or crypto price
+                    if(inList(holding.type,EQTYPES) > 0) {
+                        if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
+                        useNewValue = holding.quantity * holding.closingPrice;
+                        useNewValue = Number(useNewValue.toFixed(2));
+                        if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
+                    }
+
                     // Original price
                     const account = accountQueue.find(acc => acc.id === holding.account.id);
-                    if(holding.account.id == "161322662815405135") {console.log('HOLDING',useHoldingValue, holding);}
                     if (account) { account.holdingBalance += useHoldingValue;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
                         accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
                                        "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
-                        if(holding.account.id == "161322662815405135") {console.log('ACCOUNTQUEUE',accountQueue);}
                     }
 
                     // New price
                     if(skipCalc == 0) {
                         if(inList(holding.type,EQTYPES) > 0) {
-                            if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
                             holding.closingPrice = currentStockPrice;
                             holding.closingPriceUpdatedAt = getDates('s_YMD');
-                            useHoldingValue = holding.quantity * holding.closingPrice;
-                            useHoldingValue = Number(useHoldingValue.toFixed(2));
+                            useHoldingValue = useNewValue;
                         }
                     }
 
