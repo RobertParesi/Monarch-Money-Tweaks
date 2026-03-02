@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.13
+// @version      4.33.14
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -23,7 +23,7 @@ const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
-let accountGroups = [],accountFields = [],accountSummary = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
+let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
@@ -2336,8 +2336,8 @@ async function MenuReportsInvestmentsGo() {
 
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let accountSummary = [], sumPortfolio = 0, cashValue = 0, sumCash = 0;
-    let tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
+    let sumPortfolio = 0, cashValue = 0, sumCash = 0, tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
+    accountQueue = [];
 
     MTFlex.Title1 = 'Investments Report';
     if(MTFlex.Button2 < 2) {
@@ -2441,11 +2441,18 @@ async function MenuReportsInvestmentsGo() {
                     }
 
                     // Original price
-                    const account = accountSummary.find(acc => acc.id === holding.account.id);
-                    if (account) { account.holdingBalance += useHoldingValue; account.holdingBalance = get2dec(account.holdingBalance,2);account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
-                        accountSummary.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
-                                       "portfolioBalance": get2dec(holding.account.displayBalance,2),"institutionName": useInst,
-                                       "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
+                    const account = accountQueue.find(acc => acc.id === holding.account.id);
+                    if (account) {
+                        account.holdingBalance += useHoldingValue;
+                        account.holdingBalance = get2dec(account.holdingBalance,2);
+                        account.accountHoldings+=1;
+                        if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;};
+                        if(holding.isManual == true) {account.isManual = true;}
+                    } else {
+                        accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
+                                           "portfolioBalance": get2dec(holding.account.displayBalance,2),"institutionName": useInst,
+                                           "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual,
+                                           "crypto": holding.type == 'cryptocurrency' ? useHoldingValue : 0});
                     }
 
                     // New price
@@ -2543,12 +2550,13 @@ async function MenuReportsInvestmentsGo() {
 
             if(MTFlex.Button2 == 2) return;
             if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
-            for (const acc of accountSummary) {
+            for (const acc of accountQueue) {
                 sumPortfolio += acc.portfolioBalance;
                 if(acc.isManual == true) continue;
+                if(acc.crypto > 0) continue;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
 
-                if(cashValue > 1) {
+                if(cashValue > 0) {
                     sumCash+=cashValue;
                     let useID = '$$';
                     if(MTFlex.Button2 == 1) {
@@ -4700,7 +4708,7 @@ function onClickDumpDebug(inNode) {
     jsonString = MNAME + ' for Monarch Money - Version: ' + VERSION + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
     divs.node.holdings.forEach(holding => {
         jsonString += CRLF + 'holding: ' + holding.account.id + ' ';
-        let account = accountSummary.find(acc => acc.id === holding.account.id);
+        let account = accountQueue.find(acc => acc.id === holding.account.id);
         jsonString += JSON.stringify(account, null, 2);
     });
     navigator.clipboard.writeText(jsonString);
