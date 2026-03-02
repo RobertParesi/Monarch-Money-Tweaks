@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.12
+// @version      4.33.13
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2336,9 +2336,8 @@ async function MenuReportsInvestmentsGo() {
 
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let sumPortfolio = 0, cashValue = 0, sumCash = 0;
+    let accountSummary = null, sumPortfolio = 0, cashValue = 0, sumCash = 0;
     let tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
-    accountSummary = [];
 
     MTFlex.Title1 = 'Investments Report';
     if(MTFlex.Button2 < 2) {
@@ -2424,7 +2423,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let skipRec = false;
-                    let useHoldingValue = Number(holding.value?.toFixed(2) ?? 0),useNewValue = 0;
+                    let useHoldingValue = get2dec(holding.value,2),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHoldingValue);
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHoldingValue;}
 
@@ -2547,8 +2546,9 @@ async function MenuReportsInvestmentsGo() {
             for (const acc of accountSummary) {
                 sumPortfolio += acc.portfolioBalance;
                 if(acc.isManual == true) continue;
-                cashValue = get2dec(acc.portfolioBalance - acc.holdingBalance,2);
-                if(cashValue > 0) {
+                cashValue = acc.portfolioBalance - acc.holdingBalance;
+
+                if(cashValue > 1) {
                     sumCash+=cashValue;
                     let useID = '$$';
                     if(MTFlex.Button2 == 1) {
@@ -5490,7 +5490,7 @@ async function buildPortfolioHoldings(getData) {
                 let hp = get2dec(holding.closingPrice,3);
                 if(hp == 0) hp = currentPrice;
                 t = holding.quantity * hp;
-                if(holding.type == 'fixed_income') t = t * .01;
+                if(holding.type == 'fixed_income') t = t * 0.01;
             }
             t = get2dec(t,2);
             if(totals[a] === undefined ) {totals[a] = t;} else {totals[a] = totals[a] + t;totals[a] = get2dec(totals[a],2);}
