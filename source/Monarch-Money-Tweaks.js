@@ -2553,39 +2553,36 @@ async function MenuReportsInvestmentsGo() {
             for (const acc of accountQueue) {
                 sumPortfolio += acc.portfolioBalance;
                 if(acc.isManual == true) continue;
-                if(acc.crypto > 0) continue;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
-
-                if(cashValue > 0) {
-                    sumCash+=cashValue;
-                    let useID = '$$';
-                    if(MTFlex.Button2 == 1) {
-                        if(MTFlex.Button1 == 2 || MTFlex.Button1 == 3 || MTFlex.Button1 == 5) {
-                            useID += '-' + acc.id;
-                        }
-                        if(MF_GridUpdateUID(useID,8,cashValue,false,true)) {
-                            MF_GridUpdateUID(useID,9,cashValue,false,true);
-                            continue;
-                        }
+                if(acc.crypto > 0 && cashValue < 1) continue;
+                if(acc.crypto == 0 && cashValue <= 0) continue;
+                sumCash+=cashValue;
+                let useID = '$$';
+                if(MTFlex.Button2 == 1) {
+                    if(MTFlex.Button1 == 2 || MTFlex.Button1 == 3 || MTFlex.Button1 == 5) {
+                        useID += '-' + acc.id;
                     }
-                    MTP = [];
-                    MTP.UID = useID;
-                    if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
-                    MTP.PK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
-                    MF_QueueAddRow(MTP);
-                    if(splitTicker == 1) { MTFlexRow[MTFlexCR][0] = '';} else {MTFlexRow[MTFlexCR][0] = ' CASH & MONEY MARKET';}
-                    MTFlexRow[MTFlexCR][1] = ' CASH & MONEY MARKET';
-                    MTFlexRow[MTFlexCR][2] = acc.institutionName;
-                    MTFlexRow[MTFlexCR][3] = acc.accountName;
-                    MTFlexRow[MTFlexCR][4] = acc.accountSubtype;
-                    MTFlexRow[MTFlexCR][5] = 'Cash';
-                    MTFlexRow[MTFlexCR][6] = null;
-                    MTFlexRow[MTFlexCR][7] = null;
-                    MTFlexRow[MTFlexCR][8] = cashValue;
-                    MTFlexRow[MTFlexCR][9] = cashValue;
-                    MTFlexRow[MTFlexCR][10] = null;
-                    MTFlexRow[MTFlexCR][11] = null;
+                    if(MF_GridUpdateUID(useID,8,cashValue,false,true)) {
+                        MF_GridUpdateUID(useID,9,cashValue,false,true);continue;
+                    }
                 }
+                MTP = [];
+                MTP.UID = useID;
+                if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
+                MTP.PK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
+                MF_QueueAddRow(MTP);
+                if(splitTicker == 1) { MTFlexRow[MTFlexCR][0] = '';} else {MTFlexRow[MTFlexCR][0] = ' CASH & MONEY MARKET';}
+                MTFlexRow[MTFlexCR][1] = ' CASH & MONEY MARKET';
+                MTFlexRow[MTFlexCR][2] = acc.institutionName;
+                MTFlexRow[MTFlexCR][3] = acc.accountName;
+                MTFlexRow[MTFlexCR][4] = acc.accountSubtype;
+                MTFlexRow[MTFlexCR][5] = 'Cash';
+                MTFlexRow[MTFlexCR][6] = null;
+                MTFlexRow[MTFlexCR][7] = null;
+                MTFlexRow[MTFlexCR][8] = cashValue;
+                MTFlexRow[MTFlexCR][9] = cashValue;
+                MTFlexRow[MTFlexCR][10] = null;
+                MTFlexRow[MTFlexCR][11] = null;
             }
         }
 
