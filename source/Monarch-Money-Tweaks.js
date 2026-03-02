@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.11
+// @version      4.33.12
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -23,7 +23,7 @@ const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
-let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
+let accountGroups = [],accountFields = [],accountSummary = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
@@ -1978,11 +1978,11 @@ async function MenuReportsAccountsGo() {
     }
     async function MenuReportsAccountsGoCash(){
 
-        let manualHoldData = null,cashHoldData = null;
+        let summaryData = null,manualHoldData = null,cashHoldData = null;
         MTFlex.DateEvent = 0;
 
         accountsData = await dataGetAccounts();
-        [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings();
+        [summaryData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
         if(getCookie('MT_AccountsHideUpdated',true) == 1) {MTP.IsHidden = true;}
         MTP.Format = -1;MF_QueueAddTitle(4,'Updated',MTP);
         MTP.IsHidden = false;MTP.IsSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];
@@ -1990,28 +1990,29 @@ async function MenuReportsAccountsGo() {
         MF_QueueAddTitle(6,'Cash Holdings',MTP);
         MTP.ShowPercent = {Type: 'Column'}
         MF_QueueAddTitle(7,'Total Cash',MTP);
+
         MTFlex.Title2 = 'As of ' + getDates('s_FullDate',MTFlexDate2);
         for (let i = 0; i < accountsData.accounts.length; i ++) {
-            let ad = accountsData.accounts[i],pdV=0,cbV=0,totV = 0;
+            let ad = accountsData.accounts[i],balV = 0,pdV=0,cbV=0,totV = 0;
             if(ad.isAsset != true) continue;
             if(inList(ad.type.display,['Cash','Investments']) == 0) continue;
             if(skipHidden == 1 && ad.hideFromList == true) continue;
             if(skipHidden2 == 1 && ad.includeInNetWorth == false) continue;
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + ad.id,false)) {
+                balV = Number(ad.displayBalance?.toFixed(2) ?? 0);
                 if(ad.type.display == 'Cash') {
-                    pdV = ad.displayBalance;
-                    totV = ad.displayBalance;
+                    pdV = balV;
+                    totV = balV;
                 } else {
-                    let pd = portfolioData[ad.id];
+                    let pd = summaryData[ad.id];
                     if(pd !== undefined) {
-                        pd = +pd.toFixed(2);
                         if (manualHoldData?.[ad.id] != true) {
-                            pdV = ad.displayBalance - pd;
+                            pdV = balV - pd;
                             if(pdV < 0) pdV = 0;
                         }
                     }
                     let cb = cashHoldData[ad.id];
-                    if(cb !== undefined) {cbV = +cb.toFixed(2);}
+                    if(cb !== undefined) {cbV = cb;}
                     totV = pdV + cbV;
                 }
                 if(skipHidden3 != 1 && totV == 0) continue;
@@ -2019,9 +2020,9 @@ async function MenuReportsAccountsGo() {
                 MTP = [];MTP.IsHeader = false;MTP.UID = ad.id;MTP.SKTriggerEvent = i;
                 AccountsGetPrimaryKey(ad);
                 MTFlexRow[MTFlexCR][4] = ad.displayLastUpdatedAt.substring(0, 10);
-                MTFlexRow[MTFlexCR][5] = pdV;
-                MTFlexRow[MTFlexCR][6] = cbV;
-                MTFlexRow[MTFlexCR][7] = totV;
+                MTFlexRow[MTFlexCR][5] = get2dec(pdV,2);
+                MTFlexRow[MTFlexCR][6] = get2dec(cbV,2);
+                MTFlexRow[MTFlexCR][7] = get2dec(totV,2);
             }
         }
         MF_GridRollup(1,2,1,'Assets');
@@ -2084,7 +2085,7 @@ async function MenuReportsAccountsGo() {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings();
+                [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
                 MTP.ShowPercent = null;
                 if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
                 MF_QueueAddTitle(11,'Positions',MTP);
@@ -2337,7 +2338,7 @@ async function MenuReportsInvestmentsGo() {
     let higherDate = formatQueryDate(MTFlexDate2);
     let sumPortfolio = 0, cashValue = 0, sumCash = 0;
     let tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
-    accountQueue = [];
+    accountSummary = [];
 
     MTFlex.Title1 = 'Investments Report';
     if(MTFlex.Button2 < 2) {
@@ -2434,16 +2435,17 @@ async function MenuReportsInvestmentsGo() {
                     // Get new or crypto price
                     if(inList(holding.type,EQTYPES) > 0) {
                         if(currentStockPrice == 0) {currentStockPrice = holding.closingPrice;}
+                        currentStockPrice = get2dec(currentStockPrice,3);
                         useNewValue = holding.quantity * currentStockPrice;
-                        useNewValue = Number(useNewValue.toFixed(2));
+                        useNewValue = get2dec(useNewValue,2);
                         if(holding.type == 'cryptocurrency') {useHoldingValue = useNewValue;}
                     }
 
                     // Original price
-                    const account = accountQueue.find(acc => acc.id === holding.account.id);
-                    if (account) { account.holdingBalance += useHoldingValue;account.holdingBalance = Number(account.holdingBalance.toFixed(2));account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
-                        accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
-                                       "portfolioBalance": Number(holding.account.displayBalance),"institutionName": useInst,
+                    const account = accountSummary.find(acc => acc.id === holding.account.id);
+                    if (account) { account.holdingBalance += useHoldingValue; account.holdingBalance = get2dec(account.holdingBalance,2);account.accountHoldings+=1;if(holding.isManual == true) {account.isManual = true;}} else {
+                        accountSummary.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
+                                       "portfolioBalance": get2dec(holding.account.displayBalance,2),"institutionName": useInst,
                                        "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual});
                     }
 
@@ -2542,10 +2544,10 @@ async function MenuReportsInvestmentsGo() {
 
             if(MTFlex.Button2 == 2) return;
             if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
-            for (const acc of accountQueue) {
+            for (const acc of accountSummary) {
                 sumPortfolio += acc.portfolioBalance;
                 if(acc.isManual == true) continue;
-                cashValue = acc.portfolioBalance - acc.holdingBalance;
+                cashValue = get2dec(acc.portfolioBalance - acc.holdingBalance,2);
                 if(cashValue > 0) {
                     sumCash+=cashValue;
                     let useID = '$$';
@@ -4698,7 +4700,7 @@ function onClickDumpDebug(inNode) {
     jsonString = MNAME + ' for Monarch Money - Version: ' + VERSION + CRLF + 'Node - ' + inNode + CRLF + CRLF + jsonString;
     divs.node.holdings.forEach(holding => {
         jsonString += CRLF + 'holding: ' + holding.account.id + ' ';
-        let account = accountQueue.find(acc => acc.id === holding.account.id);
+        let account = accountSummary.find(acc => acc.id === holding.account.id);
         jsonString += JSON.stringify(account, null, 2);
     });
     navigator.clipboard.writeText(jsonString);
@@ -5136,6 +5138,8 @@ function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
     return result;
 }
 
+function get2dec(i,d) {let n = Number(i?.toFixed(d) ?? 0);return n;}
+
 function getCleanValue(inValue,inDec) {
 
     if(inValue.length > -1 && (inValue[0] === '$' || inValue[0] === '-' || inValue[0] === '+')) {
@@ -5474,24 +5478,24 @@ async function dataGetCategories() {
 }
 
 // Build Query functions
-async function buildPortfolioHoldings(startDate,endDate,inAccounts) {
+async function buildPortfolioHoldings(getData) {
+    if(getData == true) {portfolioData = await dataPortfolio();}
     const totals = {}, manual = {}, cash = {};
-    portfolioData = await dataPortfolio(startDate,endDate,inAccounts);
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(3) ?? 0);
         edge.node.holdings.forEach(holding => {
             let a = holding.account.id;
-            let t = Number(holding.value?.toFixed(3) ?? 0);
+            let t = get2dec(holding.value,3);
             if(t == 0) {
-                let hp = Number(holding.closingPrice?.toFixed(3) ?? 0);
+                let hp = get2dec(holding.closingPrice,3);
                 if(hp == 0) hp = currentPrice;
                 t = holding.quantity * hp;
                 if(holding.type == 'fixed_income') t = t * .01;
             }
-            t = Number(t.toFixed(2));
-            if(totals[a] === undefined ) {totals[a] = t;} else {totals[a] = totals[a] + t;totals[a] = Number(totals[a].toFixed(2));}
+            t = get2dec(t,2);
+            if(totals[a] === undefined ) {totals[a] = t;} else {totals[a] = totals[a] + t;totals[a] = get2dec(totals[a],2);}
             if(holding.typeDisplay == 'Cash') {
-                if(cash[a] === undefined) {cash[a] = t;} else {cash[a] = cash[a] + t;cash[a] = Number(cash[a].toFixed(2));}
+                if(cash[a] === undefined) {cash[a] = t;} else {cash[a] = cash[a] + t;cash[a] = get2dec(cash[a],2);}
             }
             if(holding.isManual == true) manual[a] = true;
         });
