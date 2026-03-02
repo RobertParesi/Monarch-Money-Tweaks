@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.33.14
+// @version      4.33.15
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -231,8 +231,8 @@ function MF_GridTip() {
     switch (MTFlex.Name) {
         case 'MTInvestments':
             switch (MTFlex.Button2) {
-                case 0: return 'Displays all your holdings, grouped different ways.';
-                case 1: return 'Displays all your holdings with same holdings combined, grouped different ways.';
+                case 0: return 'Displays all your holdings for each account. Use Allocation report to combine same holdings.';
+                case 1: return 'Displays all your holdings with same holdings combined.  Use Portfolio report to split like holdings.';
                 case 2: return 'Displays your Stock, ETF, Mutual Fund & Crypto holdings with price performance over time.';
             }
             break;
