@@ -2336,7 +2336,7 @@ async function MenuReportsInvestmentsGo() {
 
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let accountSummary = null, sumPortfolio = 0, cashValue = 0, sumCash = 0;
+    let accountSummary = [], sumPortfolio = 0, cashValue = 0, sumCash = 0;
     let tickers = [], Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
 
     MTFlex.Title1 = 'Investments Report';
