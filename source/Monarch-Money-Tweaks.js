@@ -2168,9 +2168,9 @@ async function MenuReportsAccountsGo() {
 
                             if(MTFlex.Button2 != 4) {
                                 if(MTFlex.Button2 == 2 && incTrans == 1 ) {
-                                     MF_AddCol(10,get2dec(useBalance - (MTFlexRow[MTFlexCR][5] + MTFlexRow[MTFlexCR][8])));
+                                     MF_AddCol(10,get2dec(useBalance - (MTFlexRow[MTFlexCR][5] + MTFlexRow[MTFlexCR][8]),2));
                                 } else {
-                                     MF_AddCol(10,get2dec(useBalance - MTFlexRow[MTFlexCR][5]));
+                                     MF_AddCol(10,get2dec(useBalance - MTFlexRow[MTFlexCR][5],2));
                                 }
                                 if(MTFlex.Button2 == 2) {
                                     let pd = portfolioData[MTP.UID];
@@ -2179,7 +2179,7 @@ async function MenuReportsAccountsGo() {
                                         if (manualHoldData?.[MTP.UID] != true) { MF_AddCol(12,useBalance - pd);}
                                     }
                                 } else {
-                                    MF_AddCol(11,get2dec(AccountsGetPendingBalance(ad.id,2)));
+                                    MF_AddCol(11,get2dec(AccountsGetPendingBalance(ad.id),2));
                                     MF_AddCol(12,useBalance + MTFlexRow[MTFlexCR][11]);
                                 }
                             } else {MF_AddCol(10,ad.limit);MF_AddCol(11,ad.limit - useBalance);}
