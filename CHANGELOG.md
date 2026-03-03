@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.33 (Beta)**
+* **Version 4.33 (March 2, 2026)**
      - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (Idle Cash & Cash Holdings)
      - FIX: Fixes for MONEY MARKET/CASH entries for accounts that have crypto-currency.
      - FIX: Running Reports / Investments for less than a week during first week of month caused no performance data.
