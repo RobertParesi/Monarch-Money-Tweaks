@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- **Version 4.33 (Beta)**
+ * **Version 4.33 (Beta)**
      - FIX: Under the covers fixes to be more efficient.
  
  * **Version 4.33 (March 2, 2026)**
