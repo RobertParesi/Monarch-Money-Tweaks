@@ -52,6 +52,11 @@ All four reports use the same flex-grid, structure and options:
 * The "How report is grouped" option allows you to select the data grouping. Click on any column header to sort the report in ascending or descending order.
 * The "Account Group Filter" will appear only after you have edited your accounts and assigned your custom account groups.
 
+### Monarch Money Tweaks - Information on how Investment cash is computed
+
+Monarch receives an account balance as well as holdings for your account.  The difference between the Account Balance and the total of the holdings would be the "uninvested" portion of the portfolio.  If this amount is not correct, users have reported that Monarch misses some of the holdings, so first see if the issue is that there is a missing holding.  If there is, contact Monarch support.  
+
+NOTE:  If the account has any crypto in it OR you have manually added any holdings to the account, the system will NOT look for uninvested cash since the manual holding would skew the account balance being returned from the source.
 
 **Monarch Tweaks Reports - Trends Compare, Monthly & Yearly sub-reports**
 ![Settings](/images/MT_V3_04.png)
