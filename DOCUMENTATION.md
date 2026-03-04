@@ -45,9 +45,10 @@ Personally I did the following:
 
 💵 Monarch receives an _Account Balance_ as well as _holdings_ for each investment account.  The difference between the _Account Balance_ and the value of the _holdings_ at that snapshot in time would be the "uninvested" portion of the portfolio.  You'll see this cash figure in both Reports / Accounts [Overall Cash Statement] as well as Reports / Investments with each "CASH/MONEY MARKET" entry.  
 
-🔖 If this amount is not correct, users have reported that Monarch misses some of the holdings.  First see if the issue is if there is a missing holding.  If there is, contact Monarch support.  If the account has any **crypto** in it OR you have **manually** added any holdings to the account, the system will NOT look for uninvested cash since the manual holding would skew the account balance being returned from the source.  If there is still an issue, contact me either via Reddit DM, Discussion above or direct email.
+🔖 If the cash amount is incorrect, first check whether any holdings are missing — if you find missing holdings, contact Monarch support.
+Note that if the account contains any **crypto** or you’ve **manually** added holdings, the system will not search for uninvested cash because manual entries or crypto can skew the account balance returned from the source. If everything looks correct but the amount is still wrong, contact me via Reddit DM, the Discussion thread above, or direct email.
 
-To make Cash in Holdings appear, the holding must be marked as Type "Cash" by selecting Accounts, selecting the account, and then scrolling down to the holdings.   Select > next to the holding to open the side-panel and then change the type to Cash.
+To make cash appear in Cash Holdings, go to Accounts, select the account, scroll down to the holdings, click the > next to the holding to open the side panel, and change the holding Type to “Cash.”
 
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
