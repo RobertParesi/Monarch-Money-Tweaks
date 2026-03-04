@@ -1,6 +1,7 @@
 # Change Log (Version History)
 
  * **Version 4.33 (Beta)**
+     - NEW: Less Total Spending YTD card added to Reports / Trends.
      - FIX: Under the covers fixes to be more efficient.
  
  * **Version 4.33 (March 2, 2026)**
