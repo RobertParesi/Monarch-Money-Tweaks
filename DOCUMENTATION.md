@@ -47,6 +47,8 @@ Personally I did the following:
 
 🔖 If this amount is not correct, users have reported that Monarch misses some of the holdings.  First see if the issue is if there is a missing holding.  If there is, contact Monarch support.  If the account has any **crypto** in it OR you have **manually** added any holdings to the account, the system will NOT look for uninvested cash since the manual holding would skew the account balance being returned from the source.  If there is still an issue, contact me either via Reddit DM, Discussion above or direct email.
 
+To make Cash in Holdings appear, the holding must be marked as Type "Cash" by selecting Accounts, selecting the account, and then scrolling down to the holdings.   Select > next to the holding to open the side-panel and then change the type to Cash.
+
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
 
