@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+* **Version 4.35 (Beta)**
+     - ADD: Added "Show Income and Expenses used in calculation" to Settings for Budget / Left to Spend.
+
  * **Version 4.34 (March 4, 2026)**
      - NEW: Total Spending YTD card added to Reports / Trends.
      - FIX: Under the covers fixes to be more efficient.
