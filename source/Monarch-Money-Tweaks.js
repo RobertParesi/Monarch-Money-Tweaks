@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.34
+// @version      4.35.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.34';
+const VERSION = '4.35';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2113,6 +2113,7 @@ async function MenuReportsAccountsGo() {
         accountsData = await dataGetAccounts();
         let txLen = -1;
         if(MTFlex.Button2 != 1) {
+            if(MTFlex.Button2 == 3) {MTFlexDate1 == getDates('d_StartofYear');}
             transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
             txLen = transData.allTransactions.results.length;
             if(txLen > 5999) {MTFlex.ErrorMsg = 'The date range is too extensive to display ' + fields[1] + ' & ' + fields[2] + ' by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
@@ -3736,7 +3737,6 @@ async function MenuAccountsSummary() {
         aSummary.push({"AccountGroup": inGroup, "ToolTipAsset": tta ,"ToolTipLiability":ttl,"Asset": inA == true ? Number(inBal) : 0, "Liability": inA == true ? 0 : Number(inBal) });
     }
 }
-
 // [ Budgets ]
 async function MenuPlanRefresh() {
 
@@ -3765,39 +3765,57 @@ async function MenuPlanRefresh() {
     if(li) return;
     div = cec('div','MTBudget',div,'','','margin-top: 20px; font-size: 14px;');
 
-    let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,BRLit = 'Budget Remaining',LTSLit = 'Left to Spend';
+    let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,ExLit = 'Budget Expenses';
     let noBudget=true;
     let snapshotData = await dataGetAccounts();
     let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     if(snapshotData) {
         for (let i = 0; i < snapshotData.accounts.length; i++) {
-            if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
-                if(snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'checking') {
-                    bCK+=Number(snapshotData.accounts[i].displayBalance);
-                } else if (snapshotData.accounts[i].isAsset == true && snapshotData.accounts[i].subtype.name == 'savings') {
-                    bSV+=Number(snapshotData.accounts[i].displayBalance);
-                } else if (snapshotData.accounts[i].isAsset == false && snapshotData.accounts[i].subtype.name == 'credit_card') {
-                    bCC+=Number(snapshotData.accounts[i].displayBalance);
+            const ss = snapshotData.accounts[i];
+            if(ss.hideTransactionsFromReports == false) {
+                if(ss.isAsset == true && ss.subtype.name == 'checking') {
+                    bCK+=Number(ss.displayBalance);
+                } else if (ss.isAsset == true && ss.subtype.name == 'savings') {
+                    bSV+=Number(ss.displayBalance);
+                } else if (ss.isAsset == false && ss.subtype.name == 'credit_card') {
+                    bCC+=Number(ss.displayBalance);
                 }
             }
         }
     }
     const [pendingAmt,pendingTx] = rtnPendingBalance(snapshotData4);
     LeftToSpend = (bCK-bCC-pendingAmt);
-    if(getCookie('MT_PlanLTBIR',true) == 0) {budgetI[3] = budgetI[0];budgetE[3]=budgetE[0];} else {
-        budgetI[3] = budgetI[1]-budgetI[2];budgetE[3]=budgetE[1]-budgetE[2];}
+    if(getCookie('MT_PlanLTBIR',true) == 0) {
+        budgetI[3] = budgetI[0];budgetE[3]=budgetE[0];
+    } else {
+        budgetI[3] = budgetI[1]-budgetI[2];budgetE[3]=budgetE[1]-budgetE[2];
+    }
 
-    if(getCookie('MT_PlanLTBII',true) == 0) {noBudget = false; if(budgetI[3] > 0) { BudgetRemain = budgetI[3];LeftToSpend = LeftToSpend + budgetI[3];}}
-    if(getCookie('MT_PlanLTBIE',true) == 0) {noBudget = false; if(budgetE[3] >= 0) { BudgetRemain = BudgetRemain - budgetE[3];LeftToSpend = LeftToSpend - budgetE[3];} else {LTSLit=LTSLit + ' (Over Budget!)';}}
-    let LeftToSpendStyle = css.green;if(LeftToSpend < 0) {LeftToSpendStyle = css.red;}
+    if(getCookie('MT_PlanLTBII',true) == 0) {
+        noBudget = false;
+        if(budgetI[3] > 0) {
+            BudgetRemain = budgetI[3];LeftToSpend = LeftToSpend + budgetI[3];
+        } else {budgetI[3] = 0;}
+    }
+    if(getCookie('MT_PlanLTBIE',true) == 0) {
+        noBudget = false;
+        if(budgetE[3] >= 0) {
+            BudgetRemain = BudgetRemain - budgetE[3];LeftToSpend = LeftToSpend - budgetE[3];
+        } else {budgetE[3] = 0;ExLit += ' (Over Budget)';}
+    }
+    let LeftToSpendStyle = LeftToSpend < 0 ? css.red : css.green;
 
     writePlan('Total in Checking',getDollarValue(bCK,true),'','');
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
     writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','');
     writePlan('Total Available',getDollarValue(bCK-bCC-pendingAmt,true),'','font-weight: 500;');
     if(noBudget == false) {
-        writePlan(BRLit,getDollarValue(BudgetRemain,true),'','font-weight: 500;','', true);
-        writePlan(LTSLit,getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);
+        if(getCookie('MT_PlanShowAll',true) == 1) {
+            if(getCookie('MT_PlanLTBII',true) == 0) writePlan('Budget Income',getDollarValue(budgetI[3],true),'','','', true);
+            if(getCookie('MT_PlanLTBIE',true) == 0) writePlan(ExLit,getDollarValue(budgetE[3],true),'','');
+        }
+        writePlan('Budget Remaining',getDollarValue(BudgetRemain,true),'','font-weight: 500;','', true);
+        writePlan('Left to Spend',getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);
     }
     if(bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
 
@@ -4156,6 +4174,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
+    MenuDisplay_Input('Show Budget Income and Expenses used','MT_PlanShowAll','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
 
     function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
