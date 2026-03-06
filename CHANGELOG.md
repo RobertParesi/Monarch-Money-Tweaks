@@ -3,6 +3,7 @@
 * **Version 4.35 (Beta)**
      - ADD: Added "Show budget Income and Expenses used" in Settings for Budget / Left to Spend.
      - FIX: Selecting Overall Cash Report for first time may show error with too many transactions.
+     - FIX: Up/Down font issue on Current Price.
 
  * **Version 4.34 (March 4, 2026)**
      - NEW: Total Spending YTD card added to Reports / Trends.
