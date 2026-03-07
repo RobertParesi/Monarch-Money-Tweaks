@@ -758,23 +758,24 @@ function MT_GridExport() {
     if(MTFlex.HideDetails != true) {
         csvContent += CRLF;
         for (let i = 0; i < MTFlexRow.length; i++) {
-            if(i > 0 && MTFlexRow[i].Section != MTFlexRow[i-1].Section && MTFlexRow[i].IsHeader == true) { csvContent += c + CRLF; }
+            const fr = MTFlexRow[i];
+            if(i > 0 && fr.Section != MTFlexRow[i-1].Section && fr.IsHeader == true) { csvContent += c + CRLF; }
             k = 0;
             for (let j = 0; j < MTFlexTitle.length; j++) {
                 if(MTFlexTitle[k].IsHidden == false) {
                     v = '';
-                    if(MTFlexRow[i].IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
-                        if(MTFlexRow[i][j] != undefined && MTFlexRow[i][j] != null) {
-                            v = MT_GetFormattedValue(MTFlexTitle[k].Format,MTFlexRow[i][j],true);
+                    if(fr.IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
+                        if(fr[j] != undefined && fr[j] != null) {
+                            v = MT_GetFormattedValue(MTFlexTitle[k].Format,fr[j],true);
                         }
                     }
                     if(MTFlex.Subtotals == true && j == 0) {
-                        if(MTFlexRow[i].IsHeader == false) { csvContent += MTFlexRow[i].PK.slice(MTFlex.PKSlice) + c; }
+                        if(fr.IsHeader == false) { csvContent += fr.PK.slice(MTFlex.PKSlice) + c; }
                     }
                     if(String(v).includes(',')) v = '"' + v + '"';
                     csvContent += v + c;
                     if(MTFlex.Subtotals == true && j == 0) {
-                        if(MTFlexRow[i].IsHeader == true) { csvContent += ' ' + c; }
+                        if(fr.IsHeader == true) { csvContent += ' ' + c; }
                     }
                 }
                 k++;
@@ -984,15 +985,14 @@ function MF_GridUpdateUID(inUID,inCol,inValue,addMissing, increment) {
 }
 
 function MF_GridRollup(inSection,inRoll,inBasedOn,inName,inTrigger) {
-    if(MTFlexRow.length == 0) {return;}
-    let Subtotals = [],useName ='',highSec=0;
-    for (let i = 0; i < MTFlexTitle.length; i++) {Subtotals[i] = null;}
-    for (let i = 0; i < MTFlexRow.length; i++) {
-         if((inRoll == 0 && MTFlexRow[i].IsHeader == true) || MTFlexRow[i].Section == inRoll) {
-             useName = MTFlexRow[i].PK;
-             if(MTFlexRow[i].Section > highSec) highSec = MTFlexRow[i].Section;
-             for (let j = 1; j < MTFlexTitle.length; j++) {
-                 if(MTFlexTitle[j].Format > 0) {Subtotals[j] += MTFlexRow[i][j];}
+    if(MTFlexRow.length == 0) return;
+    let Subtotals = [],useName ='';
+    for (let i = 0; i < MTFlexTitle.length; i++) {Subtotals[i] = 0;}
+    for (const Row of MTFlexRow) {
+         if((inRoll == 0 && Row.IsHeader == true) || Row.Section == inRoll) {
+             useName = Row.PK;
+             for (let col = 1; col < MTFlexTitle.length; col++) {
+                 if(MTFlexTitle[col].Format > 0) {Subtotals[col] += Row[col];}
              }
          }
     }
@@ -2661,8 +2661,7 @@ async function MenuReportsTrendsGo() {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
             for (let i = 0; i < 12; i++) {
                 if(i > month2) {MTP.IsHidden = true;}
-                MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
-                newCol++;
+                MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;
             }
         } else if (MTFlex.Button2 == 4 || MTFlex.Button2 == 6 || MTFlex.Button2 == 7) {
             year-=1;
@@ -2670,31 +2669,17 @@ async function MenuReportsTrendsGo() {
             if(MTFlex.Button2 == 7) {year-=2;}
             lowerDate.setFullYear(year);
             higherDate.setFullYear(year,11,31);
-            for (let i = 0; i < 12; i++) {
-                MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
-                newCol++;
-            }
+            for (let i = 0; i < 12; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
         } else if (MTFlex.Button2 > 7) {
             lowerDate.setFullYear(year - 12);
-            for (let i = year - 11; i <= year; i++) {
-                MF_QueueAddTitle(newCol,i.toString(),MTP);
-                newCol++;
-            }
+            for (let i = year - 11; i <= year; i++) {MF_QueueAddTitle(newCol,i.toString(),MTP);newCol++;}
         } else if (MTFlex.Button2 == 5) {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
-            for (let i = month2 + 1; i < 12; i++) {
-                MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
-                newCol++;
-            }
-            for (let i = 0; i <= month2; i++) {
-                MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
-                newCol++;
-            }
+            for (let i = month2 + 1; i < 12; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
+            for (let i = 0; i <= month2; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
             if(month2 < 11) {
-                month2++;
-                lowerDate.setMonth(month2);
-                year2-=1;
-                lowerDate.setFullYear(year2);
+                month2++;lowerDate.setMonth(month2);
+                year2-=1;lowerDate.setFullYear(year2);
             }
         }
 
@@ -2906,8 +2891,7 @@ async function TrendsDataExtended() {
 
 async function TrendsDataStd() {
 
-    let useDesc = '', useURL = '', useFormat = false;
-    if(getCookie('MT_NoDecimals',true) == 1) {useFormat = true;}
+    let useDesc = '', useURL = '';
 
     for (let i = 0; i < TrendQueue.length; i++) {
         MTP = [];
@@ -3001,19 +2985,19 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
     const lastDate = formatQueryDate(higherDate);
     const thisMonth = getDates('n_CurMonth') + 1;
 
-    let useID = '', sendCol = '', useType = '',snapshotData = null,retGroups = [], retCats = [], s_ndx = 0;
-    if(MTFlex.Button2 > 7) {s_ndx = getDates('n_CurYear', MTFlexDate2) - 12;} else {s_ndx = getDates('n_CurMonth',lowerDate) + 1;}
+    let useType = '',snapshotData = null,retGroups = [], retCats = [];
+    let s_ndx = MTFlex.Button2 > 7 ? getDates('n_CurYear', MTFlexDate2) - 12 : getDates('n_CurMonth',lowerDate) + 1;
     if(inGrouping == 4) {
         snapshotData = await dataMonthlySnapshotGroup(firstDate,lastDate,inPeriod,inAccounts,inCats);
-        if(inID == 'income') {useType = inID;} else {useType = 'expense';}
+        useType = inID == 'income' ? inID : 'expense';
     } else {
-        if(inID) { useType = rtnCategoryGroup(inID).TYPE; retCats = rtnCategoryGroupList(inID,'',true); }
+        if(inID) { useType = rtnCategoryGroup(inID).TYPE; retCats = rtnCategoryGroupList(inID,'',true);}
         inGrouping = Number(inGrouping);
         if(inGrouping == 0) {snapshotData = await dataMonthlySnapshotGroup(firstDate,lastDate,inPeriod,inAccounts,retCats);} else {
             snapshotData = await dataMonthlySnapshot(firstDate,lastDate,inPeriod,inAccounts,retCats);
         }
     }
-    let useDate = null,yy = null,mm=null,ndx=null,useAmount=null;
+    let useID = '',useDate = null,ndx=0,useAmount=0;
     for (const ss of snapshotData.aggregates) {
         switch(inGrouping) {
             case 0: useID = ss.groupBy.categoryGroup.id;break;
@@ -3023,14 +3007,12 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
                 retGroups = rtnCategoryGroup(useID);
                 useID = retGroups.GROUP;useType = retGroups.TYPE;break;
         }
-        if(inGrouping == 4 || inID == '' || inID == useID) {
+        if(inGrouping === 4 || inID == '' || inID == useID) {
             useAmount = Number(ss.summary.sum);
             if(inID) {
                 useDate = ss.groupBy.month;
-                yy = useDate.substring(0,4);
-                mm = useDate.substring(5,7);
-                if(useType == 'expense') { useAmount = useAmount * -1;}
-                TrendQueue2.push({"YEAR": yy, "MONTH": mm,"AMOUNT": useAmount, "DESC": retGroups.NAME, "ID": retGroups.ID});
+                if(useType === 'expense') { useAmount = useAmount * -1;}
+                TrendQueue2.push({"YEAR": useDate.substring(0,4), "MONTH": useDate.substring(5,7),"AMOUNT": useAmount, "DESC": retGroups.NAME, "ID": retGroups.ID});
             } else if (inCol == 'oy') {
                 useDate = ss.groupBy.year;
                 ndx = Number(useDate.substring(0,4));
@@ -3049,10 +3031,10 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
                 }
                 MF_GridUpdateUID(useID,ndx,useAmount,true);
             } else {
-                sendCol = inCol;
+                let sendCol = inCol;
                 if(inCol == 'fu') {
                     useDate = ss.groupBy.month;
-                    mm = Number(useDate.substring(5,7));
+                    let mm = Number(useDate.substring(5,7));
                     if(mm != thisMonth) {sendCol = 'f2';}
                 }
                 TrendsUpdateData(useID,useAmount,sendCol);
@@ -3067,34 +3049,33 @@ function TrendsUpdateData(useID,useAmount,inCol) {
     for (let i = 0; i < TrendQueue.length; i++) {
         if(TrendQueue[i].ID == useID) {
             switch(inCol) {
-                case 'cp':TrendQueue[i].N_CURRENT = useAmount;break;
-                case 'lp':TrendQueue[i].N_LAST = useAmount;break;
-                case 'cm':TrendQueue[i].N_CURRENTM = useAmount;break;
-                case 'lm':TrendQueue[i].N_LASTM = useAmount;break;
-                case 'fu':TrendQueue[i].N_FUTURE = useAmount;break;
-                case 'f2':TrendQueue[i].N_FUTURE2 = useAmount;break;
+                case 'cp':TrendQueue[i].N_CURRENT = useAmount;return;
+                case 'lp':TrendQueue[i].N_LAST = useAmount;return;
+                case 'cm':TrendQueue[i].N_CURRENTM = useAmount;return;
+                case 'lm':TrendQueue[i].N_LASTM = useAmount;return;
+                case 'fu':TrendQueue[i].N_FUTURE = useAmount;return;
+                case 'f2':TrendQueue[i].N_FUTURE2 = useAmount;return;
             }
-            return;
         }
     }
     switch(inCol) {
-        case 'cp':TrendQueue.push({"ID": useID,"N_CURRENT": useAmount,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});break;
-        case 'lp':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": useAmount, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});break;
-        case 'cm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": useAmount, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});break;
-        case 'lm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": useAmount, "N_FUTURE": 0,"N_FUTURE2": 0});break;
-        case 'fu':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": useAmount, "N_FUTURE2": 0});break;
-        case 'f2':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0, "N_FUTURE2": useAmount});break;
+        case 'cp':TrendQueue.push({"ID": useID,"N_CURRENT": useAmount,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});return;
+        case 'lp':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": useAmount, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});return;
+        case 'cm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": useAmount, "N_LASTM": 0, "N_FUTURE": 0,"N_FUTURE2": 0});return;
+        case 'lm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": useAmount, "N_FUTURE": 0,"N_FUTURE2": 0});return;
+        case 'fu':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": useAmount, "N_FUTURE2": 0});return;
+        case 'f2':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0, "N_FUTURE2": useAmount});return;
     }
 }
 
 async function HistoryDrawer(inType,inId,inDesc) {
     let lowerDate = getDates('d_Minus2FullYears'),higherDate = new Date();
-    let sObj = {},retGroups = [],useGroupId = '',useTitle = 'Monthly';
+    let sObj = {},retGroups = [],useGroupId = '',inGroup = 0,useTitle = 'Monthly';
 
     if(MTFlexAccountFilter.name) {useTitle += ' - ' + MTFlexAccountFilter.name;}
     if(inType == 'section') {
         useGroupId = inId;
-        sObj.id = 4;
+        inGroup = 4;
         sObj.type2 = inId == 'income' ? inType : 'expense';
         sObj.urltext = inDesc;
     } else {
@@ -3106,14 +3087,15 @@ async function HistoryDrawer(inType,inId,inDesc) {
             sObj.toggle = ['',''];
             sObj.urltext = retGroups.ICON + ' ' + retGroups.GROUPNAME;
             sObj.url = sObj.url + '|' + retGroups.GROUP;
-            sObj.id = 3;
+            inGroup = 3;
         } else {
             useGroupId = retGroups.ID;
-            sObj.id = 1;
+            inGroup = 1;
             sObj.urltext = retGroups.ICON + ' ' + retGroups.GROUPNAME + ' / ' + retGroups.NAME;
             sObj.url += retGroups.ID + '|';
         }
     }
+    sObj.id = inId;
     sObj.type = inType;
     sObj.small = sObj.type2;
     sObj.big = useTitle;
@@ -3126,7 +3108,7 @@ async function HistoryDrawer(inType,inId,inDesc) {
     ld = formatQueryDate(ld);hd = formatQueryDate(hd);
     const pendingData = await dataTransactions(ld,hd,0,true,MTFlexAccountFilter.filter,null,null,null,useCats);
     TrendPending = await rtnPendingBalance(pendingData);
-    TrendsBuildData('hs',sObj.id,'month',lowerDate,higherDate,inId,MTFlexAccountFilter.filter,sObj.type2,useCats);
+    TrendsBuildData('hs',inGroup,'month',lowerDate,higherDate,inId,MTFlexAccountFilter.filter,sObj.type2,useCats);
 }
 
 function HistoryDrawerDraw() {
@@ -3177,7 +3159,6 @@ function HistoryDrawerDraw() {
         }
         div3 = cec('span','MTSideDrawerDetail3',div2);
         div3 = cec('span','MTSideDrawerDetail',div2,'Average','',titleStyle);
-
         div2 = cec('div','MTSideDrawerItem',div);
         div3 = cec('span','MTFlexSpacer',div2);
 
@@ -3568,7 +3549,6 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
     let grpID = div.getAttribute('groupid');
     let grpType = div.getAttribute('grouptype');
     let grpSubtype = div.getAttribute('groupsubtype');
-
     let filterType = '',filterAct = [];
     let ldR = formatQueryDate(getDates('d_StartofLastMonth'));
     let hdR = formatQueryDate(getDates('d_Today'));
@@ -3688,9 +3668,10 @@ async function MenuAccountsSummary() {
     if(elements.length > 1) {
         let snapshotData = await dataGetAccounts();
         for (let i = 0; i < snapshotData.accounts.length; i++) {
-            if(snapshotData.accounts[i].hideFromList == false && snapshotData.accounts[i].includeInNetWorth == true) {
-                let AccountGroupFilter = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
-                MenuAccountSummaryUpdate(AccountGroupFilter, snapshotData.accounts[i].isAsset, snapshotData.accounts[i].displayBalance,snapshotData.accounts[i].displayName);
+            let ss = snapshotData.accounts[i];
+            if(ss.hideFromList == false && ss.includeInNetWorth == true) {
+                let AccountGroupFilter = getCookie('MTAccounts:' + ss.id,false);
+                MenuAccountSummaryUpdate(AccountGroupFilter,ss.isAsset,ss.displayBalance,ss.displayName);
             }
         }
         aSummary.sort();
