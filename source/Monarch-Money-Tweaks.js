@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.35.2
+// @version      4.35.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2451,11 +2451,15 @@ async function MenuReportsInvestmentsGo() {
                         account.accountHoldings+=1;
                         if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;}
                         if(holding.isManual == true) {account.isManual = true;}
+                        if(holding.type == 'Cash') {account.cashHoldings+= useHoldingValue;}
+                        if(useHoldingValue == 0) {account.zeroHoldings+=1;}
                     } else {
                         accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
                                            "portfolioBalance": get2dec(holding.account.displayBalance),"institutionName": useInst,
                                            "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual,
-                                           "crypto": holding.type == 'cryptocurrency' ? useHoldingValue : 0});
+                                           "crypto": holding.type == 'cryptocurrency' ? useHoldingValue : 0,
+                                           "cashHoldings": holding.type == 'cash' ? useHoldingValue : 0,
+                                           "zeroHoldings": useHoldingValue == 0 ? 1 : 0});
                     }
 
                     // New price
@@ -3418,23 +3422,22 @@ async function InvestmentsDrawerCash(inP) {
     console.log(account);
     sObj.small = 'CASH';
     sObj.big = 'CASH/MONEY MARKET';
-    sObj.urltext = account.accountHoldings + ' holdings';
+    sObj.urltext = account.accountName;
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
     divTop2.setAttribute('data',inP);
-    DrawerDrawLine(divTop2,'Account',account.accountName,'','margin-top:20px;');
     DrawerDrawLine(divTop2,'Institution',account.institutionName);
     DrawerDrawLine(divTop2,'Account type','Investments');
     DrawerDrawLine(divTop2,'Account subtype',account.accountSubtype);
     DrawerDrawSpacer(divTop2);
     DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance,2));
     DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance,2));
-    DrawerDrawLine(divTop2,'CASH/MONEY MARKET Value',getDollarValue(account.portfolioBalance - account.holdingBalance,2));
+    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance,2));
     DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings);
-    DrawerDrawLine(divTop2,'Manual Holdings',account.isManual == true ? 'Yes' : 'None');
-    DrawerDrawLine(divTop2,'Total in Crypto',getDollarValue(account.crypto,2));
+    DrawerDrawLine(divTop2,'Cash Holdings Value',getDollarValue(account.cashHoldings,2));
+    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
+    DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
     cec('button','MTInputButton',divTop2,'Close','','float:right;' );
 }
