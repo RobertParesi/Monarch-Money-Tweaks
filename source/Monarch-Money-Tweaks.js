@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.35.1
+// @version      4.35.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2568,6 +2568,8 @@ async function MenuReportsInvestmentsGo() {
                 MTP.UID = useID;
                 if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                 MTP.PK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
+                MTP.SKHRef = '/accounts/details/' + acc.id;
+                MTP.SKTriggerEvent = 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
                 MF_AddCol(0,splitTicker == 1 ? '' : ' CASH & MONEY MARKET');
                 MF_AddCol(1,' CASH & MONEY MARKET');
@@ -3409,6 +3411,31 @@ async function AccountsDrawer(inP) {
     }
 }
 
+async function InvestmentsDrawerCash(inP) {
+
+    let sObj = {};
+    let account = accountQueue.find(acc => acc.id === inP[1]);
+    console.log(account);
+    sObj.small = 'CASH';
+    sObj.big = 'CASH/MONEY MARKET';
+    sObj.urltext = account.accountSubtype;
+    let divTop = MF_SidePanelOpen(sObj);
+    let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
+    divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
+    divTop2.setAttribute('data',inP);
+    DrawerDrawLine(divTop2,'Account',account.accountName,'','margin-top:20px;');
+    DrawerDrawLine(divTop2,'Institution',account.institutionName);
+    DrawerDrawLine(divTop2,'Current Value',getDollarValue(account.portfolioBalance - account.holdingBalance,2));
+    DrawerDrawSpacer(divTop2);
+    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance,2));
+    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance,2));
+    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings);
+    DrawerDrawLine(divTop2,'Manual Holdings',account.isManual == true ? 'Yes' : 'None');
+    DrawerDrawLine(divTop2,'Total in Crypto',getDollarValue(account.crypto,2));
+    divTop2 = cec('span','MTSideDrawerHeader',divTop);
+    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+}
+
 async function InvestmentsDrawer(inP) {
 
     let sObj={},divReload = null,divTop=null,divTop2=null;
@@ -3416,6 +3443,8 @@ async function InvestmentsDrawer(inP) {
         divReload = document.getElementById('MTSideDrawerGroup');
         inP = divReload.getAttribute('data').split(',');
     }
+    if(inP[0] === 'ACCOUNT') {await InvestmentsDrawerCash(inP);return;}
+
     const p1 = inP[0];
     const p2 = inP[1];
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p1].node;
