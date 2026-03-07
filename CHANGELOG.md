@@ -7,7 +7,6 @@
 
  * **Version 4.34 (March 4, 2026)**
      - NEW: Total Spending YTD card added to Reports / Trends.
-     - FIX: Under the covers fixes to be more efficient.
  
  * **Version 4.33 (March 2, 2026)**
      - NEW: Added Reports / Accounts [Overall Cash Statement] to show all cash (Idle Cash & Cash Holdings)
