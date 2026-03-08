@@ -3,7 +3,7 @@
 **📣 Over 2,500 active users!**
 
 ### ⚙️ Installing MM-Tweaks for Monarch Money 
-#### Version 4.34 (March 4, 2026)
+#### Version 4.35 (March 7, 2026)
 
 Visit the Extensions area for your browser using the following links: 
 
