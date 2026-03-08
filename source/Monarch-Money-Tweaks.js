@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.35.3
+// @version      4.35.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3690,7 +3690,18 @@ function MenuHistoryExport(inType,inFile) {
 }
 
 // [ Dashboard Accounts ]
+function MenuAccountSummaryHide() {
+    if(getCookie('MT_HideAccountsSummary',true) == 1) {
+        let div = document.querySelector('[class*="Accounts__SummaryCardPositioner"]');
+        if(div) div.style.display = 'none';
+        div = document.querySelector('[class*="Grid__GridStyled-"]');
+        if(div) div.style.display = 'block';
+    }
+}
+
 async function MenuAccountsSummary() {
+
+    MenuAccountSummaryHide();
 
     const divTop = document.querySelector('div.MTAccountSummary');
     if(divTop) return;
@@ -4073,7 +4084,7 @@ function MenuLogin(OnFocus) {
 
 function MenuAccounts(OnFocus) {
     if(OnFocus == true) {
-        if (glo.pathName == '/accounts' ) { glo.spawnProcess = 4; }
+        if (glo.pathName == '/accounts' ) { MenuAccountSummaryHide();glo.spawnProcess = 4;}
     }
 }
 
@@ -4140,6 +4151,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Accounts','','spacer');
     MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
     MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
+    MenuDisplay_Input('Hide Accounts Summary panel','MT_HideAccountsSummary','checkbox');
     MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
     MenuDisplay_Input('Transactions','','spacer');
     MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
