@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.35.4
+// @version      4.35
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3419,10 +3419,10 @@ async function InvestmentsDrawerCash(inP) {
 
     let sObj = {};
     let account = accountQueue.find(acc => acc.id === inP[1]);
-    console.log(account);
     sObj.small = 'CASH';
     sObj.big = 'CASH/MONEY MARKET';
     sObj.urltext = account.accountName;
+    sObj.url = '/accounts/details/' + account.id;
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
