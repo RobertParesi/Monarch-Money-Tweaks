@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.35 (March 7, 2026)**
-     - NEW: Setting has new option to Hide the Accounts Summary panel.
+     - NEW: Settings has new option to Hide the Accounts Summary panel.
      - ADD: Added "Show budget Income and Expenses used" in Settings for Budget / Left to Spend.
      - ADD: Enhancements to the CASH/MONEY MARKET entries for more information.
      - FIX: Selecting Overall Cash Report for first time may show error with too many transactions.
