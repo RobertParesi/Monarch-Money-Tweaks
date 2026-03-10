@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.2
+// @version      4.36.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1467,7 +1467,7 @@ function MF_SidePanelOpen(sObj) {
         if(sObj.toggle != null) {
             let useButton = getCookie(MTFlex.Name + '_SidePanel',true);
             useButton = sObj.toggle[useButton];
-            const a = cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',sObj.toggle);
+            let a = cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',sObj.toggle);
             a.setAttribute('title',sObj.toggletip);
         }
         if(sObj.button != null) {
@@ -3474,12 +3474,15 @@ async function InvestmentsDrawer(inP) {
     const hld = portfolioData.portfolio.aggregateHoldings.edges[p1].node.holdings;
     let bondInfo = [],stockInfo = ['',''];
     sObj.big = hld[p2].name;
+    sObj.small = hld[p2].typeDisplay;
     if(hld[p2].type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
+        sObj.button = '!Investments|' + sObj.big + '|' + sObj.small + '|';
     } else {
         if(hld[p2].ticker != null) {
             sObj.big = hld[p2].ticker + ' • ' + hld[p2].name;
+            sObj.button = '!Investments|' + sObj.big + '|' + sObj.small + '|' + hld[p2].ticker;
             const xT = inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
                 stockInfo[0] = 'Stock Analysis for ' + hld[p2].ticker;
@@ -3490,7 +3493,6 @@ async function InvestmentsDrawer(inP) {
     }
 
     if(divReload == null) {
-        sObj.small = hld[p2].typeDisplay;
         sObj.urltext = stockInfo[0];
         sObj.url = stockInfo[1];
         sObj.toggletip = 'Split/Combine Holdings';
@@ -3574,14 +3576,11 @@ async function InvestmentsDrawer(inP) {
         divTop2 = cec('span','MTSideDrawerHeader',divTop);
         cec('button','MTInputButton',divTop2,'Close','','float:right;' );
         if(glo.debug == 1) {cec('button','MTInputButton',divTop2,'Debug','','float:right;','id',p1);}
-        if(hld[p2].ticker) {
-            cec('button','MTInputButton',divTop2,'Category','','margin-left: 0px;','id','!StockCategory|' + hld[p2].ticker + '|Stock Category');
-        }
         if(MTFlex.Button2 == 2) {
             if(hld[p2].ticker != 'null') {
                 let bName = 'Watch Ticker';
                 if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
-                cec('button','MTInputButton',divTop2,bName,'','margin-left: 12px;','id',hld[p2].ticker);
+                cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','id',hld[p2].ticker);
             }
         }
     }
@@ -4562,11 +4561,15 @@ window.onclick = function(event) {
 };
 
 function onClickOpenWindow(cn) {
-    console.log(cn);
-    if(cn[0] == '!StockCategory') {
+
+    if(cn[0] == '!Investments') {
         let d = [];
-        d.push({field1: 'Category', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...', name: 'StockCategory', key: 'MTStockCategory:' + cn[1]});
-        MF_ModelWindowOpen({width: 480, name: cn[2], title: 'Category for ' + cn[1], id: cn[0]},d,[]);return;
+        if(cn[3]) {
+            d.push({field1: 'Category [' + cn[2] + ']', style1: 'font-weight: 600;', type: 'Input', name: 'StockCategories', placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...', key: 'MTStockCategory:' + cn[3]});
+        } else {
+            d.push({field1: 'Category', field2: cn[2], style1: 'font-weight: 600;'});
+        }
+        MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[3]},d,[]);return;
     }
     if(cn[0] == '!Accounts') {
         let d = [];
