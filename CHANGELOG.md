@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Version 4.36 (Beta)**
+     - NEW: Reports / Investments card enhancements (sort by value, show percentage)
+     - NEW: Reports / Investments will now allow custom category for each ticker and "By category" report.
+
 * **Version 4.35 (March 7, 2026)**
      - NEW: Settings has new option to Hide the Accounts Summary panel.
      - NEW: Settings has new option to "Show budget Income and Expenses used" in Left to Spend.
