@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.36 (Beta)**
-     - NEW: Reports / Investments card enhancements (sort by value, show percentage)
+     - NEW: MM Tweak Report cards now enhanced (sorted and showing percentages)
      - NEW: Reports / Investments will now allow custom category for each ticker and "By category" report.
 
 * **Version 4.35 (March 7, 2026)**
