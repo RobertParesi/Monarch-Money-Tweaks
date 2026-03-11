@@ -1047,6 +1047,135 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
     }
     return 0;
 }
+
+function MF_DrawPieChart(inLocation,inP) {
+
+    let div = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;');
+    let divTop = document.createElement('div');
+    divTop.className = 'MTChartContainer';
+    divTop.id = 'MTChartCanvas';
+    divTop = div.insertAdjacentElement('afterend', divTop);
+    let divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 660; divChart.height = 600;
+    let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
+
+    // load items
+    let items = [], hitboxes = [], un = Number(inP[1]);
+    for (let i = 0; i < MTFlexRow.length; i++) {
+        const row = MTFlexRow[i];
+        if(row.Section % 2 == 1) {
+            items.push({percent: row[un] + '%', title: row[0]});
+        }
+    }
+
+    const ctx = divChart.getContext('2d');
+    const w = divChart.width, h = divChart.height;
+    ctx.clearRect(0,0,w,h);
+
+    // convert to numeric values; if percent given, use that as value directly
+    const values = items.map(it =>
+                             typeof it.percent === 'string' && it.percent.endsWith('%')
+                             ? parseFloat(it.percent)
+                             : Number(it.value) || 0
+                            );
+
+    // pair each item with its numeric value, sort by value desc
+    const entries = items.map((it, i) => ({ it, v: values[i] }));
+    entries.sort((a, b) => b.v - a.v);
+
+    const max = Math.max(...values, 1);
+
+    const topPadding = 20;
+    const bottomPadding = 20;
+    const leftLabelWidth = 120;
+    const rightValueWidth = 60;
+    const barAreaWidth = w - leftLabelWidth - rightValueWidth - 20;
+    const barHeight = (h - topPadding - bottomPadding) / items.length * 0.6;
+    const rowHeight = (h - topPadding - bottomPadding) / items.length;
+
+    const colors = ['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc949'];
+
+    ctx.font = '12px sans-serif';
+    ctx.textBaseline = 'middle';
+
+    // use sorted entries instead of items.forEach
+    entries.forEach((entry, i) => {
+        const it = entry.it;
+        const v = entry.v;
+        const yCenter = topPadding + rowHeight * i + rowHeight / 2;
+
+        // left label
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'right';
+        ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
+
+        // bar
+        const barLength = (v / max) * barAreaWidth;
+        const barX = leftLabelWidth;
+        const barY = yCenter - barHeight / 2;
+
+        ctx.fillStyle = it.color || colors[i % colors.length];
+        ctx.fillRect(barX, barY, barLength, barHeight);
+
+        // value on right
+        // value right after the bar
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'left';
+        const valueText = it.percent ?? (it.value != null ? it.value : v);
+        ctx.fillText(String(valueText), barX + barLength + 5, yCenter);
+
+        // save for tooltip
+        hitboxes.push({
+            x: barX,
+            y: barY,
+            w: barLength,
+            h: barHeight,
+            item: it,
+            value: v,
+            displayValue: valueText
+        });
+
+    });
+      // bottom border
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(leftLabelWidth, h - bottomPadding);
+  ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);
+  ctx.stroke();
+      attachTooltip(divChart, hitboxes);
+}
+function attachTooltip(canvas, hitboxes) {
+  const tooltip = document.getElementById('MTChartTip');
+
+  canvas.onmousemove = function (e) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let found = null;
+    for (const hb of hitboxes) {
+      if (x >= hb.x && x <= hb.x + hb.w &&
+          y >= hb.y && y <= hb.y + hb.h) {
+        found = hb;
+        break;
+      }
+    }
+
+    if (found) {
+      tooltip.style.display = 'block';
+      tooltip.textContent = `${found.item.title}: ${found.displayValue}`;
+      tooltip.style.left = (e.pageX - 1600) + 'px';
+      tooltip.style.top = (e.pageY - 45) + 'px';
+    } else {
+      tooltip.style.display = 'none';
+    }
+  };
+
+  canvas.onmouseleave = function () {
+    tooltip.style.display = 'none';
+  };
+}
+
 // [ Chart Canvas ]
 function MF_DrawChart(inLocation) {
 
@@ -2414,7 +2543,7 @@ async function MenuReportsInvestmentsGo() {
         if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
             MF_GridGroupByPK(); // Rollup to primary key
             if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; } // rollup to sub-total
-            MF_GridRollup(0,0,0,'Total');
+            MF_GridRollup(0,0,0,'Total','TOTAL|13');
         }
         MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
@@ -3431,6 +3560,20 @@ async function AccountsDrawer(inP) {
         }
     }
 }
+async function InvestmentsDrawerTotal(inP) {
+
+    let sObj = {};
+    sObj.small = MTFlex.Button2Options[MTFlex.Button2];
+    sObj.big = 'Investments';
+    sObj.urltext = MTFlex.Button1Options[MTFlex.Button1];
+    let divTop = MF_SidePanelOpen(sObj);
+    let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
+    divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
+    divTop2.setAttribute('data',inP);
+    divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
+    MF_DrawPieChart(divTop2,inP);
+    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+}
 
 async function InvestmentsDrawerCash(inP) {
 
@@ -3467,6 +3610,7 @@ async function InvestmentsDrawer(inP) {
         inP = divReload.getAttribute('data').split(',');
     }
     if(inP[0] === 'ACCOUNT') {await InvestmentsDrawerCash(inP);return;}
+    if(inP[0] === 'TOTAL') {await InvestmentsDrawerTotal(inP);return;}
 
     const p1 = inP[0];
     const p2 = inP[1];
