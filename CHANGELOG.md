@@ -2,7 +2,8 @@
 
 * **Version 4.36 (Beta)**
      - NEW: MM Tweak Report cards now enhanced (sorted and showing percentages)
-     - NEW: Reports / Investments will now allow custom category for each ticker and "By category" report.
+     - NEW: Reports / Investments will now allow custom category for each ticker and new "By category" report.
+     - NEW: MM Tweak Reports side-drawer enhanced for all sub totals and totals with new Bar graph.
 
 * **Version 4.35 (March 7, 2026)**
      - NEW: Settings has new option to Hide the Accounts Summary panel.
