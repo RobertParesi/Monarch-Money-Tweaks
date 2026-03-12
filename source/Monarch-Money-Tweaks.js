@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.4
+// @version      4.36.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -499,22 +499,11 @@ function MT_GridDrawDetails() {
                     elx = cec('td', S1, el, V2, '', (S2 || '') + HeaderStyle);
                     if(useRow[j] != null) { Grouptotals[j-1] += V1; }
                 }
-
-                // Write Cards
-                if(MTFlex.AutoCard !== undefined) {
-                    if(MTFlex.AutoCard.Column === j) {
-                        let runCard = false;
-                        if(MTFlex.AutoCard.Section == -1 && useRow.Section % 2 == 1) runCard = true;
-                        if(MTFlex.AutoCard.Section > 0) {
-                            if((isSubTotal == true && MTFlex.AutoCard.Section == useRow.Section) || (isSubTotal == false && MTFlex.AutoCard.Section -1 == useRow.Section)) {runCard = true;}
-                        }
-                        if(runCard == true) {
-                            MTP.Col = 1 + (MTFlexCard.length+1);
-                            MTP.Subtitle = isSubTotal || MTFlex.AutoCard.Section == -1 ? useDesc : MTFlex.AutoCard.Title;
-                            MTP.Title = MTFlex.AutoCard.Chop !== undefined ? V2.slice(0,MTFlex.AutoCard.Chop) : MTP.Title = V2;
-                            if(MTFlex.AutoCard.Split) MTP.Title = MTP.Title.replace(' ','\n');
-                            MTP.Style = MTP.Title[0] === '-' ? css.red : css.green;
-                            MF_QueueAddCard(MTP);
+                if(isSubTotal == true) {
+                    if(MTFlex.AutoCard != undefined) {
+                        if(MTFlex.AutoCard.section == useRow.Section && MTFlex.AutoCard.x == j) {
+                            V2 = V2.split(' ');V2[0] = getCleanValue(V2[0]);
+                            MF_GridCardAddAll (MTFlex.AutoCard,V2[0],useRow.PK,V2[2] ? V2[2] : '');
                         }
                     }
                 }
@@ -977,9 +966,12 @@ function MF_GridCalcRowRange(inColumn,inStart,inEnd,inOp) {
     }
 }
 
-function MF_GridCardAddAll (cObj) {
+function MF_GridCardAddAll (cObj,inA,inB,inC) {
 
     let cards=0;
+    if(inA) {MT_GridCardAddAllGo (inA,inB,inC,cObj);return;}
+    if(cObj.y == 'AutoCard') {MTFlex.AutoCard = cObj;return;}
+
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(cObj.section == 'odd') {
@@ -989,10 +981,8 @@ function MF_GridCardAddAll (cObj) {
             }
         } else {
             if(cObj.section == row.Section) {
-                if(cObj.total > 0) {
-                    MT_GridCardAddAllGo(row[cObj.total], row[0]);
-                }
-                for ( let j = cObj.x; j <= cObj.y; j++) {
+                if(cObj.total > 0) {MT_GridCardAddAllGo(row[cObj.total], row[0]);}
+                for( let j = cObj.x; j <= cObj.y; j++) {
                     MT_GridCardAddAllGo(row[j], MTFlexTitle[j].Title);
                     if(cards == cObj.max) break;
                 }
@@ -1001,14 +991,15 @@ function MF_GridCardAddAll (cObj) {
     }
     return cards;
 
-    function MT_GridCardAddAllGo (inA,inB,inC) {
+    function MT_GridCardAddAllGo (inA,inB,inC,inD) {
+        if(inD != undefined) cObj = inD;
         cards++;
         MTP = [];MTP.Col = cards;
         if (cObj.sort === 'A') MTP.Col = inA;
         if (cObj.sort === 'D') MTP.Col = inA * -1;
-        MTP.Title = MT_GetFormattedValue(cObj.xf,inA);
-        if(inC != '') MTP.Title += '\n' + MT_GetFormattedValue(cObj.zf,inC);
-        MTP.Subtitle = inB;
+        MTP.Title = cObj.xf == undefined ? inA : MT_GetFormattedValue(cObj.xf,inA);
+        if(inC != undefined) MTP.Title += '\n' + MT_GetFormattedValue(cObj.zf,inC);
+        MTP.Subtitle = cObj.xSlice > 0 ? inB.slice(cObj.xSlice) : inB;
         if(MTP.Title[0] == '-') {MTP.Style = cObj.isNeg;} else {MTP.Style = cObj.isPos;}
         MF_QueueAddCard(MTP);
     }
@@ -1059,31 +1050,32 @@ function MF_DrawPieChart(inLocation,inP) {
     let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
 
     // load items
-    let items = [], hitboxes = [], un = Number(inP[1]);
+    let items = [], hitboxes = [], un = Number(inP[2]),sumTotal = 0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(row.Section % 2 == 1) {
-            items.push({percent: row[un] + '%', title: row[0]});
+            items.push({percent: '', title: row[0], value: row[un]});
+            sumTotal += row[un];
         }
     }
-
+    for (let i = 0; i < items.length; i++) {
+        let ii = (items[i].value / sumTotal) * 100;
+        items[i].percent = get2dec(ii,1) + '%';
+    }
+    const csp = document.getElementById('MTTotal');
+    if(csp) {
+        if(MTFlex.Button4 > 0) csp.childNodes[0].innerText = 'Total ' + MTFlex.Button4Options[MTFlex.Button4];
+        csp.childNodes[1].innerText = getDollarValue(sumTotal);
+    }
     const ctx = divChart.getContext('2d');
     const w = divChart.width, h = divChart.height;
     ctx.clearRect(0,0,w,h);
 
-    // convert to numeric values; if percent given, use that as value directly
-    const values = items.map(it =>
-                             typeof it.percent === 'string' && it.percent.endsWith('%')
-                             ? parseFloat(it.percent)
-                             : Number(it.value) || 0
-                            );
-
-    // pair each item with its numeric value, sort by value desc
+    const values = items.map(it => it.value);
     const entries = items.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
 
     const max = Math.max(...values, 1);
-
     const topPadding = 20;
     const bottomPadding = 20;
     const leftLabelWidth = 120;
@@ -1091,13 +1083,11 @@ function MF_DrawPieChart(inLocation,inP) {
     const barAreaWidth = w - leftLabelWidth - rightValueWidth - 20;
     const barHeight = (h - topPadding - bottomPadding) / items.length * 0.6;
     const rowHeight = (h - topPadding - bottomPadding) / items.length;
-
-    const colors = ['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc949'];
+    const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
     ctx.font = '12px sans-serif';
     ctx.textBaseline = 'middle';
 
-    // use sorted entries instead of items.forEach
     entries.forEach((entry, i) => {
         const it = entry.it;
         const v = entry.v;
@@ -1108,72 +1098,64 @@ function MF_DrawPieChart(inLocation,inP) {
         ctx.textAlign = 'right';
         ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
 
-        // bar
         const barLength = (v / max) * barAreaWidth;
         const barX = leftLabelWidth;
         const barY = yCenter - barHeight / 2;
+        const r = Math.min(6, barHeight / 2, barLength / 2);
 
         ctx.fillStyle = it.color || colors[i % colors.length];
-        ctx.fillRect(barX, barY, barLength, barHeight);
+        ctx.beginPath();
+        ctx.moveTo(barX, barY);
+        ctx.lineTo(barX + barLength - r, barY);
+        ctx.quadraticCurveTo(barX + barLength, barY,barX + barLength, barY + r);
+        ctx.lineTo(barX + barLength, barY + barHeight - r);
+        ctx.quadraticCurveTo(barX + barLength, barY + barHeight,barX + barLength - r, barY + barHeight);
+        ctx.lineTo(barX, barY + barHeight);
+        ctx.closePath();
+        ctx.fill();
 
-        // value on right
         // value right after the bar
         ctx.fillStyle = '#000';
         ctx.textAlign = 'left';
-        const valueText = it.percent ?? (it.value != null ? it.value : v);
-        ctx.fillText(String(valueText), barX + barLength + 5, yCenter);
-
-        // save for tooltip
-        hitboxes.push({
-            x: barX,
-            y: barY,
-            w: barLength,
-            h: barHeight,
-            item: it,
-            value: v,
-            displayValue: valueText
-        });
+        ctx.fillText(String(it.percent), barX + barLength + 5, yCenter);
+        hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
 
     });
-      // bottom border
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(leftLabelWidth, h - bottomPadding);
-  ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);
-  ctx.stroke();
-      attachTooltip(divChart, hitboxes);
+
+    // bottom border
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(leftLabelWidth, h - bottomPadding);
+    ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);
+    ctx.stroke();
+    attachTooltip(divChart, hitboxes);
 }
+
 function attachTooltip(canvas, hitboxes) {
-  const tooltip = document.getElementById('MTChartTip');
 
-  canvas.onmousemove = function (e) {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const tooltip = document.getElementById('MTChartTip');
 
-    let found = null;
-    for (const hb of hitboxes) {
-      if (x >= hb.x && x <= hb.x + hb.w &&
-          y >= hb.y && y <= hb.y + hb.h) {
-        found = hb;
-        break;
-      }
-    }
+    canvas.onmousemove = function (e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        let found = null;
+        for (const hb of hitboxes) {
+            if (x >= hb.x && x <= hb.x + hb.w && y >= hb.y && y <= hb.y + hb.h) { found = hb; break;}
+        }
 
-    if (found) {
-      tooltip.style.display = 'block';
-      tooltip.textContent = `${found.item.title}: ${found.displayValue}`;
-      tooltip.style.left = (e.pageX - 1600) + 'px';
-      tooltip.style.top = (e.pageY - 45) + 'px';
-    } else {
-      tooltip.style.display = 'none';
-    }
-  };
-
-  canvas.onmouseleave = function () {
-    tooltip.style.display = 'none';
-  };
+        if (found) {
+            let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 65px; text-align: right;">' + found.item.percent + '</td></tr>';
+            tt += '<tr><td colspan="2" style="text-align: right;">' + getDollarValue(found.item.value,2) + '</td></tr></table>';
+            tooltip.style.display = 'block';
+            tooltip.innerHTML = tt;
+            const mX = Math.min(x, 440);
+            tooltip.style.left = mX + 'px';
+            tooltip.style.top = (e.pageY - 80) + 'px';
+        } else {tooltip.style.display = 'none';}
+    };
+    canvas.onmouseleave = function () {tooltip.style.display = 'none';};
 }
 
 // [ Chart Canvas ]
@@ -2179,10 +2161,11 @@ async function MenuReportsAccountsGo() {
                 MF_AddCol(7,get2dec(totV));
             }
         }
-        MF_GridRollup(1,2,1,'Assets');
+        MF_GridRollup(1,2,1,'Assets','TOTAL|2|7');
         MTFlexCard = [];
-        MF_GridCardAdd(1,5,5,'HV','Idle Cash','Overdrawn!',css.green,css.red,'', '',0);
-        MTFlex.AutoCard = {Title: 'Total Cash', Section: 2, Column: 7, Split: true };
+        MF_GridCardAddAll({section: 2, x: 7, xf: 2, y: 'AutoCard', sort: 'D', xSlice: 2, isPos: css.green, isNeg: css.red});
+        MF_GridCardAdd(1,5,5,'HV','Idle Cash','Overdrawn!',css.green,css.red,'', '',-9999999);
+        MF_GridCardAdd(1,7,7,'HV','Total Cash','Overdrawn!',css.green,css.red,'', '',-9999998);
     }
     async function MenuReportsAccountsGoStd(){
 
@@ -2361,9 +2344,9 @@ async function MenuReportsAccountsGo() {
         switch(MTFlex.Button2) {
             case 2:
                 MTFlexCard = [];
-                MF_GridCardAdd(1,9,9,'HV','Total Brokerage','Total Brokerage',css.green,css.red,'', '',0);
-                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',99);
-                MTFlex.AutoCard = {Title: 'Net Change', Section: 2, Column: 10, Split: true };
+                MF_GridCardAdd(1,9,9,'HV','Total Brokerage','Total Brokerage',css.green,css.red,'', '',-9999999);
+                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',1);
+                MF_GridCardAddAll({section: 2, x: 10, y: 'AutoCard', sort: 'D', xf: 1, xSlice: 2, isPos: css.green, isNeg: css.red});
                 break;
             case 4:
                 MTFlexCard = [];
@@ -2543,7 +2526,7 @@ async function MenuReportsInvestmentsGo() {
         if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
             MF_GridGroupByPK(); // Rollup to primary key
             if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; } // rollup to sub-total
-            MF_GridRollup(0,0,0,'Total','TOTAL|13');
+            MF_GridRollup(0,0,0,'Total','TOTAL|odd|8');
         }
         MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
@@ -3560,18 +3543,19 @@ async function AccountsDrawer(inP) {
         }
     }
 }
-async function InvestmentsDrawerTotal(inP) {
+async function SummaryDrawer(inP) {
 
     let sObj = {};
-    sObj.small = MTFlex.Button2Options[MTFlex.Button2];
-    sObj.big = 'Investments';
-    sObj.urltext = MTFlex.Button1Options[MTFlex.Button1];
+    sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
+    sObj.big = MTFlex.Desc;
+    sObj.small = MTFlex.Button1Options[MTFlex.Button1];
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
     divTop2.setAttribute('data',inP);
+    DrawerDrawLine(divTop2,'Total','0','MTTotal');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
-    MF_DrawPieChart(divTop2,inP);
+    MF_DrawPieChart(divTop2,inP.split('|'));
     cec('button','MTInputButton',divTop2,'Close','','float:right;' );
 }
 
@@ -3610,7 +3594,6 @@ async function InvestmentsDrawer(inP) {
         inP = divReload.getAttribute('data').split(',');
     }
     if(inP[0] === 'ACCOUNT') {await InvestmentsDrawerCash(inP);return;}
-    if(inP[0] === 'TOTAL') {await InvestmentsDrawerTotal(inP);return;}
 
     const p1 = inP[0];
     const p2 = inP[1];
@@ -5067,6 +5050,7 @@ function onClickMTFlexArrow(inP) {
 
     if(inP == null) return;
     let p = inP.split('|');
+    if(p[0] == 'TOTAL') {SummaryDrawer(inP);return;}
     switch(MTFlex.Name) {
         case 'MTTrends':
         case 'MTNet_Income':
