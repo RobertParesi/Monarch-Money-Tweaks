@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.6
+// @version      4.36.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -382,9 +382,8 @@ function MT_GridDrawDetails() {
                 } else {
                     if(MTFlex.HideDetails) glo.cecIgnore = true;
                     if(SubHeader == false && MTFlex.Subtotals == true) {
-                        let shDesc = useRow.PK;if(MTFlex.PKSlice) {shDesc = shDesc.slice(MTFlex.PKSlice);}
                         el = cec('tr','',Header,'','',MTFlex.CanvasRow,'MTsection',useRow.Section);
-                        cec('td','MTFlexGridSHCell',el,shDesc,'',MTFlex.CanvasRow,'colspan',MTFlexTitle.length-1);
+                        cec('td','MTFlexGridSHCell',el,MT_GetPK(useRow.PK),'',MTFlex.CanvasRow,'colspan',MTFlexTitle.length-1);
                         SubHeader = true;
                     }
                     el = cec('tr','MTFlexGridItem',Header,'','',MTFlex.CanvasRow,'MTsection',useRow.Section);
@@ -405,8 +404,7 @@ function MT_GridDrawDetails() {
                 SubHeader = false;
                 if(useRow.IsHeader || MTFlex.Subtotals != true) {return false;}
 
-                useRow.IgnoreShade = true;
-                useDesc = useRow.PK;if(MTFlex.PKSlice) {useDesc = useDesc.slice(MTFlex.PKSlice);}
+                useRow.IgnoreShade = true;useDesc = MT_GetPK(useRow.PK);
 
                 for (let j = 0; j < MTFlexTitle.length; j++) {useRow[j + 1] = Grouptotals[j];}
                 for (let j = 0; j < MTFlexTitle.length; j++) {
@@ -503,8 +501,7 @@ function MT_GridDrawDetails() {
                     if(MTFlex.AutoCard != undefined) {
                         if(MTFlex.AutoCard.section == useRow.Section && MTFlex.AutoCard.x == j) {
                             V2 = V2.split(' ');V2[0] = getCleanValue(V2[0]);
-                            V1 = MTFlex.PKSlice > 0 ? useRow.PK.slice(MTFlex.PKSlice) : useRow.PK;
-                            MF_GridCardAddAll (MTFlex.AutoCard,V2[0],V1,V2[2] ? V2[2] : '');
+                            MF_GridCardAddAll (MTFlex.AutoCard,V2[0],MT_GetPK(useRow.PK),V2[2] ? V2[2] : '');
                         }
                     }
                 }
@@ -740,7 +737,7 @@ function MT_GridExport() {
                         }
                     }
                     if(MTFlex.Subtotals == true && j == 0) {
-                        if(fr.IsHeader == false) { csvContent += fr.PK.slice(MTFlex.PKSlice) + c; }
+                        if(fr.IsHeader == false) { csvContent += MT_GetPK(fr.PK) + c; }
                     }
                     if(String(v).includes(',')) v = '"' + v + '"';
                     csvContent += v + c;
@@ -825,6 +822,12 @@ function MF_GridPKUIDs(inPK) {
     let a = [];
     for (let i = 0; i < MTFlexRow.length; i++) {if(MTFlexRow[i].PK == inPK) {a.push(MTFlexRow[i].UID);}}
     return a;
+}
+
+function MT_GetPK(inR) {
+    let r = inR;
+    if(MTFlex.PKSlice > 0) r = r.slice(MTFlex.PKSlice);
+    return r;
 }
 
 function MF_GridGroupByPK() {
@@ -1051,7 +1054,7 @@ function MF_DrawPieChart(inLocation,inP) {
     let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
 
     // load items
-    let items = [], hitboxes = [], un = Number(inP[2]),sl=MTFlex.PKSlice != undefined ? MTFlex.PKSlice : 0 , sumTotal = 0,pkTotal=0;
+    let items = [], hitboxes = [], un = Number(inP[2]),sumTotal = 0,pkTotal=0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(inP[1] == 'odd') {
@@ -1059,11 +1062,16 @@ function MF_DrawPieChart(inLocation,inP) {
                 items.push({percent: '', title: row[0], value: row[un]});
                 sumTotal += row[un];
             }
+        } else if(inP[0] == 'ALL') {
+            if(row.Section == inP[1]) {
+                items.push({percent: '', title: row[0], value: row[un]});
+                sumTotal += row[un];
+            }
         } else {
             if(row.Section == inP[1]) {
                 pkTotal += row[un];
                 if(MTFlexRow[i+1] == undefined || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                    items.push({percent: '', title: row.PK.slice(sl), value: pkTotal});
+                    items.push({percent: '', title: MT_GetPK(row.PK), value: pkTotal});
                     pkTotal = 0;
                 }
                 sumTotal += row[un];
@@ -2365,7 +2373,7 @@ async function MenuReportsAccountsGo() {
                 break;
             case 4:
                 MTFlexCard = [];
-                MF_GridRollup(3,4,3,'Credit Cards');
+                MF_GridRollup(3,4,3,'Credit Cards','ALL|4|9');
                 MF_GridCardAdd(3,5,5,'HV','Total Spend','Total Spend',css.red,css.green);
                 MF_GridCardAdd(3,6,6,'HV','Total Refunds','Total Refunds',css.green,css.red);
                 MF_GridCardAdd(3,7,7,'HV','Total Charges','Total Charges',css.red,css.green);
@@ -2373,7 +2381,7 @@ async function MenuReportsAccountsGo() {
                 MF_GridCardAdd(3,11,11,'HV','Credit Remaining','Credit Remaining',css.green,css.red);
                 break;
             default:
-                MF_GridRollup(3,4,3,'Liabilities');
+                MF_GridRollup(3,4,3,'Liabilities','TOTAL|4|9');
                 MF_GridRollDifference(5,1,3,1,NetWorthLit,'Add');
                 MF_GridCalcDifference(5,1,3,[5,9,10,12],'Sub');
                 cards=0;
@@ -5064,7 +5072,7 @@ function onClickMTFlexArrow(inP) {
 
     if(inP == null) return;
     let p = inP.split('|');
-    if(p[0] == 'TOTAL') {SummaryDrawer(inP);return;}
+    if(p[0] == 'TOTAL' || p[0] == 'ALL') {SummaryDrawer(inP);return;}
     switch(MTFlex.Name) {
         case 'MTTrends':
         case 'MTNet_Income':
