@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.8
+// @version      4.36.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4171,23 +4171,25 @@ async function MenuDashboardAccounts() {
     ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
     if(ds) {
         let newDiv = null;
+        console.log(snapshotData4);
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const aa = snapshotData.accounts[i].id;
             if(getCookie('MTAccountDashboard:' + aa,true) != 1) continue;
             if(!newDiv) MenuDashboardAccountsHeader();
-            let amt = 0;
+            let amt = 0,runAmt = 0;
             for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
                 if(snapshotData4.allTransactions.results[j].account.id == aa) {
-                    amt = amt + snapshotData4.allTransactions.results[j].amount;
+                    amt=snapshotData4.allTransactions.results[j].amount;
+                    if(snapshotData4.allTransactions.results[j].account.type.group == 'liability') {amt=-amt;}
+                    runAmt+= amt;
                 }
             }
-            amt = amt * -1;
             let bal = snapshotData.accounts[i].displayBalance;
-            let pBal = bal + amt;
+            let pBal = bal + runAmt;
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
             cec('td','MTSideDrawerSummaryData',newRow,snapshotData.accounts[i].displayName);
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal,false));
-            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(amt,false));
+            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(runAmt,false));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal,false));
         }
         if(newDiv) sortTableByColumn(newDiv);
@@ -5603,7 +5605,7 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     inCat = await dataFixCats(inCat);
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order \n type {\n group}} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
