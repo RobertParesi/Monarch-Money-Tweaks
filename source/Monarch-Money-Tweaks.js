@@ -825,13 +825,9 @@ function MF_GridPKUIDs(inPK) {
     return a;
 }
 
-function MT_GetPK(inR) {
-    let r = inR;
-    if(MTFlex.PKSlice > 0) r = r.slice(MTFlex.PKSlice);
-    return r;
-}
+function MT_GetPK(r) {return MTFlex.PKSlice > 0 ? r.slice(MTFlex.PKSlice) : r;}
 
-function MF_GridGroupByPK() {
+function MF_GridGroupByPK(inCol) {
     MTFlexRow.sort((a, b) => a.PK.localeCompare(b.PK));
     const oldLength = MTFlexRow.length;
     let useSec = 0;
@@ -842,8 +838,8 @@ function MF_GridGroupByPK() {
         MTFlexRow[i].Section = useSec;
     }
     let i = 2;
-    for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1);}
-    MF_GridRollup(i-1,i,i-1);
+    for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol);}
+    MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol);
 }
 
 function MF_GridRegroupPK(inCol) {
@@ -1052,29 +1048,23 @@ function MF_DrawPieChart(inLocation,inP) {
     divTop.className = 'MTChartContainer';
     divTop.id = 'MTChartCanvas';
     divTop = div.insertAdjacentElement('afterend', divTop);
-    let divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 660; divChart.height = 600;
+    let divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 660; divChart.height = 660;
     let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
 
     // load items
-    let items = [], hitboxes = [], un = Number(inP[2]),sumTotal = 0,pkTotal=0;
+    let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, pkTotal = 0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
-        if(inP[1] == 'odd') {
-            if(row.Section % 2 == 1) {
-                items.push({percent: '', title: row[0], value: row[un]});sumTotal += row[un];
+        const secMatch = row.Section == inP[1];
+        if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'ALL' && secMatch) {
+            let usePart = getStringPart(row[0], ' • ', 'left');
+            items.push({ percent: '', title: usePart, value: row[un] });sumTotal += row[un];
+        } else if (secMatch) {
+            pkTotal += row[un];
+            if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
+                items.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal });pkTotal = 0;
             }
-        } else if(inP[0] == 'ALL') {
-            if(row.Section == inP[1]) {
-                items.push({percent: '', title: row[0], value: row[un]});sumTotal += row[un];
-            }
-        } else {
-            if(row.Section == inP[1]) {
-                pkTotal += row[un];
-                if(MTFlexRow[i+1] == undefined || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                    items.push({percent: '', title: MT_GetPK(row.PK), value: pkTotal});pkTotal = 0;
-                }
-                sumTotal += row[un];
-            }
+            sumTotal += row[un];
         }
     }
     for (let i = 0; i < items.length; i++) {
@@ -1092,60 +1082,73 @@ function MF_DrawPieChart(inLocation,inP) {
     const values = items.map(it => it.value);
     const entries = items.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
+    const maxItems = items.length > 20 ? 20 : items.length;
     const max = Math.max(...values, 1);
     const topPadding = 20;
     const bottomPadding = 20;
     const leftLabelWidth = 120;
     const rightValueWidth = 60;
     const barAreaWidth = w - leftLabelWidth - rightValueWidth - 20;
-    const barHeight = (h - topPadding - bottomPadding) / items.length * 0.6;
-    const rowHeight = (h - topPadding - bottomPadding) / items.length;
+    const barHeight = (h - topPadding - bottomPadding) / maxItems * 0.6;
+    const rowHeight = (h - topPadding - bottomPadding) / maxItems;
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
     ctx.font = '13px sans-serif';
     ctx.textBaseline = 'middle';
-
+    let sumP=0,sumA=0,sumC=0,skipThis=false;
     entries.forEach((entry, i) => {
-        const it = entry.it;
+        let it = entry.it;
         const v = entry.v;
-        const yCenter = topPadding + rowHeight * i + rowHeight / 2;
-
-        // left label
-        ctx.fillStyle = standardText;
-        ctx.textAlign = 'right';
-        if(it.title.length < 19) {
-            ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
-        } else {
-            ctx.fillText(getStringPart(it.title,' ','left'), leftLabelWidth - 5, yCenter-8);
-            ctx.fillText(getStringPart(it.title,' ','right'), leftLabelWidth - 5, yCenter+8);
+        if(i > 19) {
+            sumP+=getCleanValue(it.percent,2);sumA+=it.value;sumC++;
+            if(i != items.length-1) skipThis = true;
+            if(i == items.length-1) {
+                let div = cec('div','SideDrawerHeader',divTop);
+                cec('div','MTSideDrawerGroup',div,'* ' + sumC + ' items not shown ' + getDollarValue(sumA,2) + ' (' + get2dec(sumP,1) + '%)','','font-size:12px;');
+            }
         }
+        if(!skipThis) {
+            const yCenter = topPadding + rowHeight * i + rowHeight / 2;
 
-        const barLength = (v / max) * barAreaWidth;
-        const barX = leftLabelWidth;
-        const barY = yCenter - barHeight / 2;
-        const r = Math.min(6, barHeight / 2, barLength / 2);
+            // left label
+            ctx.fillStyle = standardText;
+            ctx.textAlign = 'right';
+            if(it.title.length < 19) {
+                ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
+            } else {
+                ctx.fillText(getStringPart(it.title,' ','left'), leftLabelWidth - 5, yCenter-8);
+                let sp = getStringPart(it.title,' ','right');sp = sp.slice(0,14);
+                ctx.fillText(sp, leftLabelWidth - 5, yCenter+8);
+            }
 
-        ctx.fillStyle = it.color || colors[i % colors.length];
-        ctx.beginPath();
-        ctx.moveTo(barX, barY);
-        ctx.lineTo(barX + barLength - r, barY);
-        ctx.quadraticCurveTo(barX + barLength, barY,barX + barLength, barY + r);
-        ctx.lineTo(barX + barLength, barY + barHeight - r);
-        ctx.quadraticCurveTo(barX + barLength, barY + barHeight,barX + barLength - r, barY + barHeight);
-        ctx.lineTo(barX, barY + barHeight);
-        ctx.closePath();
-        ctx.fill();
+            const barLength = (v / max) * barAreaWidth;
+            const barX = leftLabelWidth;
+            const barY = yCenter - barHeight / 2;
+            const r = Math.min(6, barHeight / 2, barLength / 2);
 
-        // value right after the bar
-        ctx.fillStyle = standardText;ctx.textAlign = 'left';
-        ctx.fillText(String(it.percent), barX + barLength + 5, yCenter);
-        hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
+            ctx.fillStyle = it.color || colors[i % colors.length];
+            ctx.beginPath();
+            ctx.moveTo(barX, barY);
+            ctx.lineTo(barX + barLength - r, barY);
+            ctx.quadraticCurveTo(barX + barLength, barY,barX + barLength, barY + r);
+            ctx.lineTo(barX + barLength, barY + barHeight - r);
+            ctx.quadraticCurveTo(barX + barLength, barY + barHeight,barX + barLength - r, barY + barHeight);
+            ctx.lineTo(barX, barY + barHeight);
+            ctx.closePath();
+            ctx.fill();
+
+            // value right after the bar
+            ctx.fillStyle = standardText;ctx.textAlign = 'left';
+            ctx.fillText(String(it.percent), barX + barLength + 5, yCenter);
+            hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
+        }
 
     });
 
     // bottom border
-    ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();ctx.moveTo(leftLabelWidth, h - bottomPadding);
-    ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);ctx.stroke();
+    ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();
+    ctx.moveTo(0, h );ctx.lineTo(660, h );
+    ctx.stroke();
     attachTooltip(divChart, hitboxes);
 }
 
@@ -2531,8 +2534,8 @@ async function MenuReportsInvestmentsGo() {
         await InvestmentHoldings();
         await InvestmentCash();
         if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
-            MF_GridGroupByPK(); // Rollup to primary key
-            if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; } // rollup to sub-total
+            MF_GridGroupByPK(8);
+            if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
             MF_GridRollup(0,0,0,'Total','TOTAL|odd|8|0');
         }
         MF_GridCalcRowPercent(11,9,8);
@@ -2566,7 +2569,6 @@ async function MenuReportsInvestmentsGo() {
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
-
                     if(MTFlex.Button1 == 6 && holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
                     if(!useCat) useCat = holding.typeDisplay;
 
@@ -2647,7 +2649,6 @@ async function MenuReportsInvestmentsGo() {
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                         MTP.SKTriggerEvent = MTP.RRN + '|' + (hld-1);
                         MTP.PK = InvestmentgetPK(useInst,useAccount, useSubType, useCat);
-                        if(MTP.PK == null) {MTP.PK = '';}
                         MTP.SKHRef = '/accounts/details/' + holding.account.id;
                         MF_QueueAddRow(MTP);
                         MF_AddCol(0,splitTicker == 1 ? useTicker : shortTitle);
@@ -2676,6 +2677,7 @@ async function MenuReportsInvestmentsGo() {
                                 }
                                 if(numCards + 2 < maxCards) {
                                     numCards++;
+
                                     MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: InvestmentCardDesc(shortTitle), Style: cardStyle});
                                     CardShown = true;
                                 }
@@ -2711,8 +2713,8 @@ async function MenuReportsInvestmentsGo() {
                 MTP.SKHRef = '/accounts/details/' + acc.id;
                 MTP.SKTriggerEvent = 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
-                MF_AddCol(0,splitTicker == 1 ? '' : ' CASH & MONEY MARKET');
-                MF_AddCol(1,' CASH & MONEY MARKET');
+                MF_AddCol(0,splitTicker == 1 ? 'CASH' : 'CASH • CASH/MONEY MARKET');
+                MF_AddCol(1,' Cash/MONEY MARKET');
                 MF_AddCol(2,acc.institutionName);
                 MF_AddCol(3,acc.accountName);
                 MF_AddCol(4,acc.accountSubtype);
@@ -2755,16 +2757,17 @@ async function MenuReportsInvestmentsGo() {
             return outCard;
         }
 
-        function InvestmentgetPK(inIns,inAcc,inSub,inType) {
-            switch(MTFlex.Button1) {
+        function InvestmentgetPK(inIns, inAcc, inSub, inType) {
+            switch (MTFlex.Button1) {
                 case 0:return 'Positions';
-                case 1:return inIns.trim();
+                case 1:return (inIns ?? '').trim();
                 case 2:
-                case 5:
-                    return inAcc.trim();
-                case 3:return inSub;
+                case 5:return (inAcc ?? '').trim();
+                case 3:return (inSub ?? '').trim();
                 case 4:
-                case 6:return inType;
+                case 6:return (inType ?? '').trim();
+                default:
+                    return '';
             }
         }
     }
@@ -3210,12 +3213,12 @@ function TrendsUpdateData(useID,useAmount,inCol) {
     }
 }
 
-async function HistoryDrawer(inType,inId,inDesc) {
+async function HistoryDrawer(inP) {
     let lowerDate = getDates('d_Minus2FullYears'),higherDate = new Date();
     let sObj = {},retGroups = [],useGroupId = '',inGroup = 0,useTitle = 'Monthly';
-
+    let inType = inP[0],inId=inP[1],inDesc=inP[2];
     if(MTFlexAccountFilter.name) {useTitle += ' - ' + MTFlexAccountFilter.name;}
-    if(inType == 'section') {
+    if(inP[0] == 'section') {
         useGroupId = inId;
         inGroup = 4;
         sObj.type2 = inId == 'income' ? inType : 'expense';
@@ -4171,7 +4174,6 @@ async function MenuDashboardAccounts() {
     ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
     if(ds) {
         let newDiv = null;
-        console.log(snapshotData4);
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const aa = snapshotData.accounts[i].id;
             if(getCookie('MTAccountDashboard:' + aa,true) != 1) continue;
@@ -5061,13 +5063,13 @@ function onClickMTFlexArrow(inP) {
 
     if(inP == null) return;
     let p = inP.split('|');
+    while (p.length < 3) {p.push('');}
     if(p[0] == 'TOTAL' || p[0] == 'ALL') {SummaryDrawer(inP);return;}
     switch(MTFlex.Name) {
         case 'MTTrends':
         case 'MTNet_Income':
         case undefined:
-            while (p.length < 3) {p.push('');}
-            HistoryDrawer(p[0],p[1],p[2]);
+            HistoryDrawer(p);
             break;
         case 'MTInvestments':
             InvestmentsDrawer(p);
@@ -5376,7 +5378,7 @@ function getCleanValue(inValue,inDec) {
     } else {
         inValue = inValue.replace('%','');
         inValue = inValue.replace(',','');
-        return inValue;
+        return Number(inValue);
     }
 }
 
