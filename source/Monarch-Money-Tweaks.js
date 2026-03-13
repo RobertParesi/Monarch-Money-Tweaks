@@ -1046,6 +1046,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 
 function MF_DrawPieChart(inLocation,inP) {
 
+    const standardText = ['#333333','#cccccc'][isDarkMode()];
     let div = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;');
     let divTop = document.createElement('div');
     divTop.className = 'MTChartContainer';
@@ -1060,20 +1061,17 @@ function MF_DrawPieChart(inLocation,inP) {
         const row = MTFlexRow[i];
         if(inP[1] == 'odd') {
             if(row.Section % 2 == 1) {
-                items.push({percent: '', title: row[0], value: row[un]});
-                sumTotal += row[un];
+                items.push({percent: '', title: row[0], value: row[un]});sumTotal += row[un];
             }
         } else if(inP[0] == 'ALL') {
             if(row.Section == inP[1]) {
-                items.push({percent: '', title: row[0], value: row[un]});
-                sumTotal += row[un];
+                items.push({percent: '', title: row[0], value: row[un]});sumTotal += row[un];
             }
         } else {
             if(row.Section == inP[1]) {
                 pkTotal += row[un];
                 if(MTFlexRow[i+1] == undefined || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                    items.push({percent: '', title: MT_GetPK(row.PK), value: pkTotal});
-                    pkTotal = 0;
+                    items.push({percent: '', title: MT_GetPK(row.PK), value: pkTotal});pkTotal = 0;
                 }
                 sumTotal += row[un];
             }
@@ -1104,7 +1102,7 @@ function MF_DrawPieChart(inLocation,inP) {
     const rowHeight = (h - topPadding - bottomPadding) / items.length;
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
-    ctx.font = '12px sans-serif';
+    ctx.font = '13px sans-serif';
     ctx.textBaseline = 'middle';
 
     entries.forEach((entry, i) => {
@@ -1113,7 +1111,7 @@ function MF_DrawPieChart(inLocation,inP) {
         const yCenter = topPadding + rowHeight * i + rowHeight / 2;
 
         // left label
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = standardText;
         ctx.textAlign = 'right';
         if(it.title.length < 19) {
             ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
@@ -1139,20 +1137,15 @@ function MF_DrawPieChart(inLocation,inP) {
         ctx.fill();
 
         // value right after the bar
-        ctx.fillStyle = '#000';
-        ctx.textAlign = 'left';
+        ctx.fillStyle = standardText;ctx.textAlign = 'left';
         ctx.fillText(String(it.percent), barX + barLength + 5, yCenter);
         hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
 
     });
 
     // bottom border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(leftLabelWidth, h - bottomPadding);
-    ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);
-    ctx.stroke();
+    ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();ctx.moveTo(leftLabelWidth, h - bottomPadding);
+    ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);ctx.stroke();
     attachTooltip(divChart, hitboxes);
 }
 
@@ -1170,8 +1163,8 @@ function attachTooltip(canvas, hitboxes) {
         }
 
         if (found) {
-            let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 65px; text-align: right;">' + found.item.percent + '</td></tr>';
-            tt += '<tr><td colspan="2" style="text-align: right;">' + getDollarValue(found.item.value,2) + '</td></tr></table>';
+            let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value,2) + '</td></tr>';
+            tt += '<tr><td colspan="2" style="text-align: right;">' + found.item.percent + '</td></tr></table>';
             tooltip.style.display = 'block';
             tooltip.innerHTML = tt;
             const mX = Math.min(x, 440);
@@ -1741,10 +1734,10 @@ function MenuReportsCustom() {
         let useClass = div.childNodes[0].className;
         useClass = useClass.replace(' tab-nav-item-active','');
         if(mItems < 5) {
-            if(mItems == 4) div.childNodes[3].innerText = 'Business';
             for (let i = 0; i < mItems; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1; white-space: nowrap; overflow: hidden;';}
         }
         for (let i = 0; i < FlexOptions.length; i++) {
+            if(div.childNodes[i].innerText.startsWith('Business')) div.childNodes[i].innerText = 'Business';
             if(mItems < 5) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
             else {div.childNodes[i + mItems].className = FlexOptions[i] + ' ' + useClass;}
         }
@@ -1756,36 +1749,11 @@ function MenuReportsCustomUpdate() {
     if (!divRoot) return;
     const rItems = divRoot.children.length;
     const mItems = rItems - 4;
-    const sItem = inList(MTFlex.Name, FlexOptions);
     for (let i = 0; i < rItems; i++) {
         const tab = divRoot.children[i];
-        const isSelected = sItem > 0 && i === mItems + sItem - 1;
-        if (isSelected) {
-            tab.classList.add('tab-nav-item-active');
-        } else if (sItem > 0 || i >= mItems) {
-            tab.classList.remove('tab-nav-item-active');
-        }
+        if (tab.className.startsWith(MTFlex.Name)) {tab.classList.add('tab-nav-item-active');
+        } else if (MTFlex.Name || i >= mItems) { tab.classList.remove('tab-nav-item-active');}
     }
-}
-
-function updateMenuReportsTabs() {
-  const root = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
-  if (!root) return;
-
-  const total = root.children.length;
-  const mainCount = total - 4;
-  const selected = inList(MTFlex.Name, FlexOptions); // 0 = none
-
-  for (let i = 0; i < total; i++) {
-    const tab = root.children[i];
-    const isSelected = selected > 0 && i === mainCount + selected - 1;
-
-    if (isSelected) {
-      tab.classList.add('tab-nav-item-active');
-    } else if (selected > 0 || i >= mainCount) {
-      tab.classList.remove('tab-nav-item-active');
-    }
-  }
 }
 
 function MenuReportsPanels(inType) {
@@ -1805,17 +1773,10 @@ function MenuReportsGo() {
         MenuReportsPanels('display:none;');
         MenuReportsCustomUpdate();
         switch(MTFlex.Name) {
-            case 'MTTrends':
-                MenuReportsTrendsGo();
-                break;
-            case 'MTNet_Income':
-                MenuReportsNetIncomeGo();
-                break;
-            case 'MTAccounts':
-                MenuReportsAccountsGo();
-                break;
-            case 'MTInvestments':
-                MenuReportsInvestmentsGo();
+            case 'MTTrends':MenuReportsTrendsGo();break;
+            case 'MTNet_Income':MenuReportsNetIncomeGo();break;
+            case 'MTAccounts':MenuReportsAccountsGo();break;
+            case 'MTInvestments':MenuReportsInvestmentsGo();
         }
     }
 }
@@ -4335,6 +4296,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Budget','MT_Budget','checkbox');
     MenuDisplay_Input('Hide Recurring','MT_Recurring','checkbox');
     MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
+    MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
     MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
   //  MenuDisplay_Input('Hide Forecast','MT_Forecast','checkbox');
     MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
