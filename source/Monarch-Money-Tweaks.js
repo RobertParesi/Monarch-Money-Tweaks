@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.9
+// @version      4.36.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -838,8 +838,8 @@ function MF_GridGroupByPK(inCol) {
         MTFlexRow[i].Section = useSec;
     }
     let i = 2;
-    for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol);}
-    MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol);
+    for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));}
+    MF_GridRollup(i-1,i,i-1,null,'ALL|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));
 }
 
 function MF_GridRegroupPK(inCol) {
@@ -847,7 +847,7 @@ function MF_GridRegroupPK(inCol) {
 }
 
 function MF_GridGetValue(inSection,inCol) {
-    for (let i = 0; i < MTFlexRow.length; i++) {if(MTFlexRow[i].Section == inSection) {return MTFlexRow[i][inCol];}}
+    for (let i = 0; i < MTFlexRow.length; i++) {if(MTFlexRow[i].Section == inSection) {return inCol == -1 ? MTFlexRow[i].PK : MTFlexRow[i][inCol];}}
     return 0;
 }
 
@@ -1073,7 +1073,8 @@ function MF_DrawPieChart(inLocation,inP) {
     }
     const csp = document.getElementById('MTTotal');
     if(csp) {
-        if(MTFlex.Button4 > 0) csp.childNodes[0].innerText = 'Total ' + MTFlex.Button4Options[MTFlex.Button4];
+        csp.childNodes[0].innerText = inP[3];
+        if(MTFlex.Button4 > 0) csp.childNodes[0].innerText += ' - ' + MTFlex.Button4Options[MTFlex.Button4];
         csp.childNodes[1].innerText = getDollarValue(sumTotal);
     }
     const ctx = divChart.getContext('2d');
@@ -2170,7 +2171,7 @@ async function MenuReportsAccountsGo() {
                 MF_AddCol(7,get2dec(totV));
             }
         }
-        MF_GridRollup(1,2,1,'Assets','TOTAL|2|7');
+        MF_GridRollup(1,2,1,'Assets','TOTAL|2|7|Total Assets');
         MTFlexCard = [];
         MF_GridCardAddAll({section: 2, x: 7, xf: 2, y: 'AutoCard', sort: 'D', isPos: css.green, isNeg: css.red});
         MF_GridCardAdd(1,5,5,'HV','Idle Cash','Overdrawn!',css.green,css.red,'', '',-9999999);
@@ -2349,7 +2350,7 @@ async function MenuReportsAccountsGo() {
             }
         }
 
-        MF_GridRollup(1,2,1,'Assets','TOTAL|2|9');
+        MF_GridRollup(1,2,1,'Assets','TOTAL|2|9|Total Assets');
         switch(MTFlex.Button2) {
             case 2:
                 MTFlexCard = [];
@@ -2360,7 +2361,7 @@ async function MenuReportsAccountsGo() {
                 break;
             case 4:
                 MTFlexCard = [];
-                MF_GridRollup(3,4,3,'Credit Cards','ALL|4|9');
+                MF_GridRollup(3,4,3,'Credit Cards','ALL|4|9|Credit Cards');
                 MF_GridCardAdd(3,5,5,'HV','Total Spend','Total Spend',css.red,css.green);
                 MF_GridCardAdd(3,6,6,'HV','Total Refunds','Total Refunds',css.green,css.red);
                 MF_GridCardAdd(3,7,7,'HV','Total Charges','Total Charges',css.red,css.green);
@@ -2368,7 +2369,7 @@ async function MenuReportsAccountsGo() {
                 MF_GridCardAdd(3,11,11,'HV','Credit Remaining','Credit Remaining',css.green,css.red);
                 break;
             default:
-                MF_GridRollup(3,4,3,'Liabilities','TOTAL|4|9');
+                MF_GridRollup(3,4,3,'Liabilities','TOTAL|4|9|Total Liabilities');
                 MF_GridRollDifference(5,1,3,1,NetWorthLit,'Add');
                 MF_GridCalcDifference(5,1,3,[5,9,10,12],'Sub');
                 cards=0;
@@ -2536,7 +2537,7 @@ async function MenuReportsInvestmentsGo() {
         if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
             MF_GridGroupByPK(8);
             if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
-            MF_GridRollup(0,0,0,'Total','TOTAL|odd|8|0');
+            MF_GridRollup(0,0,0,'Total','TOTAL|odd|8|Total');
         }
         MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
@@ -3588,7 +3589,7 @@ async function InvestmentsDrawerCash(inP) {
     DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance,2));
     DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance,2));
     DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Cash Holdings Value',getDollarValue(account.cashHoldings,2));
+    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings,2));
     DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
     DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
