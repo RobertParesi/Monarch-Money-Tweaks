@@ -2,7 +2,8 @@
 
 * **Version 4.36 (Beta)**
      - NEW: MM Tweak Report cards now enhanced (sorted and showing percentages)
-     - NEW: Reports / Investments will now allow custom category for each ticker and new "By category" report.
+     - NEW: Reports / Investments will now allow custom category for each ticker and new "By category" report.   
+     - NEW: You can override the "By Category" at the Account Level using Reports / Accounts and > to edit account settings using [...]
      - NEW: MM Tweak Report side-drawers enhanced for all sub totals & totals with new Bar chart.
      - FIX: Accounts Dashboard Pending was incorrect for pending deposits.
 
