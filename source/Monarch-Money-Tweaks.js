@@ -1040,7 +1040,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
     return 0;
 }
 
-function MF_DrawPieChart(inLocation,inP) {
+function MF_DrawBarChart(inLocation,inP) {
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
     let div = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;');
@@ -1048,7 +1048,7 @@ function MF_DrawPieChart(inLocation,inP) {
     divTop.className = 'MTChartContainer';
     divTop.id = 'MTChartCanvas';
     divTop = div.insertAdjacentElement('afterend', divTop);
-    let divChart = cec('canvas','',divTop,'','','','id','MTChart');divChart.width = 660; divChart.height = 660;
+    let divChart = cec('canvas','MTBarChart',divTop,'','','','id','MTChart');divChart.width = 660; divChart.height = 660;
     let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','id','MTChartTip');
 
     // load items
@@ -1687,11 +1687,7 @@ function MF_ModelWindowExecute(i) {
         default:
             divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
             for (const div of divs) {
-                if(div.type == 'checkbox') {
-                    if(div.checked == true) { setCookie(div.id,1);} else {setCookie(div.id,0);}
-                } else {
-                    setCookie(div.id,div.value.trim());
-                }
+                if(div.type == 'checkbox') {if(div.checked == true) { setCookie(div.id,1);} else {setCookie(div.id,0);}} else {setCookie(div.id,div.value.trim());}
                 let ui = div.getAttribute('uid');
                 if(ui) {MF_GridUpdateUID(ui,div.getAttribute('uidcol'),div.value.trim());}
             }
@@ -2547,7 +2543,7 @@ async function MenuReportsInvestmentsGo() {
         await InvestmentCards();
 
         async function InvestmentHoldings() {
-            let secPercent = 0, RRN = 0;
+            let secPercent = 0, RRN = 0,catOver = '';
             const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 secPercent = edge.node.securityPriceChangePercent;
@@ -2570,8 +2566,13 @@ async function MenuReportsInvestmentsGo() {
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
-                    if(MTFlex.Button1 == 6 && holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
-                    if(!useCat) useCat = holding.typeDisplay;
+                    if(MTFlex.Button1 == 6) {
+                        catOver = getCookie('MTAccountsCategory:' + holding.account.id,false);
+                        if(catOver) {useCat = catOver;} else {
+                            if(holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
+                        }
+                        if(!useCat) useCat = holding.typeDisplay;
+                    }
 
                     // Get new or crypto price
                     if(inList(holding.type,EQTYPES) > 0) {
@@ -3565,7 +3566,7 @@ async function SummaryDrawer(inP) {
     divTop2 = cec('div','',divTop2,'','','','id','MTSideDrawerGroup');
     DrawerDrawLine(divTop2,'Total','0','MTTotal');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','id','SideDrawerHeader');
-    MF_DrawPieChart(divTop2,inP.split('|'));
+    MF_DrawBarChart(divTop2,inP.split('|'));
     cec('button','MTInputButton',divTop2,'Close','','float:right;' );
 }
 
@@ -4717,6 +4718,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', name: 'AccountGroups', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
         d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', name: 'AccountSubGroups', key: 'MTAccountsSub:' + cn[1]});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
+        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1]});
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[2], id: cn[1]},d,[]);return;
     }
     if(cn[0] == '!CombinedAccounts') {
