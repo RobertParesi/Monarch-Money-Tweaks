@@ -171,6 +171,15 @@ function MM_MenuFix() {
         }
     }
     glo.debug = getCookie('MT_Log',true);
+    let lb = getCookie('MT:LastBackup',false),dy=0;
+    if(lb) {
+        const d = new Date(lb);
+        dy = daysBetween(d,getDates('d_Today'));
+        if(dy > 30) {
+            MF_ModelWindowOpen({title: 'MM-Tweaks Backup Data'},'Please remember to backup your MM-Tweaks settings by going to Setting / Display.\n\nLast Backup: ' + lb );
+        } else return;
+    }
+    setCookie('MT:LastBackup',getDates('s_FullDate'));
 }
 
 function MM_RefreshAll() {
