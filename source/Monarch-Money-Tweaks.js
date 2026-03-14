@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.10
+// @version      4.36.11
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1143,13 +1143,7 @@ function MF_DrawBarChart(inLocation,inP) {
             ctx.fillText(String(it.percent), barX + barLength + 5, yCenter);
             hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
         }
-
     });
-
-    // bottom border
-    ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();
-    ctx.moveTo(0, h );ctx.lineTo(660, h );
-    ctx.stroke();
     attachTooltip(divChart, hitboxes);
 }
 
@@ -2571,8 +2565,8 @@ async function MenuReportsInvestmentsGo() {
                         if(catOver) {useCat = catOver;} else {
                             if(holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
                         }
-                        if(!useCat) useCat = holding.typeDisplay;
                     }
+                    if(!useCat) useCat = holding.typeDisplay;
 
                     // Get new or crypto price
                     if(inList(holding.type,EQTYPES) > 0) {
