@@ -1128,7 +1128,7 @@ function MF_DrawBarChart(inLocation,inP) {
             ctx.beginPath();
             ctx.moveTo(barX, barY);
             ctx.lineTo(barX + barLength - r, barY);
-            if(i < 10) {dashes.push({x: barX + barLength - r + 8, y: barY + 8, v: it.value});}
+            dashes.push({x: barX + barLength - r + 8, y: barY + 8, v: it.value});
             ctx.quadraticCurveTo(barX + barLength, barY,barX + barLength, barY + r);
             ctx.lineTo(barX + barLength, barY + barHeight - r);
             ctx.quadraticCurveTo(barX + barLength, barY + barHeight,barX + barLength - r, barY + barHeight);
