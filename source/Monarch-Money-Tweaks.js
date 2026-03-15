@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.13
+// @version      4.36.14
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -83,7 +83,7 @@ function MM_Init() {
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child { margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 10px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTBub1, .MTFlexButtonExport, .MTWindowButton, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTSideExpand, .MTSideExport, .MTFlexExpand, .MTFlexSave, .MTFlexRestore, .MTFlexConfig {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
@@ -176,7 +176,8 @@ function MM_MenuFix() {
         const d = new Date(lb);
         dy = daysBetween(d,getDates('d_Today'));
         if(dy > 30) {
-            MF_ModelWindowOpen({title: 'MM-Tweaks Backup Data'},'Please remember to backup your MM-Tweaks settings by going to Setting / Display.\n\nLast Backup: ' + lb );
+            let b = [];b.push({name: 'Save Settings', id: 'SaveSettings'});
+            MF_ModelWindowOpen({title: 'MM-Tweaks Backup Data'},'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + lb,b);
         } else return;
     }
     setCookie('MT:LastBackup',getDates('s_FullDate'));
@@ -1620,7 +1621,7 @@ function MF_SidePanelflipElement(inCookie) {
 }
 
 // [ Popup Window ]
-function MF_ModelWindowOpen(t,d,b,o) {
+function MF_ModelWindowOpen(t,d,b) {
 
     let divTop = document.getElementById('root');
     let div = cec('div','MTModelContainer',divTop);
@@ -1668,24 +1669,6 @@ function MF_ModelWindowOpen(t,d,b,o) {
     }
     cec('button','MTWindowButton',div,'Close','','','id',t.name);
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
-}
-
-function MF_ModelWindowExecute(i) {
-    let divs = document.querySelector('div.MTModelWindow'),id = divs.id;
-    switch(i) {
-       case 'TransEdit':
-            window.location.replace('/transactions/' + id);return;
-        case 'TransEdit2':
-            window.open('/transactions/' + id, '_blank', 'noopener');return;
-        default:
-            divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
-            for (const div of divs) {
-                if(div.type == 'checkbox') {if(div.checked == true) { setCookie(div.id,1);} else {setCookie(div.id,0);}} else {setCookie(div.id,div.value.trim());}
-                let ui = div.getAttribute('uid');
-                if(ui) {MF_GridUpdateUID(ui,div.getAttribute('uidcol'),div.value.trim());}
-            }
-    }
-    removeAllSections('div.MTModelContainer');
 }
 
 // [ Reports Menu ]
@@ -4290,8 +4273,8 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
     const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text','font-size: 18px; font-weight: 500;');
     MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
-    MenuDisplay_Input(p,'Save Settings', 'button');
-    MenuDisplay_Input(p,'Restore Settings', 'button');
+    MenuDisplay_Input(p,'Save Settings', 'button','','id','SaveSettings');
+    MenuDisplay_Input(p,'Restore Settings', 'button','','id','RestoreSettings');
     MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
     MenuDisplay_Input('','MT_LowCalendarYear','number',null,2000,getDates('n_CurYear'));
     MenuDisplay_Input('Menu','','spacer');
@@ -4380,7 +4363,7 @@ function MenuSettingsDisplay(inDiv) {
 
         switch(inType) {
             case 'button':
-                return cec('button','MTSettingsButton',inValue,inCookie,'','float:right;');
+                return cec('button','MTSettingsButton',inValue,inCookie,'','float:right;',optValue,optValue2);
             case 'spacer':
                 e1 = cec('div','MTSpacerClass',qs);
                 return cec('div','MTItemClass',qs,inValue,'','font-size: 17px; font-weight: 500;');
@@ -4546,9 +4529,9 @@ window.onclick = function(event) {
                 onClickMTDropdownRelease();
                 cn = event.target.getAttribute('link').split('|');
                 onClickOpenWindow(cn);return;
+            case 'MTSettingsButton':
             case 'MTWindowButton':
-                cn = event.target.getAttribute('id');
-                MF_ModelWindowExecute(cn);return;
+                onClickMTButton();return;
             case 'MTSortTableByColumn':
                 sortTableByColumn(event.target);
                 return;
@@ -4586,8 +4569,6 @@ window.onclick = function(event) {
             case 'MTSideExport':
                 cn = event.target.getAttribute('data');
                 MenuHistoryExport('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + cn);return;
-            case 'MTSettingsButton':
-                onClickMTSettings();return;
             case 'MTFlexBig':
                 onClickMTDropdownRelease();
                 onClickMTFlexBig();return;
@@ -4712,8 +4693,8 @@ function onClickOpenWindow(cn) {
         let d = [];
         d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', name: 'AccountGroups', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
         d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', name: 'AccountSubGroups', key: 'MTAccountsSub:' + cn[1]});
-        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
         d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1]});
+        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[2], id: cn[1]},d,[]);return;
     }
     if(cn[0] == '!CombinedAccounts') {
@@ -5026,9 +5007,9 @@ function onClickMTDropdownRelease() {
     }
 }
 
-function onClickMTSettings() {
-    const bt = event.target.innerText.trim();
-    if(bt == 'Save Settings') {
+function onClickMTButton() {
+    const bt = event.target.id;
+    if(bt == 'SaveSettings') {
         let csvContent = 'Monarch Money Tweaks Configuration File' + CRLF;
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -5037,7 +5018,22 @@ function onClickMTSettings() {
         }
         downloadFile('Monarch Money Tweaks Settings',csvContent);
     }
-    if(bt == 'Restore Settings') { uploadfileSettings('.csv'); }
+    if(bt == 'RestoreSettings') { uploadfileSettings('.csv'); }
+    let divs = document.querySelector('div.MTModelWindow'),id = divs.id;
+    switch(bt) {
+        case 'TransEdit':
+             window.location.replace('/transactions/' + id);return;
+         case 'TransEdit2':
+             window.open('/transactions/' + id, '_blank', 'noopener');return;
+         default:
+             divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
+             for (const div of divs) {
+                 if(div.type == 'checkbox') {if(div.checked == true) { setCookie(div.id,1);} else {setCookie(div.id,0);}} else {setCookie(div.id,div.value.trim());}
+                 let ui = div.getAttribute('uid');
+                 if(ui) {MF_GridUpdateUID(ui,div.getAttribute('uidcol'),div.value.trim());}
+             }
+     }
+     removeAllSections('div.MTModelContainer');
 }
 
 function onClickMTFlexBig() {
