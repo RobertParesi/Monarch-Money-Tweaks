@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.16
+// @version      4.36.17
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1118,7 +1118,8 @@ function MF_DrawBarChart(inLocation,inP) {
         let it = entry.it;
         const v = entry.v;
         if(i > 19) {
-            sumP+=getCleanValue(it.percent,2);sumA+=it.value;sumC++;
+            let pct = getCleanValue(it.percent,2);pct=Number(pct);
+            sumP+=pct;sumA+=it.value;sumC++;
             if(i != items.length-1) skipThis = true;
             if(i == items.length-1) {
                 let div = cec('div','SideDrawerHeader',divTop);
@@ -5342,7 +5343,7 @@ function getCleanValue(inValue,inDec) {
     } else {
         inValue = inValue.replace('%','');
         inValue = inValue.replace(',','');
-        return Number(inValue);
+        return inValue;
     }
 }
 
