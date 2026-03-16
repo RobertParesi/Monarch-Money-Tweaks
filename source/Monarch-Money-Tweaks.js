@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.17
+// @version      4.36.18
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -830,7 +830,8 @@ function MT_GetInput(inputs) {
 
     }
     div = cec('span','MTSideDrawerHeader',divTop);
-    cec('button','MTInputButton',div,'Past week','','margin-left: 0px;');
+    cec('button','MTInputButton',div,'Last year','','margin-left: 0px;');
+    cec('button','MTInputButton',div,'Past week');
     cec('button','MTInputButton',div,'Last month');
     cec('button','MTInputButton',div,'This month');
     cec('button','MTInputButton',div,'This quarter');
@@ -1068,7 +1069,7 @@ function MF_DrawBarChart(inLocation,inP) {
     divTop.id = 'MTChartCanvas';
     divTop = div.insertAdjacentElement('afterend', divTop);
     let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 660; divChart.height = 660;
-    let divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
+    cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
 
     // load items
     let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0;
@@ -1195,14 +1196,12 @@ function attachTooltip(canvas, hitboxes) {
         for (const hb of hitboxes) {
             if (x >= hb.x && x <= hb.x + hb.w && y >= hb.y && y <= hb.y + hb.h) { found = hb; break;}
         }
-
         if (found) {
             let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value,2) + '</td></tr>';
             tt += '<tr><td colspan="2" style="text-align: right;">' + found.item.percent + '</td></tr></table>';
             tooltip.style.display = 'block';
             tooltip.innerHTML = tt;
-            const mX = Math.min(x, 440);
-            tooltip.style.left = mX + 'px';
+            tooltip.style.left = Math.min(x, 440) + 'px';
             tooltip.style.top = (e.pageY - 80) + 'px';
         } else {tooltip.style.display = 'none';}
     };
@@ -4513,7 +4512,7 @@ window.onclick = function(event) {
             case 'MTGeneralLink':
             case 'MTGeneralCell':
                 onClickMTDropdownRelease();
-                onClickOpenWindow(cn);return;
+                onClickOpenWindow();return;
             case 'MTButton':
             case 'MTWindowButton':
                 onClickMTButton();return;
@@ -4616,10 +4615,8 @@ window.onclick = function(event) {
         if(cn.startsWith('TabNavLink')) {
             if(event.target.pathname == window.location.pathname) {
                 removeAllSections('.MTFlexContainer');
-                MTFlex = [];
-                MenuReportsPanels('');
-                MenuReportsCustomUpdate();
-                return;
+                MTFlex = [];MenuReportsPanels('');
+                MenuReportsCustomUpdate();return;
             }
         }
     }
@@ -4715,11 +4712,12 @@ function onClickMTButtonSmall() {
     }
 }
 
-function onClickOpenWindow(cn) {
+function onClickOpenWindow() {
 
-    cn = event.target.getAttribute('link').split('|');
+    let cn = event.target.getAttribute('link').split('|');
+    if(!cn) return;
+    let d=[],p=[],b=[],rrn=cn[1];
     if(cn[0] == '!Investments') {
-        let d = [];
         if(cn[3]) {
             d.push({field1: 'Category [' + cn[2] + ']', style1: 'font-weight: 600;', type: 'Input', name: 'StockCategories', placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...', key: 'MTStockCategory:' + cn[3]});
         } else {
@@ -4728,7 +4726,6 @@ function onClickOpenWindow(cn) {
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[3]},d,[]);return;
     }
     if(cn[0] == '!Accounts') {
-        let d = [];
         d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', name: 'AccountGroups', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
         d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', name: 'AccountSubGroups', key: 'MTAccountsSub:' + cn[1]});
         d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1],placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...'});
@@ -4736,7 +4733,7 @@ function onClickOpenWindow(cn) {
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[2], id: cn[1]},d,[]);return;
     }
     if(cn[0] == '!CombinedAccounts') {
-        let d = [], p = [], rrn = cn[1],tot=0;
+        let tot=0;
         p = MF_GridPKUIDs(rrn);
         d.push({field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
         p.forEach(item => {
@@ -4753,7 +4750,6 @@ function onClickOpenWindow(cn) {
         MF_ModelWindowOpen({width: 480, title: cn[1].slice(2), name: cn[0], id: rrn},d,[]);return;
     }
     if(cn[0] == 'transdata') {
-        let d = [], b = [], rrn = cn[1];
         let t = transData.allTransactions.results[rrn];
         let useAmt = t.amount, useLit = 'Amount', useColor = '';
         if(t.category.group.type == 'expense') {
@@ -4875,6 +4871,7 @@ function onClickCloseDrawer() {
         case 'This month':
         case 'This quarter':
         case 'This year':
+        case 'Last year':
             onClickCloseDrawer2();
             returnV = true;
             break;
@@ -4909,7 +4906,7 @@ function onClickDumpDebug(inNode) {
 }
 
 function onClickCloseDrawer2() {
-    const cases = {'Past week': ['d_MinusWeek','d_Today'],'Last month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This month': ['d_StartofMonth', 'd_Today'], 'This quarter': ['d_ThisQTRs', 'd_Today'], 'This year': ['d_StartofYear', 'd_Today']};
+    const cases = {'Last year': ['d_StartofLastYear','d_EndofLastYear'], 'Past week': ['d_MinusWeek','d_Today'],'Last month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This month': ['d_StartofMonth', 'd_Today'], 'This quarter': ['d_ThisQTRs', 'd_Today'], 'This year': ['d_StartofYear', 'd_Today']};
     if(cases[event.target.innerText.trim()]) {
         const [lowerDate, higherDate] = cases[event.target.innerText.trim()];
         if(MTFlex.DateEvent == 2) {
