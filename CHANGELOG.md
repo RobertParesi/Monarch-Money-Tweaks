@@ -1,11 +1,12 @@
 # Change Log (Version History)
 
 * **Version 4.36 (Beta)**
-     - NEW: MM Tweak Report cards now enhanced (sorted and showing percentages)
-     - NEW: Reports / Investments will now allow custom category for each ticker and new "By category" report.   
-     - NEW: Ability to override Holding Category at Account level. (Reports / Accounts, > and then Edit account settings)
-     - NEW: MM Tweak Report side-drawers enhanced for all sub totals & totals with new Bar chart.
-     - NEW: MM Tweaks save settings reminder.
+     - NEW: Report cards now enhanced (sorted and showing percentages)
+     - NEW: Reports / Investments will now allow custom holding category with new [By category] report.   
+     - NEW: Reports / Investments custom holding category can be overridden at Account level.  Use Reports / Accounts, > to change.
+     - NEW: Added > (side-drawer) for all sub-total and total lines in the reports to go to new Bar chart.
+     - NEW: Added reminder to save MM-Tweaks settings every 30 days.
+     - NEW: Added drop-downs for all MM-Tweak entry fields.
      - FIX: Accounts Dashboard Pending was incorrect for pending deposits.
 
 * **Version 4.35 (March 7, 2026)**
