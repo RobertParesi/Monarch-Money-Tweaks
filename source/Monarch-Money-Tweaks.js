@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.21
+// @version      4.36.22
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -171,16 +171,14 @@ function MM_MenuFix() {
         }
     }
     glo.debug = getCookie('MT_Log',true);
-    let lb = getCookie('MT:LastBackup',false),dy=0;
-    if(lb) {
-        const d = new Date(lb);
-        dy = daysBetween(d,getDates('d_Today'));
-        if(dy > 30) {
-            let b = [];b.push({name: 'Save Settings', id: 'SaveSettings'});
-            MF_ModelWindowOpen({title: 'MM-Tweaks Backup Data'},'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + lb,b);
-        } else return;
+    if(getCookie('MT:LastBackupSkip',true) != 1) {
+        let lb = getCookie('MT:LastBackup',false);
+        if(lb) {
+            const d = new Date(lb);
+            if(daysBetween(d,getDates('d_Today')) > 30) {onClickOpenWindow(['!SaveSettings','MM-Tweaks Backup Data','!SaveSettings',lb]);} else return;
+        }
+        setCookie('MT:LastBackup',getDates('s_FullDate'));
     }
-    setCookie('MT:LastBackup',getDates('s_FullDate'));
 }
 
 function MM_RefreshAll() {
@@ -1656,14 +1654,14 @@ function MF_ModelWindowOpen(t,d,b) {
                                 e2 = cec('a','MTSetupDropdown',e3,optValue[i],'','','MTSetupOption',optValue[i]);
                             }
                         }
+                        if(ff == null) ff = div3;
                     }
                     if(data.type == 'Checkbox') {
-                        div3 = cec('label','',div,data.field1,'','','htmlFor',data.key);
+                        div3 = cec('label','',div2,data.field1,'','','htmlFor',data.key);
                         div3 = cec('input','MTCheckboxClass',div3,'','','float:left;','','',data.key);
                         div3.type = 'checkbox';
                         if(getCookie(data.key,true) == true) {div3.checked = 'true';}
                     }
-                    if(ff == null) ff = div3;
                 } else {cec('div','MTField1',div2,data.field1,'','width: 100%;' + data.style1);}
             } else {
                 cec('span','MTField1',div2,data.field1,'',data.style1);
@@ -1677,6 +1675,7 @@ function MF_ModelWindowOpen(t,d,b) {
     }
     cec('button','MTWindowButton',div,'Close','','','','',t.name);
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
+
 }
 
 // [ Reports Menu ]
@@ -3444,7 +3443,7 @@ async function AccountsDrawer(inP) {
 
     let sObj = {},transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null,p1 = inP[0],acc = null;
     if(p1 == 'Group') {
-        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2];
+        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2].slice(2) + '|' + inP[2];
         accts = MF_GridPKUIDs(inP[2]);
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
@@ -3455,7 +3454,7 @@ async function AccountsDrawer(inP) {
         let gn = getCookie('MTAccounts:' + acc.id,false);
         if(!gn) sObj.header = 'Use  button to edit ' + MNAME + ' Account settings and Account group.';
         sObj.type = acc.type;sObj.type2=acc.type.display;sObj.big='Account';sObj.small=acc.type.display;sObj.urltext=acc.displayName;sObj.url='/accounts/details/' + acc.id;
-        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts|' + acc.id + '|' + acc.displayName;
+        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts|' + acc.displayName + '|' + acc.id;
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
@@ -3603,11 +3602,11 @@ async function InvestmentsDrawer(inP) {
     if(hld[p2].type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
-        sObj.button = '!Investments|' + sObj.big + '|' + sObj.small + '|';
+        sObj.button = '!Investments|' + sObj.big + '| |' + sObj.small;
     } else {
         if(hld[p2].ticker != null) {
             sObj.big = hld[p2].ticker + ' • ' + hld[p2].name;
-            sObj.button = '!Investments|' + sObj.big + '|' + sObj.small + '|' + hld[p2].ticker;
+            sObj.button = '!Investments|' + sObj.big + '|' + hld[p2].ticker + '|' + sObj.small;
             const xT = inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
                 stockInfo[0] = 'Stock Analysis for ' + hld[p2].ticker;
@@ -3772,7 +3771,7 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
 
         newRow = cec('tr','MTSideDrawerSummaryRow',inDiv);
         useDate = unformatQueryDate(rec.date);
-        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','transdata|' + j);
+        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','!TransData|' + j);
         cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name);
         cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
         useColor = '';
@@ -4522,7 +4521,9 @@ window.onclick = function(event) {
             case 'MTGeneralLink':
             case 'MTGeneralCell':
                 onClickMTDropdownRelease();
-                onClickOpenWindow();return;
+                cn = event.target.getAttribute('link').split('|');
+                if(cn) onClickOpenWindow(cn);
+                return;
             case 'MTButton':
             case 'MTWindowButton':
                 onClickMTButton();return;
@@ -4722,29 +4723,29 @@ function onClickMTButtonSmall() {
     }
 }
 
-function onClickOpenWindow() {
+function onClickOpenWindow(cn) {
 
-    let cn = event.target.getAttribute('link').split('|');
-    if(!cn) return;
-    let d=[],p=[],b=[],rrn=cn[1];
+    let d=[],b=[];
+    if(cn[0] == '!SaveSettings') {
+        d.push({field1: 'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + cn[3]});
+        d.push({field1: 'Skip Save Settings reminder', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MT:LastBackupSkip'});
+        b.push({name: 'Save Settings', id: 'SaveSettings'});
+    }
     if(cn[0] == '!Investments') {
-        if(cn[3]) {
-            d.push({field1: 'Category [' + cn[2] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[3]});
+        if(cn[2]) {
+            d.push({field1: 'Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[3]});
         } else {
-            d.push({field1: 'Category', field2: cn[2], style1: 'font-weight: 600;'});
+            d.push({field1: 'Category', field2: cn[3], style1: 'font-weight: 600;'});
         }
-        MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[3]},d,[]);return;
     }
     if(cn[0] == '!Accounts') {
-        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
-        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[1]});
-        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
-        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
-        MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[2], id: cn[1]},d,[]);return;
+        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], uid: cn[2], uidcol: 3});
+        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[2]});
+        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
+        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
     if(cn[0] == '!CombinedAccounts') {
-        let tot=0;
-        p = MF_GridPKUIDs(rrn);
+        let p = MF_GridPKUIDs(cn[2]),tot = 0;
         d.push({field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
         p.forEach(item => {
             for (let i = 0; i < accountsData.accounts.length; i ++) {
@@ -4757,10 +4758,9 @@ function onClickOpenWindow() {
             }
         });
         d.push({field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;'});
-        MF_ModelWindowOpen({width: 480, title: cn[1].slice(2), name: cn[0], id: rrn},d,[]);return;
     }
-    if(cn[0] == 'transdata') {
-        let t = transData.allTransactions.results[rrn];
+    if(cn[0] == '!TransData') {
+        let rrn = Number(cn[1]), t = transData.allTransactions.results[rrn];
         let useAmt = t.amount, useLit = 'Amount', useColor = '';
         if(t.category.group.type == 'expense') {
             useAmt = useAmt * -1;
@@ -4780,8 +4780,9 @@ function onClickOpenWindow() {
         d.push({field1: t.notes, style1: '', field2: null, style2: ''});
         b.push({name: 'Edit', id: 'TransEdit'});
         b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
-        MF_ModelWindowOpen({width: 480, title: t.merchant.name, name: cn[0], id: t.id},d,b);return;
+        cn[1] = t.merchant.name;cn[2] = t.id;
     }
+    MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[2]},d,b);
 }
 
 function onClickMTFlexConfig() {
