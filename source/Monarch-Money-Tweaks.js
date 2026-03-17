@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.20
+// @version      4.36.21
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -22,7 +22,7 @@ const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
-let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: false, tooltipHandle: null, accountsHasFixed: false};
+let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
@@ -1622,13 +1622,12 @@ function MF_SidePanelflipElement(inCookie) {
 // [ Popup Window ]
 function MF_ModelWindowOpen(t,d,b) {
 
-    let divTop = document.getElementById('root');
+    let divTop = document.getElementById('root'),ff = null;
     let div = cec('div','MTModelContainer',divTop);
-    let ff = null;
     div = cec('div','MTModelWindow',div,'','','','','',t.id);
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
-    cec('div','',divTop,t.title,'','padding-left:16px; padding-top: 12px; font-weight: 600; font-size: 18px;');
+    cec('div','',divTop,t.title,'','padding: 16px 16px 0px 16px; font-weight: 600; font-size: 18px;');
     div = cec('div','',divTop,'','','padding: 16px;');
     if(typeof d !== 'string') {
         d.forEach(data => {
@@ -1641,11 +1640,22 @@ function MF_ModelWindowOpen(t,d,b) {
                 if(data.type != undefined) {
                     if(data.type == 'Input') {
                         cec('div','MTInputTitle',div,data.field1);
-                        div3 = cec('input','MTInputClass',div,'','','width: 100%;','','',data.key);
+                        let divD = cec('div','',div);
+                        const ci = data.key.indexOf(':');
+                        div3 = cec('input','MTInputClass',divD,'','',ci > -1 ? 'width: 88%;' : '','','',data.key);
                         div3.value = getCookie(data.key,false);
                         if(data.uid) {div3.setAttribute('uid',data.uid); div3.setAttribute('uidcol',data.uidcol);}
-                        if(data.name) {div3.name = data.name;}
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
+                        if(ci > -1) {
+                            const lk = data.key.slice(0, ci+1);
+                            let e1 = cec('div','MTdropdown',divD);
+                            let e2 = cec('button','MTFlexButton',e1,'','','','','',data.key);
+                            let e3 = cec('div','MTFlexdown-content',e1,'','','','','','MTDropdown'+data.key);
+                            let optValue = listCookies(lk);
+                            for (let i = 0; i < optValue.length; i++) {
+                                e2 = cec('a','MTSetupDropdown',e3,optValue[i],'','','MTSetupOption',optValue[i]);
+                            }
+                        }
                     }
                     if(data.type == 'Checkbox') {
                         div3 = cec('label','',div,data.field1,'','','htmlFor',data.key);
@@ -4489,7 +4499,7 @@ window.onclick = function(event) {
     let cn = event.target.className;
     if(typeof cn === 'object') {MM_MenuFix();return;}
     if(typeof cn === 'string') {
-        if(glo.debug == 1) console.log(MNAME,cn,event.target);
+        if(glo.debug == 1) addConsole(cn,event.target,event.target.id);
         cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
@@ -4719,16 +4729,16 @@ function onClickOpenWindow() {
     let d=[],p=[],b=[],rrn=cn[1];
     if(cn[0] == '!Investments') {
         if(cn[3]) {
-            d.push({field1: 'Category [' + cn[2] + ']', style1: 'font-weight: 600;', type: 'Input', name: 'StockCategories', placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...', key: 'MTStockCategory:' + cn[3]});
+            d.push({field1: 'Category [' + cn[2] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[3]});
         } else {
             d.push({field1: 'Category', field2: cn[2], style1: 'font-weight: 600;'});
         }
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[3]},d,[]);return;
     }
     if(cn[0] == '!Accounts') {
-        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', name: 'AccountGroups', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
-        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', name: 'AccountSubGroups', key: 'MTAccountsSub:' + cn[1]});
-        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1],placeholder: 'Communications, Financials, Health, Industrials, International, Large Value, ...'});
+        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[1], uid: cn[1], uidcol: 3});
+        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[1]});
+        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[1],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[1]});
         MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[2], id: cn[1]},d,[]);return;
     }
@@ -4931,9 +4941,17 @@ function onClickContainer() {
 function onClickSetupDropdown(et) {
     let cn = et.getAttribute('mtsetupoption');
     let cvalue = et.getAttribute('mtsetupvalue');
-    setCookie(cn,cvalue);
-    const pDiv = et.parentNode.parentNode;
-    pDiv.childNodes[0].textContent = et.innerText.trim() + ' ';
+    if(cvalue) {
+        setCookie(cn,cvalue);
+        const pDiv = et.parentNode.parentNode;
+        pDiv.childNodes[0].textContent = et.innerText.trim() + ' ';
+    } else {
+        let pDiv = et.parentNode?.parentNode;
+        let pc = pDiv.parentNode.childNodes[0];
+        if(pc) pc.value = cn;
+        pDiv = pDiv.childNodes[1];
+        onClickMTDropdownRelease();
+    }
 }
 
 async function onClickNoteTagButton() {
@@ -4990,15 +5008,15 @@ function onClickMTDropdown() {
     let cActive = event.target.id;
     if(cActive == glo.flexButtonActive) { onClickMTDropdownRelease(); } else {
         onClickMTDropdownRelease();
-        if(document.getElementById("MTDropdown"+cActive).classList.toggle("show") == true) { glo.flexButtonActive = cActive;} else { glo.flexButtonActive = 0;}
+        if(document.getElementById("MTDropdown"+cActive).classList.toggle("show") == true) { glo.flexButtonActive = cActive;} else { glo.flexButtonActive = '';}
     }
 }
 
 function onClickMTDropdownRelease() {
-    if(glo.flexButtonActive > 0) {
+    if(glo.flexButtonActive) {
         let li = document.getElementById("MTDropdown" + glo.flexButtonActive);
         if(li) {li.className = 'MTFlexdown-content';}
-        glo.flexButtonActive = 0;
+        glo.flexButtonActive = '';
     }
 }
 
@@ -5451,8 +5469,8 @@ function uploadfileSettings(inType) {
 
 function setCookie(cName, cValue) {localStorage.setItem(cName,cValue);}
 
-function getCookie(cname, isNum = false, useDefault) {
-    let value = localStorage.getItem(cname);
+function getCookie(cName, isNum = false, useDefault) {
+    let value = localStorage.getItem(cName);
     if (value !== null) { return isNum ? Number(value) : value;}
     if (useDefault !== undefined) {return useDefault;}
     return isNum ? 0 : '';
@@ -5463,6 +5481,19 @@ function flipCookie(inCookie,spin) {
     if(spin == null) {spin = 1;}
     if(OldValue > spin) { setCookie(inCookie,0); } else {setCookie(inCookie,OldValue); }
 }
+
+const listCookies = (cName) => {
+    const values = new Set();
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(cName)) {
+            const value = localStorage.getItem(key);
+            if (value) values.add(value);
+        }
+    }
+    return Array.from(values).sort();
+};
+
 function getDisplay(InA,InB) {
     if(InA == 1) {return 'none;';} else {return InB;}
 }
