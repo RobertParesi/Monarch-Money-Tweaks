@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.18
+// @version      4.36.19
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -231,7 +231,7 @@ async function MF_GridInit(inName, inDesc) {
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
-    let div = document.querySelector('[class*="Scroll__Root-sc"]');
+    let div = gec('Scroll__Root');
     if(div) {MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');}
     glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
@@ -628,7 +628,7 @@ function MT_GridDrawSort() {
 }
 
 function MT_GridDrawContainer() {
-    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
+    const divTop = gec('Scroll__Root');
     if(!divTop) return;
 
     let MTFlexContainer = document.createElement('div');
@@ -682,7 +682,7 @@ function MT_GridDrawContainer() {
 
 function MT_GridDrawCards() {
     if(MTFlexCard.length == 0) {return;}
-    let divTop = document.querySelector('[class*="Scroll__Root-sc"]');
+    let divTop = gec('Scroll__Root');
     if(divTop) {
         MTFlexCard.sort((a, b) => (a.Col - b.Col));
         let splitCards = 'flex-flow: column;';
@@ -5087,6 +5087,11 @@ function cecTip(e,c,p,it,tip) {
     const div = cec('span',c + ' tooltip',p,it);
     const tt = cec('div','tooltip',div);
     cec(e,'tooltiptext',tt,tip);
+}
+
+function gec(e,a) {
+    if(a) return document.querySelectorAll('[data-component="' + e + '"]');
+    return document.querySelector('[data-component="' + e + '"]');
 }
 
 // Generic Functions
