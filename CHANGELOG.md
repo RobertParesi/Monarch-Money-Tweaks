@@ -4,7 +4,7 @@
      - NEW: Report cards now enhanced (sorted and showing percentages)
      - NEW: Reports / Investments will now allow custom holding category with new [By category] report.   
      - NEW: Reports / Investments custom holding category can be overridden at Account level.  Use Reports / Accounts, > to change.
-     - NEW: Added > (side-drawer) for all sub-total and total lines in the reports to go to new Bar chart.
+     - NEW: Added > (side-drawer) for all Total/Sub-total lines in reports to go to new Bar chart.
      - NEW: Added reminder to save MM-Tweaks settings every 30 days.
      - NEW: Added drop-downs for all MM-Tweak entry fields.
      - FIX: Accounts Dashboard Pending was incorrect for pending deposits.
