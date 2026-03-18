@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.26
+// @version      4.36.27
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -21,7 +21,7 @@ const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 
-let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
+let css = {headStyle: null, mItems: 0, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
@@ -36,7 +36,7 @@ let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 function MM_Init() {
 
     MM_RefreshAll();
-    const a = isDarkMode();
+    let a = isDarkMode();
     if(a == null) {css.reload = true;return;}
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
@@ -148,7 +148,13 @@ function MM_Init() {
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
     addStyle('input::placeholder {font-size: 12px;}');
 
+    if(MTFlex.Name) {
+        a = inList(MTFlex.Name,FlexOptions) -1;
+        MenuReportsCustom();MenuReportsCustomUpdate(a + css.mItems);
+        MF_GridDraw(1);
+    }
 }
+
 function MM_GridFont() {
     css.FontFamily = getCookie('MT_MonoMT', false) || 'System';
     css.FontFamily = 'font-family: ' + (css.FontFamily == 'System' ? 'Oracle' : css.FontFamily) + ', sans-serif, MonarchIcons;';
@@ -1704,39 +1710,35 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     localStorage.setItem('persist:reports',reportsObj,JSON.stringify(reportsObj));
 }
 
-function MenuReportsFix() {
-    if(MTFlex.Name) {
-        const x = inList(MTFlex.Name,FlexOptions);
-        if(x > 0) {MenuReportsCustom();MenuReportsCustomUpdate(x+2);}
-    }
-}
-
 function MenuReportsCustom() {
-    let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
+    let div = gde('reports-header-tabs');
     if(div) {
         div.style = 'margin-left: 12px;';
-        const mItems = div.childNodes.length;
+        let mItems = div.childNodes.length;
         let useClass = div.childNodes[0].className;
-        for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1;  white-space: nowrap; overflow: hidden;';}
+        if(mItems < 4) {
+            for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1;  white-space: nowrap; overflow: hidden;';}
+            css.mItems = mItems;
+        }
         useClass = useClass.replace(' tab-nav-item-active','');
         for (let i = 0; i < FlexOptions.length; i++) {
-            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
-            else {div.childNodes[i + 3].className = FlexOptions[i] + ' ' + useClass;}
+            if(mItems == css.mItems) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
+            else {div.childNodes[i + css.mItems].className = FlexOptions[i] + ' ' + useClass;}
         }
     }
 }
 
 function MenuReportsCustomUpdate(inValue) {
-    let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
+    let div = gde('reports-header-tabs');
     if(div) {
-        for (let i = 0; i < FlexOptions.length + 3; i++) {
+        for (let i = 0; i < FlexOptions.length + css.mItems; i++) {
             let useClass = div.childNodes[i].className;
             if(inValue == i) {
                 if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
             } else {useClass = useClass.replace(' tab-nav-item-active','');}
             div.childNodes[i].className = useClass;
         }
-        if(inValue < 3) {MTFlex = [];}
+        if(inValue < css.mItems) {MTFlex = [];}
     }
 }
 
@@ -1747,19 +1749,18 @@ function MenuReportsPanels(inType) {
     if(divs) {divs.style=inType;}
 }
 
-
 function MenuReportsGo() {
-    let div = document.getElementById('MTWait');
-    if(!div) {
-        document.body.style.cursor = "wait";
-        removeAllSections('.MTFlexContainer');
-        MenuReportsPanels('display:none;');
-        switch(MTFlex.Name) {
-            case 'MTTrends': MenuReportsCustomUpdate(3);MenuReportsTrendsGo();break;
-            case 'MTNet_Income': MenuReportsCustomUpdate(4);MenuReportsNetIncomeGo();break;
-            case 'MTAccounts': MenuReportsCustomUpdate(5);MenuReportsAccountsGo();break;
-            case 'MTInvestments': MenuReportsCustomUpdate(6);MenuReportsInvestmentsGo();
-        }
+    if(document.getElementById('MTWait')) return;
+    document.body.style.cursor = "wait";
+    removeAllSections('.MTFlexContainer');
+    MenuReportsPanels('display:none;');
+    let div = css.mItems + inList(MTFlex.Name,FlexOptions) -1;
+    MenuReportsCustomUpdate(div);
+    switch(MTFlex.Name) {
+        case 'MTTrends': MenuReportsTrendsGo();break;
+        case 'MTNet_Income': MenuReportsNetIncomeGo();break;
+        case 'MTAccounts': MenuReportsAccountsGo();break;
+        case 'MTInvestments': MenuReportsInvestmentsGo();
     }
 }
 
@@ -4471,7 +4472,7 @@ function MenuCheckSpawnProcess() {
             case 2:HistoryDrawerDraw();break;
             case 3:MenuPlanRefresh();MenuPlanBudgetReorder();break;
             case 4:MenuAccountsSummary();break;
-            case 5:MM_Init();MenuReportsFix();break;
+            case 5:MM_Init();break;
             case 6:if(getCookie('MT_MerAssist',true)) {onClickContainer();}break;
             case 7:MM_SplitTransaction();break;
             case 8:break;
@@ -5085,9 +5086,6 @@ function addStyle(aCss) {
     style.setAttribute('type', 'text/css');
     style.textContent = aCss;
     css.headStyle.appendChild(style);
-}
-function updateStyle(a,b) {
-    const x = gde(a);if(x) x.style.display = b;
 }
 
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra],id)
