@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.28
+// @version      4.36.29
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -75,7 +75,7 @@ function MM_Init() {
     addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
     addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
-    addStyle('.MTModelWindow {position: absolute; top: 25%;left: 35%; }');
+    addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
     addStyle('.MTField1 {width: 35%;}');addStyle('.MTField2 {width: 65%;}');
@@ -1656,7 +1656,7 @@ function MF_ModelWindowOpen(t,d,b) {
                             let e3 = cec('div','MTFlexdown-content',e1,'','','','','','MTDropdown'+data.key);
                             let optValue = listCookies(lk);
                             for (let i = 0; i < optValue.length; i++) {
-                                e2 = cec('a','MTSetupDropdown',e3,optValue[i],'','','MTSetupOption',optValue[i]);
+                                e2 = cec('a','MTSetupDropdown',e3,optValue[i],'','padding: 5px 5px;','MTSetupOption',optValue[i]);
                             }
                         }
                         if(ff == null) ff = div3;
