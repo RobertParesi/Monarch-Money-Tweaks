@@ -679,7 +679,7 @@ function MT_GridDrawContainer() {
 
 function MT_GridDrawCards() {
     if(MTFlexCard.length == 0) {return;}
-    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
+    let divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(!divTop) return;
 
     MTFlexCard.sort((a, b) => (a.Col - b.Col));
