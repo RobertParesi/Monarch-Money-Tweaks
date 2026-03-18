@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.29
+// @version      4.36.30
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4264,13 +4264,12 @@ function MenuSettingsDisplay(inDiv) {
     let qs = inDiv;
     if(!qs) {
         qs = gde('settings-card');
-        if (!qs) {glo.spawnProcess = 11;return;}
+        if(!qs || !qs.innerText.startsWith('Display')) {glo.pathName='';return;}
         qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
     } else {
-        qs = cec('span','MTSideDrawerHeader',qs);
+        qs=cec('span','MTSideDrawerHeader',qs);
     }
-    let OnOff = (inDiv == null);
-    let dropDowns = 0;
+    let OnOff = (inDiv == null),dropDowns = 0;
 
     if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
@@ -4475,9 +4474,7 @@ function MenuCheckSpawnProcess() {
             case 5:MM_Init();break;
             case 6:if(getCookie('MT_MerAssist',true)) {onClickContainer();}break;
             case 7:MM_SplitTransaction();break;
-            case 8:break;
             case 9:if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag();}break;
-            case 11:MenuSettings();break;
         }
     }
     function MenuCheckSpawnProcessCl(a,b,c) {
