@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.27
+// @version      4.36.28
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4732,7 +4732,7 @@ function onClickOpenWindow(cn) {
     }
     if(cn[0] == '!Investments') {
         if(cn[2]) {
-            d.push({field1: 'Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[3]});
+            d.push({field1: 'Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
         } else {
             d.push({field1: 'Category', field2: cn[3], style1: 'font-weight: 600;'});
         }
