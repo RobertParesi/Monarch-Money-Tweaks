@@ -4457,9 +4457,9 @@ function MenuFirstTimeUser() {
 // Function calls which need waits and retries ...
 function MenuCheckSpawnProcess() {
     if(glo.compressTx === 2) {
-        if(MenuCheckSpawnProcessCl('Transaction__Root-','padding-top: 1px !important; padding-bottom: 1px !important;font-size: 13.5px !important;}',0)) {
-           if(MenuCheckSpawnProcessCl('FullScreenSelect__SelectTrigger','font-size: 13.5px;}',0)) {
-               if(MenuCheckSpawnProcessCl('TransactionLinkButton__Children','font-size: 13.5px;}')) {glo.compressTx = true;}
+        if(MenuCheckSpawnProcessCl('transaction','padding-top: 1px !important; padding-bottom: 1px !important;font-size: 13.5px !important;}',0)) {
+           if(MenuCheckSpawnProcessCl('full-screen-select-trigger','font-size: 13.5px;}',0)) {
+               if(MenuCheckSpawnProcessCl('transaction-link-button-children','font-size: 13.5px;}')) {glo.compressTx = true;}
            }
         }
     }
@@ -4479,7 +4479,7 @@ function MenuCheckSpawnProcess() {
         }
     }
     function MenuCheckSpawnProcessCl(a,b,c) {
-        let div = document.querySelector('[class*="' + a + '"]');
+        let div = gde(a);
         if(div) {
             let nd = c == null ? div : div.childNodes[c], cl = nd.classList[1], sy = '';
             for (let property of nd.style) {sy += `${property}: ${nd.style[property]}; `;}
