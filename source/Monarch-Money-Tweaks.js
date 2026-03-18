@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.22
+// @version      4.36.23
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -157,7 +157,7 @@ function MM_GridFont() {
 function MM_MenuFix() {
     const wbs = ['/advice','/recurring','/plan','/investments','/goals','/objectives','/forecast'];
     const cks = ['MT_Advice','MT_Recurring','MT_Budget','MT_Investments','MT_Goals','MT_Goals','MT_Forecast'];
-    let divs = document.querySelectorAll('[class*="NavBarLink-sc"]');
+    let divs = gde('nav-bar-link',true);
     if(divs.length > 10) {
         for (const div of divs) {
             if(div.pathname) {
@@ -166,8 +166,7 @@ function MM_MenuFix() {
             }
         }
         if(getCookie('MT_Assistant',true) == 1) {
-            divs = document.querySelector('[class*="SideBarDefaultContent__PersistentAssistant"]');
-            if(divs) divs.style.display = 'none';
+            divs = gde('sidebar-persistent-assistant');if(divs) divs.style.display = 'none';
         }
     }
     glo.debug = getCookie('MT_Log',true);
@@ -229,8 +228,8 @@ async function MF_GridInit(inName, inDesc) {
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
-    let div = gec('Scroll__Root');
-    if(div) {MTFlex.Loading = MF_PleaseWait(div,' Loading ' + inDesc + ' ...');}
+    let divTop = document.getElementById('1val-scroll');
+    if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
     glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
@@ -626,7 +625,7 @@ function MT_GridDrawSort() {
 }
 
 function MT_GridDrawContainer() {
-    const divTop = gec('Scroll__Root');
+    let divTop = document.getElementById('1val-scroll');
     if(!divTop) return;
 
     let MTFlexContainer = document.createElement('div');
@@ -680,7 +679,7 @@ function MT_GridDrawContainer() {
 
 function MT_GridDrawCards() {
     if(MTFlexCard.length == 0) {return;}
-    let divTop = gec('Scroll__Root');
+    let divTop = document.getElementById('1val-scroll');
     if(divTop) {
         MTFlexCard.sort((a, b) => (a.Col - b.Col));
         let splitCards = 'flex-flow: column;';
@@ -1710,7 +1709,7 @@ function MenuReportsFix() {
 }
 
 function MenuReportsCustom() {
-    let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
+    let div = gde('reports-header-tabs');
     if(div) {
         div.style = 'margin-left: 12px;';
         const mItems = div.childNodes.length;
@@ -1727,7 +1726,7 @@ function MenuReportsCustom() {
 }
 
 function MenuReportsCustomUpdate() {
-    const divRoot = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
+    const divRoot = gde('reports-header-tabs');
     if (!divRoot) return;
     const rItems = divRoot.children.length;
     const mItems = rItems - 4;
@@ -3853,7 +3852,7 @@ async function MenuAccountsSummary() {
         if(cls) {addStyle('.' + cls + ' {display:none;}');glo.owners = true;}
     }
     let aSummary = [];
-    const elements = document.querySelectorAll('[class*="AccountSummaryCardGroup__CardSection"]');
+    const elements = gde('account-summary-card-group',true);
     if(elements.length > 1) {
         let snapshotData = await dataGetAccounts();
         for (let i = 0; i < snapshotData.accounts.length; i++) {
@@ -3922,9 +3921,8 @@ async function MenuPlanRefresh() {
 
     if(getCookie('MT_PlanLTB',true) == 0) return;
 
-    let budgetI = [0,0,0,0],budgetE = [0,0,0,0]; // 0=remaining,1=budget,2=spent,3=use
-    let div=null;
-    const elements = document.querySelectorAll('[class*="PlanSummaryWidgetRow"]');
+    let div=null,budgetI = [0,0,0,0],budgetE = [0,0,0,0]; // 0=remaining,1=budget,2=spent,3=use
+    const elements = gde('plan-summary-widget-row',true);
     for (const li of elements) {
         const ca = li.innerText.split('\n');
         if(ca.length > 0) {
@@ -4007,8 +4005,8 @@ async function MenuPlanRefresh() {
 }
 // [ Budget Plan Reorder ]
 function MenuPlanBudgetReorder() {
-    const budgetGrid = document.querySelector('[class*="Plan__SectionsContainer"]');
-    const separator = document.querySelector('[class*="PlanSectionFooter__Separator"]');
+    const budgetGrid = gde('plan-sections-container');
+    const separator = gde('plan-section-footer-separator');
     if(budgetGrid && separator && !budgetGrid.dataset.mtInit === true) {
         const defaultOrder = [0, 1, 2];
         let order = getCookie("MT_BudgetOrder");
@@ -4046,21 +4044,20 @@ function MM_FixCalendarDropdown(calItems) {
 
 // [ Splits ]
 function MM_SplitTransaction() {
-
-    let li = document.querySelector('[class*="TransactionSplitOriginalTransactionContainer__OriginalAmountColumn"]');
+    let li = gde('transaction-split-original-amount-column');
     if(li) {
         let AmtA = getCleanValue(li.innerText.trim(),2);
-        li = document.querySelector('[class*="TransactionSplitModal__TabsContainer-sc"]');
+        li = gde('transaction-split-modal-tabs');
         let div = cec('button','MTButton',li,'Split 50%','','margin-left: 0px;');
         let AmtB = get2dec(AmtA / 2);
         AmtA = get2dec(AmtA - AmtB);
-        div.addEventListener('click', () => { inputTwoFields('input.CurrencyInput__Input-ay6xtd-0',AmtA,AmtB); });
+        div.addEventListener('click', () => { inputTwoFields('CurrencyInput__Input',AmtA,AmtB); });
     }
 }
 // [ Fix Note Popup ]
 function MM_NoteTag() {
 
-    const divs = document.querySelectorAll('[class*="TransactionDrawerFieldRow__StyledFlexContainer-"]');
+    const divs = gde('transaction-drawer-field-row',true);
     if(divs.length == 0) { glo.spawnProcess = 9; return; }
     for (const div of divs) {
         if(div.innerText.trim() == 'Notes') {
@@ -4244,7 +4241,7 @@ function MenuSettings(OnFocus) {
 }
 
 function MenuSetttingsCategory() {
-    let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
+    let divs = gde('manage-category-group-card-header',true);
     if(divs.length == 0) {glo.pathName = '';return;}
     let div = null,grp=null,isExp=null;
     for (let i = 0; i < divs.length; i++) {
@@ -4264,7 +4261,7 @@ function MenuSettingsDisplay(inDiv) {
 
     let qs = inDiv;
     if(!qs) {
-        qs = document.querySelector('[class*="SettingsCard__StyledCard-sc-189f681"]');
+        qs = gde('settings-card');
         if (!qs) {glo.spawnProcess = 11;return;}
         qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
     } else {
@@ -4639,7 +4636,7 @@ function onClickMTButton() {
     const bt = event.target.id;
     if(bt == 'RestoreSettings') {uploadfileSettings('.csv');return;}
     if(bt == 'FlexButtonExport') {MT_GridExport(); return;}
-    if(bt == 'MTNoteTagButton') {onClickNoteTagButton();return;}
+    if(bt == 'NoteTagButton') {onClickNoteTagButton();return;}
     if(bt == 'SaveSettings') {
         let csvContent = 'Monarch Money Tweaks Configuration File' + CRLF;
         for (let i = 0; i < localStorage.length; i++) {
@@ -5088,6 +5085,9 @@ function addStyle(aCss) {
     style.textContent = aCss;
     css.headStyle.appendChild(style);
 }
+function updateStyle(a,b) {
+    const x = gde(a);if(x) x.style.display = b;
+}
 
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra],id)
 function cec(e, c, p, it, hr, st, a1, a2, id) {
@@ -5108,9 +5108,9 @@ function cecTip(e,c,p,it,tip) {
     cec(e,'tooltiptext',tt,tip);
 }
 
-function gec(e,a) {
-    if(a) return document.querySelectorAll('[class*="' + e + '"]');
-    return document.querySelector('[class*="' + e + '"]');
+function gde(e,a) {
+    if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
+    return document.querySelector('[data-external-id="' + e + '"]');
 }
 
 // Generic Functions
@@ -5137,7 +5137,7 @@ function getFullClassName(a) {
 
 function inputTwoFields(InSelector,InValue1,InValue2) {
 
-    let x = document.querySelectorAll(InSelector);
+    let x = document.querySelectorAll('[class*="' + InSelector + '"]');
     if(x[0]) {
         x[0].focus();x[0].value = '';
         document.execCommand('insertText', false, InValue1);
