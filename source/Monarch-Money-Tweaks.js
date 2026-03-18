@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.25
+// @version      4.36.26
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -228,7 +228,7 @@ async function MF_GridInit(inName, inDesc) {
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
-    let divTop = document.getElementById('1val-scroll');
+    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
     glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
@@ -625,7 +625,7 @@ function MT_GridDrawSort() {
 }
 
 function MT_GridDrawContainer() {
-    let divTop = document.getElementById('1val-scroll');
+    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(!divTop) return;
 
     let MTFlexContainer = document.createElement('div');
@@ -679,19 +679,19 @@ function MT_GridDrawContainer() {
 
 function MT_GridDrawCards() {
     if(MTFlexCard.length == 0) {return;}
-    let divTop = document.getElementById('1val-scroll');
-    if(divTop) {
-        MTFlexCard.sort((a, b) => (a.Col - b.Col));
-        let splitCards = 'flex-flow: column;';
-        let div = document.createElement('div');
-        div.className = 'MTFlexContainer';
-        divTop.prepend(div);
-        divTop = cec('div','MTFlexContainer2',div);
-        for (let i = 0; i < MTFlexCard.length; i++) {
-            let div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
-            cec('span','MTFlexCardBig fs-exclude',div2,MTFlexCard[i].Title,'',MTFlexCard[i].Style);
-            cec('span','MTFlexSmall',div2,MTFlexCard[i].Subtitle,'','text-align:center');
-        }
+    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
+    if(!divTop) return;
+
+    MTFlexCard.sort((a, b) => (a.Col - b.Col));
+    let splitCards = 'flex-flow: column;';
+    let div = document.createElement('div');
+    div.className = 'MTFlexContainer';
+    divTop.prepend(div);
+    divTop = cec('div','MTFlexContainer2',div);
+    for (let i = 0; i < MTFlexCard.length; i++) {
+        let div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
+        cec('span','MTFlexCardBig fs-exclude',div2,MTFlexCard[i].Title,'',MTFlexCard[i].Style);
+        cec('span','MTFlexSmall',div2,MTFlexCard[i].Subtitle,'','text-align:center');
     }
 }
 
@@ -1705,37 +1705,38 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
 }
 
 function MenuReportsFix() {
-    if(MTFlex.Name) { MenuReportsCustom();MenuReportsCustomUpdate(); }
+    if(MTFlex.Name) {
+        const x = inList(MTFlex.Name,FlexOptions);
+        if(x > 0) {MenuReportsCustom();MenuReportsCustomUpdate(x+2);}
+    }
 }
 
 function MenuReportsCustom() {
-    //let div = gde('reports-header-tabs');
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
     if(div) {
         div.style = 'margin-left: 12px;';
         const mItems = div.childNodes.length;
         let useClass = div.childNodes[0].className;
+        for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1;  white-space: nowrap; overflow: hidden;';}
         useClass = useClass.replace(' tab-nav-item-active','');
-        if(mItems < 5) {
-            for (let i = 0; i < mItems; i++) {div.childNodes[i].style = 'margin-right: 12px; flex-shrink: 1; white-space: nowrap; overflow: hidden;';}
-        }
         for (let i = 0; i < FlexOptions.length; i++) {
-            if(mItems < 5) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
-            else {div.childNodes[i + mItems].className = FlexOptions[i] + ' ' + useClass;}
+            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px;white-space: nowrap;');}
+            else {div.childNodes[i + 3].className = FlexOptions[i] + ' ' + useClass;}
         }
     }
 }
 
-function MenuReportsCustomUpdate() {
-    const divRoot = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
-    //const divRoot = gde('reports-header-tabs');
-    if (!divRoot) return;
-    const rItems = divRoot.children.length;
-    const mItems = rItems - 4;
-    for (let i = 0; i < rItems; i++) {
-        const tab = divRoot.children[i];
-        if (tab.className.startsWith(MTFlex.Name)) {tab.classList.add('tab-nav-item-active');
-        } else if (MTFlex.Name || i >= mItems) { tab.classList.remove('tab-nav-item-active');}
+function MenuReportsCustomUpdate(inValue) {
+    let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
+    if(div) {
+        for (let i = 0; i < FlexOptions.length + 3; i++) {
+            let useClass = div.childNodes[i].className;
+            if(inValue == i) {
+                if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
+            } else {useClass = useClass.replace(' tab-nav-item-active','');}
+            div.childNodes[i].className = useClass;
+        }
+        if(inValue < 3) {MTFlex = [];}
     }
 }
 
@@ -1744,9 +1745,8 @@ function MenuReportsPanels(inType) {
     for (const div of divs) { if(div.innerText.startsWith('Clear') || div.innerText.includes('Filters')) {div.style=inType;break;}}
     divs = document.querySelector('[class*="Grid__GridStyled-"]');
     if(divs) {divs.style=inType;}
-    divs = document.querySelector('[class*="shared__Root-sc-"]');
-    if(divs) {divs.style=inType;}
 }
+
 
 function MenuReportsGo() {
     let div = document.getElementById('MTWait');
@@ -1754,12 +1754,11 @@ function MenuReportsGo() {
         document.body.style.cursor = "wait";
         removeAllSections('.MTFlexContainer');
         MenuReportsPanels('display:none;');
-        MenuReportsCustomUpdate();
         switch(MTFlex.Name) {
-            case 'MTTrends':MenuReportsTrendsGo();break;
-            case 'MTNet_Income':MenuReportsNetIncomeGo();break;
-            case 'MTAccounts':MenuReportsAccountsGo();break;
-            case 'MTInvestments':MenuReportsInvestmentsGo();
+            case 'MTTrends': MenuReportsCustomUpdate(3);MenuReportsTrendsGo();break;
+            case 'MTNet_Income': MenuReportsCustomUpdate(4);MenuReportsNetIncomeGo();break;
+            case 'MTAccounts': MenuReportsCustomUpdate(5);MenuReportsAccountsGo();break;
+            case 'MTInvestments': MenuReportsCustomUpdate(6);MenuReportsInvestmentsGo();
         }
     }
 }
@@ -4626,7 +4625,7 @@ window.onclick = function(event) {
             if(event.target.pathname == window.location.pathname) {
                 removeAllSections('.MTFlexContainer');
                 MTFlex = [];MenuReportsPanels('');
-                MenuReportsCustomUpdate();return;
+                MenuReportsCustomUpdate(inList(window.location.pathname,['/reports/spending','/reports/income']));return;
             }
         }
     }
