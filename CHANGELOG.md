@@ -9,7 +9,8 @@
      - NEW: Drop-downs added for all MM-Tweak entry fields.
      - FIX: Accounts Dashboard Pending amount for deposits corrected.
      - FIX: Resolved where sometimes MM-Tweaks settings did not appear.
-     - CHANGE: Now using Monarch's data-external-id across the system.
+     - INTERNAL: More efficient style sheet & style-sheet updating.
+     - INTERNAL: Now using Monarch's data-external-id across the system to avoid UI regressions.
 
 * **Version 4.35 (March 7, 2026)**
      - NEW: Settings has new option to Hide the Accounts Summary panel.
