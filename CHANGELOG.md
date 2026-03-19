@@ -8,7 +8,7 @@
      - NEW: Reminder to save MM-Tweaks settings every 30 days.
      - NEW: Drop-downs added for all MM-Tweak entry fields.
      - FIX: Accounts Dashboard Pending amount for deposits corrected.
-     - FIX: Resolved intermittent issue where MM-Tweaks settings did not appear.
+     - FIX: Resolved where sometimes MM-Tweaks settings did not appear.
      - CHANGE: Now using Monarch's data-external-id across the system.
 
 * **Version 4.35 (March 7, 2026)**
