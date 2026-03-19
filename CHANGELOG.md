@@ -2,7 +2,7 @@
 
 * **Version 4.36 (Beta)**
      - NEW: Report cards enhanced — now sorted and showing percentages.
-     - NEW: Reports / Investments: add custom holding categories and a new "By category" report.
+     - NEW: Reports / Investments: add custom holding categories and new "By category" & "By account/category" reports.
      - NEW: Reports / Investments: custom holding category can be overridden at the Account level (Reports / Accounts).
      - NEW: Added side-drawer (>) on Total/Sub-total lines in reports to open a new bar chart.
      - NEW: Reminder to save MM-Tweaks settings every 30 days.
