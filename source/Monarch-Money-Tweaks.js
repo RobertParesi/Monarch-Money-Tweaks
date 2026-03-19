@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.30
+// @version      4.36.31
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -63,7 +63,7 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
-
+    addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; ' + css.font + '}');
     addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
@@ -78,7 +78,6 @@ function MM_Init() {
     addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
-    addStyle('.MTField1 {width: 35%;}');addStyle('.MTField2 {width: 65%;}');
     addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
@@ -1075,17 +1074,18 @@ function MF_DrawBarChart(inLocation,inP) {
     cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
 
     // load items
-    let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0;
+    let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         const secMatch = row.Section == inP[1];
         if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'All' && secMatch) {
             let usePart = getStringPart(row[0], ' • ', 'left');
-            items.push({ percent: '', title: usePart, value: row[un] });sumTotal += row[un];
+            if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
+            items.push({ percent: '', title: usePart, value: row[un], record: useRec, section: useSec });sumTotal += row[un];
         } else if (secMatch) {
             pkTotal += row[un];
             if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                items.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal });pkTotal = 0;
+                items.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal, record: row.PK, section: row.Section});pkTotal = 0;
             }
             sumTotal += row[un];
         }
@@ -1184,10 +1184,10 @@ function MF_DrawBarChart(inLocation,inP) {
         ctx.fillText(getShortDollarValue(dashes[i].v), dashes[i].x,h - bottomPadding + 12);
         lastDash = dashes[i].x;
     }
-    attachTooltip(divChart, hitboxes);
+    attachTooltip(divChart, hitboxes, inP[2]);
 }
 
-function attachTooltip(canvas, hitboxes) {
+function attachTooltip(canvas, hitboxes, inCol) {
 
     const tooltip = document.getElementById('MTChartTip');
 
@@ -1206,7 +1206,8 @@ function attachTooltip(canvas, hitboxes) {
             tooltip.innerHTML = tt;
             tooltip.style.left = Math.min(x, 440) + 'px';
             tooltip.style.top = (e.pageY - 80) + 'px';
-        } else {tooltip.style.display = 'none';}
+            glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
+        } else {tooltip.style.display = 'none';glo.barchartCol=0}
     };
     canvas.onmouseleave = function () {tooltip.style.display = 'none';};
 }
@@ -1623,15 +1624,17 @@ function MF_SidePanelflipElement(inCookie) {
 }
 
 // [ Popup Window ]
-function MF_ModelWindowOpen(t,d,b) {
+function MF_ModelWindowOpen(t,d,b,f1,f2) {
 
     let divTop = document.getElementById('root'),ff = null;
     let div = cec('div','MTModelContainer',divTop);
-    div = cec('div','MTModelWindow',div,'','','','','',t.id);
+    addStyle('.MTField1 {width: ' + f1 + 'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}');
+    addStyle('.MTField2 {width: ' + f2 + '}');
+    div = cec('div','MTModelWindow',div,'','',css.FontFamily,'','',t.id);
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
     cec('div','',divTop,t.title,'','padding: 16px 16px 0px 16px; font-weight: 600; font-size: 18px;');
-    div = cec('div','',divTop,'','','padding: 16px;');
+    div = cec('div','',divTop,'','','max-height: 458px;overflow-y: auto;padding: 16px;');
     if(typeof d !== 'string') {
         d.forEach(data => {
             let div2 = cec('div','MTRow',div), div3 = null;
@@ -1674,13 +1677,12 @@ function MF_ModelWindowOpen(t,d,b) {
             }
         });
     } else { let div2 = cec('div','MTRow',div); cec('div','MTField1',div2,d,'','width: 100%;'); }
-    div = cec('div','MTButtons',divTop);
+    div = cec('div','MTButtons',divTop,'','','margin-top: 4px;');
     if(b != null) {
         if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','','',but.id);});}
     }
     cec('button','MTWindowButton',div,'Close','','','','',t.name);
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
-
 }
 
 // [ Reports Menu ]
@@ -4520,6 +4522,9 @@ window.onclick = function(event) {
                 cn = event.target.getAttribute('link').split('|');
                 if(cn) onClickOpenWindow(cn);
                 return;
+            case 'MTBarChart':
+                if(glo.barchartCol > 0) onClickOpenWindow(['!BarChart','','']);
+                return;
             case 'MTButton':
             case 'MTWindowButton':
                 onClickMTButton();return;
@@ -4721,7 +4726,7 @@ function onClickMTButtonSmall() {
 
 function onClickOpenWindow(cn) {
 
-    let d=[],b=[];
+    let d=[],b=[],w=480,f1='65%',f2='35%',tot=0;
     if(cn[0] == '!SaveSettings') {
         d.push({field1: 'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + cn[3]});
         d.push({field1: 'Skip Save Settings reminder', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MT:LastBackupSkip'});
@@ -4740,20 +4745,45 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
+    if(cn[0] == '!BarChart') {
+        let x = glo.barchartSec,y=glo.barchartCol,z=glo.barchartRec;
+        if(x == 0) {
+            f1='260px;';f2='260px;';
+            d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][0]});
+            d.push({sort: 0, field1: MTFlexTitle[1].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][1]});
+            d.push({sort: 0, field1: MTFlexTitle[2].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][2]});
+            d.push({sort: 0, field1: MTFlexTitle[3].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][3]});
+            d.push({sort: 0, field1: MTFlexTitle[y].Title, style1: 'font-weight: 600;;',field2: getDollarValue(MTFlexRow[z][y],2)});
+         } else {
+             f1='400px;';f2='120px;';
+             if(z=='') x+=1;
+             d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: 'font-weight: 600;;',field2: MTFlexTitle[y].Title, style2: 'font-weight: 600;', val: 0});
+             for (let i = 0; i < MTFlexRow.length; i ++) {
+                 const useRow = MTFlexRow[i];
+                 if(useRow.Section == x) {
+                     if(z == '' || useRow.PK == z) {
+                         cn[1] = MT_GetPK(useRow.PK);
+                         d.push({sort: 1, field1: useRow[0], style1: 'font-size: 14px;',field2: getDollarValue(useRow[y],2), style2: 'font-size: 14px;',val: useRow[y]});
+                         tot+=useRow[y];
+                     }
+                 }
+             }
+        }
+        w=520;
+    }
     if(cn[0] == '!CombinedAccounts') {
-        let p = MF_GridPKUIDs(cn[2]),tot = 0;
-        d.push({field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
+        let p = MF_GridPKUIDs(cn[2]);
+        d.push({sort: 0, field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
         p.forEach(item => {
             for (let i = 0; i < accountsData.accounts.length; i ++) {
                 let ad = accountsData.accounts[i];
                 if(ad.id == item) {
-                    d.push({field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance), style2: ''});
+                    d.push({sort: 1, field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance), style2: ''});
                     tot+=ad.displayBalance;
                     break;
                 }
             }
         });
-        d.push({field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;'});
     }
     if(cn[0] == '!TransData') {
         let rrn = Number(cn[1]), t = transData.allTransactions.results[rrn];
@@ -4778,7 +4808,16 @@ function onClickOpenWindow(cn) {
         b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
         cn[1] = t.merchant.name;cn[2] = t.id;
     }
-    MF_ModelWindowOpen({width: 480, name: cn[0], title: cn[1], id: cn[2]},d,b);
+    if(tot != 0) {
+        d.push({sort: 3, field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;', val: tot});
+        d.sort((a, b) => {
+            if (a.sort !== b.sort) return a.sort - b.sort;
+            const fa = parseFloat(a.val);
+            const fb = parseFloat(b.val);
+            return fb - fa;
+        });
+    }
+    MF_ModelWindowOpen({width: w, name: cn[0], title: cn[1], id: cn[2]},d,b,f1,f2);
 }
 
 function onClickMTFlexConfig() {
@@ -5077,11 +5116,28 @@ function isDarkMode() {
     if(bgColor == null || bgColor == '') {return null;}
     if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
 }
+
 function addStyle(aCss) {
-    if(css.headStyle == null) {css.headStyle = document.getElementsByTagName('head')[0]; }
-    let style = document.createElement('style');
-    style.setAttribute('type', 'text/css');
-    style.textContent = aCss;
+    if (!css.headStyle) css.headStyle = document.getElementsByTagName('head')[0];
+    const rule = aCss.trim();
+    const selectorMatch = rule.match(/^([^{]+)\s*\{/);
+    if (!selectorMatch) {
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.textContent = rule;
+        css.headStyle.appendChild(style);
+        return;
+    }
+
+    const selector = selectorMatch[1].trim();
+    const key = encodeURIComponent(selector);
+    let existing = css.headStyle.querySelector(`style[data-managed="${key}"]`);
+    if (existing) {existing.textContent = rule;return;}
+
+    const style = document.createElement('style');
+    style.type = 'text/css';
+    style.setAttribute('data-managed', key);
+    style.textContent = rule;
     css.headStyle.appendChild(style);
 }
 
