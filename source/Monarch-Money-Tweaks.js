@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.31
+// @version      4.36.32
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1207,7 +1207,8 @@ function attachTooltip(canvas, hitboxes, inCol) {
             tooltip.style.left = Math.min(x, 440) + 'px';
             tooltip.style.top = (e.pageY - 80) + 'px';
             glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
-        } else {tooltip.style.display = 'none';glo.barchartCol=0}
+            document.body.style.cursor = "pointer";
+        } else {tooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
     };
     canvas.onmouseleave = function () {tooltip.style.display = 'none';};
 }
@@ -4319,7 +4320,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
     MenuDisplay_Input('Reports / Net Income Report','','spacer');
     MenuDisplay_Input('Sort column results by Tag/Account ranking rather than value','MT_NetIncomeRankOrder','checkbox');
-    MenuDisplay_Input('Show Note Tags drop-down on Transaction screen (Used if tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
+    MenuDisplay_Input('Show Note Tags drop-down on Transaction side-panel (Used if tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
     MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
@@ -4746,6 +4747,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
     if(cn[0] == '!BarChart') {
+        document.body.style.cursor = "";
         let x = glo.barchartSec,y=glo.barchartCol,z=glo.barchartRec;
         if(x == 0) {
             f1='260px;';f2='260px;';
