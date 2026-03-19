@@ -3838,7 +3838,7 @@ function MenuHistoryExport(inType,inFile) {
 // [ Dashboard Accounts ]
 function MenuAccountSummaryHide() {
     if(getCookie('MT_HideAccountsSummary',true) == 1) {
-        let div = document.querySelector('[class*="Accounts__SummaryCardPositioner"]');
+        let div = gde('accounts-summary-card');
         if(div) div.style.display = 'none';
         div = document.querySelector('[class*="Grid__GridStyled-"]');
         if(div) div.style.display = 'block';
@@ -4114,7 +4114,7 @@ function MM_SearchMerchants(inDiv) {
 function MenuHistory(OnFocus) {
     if (glo.pathName.startsWith('/categor')) {
         if(OnFocus == true) {
-            if(getCookie('MT_Budget',true) == 1) { hideAllSections('[class*="CategoryDetails__PlanSummaryCard"]',1);}
+            if(getCookie('MT_Budget',true) == 1) { gde('cashflow-budget-card',true,true);}
         }
         let div = findButton('Filters');
         if(div) {
@@ -4160,7 +4160,7 @@ async function MenuDashboardAccounts() {
     if(ds) return;
     let snapshotData = await dataGetAccounts();
     let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
-    ds = document.querySelector('[class*="Droppable__Unstyled-sc"]');
+    ds = gde('dashboard-droppable-column-0');
     if(ds) {
         let newDiv = null;
         for (let i = 0; i < snapshotData.accounts.length; i++) {
@@ -5160,9 +5160,14 @@ function cecTip(e,c,p,it,tip) {
     cec(e,'tooltiptext',tt,tip);
 }
 
-function gde(e,a) {
-    if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
-    return document.querySelector('[data-external-id="' + e + '"]');
+function gde(e,a,h) {
+    if(h === true) {
+        let divs = document.querySelectorAll('[data-external-id="' + e + '"]');
+        for (let i = 0; i < divs.length; i++) { divs[i].style.display = 'none'}
+    } else {
+        if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
+        return document.querySelector('[data-external-id="' + e + '"]');
+    }
 }
 
 // Generic Functions
@@ -5175,6 +5180,7 @@ function hideAllSections(qList,InValue,inStartsWith) {
     const els = document.querySelectorAll(qList);
     for (const el of els) { if(inStartsWith == null || el.innerText.startsWith(inStartsWith)) {InValue == 1 ? el.style.display = 'none' : el.style.display = '';}}
 }
+
 function getFullClassName(a) {
     let el = document.querySelector('[class*=' + a + ']');
     if(el) {
