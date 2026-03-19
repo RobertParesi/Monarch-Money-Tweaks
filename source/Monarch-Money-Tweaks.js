@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.32
+// @version      4.36.33
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1635,7 +1635,9 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
     cec('div','',divTop,t.title,'','padding: 16px 16px 0px 16px; font-weight: 600; font-size: 18px;');
-    div = cec('div','',divTop,'','','max-height: 458px;overflow-y: auto;padding: 16px;');
+    let st = 'max-height: 458px;padding: 16px;';
+    if(d.length > 10) st+= 'overflow-y: auto;';
+    div = cec('div','',divTop,'','',st );
     if(typeof d !== 'string') {
         d.forEach(data => {
             let div2 = cec('div','MTRow',div), div3 = null;
