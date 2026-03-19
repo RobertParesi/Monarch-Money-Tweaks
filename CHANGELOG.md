@@ -1,13 +1,15 @@
 # Change Log (Version History)
 
 * **Version 4.36 (Beta)**
-     - NEW: Report cards now enhanced (sorted and showing percentages)
-     - NEW: Reports / Investments will now allow custom holding category with new [By category] report.   
-     - NEW: Reports / Investments custom holding category can be overridden at Account level.  Use Reports / Accounts, > to change.
-     - NEW: Added > (side-drawer) for all Total/Sub-total lines in reports to go to new Bar chart.
-     - NEW: Added reminder to save MM-Tweaks settings every 30 days.
-     - NEW: Added drop-downs for all MM-Tweak entry fields.
-     - FIX: Accounts Dashboard Pending was incorrect for pending deposits.
+     - NEW: Report cards enhanced — now sorted and showing percentages.
+     - NEW: Reports / Investments: add custom holding categories and a new "By category" report.
+     - NEW: Reports / Investments: custom holding category can be overridden at the Account level (Reports / Accounts).
+     - NEW: Added side-drawer (>) on Total/Sub-total lines in reports to open a new bar chart.
+     - NEW: Reminder to save MM-Tweaks settings every 30 days.
+     - NEW: Drop-downs added for all MM-Tweak entry fields.
+     - FIX: Accounts Dashboard Pending amount for deposits corrected.
+     - FIX: Resolved intermittent issue where MM-Tweaks settings did not appear.
+     - CHANGE: Now using Monarch's data-external-id across the system.
 
 * **Version 4.35 (March 7, 2026)**
      - NEW: Settings has new option to Hide the Accounts Summary panel.
