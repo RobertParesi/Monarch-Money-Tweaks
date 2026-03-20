@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.34
+// @version      4.36.35
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5179,7 +5179,7 @@ function cecTip(e,c,p,it,tip) {
 function gde(e,a,h) {
     if(h === true) {
         let divs = document.querySelectorAll('[data-external-id="' + e + '"]');
-        for (let i = 0; i < divs.length; i++) { divs[i].style.display = 'none'}
+        for (let i = 0; i < divs.length; i++) { divs[i].style.display = 'none';}
     } else {
         if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
         return document.querySelector('[data-external-id="' + e + '"]');
