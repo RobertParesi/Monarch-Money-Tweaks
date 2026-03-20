@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.35
+// @version      4.36.37
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -832,13 +832,11 @@ function MT_GetInput(inputs) {
 
     }
     div = cec('span','MTSideDrawerHeader',divTop);
-    cec('button','MTInputButton',div,'Last year','','margin-left: 0px;');
-    cec('button','MTInputButton',div,'Past week');
-    cec('button','MTInputButton',div,'Last month');
-    cec('button','MTInputButton',div,'This month');
-    cec('button','MTInputButton',div,'This quarter');
-    cec('button','MTInputButton',div,'This year');
-    cec('button','MTInputButton',div,'Apply','','float:right;');
+    const l = ['Last year', 'Past week', 'Last month', 'This month', 'This quarter', 'This year', 'Apply'];
+    l.forEach((label, i) => {
+        const style = (i === 0) ? 'margin-left:0px;' : (i === l.length - 1) ? 'float:right;' : '';
+        cec('button', 'MTInputButton', div, label, '', style);
+    });
 }
 
 function MF_GridPKUIDs(inPK) {
@@ -862,9 +860,6 @@ function MF_GridGroupByPK(inCol,ru) {
     for (let i = 2; i <= useSec; i += 2) {
         MF_GridRollup(i - 1, i, i - 1, null, ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i, -1));
     }
-  //  let i = 2;
-  //  for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));}
-   // MF_GridRollup(i-1,i,i-1,null,ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));
 }
 
 function MF_GridRegroupPK(inCol) {
@@ -1074,7 +1069,7 @@ function MF_DrawBarChart(inLocation,inP) {
     divTop.id = 'MTChartCanvas';
     divTop = div.insertAdjacentElement('afterend', divTop);
     let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 660; divChart.height = 660;
-    cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
+    cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
 
     // load items
     let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
@@ -1208,8 +1203,8 @@ function attachTooltip(canvas, hitboxes, inCol) {
             tt += '<tr><td colspan="2" style="text-align: right;">' + found.item.percent + '</td></tr></table>';
             tooltip.style.display = 'block';
             tooltip.innerHTML = tt;
-            tooltip.style.left = Math.min(x, 440) + 'px';
-            tooltip.style.top = (e.pageY - 80) + 'px';
+            tooltip.style.left = (Math.min(x,450) + rect.left) + 'px';
+            tooltip.style.top = (y - 80 + rect.top) + 'px';
             glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
             document.body.style.cursor = "pointer";
         } else {tooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
@@ -1232,7 +1227,7 @@ function MF_DrawChart(inLocation) {
         divTop.id = 'MTChartCanvas';
         divTop = div.insertAdjacentElement('afterend', divTop);
         divChart = cec('canvas','',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 400;
-        divTooltip = cec('div','',divTop,'','','position: absolute; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
+        divTooltip = cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
     } else {
         divChart = document.getElementById('MTChart');
         divTooltip = document.getElementById('MTChartTip');
@@ -1511,16 +1506,15 @@ function MF_DrawChart(inLocation) {
         if(glo.tooltipHandle) { divChart.removeEventListener('mousemove', glo.tooltipHandle); }
         glo.tooltipHandle = divChart.addEventListener('mousemove', (e) => {
             const rect = divChart.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
             for (let i = 0; i < points.length; i++) {
                 let pt = points[i];
-                const dx = mouseX - pt.x;
-                const dy = mouseY - pt.y;
+                const dx = x - pt.x;
+                const dy = y - pt.y;
                 if (dx * dx + dy * dy <= 64) {
-                    const mX = Math.min(mouseX - 48, 380);
-                    divTooltip.style.left = mX + 'px';
-                    divTooltip.style.top = (e.clientY + 10) + 'px';
+                    divTooltip.style.left = (Math.min(x,376) + rect.left) + 'px';
+                    divTooltip.style.top = (y - 120 + rect.top) + 'px';
                     let tt='<table>';
                     if(xAxis.length > yAxis.length) {
                         const Mth = pt.date.slice(2,4);
@@ -1639,7 +1633,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
     divTop = cec('div','MTModelWindow2',div);
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
     cec('div','',divTop,t.title,'','padding: 16px 16px 0px 16px; font-weight: 600; font-size: 18px;');
-    let st = 'max-height: 458px;padding: 16px;';
+    let st = 'max-height: 524px;padding: 16px;';
     if(d.length > 10) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
     if(typeof d !== 'string') {
@@ -2703,6 +2697,7 @@ async function MenuReportsInvestmentsGo() {
                 MTP.UID = useID;
                 if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                 MTP.PK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
+                if(MTFlex.Button1 == 5 || MTFlex.Button1 == 7) {MTP.PKTriggerEvent = 'All|this|8|Cash|Cash';}
                 MTP.SKHRef = '/accounts/details/' + acc.id;
                 MTP.SKTriggerEvent = 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
@@ -4757,12 +4752,14 @@ function onClickOpenWindow(cn) {
         document.body.style.cursor = "";
         let x = glo.barchartSec,y=glo.barchartCol,z=glo.barchartRec;
         if(x == 0) {
-            f1='260px;';f2='260px;';
-            d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][0]});
-            d.push({sort: 0, field1: MTFlexTitle[1].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][1]});
-            d.push({sort: 0, field1: MTFlexTitle[2].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][2]});
-            d.push({sort: 0, field1: MTFlexTitle[3].Title, style1: 'font-weight: 600;;',field2: MTFlexRow[z][3]});
-            d.push({sort: 0, field1: MTFlexTitle[y].Title, style1: 'font-weight: 600;;',field2: getDollarValue(MTFlexRow[z][y],2)});
+            f1='180px;';f2='340px;';
+            for (let i = 0; i < MTFlexTitle.length; i ++) {
+                const t = MTFlexTitle[i];
+                if(t.IsHidden != true) {
+                    let fd2 = MT_GetFormattedValue(t.Format,MTFlexRow[z][i])
+                    d.push({sort: 0, field1: MTFlexTitle[i].Title, style1: 'font-weight: 600;;',field2: fd2});
+                }
+            }
          } else {
              f1='400px;';f2='120px;';
              if(z=='') x+=1;
@@ -5188,13 +5185,13 @@ function gde(e,a,h) {
 
 // Generic Functions
 function removeAllSections(inDiv) {
-    const divs = document.querySelectorAll(inDiv);
-    for (let i = 0; i < divs.length; i++) { divs[i].remove(); }
+    const els = document.querySelectorAll(inDiv);
+    for (let i = 0; i < els.length; i++) { els[i].remove(); }
 }
 
 function hideAllSections(qList,InValue,inStartsWith) {
     const els = document.querySelectorAll(qList);
-    for (const el of els) { if(inStartsWith == null || el.innerText.startsWith(inStartsWith)) {InValue == 1 ? el.style.display = 'none' : el.style.display = '';}}
+    for (const el of els) { if(inStartsWith == null || el.innerText.startsWith(inStartsWith)) {el.style.display = InValue == 1 ? 'none' : '';}}
 }
 
 function getFullClassName(a) {
