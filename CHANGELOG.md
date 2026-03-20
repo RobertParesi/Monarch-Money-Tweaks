@@ -9,7 +9,7 @@
      - NEW: Drop-downs added for all MM-Tweak entry fields.
      - FIX: Accounts Dashboard Pending amount for deposits corrected.
      - FIX: Resolved where sometimes MM-Tweaks settings did not appear.
-     - FIX: Changing a non ticker holding type to an Equity type would cause side panel not to open.
+     - FIX: Changing a non ticker holding type to an Equity type would cause side panel to not display properly.
      - INTERNAL: More efficient style sheet & style-sheet updating.
      - INTERNAL: Now using Monarch's data-external-id across the system to avoid UI regressions.
 
