@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.40
+// @version      4.36.41
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3606,6 +3606,7 @@ async function InvestmentsDrawer(inP) {
     let bondInfo = [],stockInfo = ['',''];
     let useTicker = thisHld.ticker;if(useTicker == null || useTicker == undefined) useTicker = '';
     sObj.big = thisHld.name;
+    sObj.small = thisHld.typeDisplay;
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
