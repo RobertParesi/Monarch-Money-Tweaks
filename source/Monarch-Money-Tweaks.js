@@ -3605,13 +3605,12 @@ async function InvestmentsDrawer(inP) {
 
     let bondInfo = [],stockInfo = ['',''];
     sObj.big = thisHld.name;
-    sObj.small = thisHld.typeDisplay;
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
         sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
     } else {
-        sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker == null ? '' : thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
+        sObj.button = '!Investments|' + sObj.big + '|' + (thisHld.ticker == null ? '' : thisHld.ticker) + '|' + sObj.small + '|' + thisHld.account.displayName;
         if(hld[p1].ticker != null) {
             sObj.big = thisHld.ticker + ' • ' + thisHld.name;
             sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
