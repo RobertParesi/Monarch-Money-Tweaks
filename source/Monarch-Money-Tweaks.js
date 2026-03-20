@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.33
+// @version      4.36.34
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -776,7 +776,7 @@ function MT_GridExport() {
     downloadFile( MTFlex.Title1 +' - ' + MTFlex.Title2,csvContent);
 }
 
-function MT_BarChartEmbed(a,b,inP) {
+function MT_BarChartEmbed(a,b) {
     switch (MTFlex.Name) {
         case 'MTInvestments':
             if(MTFlex.Button1 == 2) {
@@ -849,7 +849,7 @@ function MF_GridPKUIDs(inPK) {
 
 function MT_GetPK(r) {return MTFlex.PKSlice > 0 ? r.slice(MTFlex.PKSlice) : r;}
 
-function MF_GridGroupByPK(inCol) {
+function MF_GridGroupByPK(inCol,ru) {
     MTFlexRow.sort((a, b) => a.PK.localeCompare(b.PK));
     const oldLength = MTFlexRow.length;
     let useSec = 0;
@@ -859,9 +859,12 @@ function MF_GridGroupByPK(inCol) {
         MTFlexRow[i].IsHeader = false;
         MTFlexRow[i].Section = useSec;
     }
-    let i = 2;
-    for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,'All|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));}
-    MF_GridRollup(i-1,i,i-1,null,'All|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));
+    for (let i = 2; i <= useSec; i += 2) {
+        MF_GridRollup(i - 1, i, i - 1, null, ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i, -1));
+    }
+  //  let i = 2;
+  //  for (i = 2; i < useSec; i+=2) { MF_GridRollup(i-1,i,i-1,null,ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));}
+   // MF_GridRollup(i-1,i,i-1,null,ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i,-1));
 }
 
 function MF_GridRegroupPK(inCol) {
@@ -1081,6 +1084,7 @@ function MF_DrawBarChart(inLocation,inP) {
         if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'All' && secMatch) {
             let usePart = getStringPart(row[0], ' • ', 'left');
             if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
+            if(inP[4]) {if(inP[4] != row.PK) continue;}
             items.push({ percent: '', title: usePart, value: row[un], record: useRec, section: useSec });sumTotal += row[un];
         } else if (secMatch) {
             pkTotal += row[un];
@@ -2449,7 +2453,7 @@ async function MenuReportsInvestmentsGo() {
     MTFlex.TriggerEvents = true;
     MTFlex.SortSeq = ['1','2','3'];
     MF_SetupDates();
-    MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category']);
+    MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category', 'by Account/Category']);
     MF_GridOptions(2,['Positions','Allocation','Performance']);
     MF_GridOptions(4,customGroupInfo());
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y'];
@@ -2489,12 +2493,11 @@ async function MenuReportsInvestmentsGo() {
 
     async function MenuReportsInvestmentsStd() {
 
-        if(MTFlex.Button1 == 2 || MTFlex.Button1 == 5) {MTP.IsHidden = true;}
-        MF_QueueAddTitle(3,'Account',MTP,MTFlex.Button1+1);
-        MF_QueueAddTitle(4,'Subtype',MTP,MTFlex.Button1+1);
-        if(MTFlex.Button2 == 1) {MTFlexTitle[3].IsHidden = true;MTFlexTitle[4].IsHidden = true;}
-        MF_QueueAddTitle(5,MTFlex.Button1 == 6 ? 'Category' : 'Type',MTP,MTFlex.Button1+1);
-        MTP.IsSortable = 2;MTP.IsHidden = false;
+        MF_QueueAddTitle(3,'Account',MTP,MTFlex.Button1+1,inList(MTFlex.Button1,[2,5,7]) > 0 ? true: false );
+        MF_QueueAddTitle(4,'Subtype',MTP,MTFlex.Button1+1,inList(MTFlex.Button1,[2,5]) > 0 ? true: false );
+        MF_QueueAddTitle(5,MTFlex.Button1 > 5 ? 'Category' : 'Type',MTP,MTFlex.Button1+1,inList(MTFlex.Button1,[2,7]) > 0 ? true: false );
+
+        MTP.IsSortable = 2;
         MTP.Width = '80px';MTP.Format = 1;MTP.IgnoreTotals = true; MF_QueueAddTitle(6,'Price',MTP);
         MTP.Width = '80px';MTP.Format = 3;MTP.IgnoreTotals = true; MF_QueueAddTitle(7,'Qty',MTP);
         MTP.Width = '105px';MTP.Format = getCookie('MT_InvestmentsNoDecimals',true) + 1;MTP.IgnoreTotals = false;MF_QueueAddTitle(8,'Value',MTP);
@@ -2513,14 +2516,13 @@ async function MenuReportsInvestmentsGo() {
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
         if(MTFlex.Button1 == 4 && MTFlex.Button2 < 2) { MTFlexTitle[12].Title = 'Type %';}
-        if(MTFlex.Button1 == 5) { MTFlexTitle[3].IsHidden = true; MTFlexTitle[5].IsHidden = true;}
         portfolioData = await dataPortfolio(lowerDate, higherDate);
 
         await InvestmentHoldings();
         await InvestmentCash();
         if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
-            MF_GridGroupByPK(8);
-            if(MTFlex.Button1 == 5) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
+            MF_GridGroupByPK(8,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All');
+            if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
             MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
         }
         MF_GridCalcRowPercent(11,9,8);
@@ -2554,7 +2556,7 @@ async function MenuReportsInvestmentsGo() {
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
-                    if(MTFlex.Button1 == 6) {
+                    if(MTFlex.Button1 > 5) {
                         catOver = getCookie('MTAccountsCategory:' + holding.account.id,false);
                         if(catOver) {useCat = catOver;} else {
                             if(holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
@@ -2639,6 +2641,7 @@ async function MenuReportsInvestmentsGo() {
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                         MTP.SKTriggerEvent = MTP.RRN + '|' + (hld-1);
                         MTP.PK = InvestmentgetPK(useInst,useAccount, useSubType, useCat);
+                        if(MTFlex.Button1 == 5 || MTFlex.Button1 == 7) {MTP.PKTriggerEvent = 'All|this|8|' + useCat + '|' + useCat;}
                         MTP.SKHRef = '/accounts/details/' + holding.account.id;
                         MF_QueueAddRow(MTP);
                         MF_AddCol(0,splitTicker == 1 ? useTicker : shortTitle);
@@ -2752,7 +2755,9 @@ async function MenuReportsInvestmentsGo() {
                 case 0:return 'Positions';
                 case 1:return (inIns ?? '').trim();
                 case 2:
-                case 5:return (inAcc ?? '').trim();
+                case 5:
+                case 7:
+                    return (inAcc ?? '').trim();
                 case 3:return (inSub ?? '').trim();
                 case 4:
                 case 6:return (inType ?? '').trim();
@@ -3543,7 +3548,7 @@ async function AccountsDrawer(inP) {
         }
     }
 }
-async function SummaryDrawer(inP) {
+async function SummaryDrawer(p) {
 
     let sObj = {};
     sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
@@ -3556,8 +3561,8 @@ async function SummaryDrawer(inP) {
     DrawerDrawLine(divTop2,'','0','MTMax');
     DrawerDrawLine(divTop2,'','0','MTMin');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
-    MF_DrawBarChart(divTop2,inP.split('|'));
-    let r = MT_BarChartEmbed(divTop,divTop2,inP);
+    MF_DrawBarChart(divTop2,p);
+    let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
     cec('button','MTInputButton',divTop2,'Close','','float:right;' );
 }
@@ -5082,7 +5087,14 @@ function onClickMTFlexArrow(inP) {
     if(inP == null) return;
     let p = inP.split('|');
     while (p.length < 3) {p.push('');}
-    if(p[0] == 'Total' || p[0] == 'All') {SummaryDrawer(inP);return;}
+    if(p[0] == 'Total' || p[0] == 'All') {
+        if(p[1] == 'this') {
+            let e = event.target.parentNode.parentNode.parentNode;
+            if(!e) return;
+            p[1] = e.getAttribute('mtsection');
+        }
+        SummaryDrawer(p);return;
+    }
     switch(MTFlex.Name) {
         case 'MTTrends':
         case 'MTNet_Income':
