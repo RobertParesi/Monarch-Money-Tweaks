@@ -3611,6 +3611,7 @@ async function InvestmentsDrawer(inP) {
         sObj.big = bondInfo[0];
         sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
     } else {
+        sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker == null ? '' : thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
         if(hld[p1].ticker != null) {
             sObj.big = thisHld.ticker + ' • ' + thisHld.name;
             sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
@@ -3631,7 +3632,7 @@ async function InvestmentsDrawer(inP) {
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
         DrawerDrawLine(divTop2,'Current Price',getDollarValue(thisHld.closingPrice,false),'MTCurrentPrice');
-        if(inList(thisHld.type,EQTYPES) > 0 && thisHld.closingPrice != 1) {
+        if(thisHld.ticker != null && inList(thisHld.type,EQTYPES) > 0 && thisHld.closingPrice != 1) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
             DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
             DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
