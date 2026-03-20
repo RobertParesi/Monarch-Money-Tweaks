@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.40
+// @version      4.36.39
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3613,7 +3613,6 @@ async function InvestmentsDrawer(inP) {
         sObj.button = '!Investments|' + sObj.big + '|' + (thisHld.ticker == null ? '' : thisHld.ticker) + '|' + sObj.small + '|' + thisHld.account.displayName;
         if(hld[p1].ticker != null) {
             sObj.big = thisHld.ticker + ' • ' + thisHld.name;
-            sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
                 stockInfo[0] = 'Stock Analysis for ' + thisHld.ticker;
