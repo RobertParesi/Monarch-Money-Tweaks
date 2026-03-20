@@ -3604,20 +3604,21 @@ async function InvestmentsDrawer(inP) {
     const thisHld = hld[p1];
 
     let bondInfo = [],stockInfo = ['',''];
+    let useTicker = thisHld.ticker;if(useTicker == null || useTicker == undefined) useTicker = '';
     sObj.big = thisHld.name;
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
         sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
     } else {
-        sObj.button = '!Investments|' + sObj.big + '|' + (thisHld.ticker == null ? '' : thisHld.ticker) + '|' + sObj.small + '|' + thisHld.account.displayName;
-        if(hld[p1].ticker != null) {
-            sObj.big = thisHld.ticker + ' • ' + thisHld.name;
+        sObj.button = '!Investments|' + sObj.big + '|' + useTicker + '|' + sObj.small + '|' + thisHld.account.displayName;
+        if(useTicker != '') {
+            sObj.big = useTicker + ' • ' + thisHld.name;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
-                stockInfo[0] = 'Stock Analysis for ' + thisHld.ticker;
+                stockInfo[0] = 'Stock Analysis for ' + useTicker;
                 stockInfo[1] = getCookie(['MT_InvestmentURLStock','MT_InvestmentURLETF','MT_InvestmentURLMuni'][xT-1],false);
-                stockInfo[1] = stockInfo[1].replace('{ticker}',thisHld.ticker);
+                stockInfo[1] = stockInfo[1].replace('{ticker}',useTicker);
             }
         }
     }
