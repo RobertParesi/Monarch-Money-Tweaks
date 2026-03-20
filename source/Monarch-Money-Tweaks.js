@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.37
+// @version      4.36.39
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3598,26 +3598,27 @@ async function InvestmentsDrawer(inP) {
     }
     if(inP[0] === 'ACCOUNT') {await InvestmentsDrawerCash(inP);return;}
 
-    const p1 = inP[0];
-    const p2 = inP[1];
-    const edg = portfolioData.portfolio.aggregateHoldings.edges[p1].node;
-    const hld = portfolioData.portfolio.aggregateHoldings.edges[p1].node.holdings;
+    const p0 = inP[0], p1 = inP[1];
+    const edg = portfolioData.portfolio.aggregateHoldings.edges[p0].node;
+    const hld = portfolioData.portfolio.aggregateHoldings.edges[p0].node.holdings;
+    const thisHld = hld[p1];
+
     let bondInfo = [],stockInfo = ['',''];
-    sObj.big = hld[p2].name;
-    sObj.small = hld[p2].typeDisplay;
-    if(hld[p2].type == 'fixed_income') {
+    sObj.big = thisHld.name;
+    sObj.small = thisHld.typeDisplay;
+    if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
-        sObj.button = '!Investments|' + sObj.big + '| |' + sObj.small;
+        sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
     } else {
-        if(hld[p2].ticker != null) {
-            sObj.big = hld[p2].ticker + ' • ' + hld[p2].name;
-            sObj.button = '!Investments|' + sObj.big + '|' + hld[p2].ticker + '|' + sObj.small;
-            const xT = inList(hld[p2].typeDisplay,['Stock','ETF','Mutual Fund']);
+        if(hld[p1].ticker != null) {
+            sObj.big = thisHld.ticker + ' • ' + thisHld.name;
+            sObj.button = '!Investments|' + sObj.big + '|' + thisHld.ticker + '|' + sObj.small + '|' + thisHld.account.displayName;
+            const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
-                stockInfo[0] = 'Stock Analysis for ' + hld[p2].ticker;
+                stockInfo[0] = 'Stock Analysis for ' + thisHld.ticker;
                 stockInfo[1] = getCookie(['MT_InvestmentURLStock','MT_InvestmentURLETF','MT_InvestmentURLMuni'][xT-1],false);
-                stockInfo[1] = stockInfo[1].replace('{ticker}',hld[p2].ticker);
+                stockInfo[1] = stockInfo[1].replace('{ticker}',thisHld.ticker);
             }
         }
     }
@@ -3629,21 +3630,21 @@ async function InvestmentsDrawer(inP) {
         sObj.toggle=['',''];
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
-        DrawerDrawLine(divTop2,'Current Price',getDollarValue(hld[p2].closingPrice,false),'MTCurrentPrice');
-        if(inList(hld[p2].type,EQTYPES) > 0 && hld[p2].closingPrice != 1) {
+        DrawerDrawLine(divTop2,'Current Price',getDollarValue(thisHld.closingPrice,false),'MTCurrentPrice');
+        if(inList(thisHld.type,EQTYPES) > 0 && thisHld.closingPrice != 1) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
             DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
             DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
             DrawerDrawLine(divTop2,'Price Change','','MTPriceChange','margin-top:20px;');
             performanceData = await dataPerformance(formatQueryDate(getDates('d_Minus3Years')),formatQueryDate(getDates('d_Today')),edg.id);
             MF_DrawChart(divTop2);
-        } else if (hld[p2].type == 'fixed_income') {
+        } else if (thisHld.type == 'fixed_income') {
             if(bondInfo[1] != '') {
                 DrawerDrawLine(divTop2,'Coupon Rate',bondInfo[1]);
                 let pct = bondInfo[1].replace('%','');
                 pct = Number(pct);
                 if(isNaN(pct) == false) {
-                    pct = hld[p2].quantity * (pct * 0.01);
+                    pct = thisHld.quantity * (pct * 0.01);
                     DrawerDrawLine(divTop2,'Estimated Yearly Income',getDollarValue(pct,false));
                 }
             }
@@ -3673,22 +3674,22 @@ async function InvestmentsDrawer(inP) {
     }
 
     if(getCookie('MTInvestments_SidePanel',true) == 0) {
-        allQty = hld[p2].quantity;
-        allValue = hld[p2].value;
-        allCost = getCostBasis(hld[p2].costBasis,hld[p2].type,hld[p2].quantity,hld[p2].value);
-        DrawerDrawLine(divTop2,'Account',hld[p2].account.displayName,'','margin-top:20px;');
-        if(hld[p2].account.institution != null) {DrawerDrawLine(divTop2,'Institution',hld[p2].account.institution.name);}
+        allQty = thisHld.quantity;
+        allValue = thisHld.value;
+        allCost = getCostBasis(thisHld.costBasis,thisHld.type,thisHld.quantity,thisHld.value);
+        DrawerDrawLine(divTop2,'Account',thisHld.account.displayName,'','margin-top:20px;');
+        if(thisHld.account.institution != null) {DrawerDrawLine(divTop2,'Institution',thisHld.account.institution.name);}
     }
-    DrawerDrawLine(divTop2,'Price',getDollarValue(hld[p2].closingPrice,false));
+    DrawerDrawLine(divTop2,'Price',getDollarValue(thisHld.closingPrice,false));
     DrawerDrawLine(divTop2,'Current Value',getDollarValue(allValue,false));
-    DrawerDrawLine(divTop2,'Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + hld[p2].name + ')');
+    DrawerDrawLine(divTop2,'Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + thisHld.name + ')');
 
     let useGainLoss = allValue - allCost;
     let useGainLossPct = ((useGainLoss / allCost) * 100);
     useGainLossPct = get2dec(useGainLossPct);
     DrawerDrawLine(divTop2,'Unrealized Gain/Loss',getDollarValue(useGainLoss) + ' (' + useGainLossPct + '%)','','',null,'',useGainLoss < 0 ? css.red : css.green);
 
-    if(hld[p2].type == 'fixed_income') {
+    if(thisHld.type == 'fixed_income') {
         useGainLoss = (allQty / allCost) * 100;
         DrawerDrawLine(divTop2,'Cost Per Share',getDollarValue(useGainLoss));
     }
@@ -3705,12 +3706,12 @@ async function InvestmentsDrawer(inP) {
     if(divReload == null) {
         divTop2 = cec('span','MTSideDrawerHeader',divTop);
         cec('button','MTInputButton',divTop2,'Close','','float:right;' );
-        if(glo.debug == 1) {cec('button','MTInputButton',divTop2,'Debug','','float:right;','','',p1);}
+        if(glo.debug == 1) {cec('button','MTInputButton',divTop2,'Debug','','float:right;','','',p0);}
         if(MTFlex.Button2 == 2) {
-            if(hld[p2].ticker != 'null') {
+            if(thisHld.ticker != 'null') {
                 let bName = 'Watch Ticker';
-                if(getCookie('MTInvestmentTickers',false).split(',').includes(hld[p2].ticker)) bName = 'Remove Ticker';
-                cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','','',hld[p2].ticker);
+                if(getCookie('MTInvestmentTickers',false).split(',').includes(thisHld.ticker)) bName = 'Remove Ticker';
+                cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','','',thisHld.ticker);
             }
         }
     }
@@ -4740,6 +4741,7 @@ function onClickOpenWindow(cn) {
             d.push({field1: 'Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
         } else {
             d.push({field1: 'Category', field2: cn[3], style1: 'font-weight: 600;'});
+            d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
         }
     }
     if(cn[0] == '!Accounts') {
