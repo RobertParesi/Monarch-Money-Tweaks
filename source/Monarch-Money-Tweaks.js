@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.45
+// @version      4.36.46
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -364,7 +364,6 @@ function MT_GridDrawDetails() {
     function MT_GridDrawRow(isSubTotal) {
         let useRow = Object.assign({}, MTFlexRow[rowI]);
         let HeaderStyle = '', skipColumns = 0;
-
         if(MT_GridDrawRowTitle() == false) return;
         MT_GridDrawRowDetail();
         MT_GridDrawTriggerEvents();
@@ -463,31 +462,24 @@ function MT_GridDrawDetails() {
                 // Calc Percentages
                 if((thisTitle.ShowPercent != null)) {
                     const sp = thisTitle.ShowPercent;
-                    let w1 = 0, w2 = 0;
+                    let w1 = 0, w2 = 0,sumCols=null;
 
                     switch (sp.Type) {
                         case 'Dif':
-                        case 'Row':
-                            for (let k = 0; k < sp.Col1.length; k++) {
-                                rowVal = useRow[sp.Col1[k]];
-                                if(rowVal != null) {
-                                    if(k == 0) {w1 = rowVal;} else { w1 += (sp.Operand == '+') ? rowVal : -rowVal;}
+                            sumCols = (cols) => {
+                                let first = true, sum = 0;
+                                for (const c of cols) {
+                                    const v = useRow[c];
+                                    if (v == null) continue;
+                                    if (first) { sum = v; first = false; } else { sum += (sp.Operand === '+' ? v : -v); }
                                 }
-                            }
-                            for (let k = 0; k < sp.Col2.length; k++) {
-                                rowVal = useRow[sp.Col2[k]];
-                                if(rowVal != null) {
-                                    if(k == 0) {w2 = rowVal;} else {w2 += (sp.Operand == '+') ? rowVal : -rowVal;}
-                                }
-                            }
+                                return sum;
+                            };
+                            w1 = sumCols(sp.Col1);w2 = sumCols(sp.Col2);
                             break;
                         case 'Column':
                             if(sp.Col1 != undefined) {
-                                if(sp.BasedOn != undefined) {
-                                    w1 = MF_GridGetValue(sp.BasedOn,sp.Col1);
-                                } else {
-                                    w1 = MF_GridGetValue(useRow.BasedOn,sp.Col1);
-                                }
+                                w1 = MF_GridGetValue(sp.BasedOn != undefined ? sp.BasedOn : useRow.BasedOn,sp.Col1);
                                 V1 = useRow[sp.Col1];
                             } else { w1 = MF_GridGetValue(useRow.BasedOn,j);}
                             w2 = V1;
@@ -496,7 +488,7 @@ function MT_GridDrawDetails() {
                             return;
                     }
                     let pct = MT_GridPercent(w1,w2,thisTitle.ShowPercentShade, sp.Type == 'Dif' ? 1 : 2,useRow.IgnoreShade);
-                    if(sp.AsRaw == true) {V1 = pct[2]; MTFlexRow[rowI][j] = V1; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 = V2 + ' ' + pct[0];}
+                    if(sp.AsRaw == true) {V1 = pct[2]; MTFlexRow[rowI][j] = V1; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 += ' ' + pct[0];}
                     S2 = pct[1];
                 }
                 if(useRow.IsHeader == true || isSubTotal == true) {if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }}
@@ -3453,7 +3445,7 @@ async function AccountsDrawer(inP) {
         let gn = getCookie('MTAccounts:' + acc.id,false);
         if(!gn) sObj.header = 'Use  button to edit ' + MNAME + ' Account settings and Account group.';
         sObj.type = acc.type;sObj.type2=acc.type.display;sObj.big='Account';sObj.small=acc.type.display;sObj.urltext=acc.displayName;sObj.url='/accounts/details/' + acc.id;
-        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts|' + acc.displayName + '|' + acc.id;
+        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts|' + acc.displayName + '|' + acc.id + '|' + acc.subtype.display;
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
@@ -4732,16 +4724,16 @@ function onClickOpenWindow(cn) {
     }
     if(cn[0] == '!Investments') {
         if(cn[2]) {
-            d.push({field1: 'Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
+            d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
         } else {
-            d.push({field1: 'Category', field2: cn[3], style1: 'font-weight: 600;'});
+            d.push({field1: 'Holding Category', field2: cn[3], style1: 'font-weight: 600;'});
             d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
         }
     }
     if(cn[0] == '!Accounts') {
         d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], uid: cn[2], uidcol: 3});
-        d.push({field1: 'Subtype override', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[2]});
-        d.push({field1: 'Category override for all Investment Holdings', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
+        d.push({field1: 'Subtype override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[2]});
+        d.push({field1: 'Holding Category override for all holdings in account', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
     if(cn[0] == '!BarChart') {
