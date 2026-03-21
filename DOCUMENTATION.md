@@ -23,7 +23,7 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 
 ### Monarch Money Tweaks - Account Settings 
 
-You can further specify MM-Tweaks special Account settings by going to **Reports** and **Accounts** and select the **>** for each account. Next, click on the **...** in the upper-right in the side-panel to access this screen.
+You can further specify MM-Tweaks special Account settings by going to **Reports** and **Accounts** and select the **>** for each account. Click on the **...** in the upper-right in the side-panel to access this screen.
 
 ![Settings](/images/MTAccountSettings.png)
 
@@ -42,6 +42,18 @@ Personally I did the following:
    * Investment accounts: I put "Managed" or "Non Managed" since I have an advisor for some investments and not others.
    * Credit cards: I put "Credit Cards" so they are all grouped together.
    * House, Cars, all other accounts: I put "Trust" or "Non Trust" depending on where it is titled.
+     
+#### Subtype override
+
+Each account in Monarch has a Subtype. If you’re happy with the current Subtype shown in reports, leave this blank. To further specify the account, you can override it with any label you prefer (for example: Bonds, Municipal Bonds, Short-Term Loan, Long-Term Loan).
+
+#### Holding Category override (applies to all holdings in this account)
+
+Monarch Money assigns each holding a type, which you can change inside Monarch Money: go to Accounts → select the brokerage account → scroll to Holdings, then tap the “>” by a holding to choose one of the nine available types. MM-Tweaks lets you refine those types with custom labels (for example: the Sector, the Asset Class, the Index Stategy, Bond, Municipal Bond, State Bond, Corporate Bond), either for the entire account or for individual holdings that have a ticker. If every holding in the account is the same type (e.g., state bonds), enter that custom label here.
+
+#### Add to Dashboard Accounts list
+
+Check this box to include a summary of this account on your Monarch Money Dashboard.
 
 ### Monarch Money Tweaks - Information on how Investment cash is computed
 
