@@ -64,7 +64,7 @@ You can further specify MM-Tweaks Investment Category settings by going to **Rep
 
 #### Holding Category override (applies to this ticker)
 
-Monarch Money assigns each holding a type, which you can change inside Monarch Money: go to Accounts → select the brokerage account → scroll to Holdings, then tap the “>” by a holding to choose one of the nine available types. MM-Tweaks lets you refine those types with custom labels (for example: the Sector, the Asset Class, the Index Stategy, Bond, Municipal Bond, State Bond, Corporate Bond), either for the entire account or for individual holdings that have a ticker. You can assign a Category if the holding has a ticker only.
+Monarch Money assigns each holding a type, which you can change inside Monarch Money: go to Accounts → select the brokerage account → scroll to Holdings, then tap the “>” by a holding to choose one of the nine available types. MM-Tweaks lets you refine those types with custom labels (for example: the Sector, the Asset Class, the Index Stategy, Bond, Municipal Bond, State Bond, Corporate Bond), either for the entire account or for individual holdings that have a ticker. You can assign a Category if the holding has a ticker only or to the entire account on the Account level.
 
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
