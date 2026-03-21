@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.42
+// @version      4.36.44
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1040,7 +1040,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
         if((v > 0 && inPosMsg != '') || (v < 0 && inNegMsg != '')) {
             let useMsg = '',useStyle='';
             if(v < 0) {useMsg = inNegMsg;useStyle=inNegColor;v = v * -1;} else {useMsg = inPosMsg;useStyle=inPosColor;}
-            if(MTFlexTitle[inStart].Format == 2) {v = getDollarValue(v,true);} else {v = getDollarValue(v,false);}
+            v = MT_GetFormattedValue(MTFlexTitle[inStart].Format,v);
             MTP = [];
             if(inCol) {MTP.Col = inCol;} else {MTP.Col = MTFlexCard.length+1;}
             if(inAddRowTitle) {useMsg = useMsg + inAddRowTitle + useRow;}
@@ -1119,7 +1119,7 @@ function MF_DrawBarChart(inLocation,inP) {
             if(i != items.length-1) skipThis = true;
             if(i == items.length-1) {
                 let div = cec('div','SideDrawerHeader',divTop);
-                cec('div','MTSideDrawerGroup',div,' ' + sumC + ' items not shown ' + getDollarValue(sumA,2) + ' (' + get2dec(sumP,1) + '%)','',css.font + 'font-size:14.5px;');
+                cec('div','MTSideDrawerGroup',div,' ' + sumC + ' items not shown ' + getDollarValue(sumA) + ' (' + get2dec(sumP,1) + '%)','',css.font + 'font-size:14.5px;');
             }
         }
         if(!skipThis) {
@@ -1192,7 +1192,7 @@ function attachTooltip(canvas, hitboxes, inCol) {
             if (x >= hb.x && x <= hb.x + hb.w && y >= hb.y && y <= hb.y + hb.h) { found = hb; break;}
         }
         if (found) {
-            let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value,2) + '</td></tr>';
+            let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value) + '</td></tr>';
             tt += '<tr><td colspan="2" style="text-align: right;">' + found.item.percent + '</td></tr></table>';
             tooltip.style.display = 'block';
             tooltip.innerHTML = tt;
@@ -1348,8 +1348,8 @@ function MF_DrawChart(inLocation) {
             if(np > op) {updn = '';useColor = css.green;}
             if(np < op) {updn = '';useColor = css.red;}
             MF_DrawChartupdateDetail('MTCurrentPrice','',getDollarValue(np) + ' ' + updn,useColor);
-            MF_DrawChartupdateDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0],false),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
-            MF_DrawChartupdateDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1],false) + ' / ' + getDollarValue(moveAvg.Accum[2],false),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
+            MF_DrawChartupdateDetail('MTMoveAvg20','',getDollarValue(moveAvg.Accum[0]),moveAvg.Style[0],'20-Day Average\nOver: ' + moveAvg.Good[0] + '   - Under: ' + moveAvg.Bad[0] + '\n\n10-Days\nOver: ' + moveAvg.Good[3] + '  -  Under: ' + moveAvg.Bad[3]);
+            MF_DrawChartupdateDetail('MTMoveAvg50','',getDollarValue(moveAvg.Accum[1]) + ' / ' + getDollarValue(moveAvg.Accum[2]),moveAvg.Style[1],'50-Day Average\nOver: ' + moveAvg.Good[1] + '  -  Under: ' + moveAvg.Bad[1] + '\n\n200-Day Average\nOver: ' + moveAvg.Good[2] + '  -  Under: ' + moveAvg.Bad[2]);
             MF_DrawChartupdateDetail('MTYTDPriceChange','',getDollarValue(Math.min(...xAxis)) + ' - ' + getDollarValue(Math.max(...xAxis)));
         }
     }
@@ -2313,7 +2313,7 @@ async function MenuReportsAccountsGo() {
                             if(ad.subtype.display == '401k') {acard[4] += useBalance;}
                             if((ad.subtype.name == 'credit_card') && cards < 5) {
                                 MTP = [];MTP.Col = cards;
-                                MTP.Title = getDollarValue(useBalance,MTFlexTitle[4].Format == 2 ? true : false);
+                                MTP.Title = MT_GetFormattedValue(MTFlexTitle[4].Format,useBalance);
                                 MTP.Subtitle = ad.displayName;
                                 MTP.Style = css.red;
                                 MF_QueueAddCard(MTP);
@@ -2331,7 +2331,7 @@ async function MenuReportsAccountsGo() {
                 MTFlexCard = [];
                 MF_GridCardAdd(1,9,9,'HV','Total Brokerage','Total Brokerage',css.green,css.red,'', '',-9999999);
                 MF_GridCardAdd(1,10,10,'HV','Net Change','Net Change',css.green,css.red,'', '',-9999998);
-                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',1);
+                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',-9999997);
                 MF_GridCardAddAll({section: 2, x: 10, y: 'AutoCard', sort: 'D', xf: 2, isPos: css.green, isNeg: css.red});
                 break;
             case 4:
@@ -2351,7 +2351,7 @@ async function MenuReportsAccountsGo() {
                 for (let i = 0; i < 5; i++) {
                     if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {
                         if(acard[i] != 0) {
-                            MTP = [];MTP.Col = cards;MTP.Title = getDollarValue(acard[i],MTFlexTitle[4].Format == 2 ? true : false);MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
+                            MTP = [];MTP.Col = cards;MTP.Title = MT_GetFormattedValue(MTFlexTitle[4].Format,acard[i]);MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
                             MTP.Style = [css.green,css.green,css.red,css.green,css.green][i];MF_QueueAddCard(MTP);
                         }
                     }
@@ -3571,11 +3571,11 @@ async function InvestmentsDrawerCash(inP) {
     DrawerDrawLine(divTop2,'Account type','Investments');
     DrawerDrawLine(divTop2,'Account subtype',account.accountSubtype);
     DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance,2));
-    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance,2));
-    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance,2));
+    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance));
+    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance));
+    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance));
     DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings,2));
+    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings));
     DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
     DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
@@ -3639,7 +3639,7 @@ async function InvestmentsDrawer(inP) {
                 pct = Number(pct);
                 if(isNaN(pct) == false) {
                     pct = thisHld.quantity * (pct * 0.01);
-                    DrawerDrawLine(divTop2,'Estimated Yearly Income',getDollarValue(pct,false));
+                    DrawerDrawLine(divTop2,'Estimated Yearly Income',getDollarValue(pct));
                 }
             }
             if(bondInfo[2] != '') DrawerDrawLine(divTop2,'Maturity Date ',bondInfo[2]);
@@ -3674,8 +3674,8 @@ async function InvestmentsDrawer(inP) {
         DrawerDrawLine(divTop2,'Account',thisHld.account.displayName,'','margin-top:20px;');
         if(thisHld.account.institution != null) {DrawerDrawLine(divTop2,'Institution',thisHld.account.institution.name);}
     }
-    DrawerDrawLine(divTop2,'Price',getDollarValue(thisHld.closingPrice,false));
-    DrawerDrawLine(divTop2,'Current Value',getDollarValue(allValue,false));
+    DrawerDrawLine(divTop2,'Price',getDollarValue(thisHld.closingPrice));
+    DrawerDrawLine(divTop2,'Current Value',getDollarValue(allValue));
     DrawerDrawLine(divTop2,'Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + thisHld.name + ')');
 
     let useGainLoss = allValue - allCost;
@@ -3897,7 +3897,7 @@ async function MenuAccountsSummary() {
     }
 
     function MenuAccountSummaryUpdate(inGroup,inA,inBal,inDesc) {
-        let ttLit = inDesc + ': \xa0\xa0\xa0' + getDollarValue(inBal,2);
+        let ttLit = inDesc + ': \xa0\xa0\xa0' + getDollarValue(inBal);
         let tta='',ttl='';
         if(inA == true) {tta = ttLit;} else {ttl = ttLit;}
 
@@ -4177,9 +4177,9 @@ async function MenuDashboardAccounts() {
             let pBal = bal + runAmt;
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
             cec('td','MTSideDrawerSummaryData',newRow,snapshotData.accounts[i].displayName);
-            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal,false));
-            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(runAmt,false));
-            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal,false));
+            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal));
+            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(runAmt));
+            cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal));
         }
         if(newDiv) sortTableByColumn(newDiv);
 
@@ -4335,7 +4335,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
     MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
     MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
-    MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement (Simple Portfolio Performance)','MT_AccountsNetTransfers','checkbox');
+    MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement (Adjusted Portfolio Performance)','MT_AccountsNetTransfers','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
@@ -4752,7 +4752,7 @@ function onClickOpenWindow(cn) {
             for (let i = 0; i < MTFlexTitle.length; i ++) {
                 const t = MTFlexTitle[i];
                 if(t.IsHidden != true) {
-                    let fd2 = MT_GetFormattedValue(t.Format,MTFlexRow[z][i])
+                    let fd2 = MT_GetFormattedValue(t.Format,MTFlexRow[z][i]);
                     d.push({sort: 0, field1: MTFlexTitle[i].Title, style1: 'font-weight: 600;;',field2: fd2});
                 }
             }
@@ -4765,7 +4765,7 @@ function onClickOpenWindow(cn) {
                  if(useRow.Section == x) {
                      if(z == '' || useRow.PK == z) {
                          cn[1] = MT_GetPK(useRow.PK);
-                         d.push({sort: 1, field1: useRow[0], style1: 'font-size: 14px;',field2: getDollarValue(useRow[y],2), style2: 'font-size: 14px;',val: useRow[y]});
+                         d.push({sort: 1, field1: useRow[0], style1: 'font-size: 14px;',field2: getDollarValue(useRow[y]), style2: 'font-size: 14px;',val: useRow[y]});
                          tot+=useRow[y];
                      }
                  }
@@ -4847,7 +4847,6 @@ function onClickFixDate() {
         const mtID = document.getElementById('MTEndDate');
         if(mtID) {mtID.value = getDates('s_YMD');}
     }
-
 }
 
 function onClickUpdateTicker() {
@@ -5036,8 +5035,8 @@ function onClickSumCells() {
     }
     if(MTFlexSum[0] < 2) {MTFlex.bub.setAttribute('style','display:none;');} else {
         MTFlex.bub.setAttribute('style','display:block;');
-        MTFlex.bub1.textContent = 'SUM: ' + getDollarValue(MTFlexSum[1],false);
-        MTFlex.bub2.textContent = 'AVG: ' + getDollarValue(MTFlexSum[1]/MTFlexSum[0],false);
+        MTFlex.bub1.textContent = 'SUM: ' + getDollarValue(MTFlexSum[1]);
+        MTFlex.bub2.textContent = 'AVG: ' + getDollarValue(MTFlexSum[1]/MTFlexSum[0]);
         MTFlex.bub5.textContent = 'CNT: ' + MTFlexSum[0];
     }
 }
