@@ -62,14 +62,9 @@ You can further specify MM-Tweaks Investment Category settings by going to **Rep
 ![Settings](/images/MTInvestmentSettings.png)
 
 
-### Monarch Money Tweaks - Information on how Investment cash is computed
+#### Holding Category override (applies to this ticker)
 
-💵 Monarch receives an _Account Balance_ as well as _holdings_ for each investment account.  The difference between the _Account Balance_ and the value of the _holdings_ at that snapshot in time would be the "uninvested" portion of the portfolio.  You'll see this cash figure in both Reports / Accounts [Overall Cash Statement] as well as Reports / Investments with each "CASH/MONEY MARKET" entry.  
-
-🔖 If the cash amount is incorrect, first check whether any holdings are missing — if you find missing holdings, contact Monarch support.
-Note that if the account contains any **crypto** or you’ve **manually** added holdings, the system will not search for uninvested cash because manual entries or crypto can skew the account balance returned from the source. If everything looks correct but the amount is still wrong, contact me via Reddit DM, the Discussion thread above, or direct email.
-
-To make cash appear in Cash Holdings, go to Accounts, select the account, scroll down to the holdings, click the > next to the holding to open the side panel, and change the holding Type to “Cash.”
+Monarch Money assigns each holding a type, which you can change inside Monarch Money: go to Accounts → select the brokerage account → scroll to Holdings, then tap the “>” by a holding to choose one of the nine available types. MM-Tweaks lets you refine those types with custom labels (for example: the Sector, the Asset Class, the Index Stategy, Bond, Municipal Bond, State Bond, Corporate Bond), either for the entire account or for individual holdings that have a ticker. You can assign a Category if the holding has a ticker only.
 
 
 ### Monarch Money Tweaks - Reports (Trends, Net Income, Accounts and Investments)
@@ -109,6 +104,16 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
+
+### Monarch Money Tweaks Reports / Accounts [Overall Cash Statement] - Information on how Investment cash is computed
+
+💵 Monarch receives an _Account Balance_ as well as _holdings_ for each investment account.  The difference between the _Account Balance_ and the value of the _holdings_ at that snapshot in time would be the "uninvested" portion of the portfolio.  You'll see this cash figure in both Reports / Accounts [Overall Cash Statement] as well as Reports / Investments with each "CASH/MONEY MARKET" entry.  
+
+🔖 If the cash amount is incorrect, first check whether any holdings are missing — if you find missing holdings, contact Monarch support.
+Note that if the account contains any **crypto** or you’ve **manually** added holdings, the system will not search for uninvested cash because manual entries or crypto can skew the account balance returned from the source. If everything looks correct but the amount is still wrong, contact me via Reddit DM, the Discussion thread above, or direct email.
+
+To make cash appear in Cash Holdings, go to Accounts, select the account, scroll down to the holdings, click the > next to the holding to open the side panel, and change the holding Type to “Cash.”
+
 
 **Monarch Tweaks Reports / Accounts / Personal Statement**
 ![Settings](/images/MT_V3_12.png)
