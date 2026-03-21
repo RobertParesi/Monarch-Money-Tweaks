@@ -2313,7 +2313,7 @@ async function MenuReportsAccountsGo() {
                             if(ad.subtype.display == '401k') {acard[4] += useBalance;}
                             if((ad.subtype.name == 'credit_card') && cards < 5) {
                                 MTP = [];MTP.Col = cards;
-                                MTP.Title = MT_GetFormattedValue(MTFlexTitle[4].Format,useBalance);
+                                MTP.Title = getDollarValue(useBalance,MTFlexTitle[4].Format == 2 ? true : false);
                                 MTP.Subtitle = ad.displayName;
                                 MTP.Style = css.red;
                                 MF_QueueAddCard(MTP);
@@ -2351,7 +2351,7 @@ async function MenuReportsAccountsGo() {
                 for (let i = 0; i < 5; i++) {
                     if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {
                         if(acard[i] != 0) {
-                            MTP = [];MTP.Col = cards;MTP.Title = MT_GetFormattedValue(MTFlexTitle[4].Format,acard[i]);MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
+                            MTP = [];MTP.Col = cards;MTP.Title = getDollarValue(acard[i],MTFlexTitle[4].Format == 2 ? true : false);;MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
                             MTP.Style = [css.green,css.green,css.red,css.green,css.green][i];MF_QueueAddCard(MTP);
                         }
                     }
