@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.44
+// @version      4.36.45
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -71,9 +71,9 @@ function MM_Init() {
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-top: 2px; width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
-    addStyle('.MTItemClass { padding-top: 6px;padding-bottom: 6px;}');
-    addStyle('.MTInputClass { margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
-    addStyle('.MTInputTitle { font-size: 14px; height: 30px; font-weight: 500;}');
+    addStyle('.MTItemClass {padding-top: 6px;padding-bottom: 6px;}');
+    addStyle('.MTInputClass {margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
+    addStyle('.MTInputTitle {font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
@@ -82,49 +82,49 @@ function MM_Init() {
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
-    addStyle('.MTWindowButton:last-child { margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
+    addStyle('.MTWindowButton:last-child {margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
     addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
-    addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
-    addStyle('.MTFlexContainerHeader { display: flex; justify-content: space-between;  padding: 16px 24px;');
-    addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
+    addStyle('.MTFlexContainerPanel {display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
+    addStyle('.MTFlexContainerHeader {display: flex; justify-content: space-between;  padding: 16px 24px;');
+    addStyle('.MTFlexContainerCard {display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 20px 20px 20px; border-spacing: 0px;}');
     addStyle('.MTFlexGrid th,.MTFlexGrid td { padding-right: 6px; padding-left: 6px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
-    addStyle('.MTFlexGridTitleRow { font-size: 15.1px; font-weight: 600; height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
+    addStyle('.MTFlexGridTitleRow {font-size: 15.1px; font-weight: 600; height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px; border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 15.1px; font-weight: 600; height: 30px;}');
+    addStyle('.MTFlexGridRow {font-size: 15.1px; font-weight: 600; height: 30px;}');
     addStyle('.MTFlexSpacer, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
     addStyle('.MTSpacerClass {' + bdrb2 + '}');
     addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
-    addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
+    addStyle('.MTFlexGridItem:hover {' + selectBackground + '}');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
-    addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
+    addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 {font-size: 15px;}');
     addStyle('.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align: right !important;}');
     addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600; padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
-    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis; max-width: 250px;}');
+    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
     addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 { ' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
-    addStyle('.MTFlexError {text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
-    addStyle('.MTFlexBig {font-size: 18px; font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
-    addStyle('.MTFlexCardBig {font-size: 20px;font-weight: 600; padding-top: 6px; text-align: center;}');
-    addStyle('.MTFlexText {font-size: 14px;' + panelText + 'font-weight: 600;margin-left: 12px;}');
-    addStyle('.MTFlexSmall {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
-    addStyle('.MTFlexImage {border-radius: 100%; width: 23px; height: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; }');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
+    addStyle('.MTFlexError{text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
+    addStyle('.MTFlexBig{font-size: 18px; font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
+    addStyle('.MTFlexCardBig{font-size: 20px;font-weight: 600; padding-top: 6px; text-align: center;}');
+    addStyle('.MTFlexText{font-size: 14px;' + panelText + 'font-weight: 600;margin-left: 12px;}');
+    addStyle('.MTFlexSmall{font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
+    addStyle('.MTFlexImage{border-radius: 100%; width: 23px; height: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; }');
     addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; ' + css.font + 'padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
-    addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 8px; }');
-    addStyle('.MTSideDrawerHeaderMsg { color: #ffffff; background-color: ' + accentColor + ' padding-left: 12px;padding-top: 3px; height: 30px;font-weight: 600; border-radius: 6px; ' + css.font + '}');
-    addStyle('.MTSideDrawerItem, .MTSideDrawerMonth { margin-top: 5px; place-content: stretch space-between; display: flex; ');
-    addStyle('.MTSideDrawerItem2 { place-content: stretch space-between; display: flex;');
-    addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
-    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
-    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; }');
+    addStyle('.MTSideDrawerHeader {' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + ' padding-left: 12px;padding-top: 3px; height: 30px;font-weight: 600; border-radius: 6px; ' + css.font + '}');
+    addStyle('.MTSideDrawerItem, .MTSideDrawerMonth {margin-top: 5px; place-content: stretch space-between; display: flex; ');
+    addStyle('.MTSideDrawerItem2 {place-content: stretch space-between; display: flex;');
+    addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
+    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
+    addStyle('.MTSideDrawerDetail3 {' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; }');
     addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor: pointer; color: rgb(50, 170, 240) !important;');
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 200px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white; font-weight: bold;}');
@@ -142,8 +142,8 @@ function MM_Init() {
     addStyle('.ReportsTooltipRow__Diff-k9pa1b-3 {display: ' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}');
     addStyle('.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display: ' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}');
     addStyle('.tooltip {position: relative; display: inline-block;}');
-    addStyle('.tooltip .tooltiptext { width: 270px; font-size: 14px; font-weight: 600; text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
-    addStyle('.tooltip .tooltiptext::after { position: absolute; top:100%; left: 50%; border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
+    addStyle('.tooltip .tooltiptext {width: 270px; font-size: 14px; font-weight: 600; text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
+    addStyle('.tooltip .tooltiptext::after {position: absolute; top:100%; left: 50%; border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
     addStyle('input::placeholder {font-size: 12px;}');
 
@@ -496,7 +496,7 @@ function MT_GridDrawDetails() {
                             return;
                     }
                     let pct = MT_GridPercent(w1,w2,thisTitle.ShowPercentShade, sp.Type == 'Dif' ? 1 : 2,useRow.IgnoreShade);
-                    if(sp.AsRaw == true) {V1 = pct[2]; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 = V2 + ' ' + pct[0];}
+                    if(sp.AsRaw == true) {V1 = pct[2]; MTFlexRow[rowI][j] = V1; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 = V2 + ' ' + pct[0];}
                     S2 = pct[1];
                 }
                 if(useRow.IsHeader == true || isSubTotal == true) {if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }}
