@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.46
+// @version      4.36.47
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -488,7 +488,7 @@ function MT_GridDrawDetails() {
                             return;
                     }
                     let pct = MT_GridPercent(w1,w2,thisTitle.ShowPercentShade, sp.Type == 'Dif' ? 1 : 2,useRow.IgnoreShade);
-                    if(sp.AsRaw == true) {V1 = pct[2]; MTFlexRow[rowI][j] = V1; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 += ' ' + pct[0];}
+                    if(sp.AsRaw == true) {V1 = pct[2]; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 += ' ' + pct[0];}
                     S2 = pct[1];
                 }
                 if(useRow.IsHeader == true || isSubTotal == true) {if(thisTitle.IgnoreTotals == true) { V1 = ''; V2 = ''; }}
@@ -939,6 +939,13 @@ function MF_GridCalcDifference(inSection,in1,in2,inCols,inOp) {
             MTFlexRow[p1][inCols[i]] = MTFlexRow[p2][inCols[i]] + MTFlexRow[p3][inCols[i]];
         } else { MTFlexRow[p1][inCols[i]] = MTFlexRow[p2][inCols[i]] - MTFlexRow[p3][inCols[i]]; }
         MTFlexRow[p1][inCols[i]] = get2dec(MTFlexRow[p1][inCols[i]]);
+    }
+}
+
+function MF_GridCalcRowPercent(inCol,inX, inY) {
+    for (let i = 0; i < MTFlexRow.length; i++) {
+        let p = MT_GridPercent(MTFlexRow[i][inX], MTFlexRow[i][inY], false, 1, true);
+        MTFlexRow[i][inCol] = p[2];
     }
 }
 
@@ -2506,6 +2513,7 @@ async function MenuReportsInvestmentsGo() {
             if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
             MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
         }
+        MF_GridCalcRowPercent(11,9,8)
         if(MTFlex.Button2 < 2) {
             MF_GridCalcColPercent(12, 8,false);
             MF_GridCalcColPercent(13, 8,true);
