@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.47
+// @version      4.36.49
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -949,8 +949,8 @@ function MF_GridCalcRowPercent(inCol,inX, inY) {
     }
 }
 
-function MF_GridCalcColPercent(inCol, inX, inOnTotal) {
-    let basedTotal = MF_GridGetValue(0, inX),basedOn = 0,p = 0;
+function MF_GridCalcColPercent(inCol, inX, inOnTotal,inGrand) {
+    let basedTotal = MF_GridGetValue(inGrand, inX),basedOn = 0,p = 0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         if (!inOnTotal && basedOn != MTFlexRow[i].BasedOn) {
             basedOn = MTFlexRow[i].BasedOn;
@@ -2515,8 +2515,8 @@ async function MenuReportsInvestmentsGo() {
         }
         MF_GridCalcRowPercent(11,9,8)
         if(MTFlex.Button2 < 2) {
-            MF_GridCalcColPercent(12, 8,false);
-            MF_GridCalcColPercent(13, 8,true);
+            MF_GridCalcColPercent(12, 8,false,0);
+            MF_GridCalcColPercent(13, 8,true,MTFlex.Button1 == 0 ? 1 : 0);
         }
         await InvestmentCards();
 
