@@ -55,6 +55,13 @@ Monarch Money assigns each holding a type, which you can change inside Monarch M
 
 Check this box to include a summary of this account on your Monarch Money Dashboard.
 
+### Monarch Money Tweaks - Investment Holding Settings 
+
+You can further specify MM-Tweaks Investment Category settings by going to **Reports** and **Investments** and select the **>** for each holding. Click on the **...** in the upper-right in the side-panel to access this screen.
+
+![Settings](/images/MTInvestmentSettings.png)
+
+
 ### Monarch Money Tweaks - Information on how Investment cash is computed
 
 💵 Monarch receives an _Account Balance_ as well as _holdings_ for each investment account.  The difference between the _Account Balance_ and the value of the _holdings_ at that snapshot in time would be the "uninvested" portion of the portfolio.  You'll see this cash figure in both Reports / Accounts [Overall Cash Statement] as well as Reports / Investments with each "CASH/MONEY MARKET" entry.  
