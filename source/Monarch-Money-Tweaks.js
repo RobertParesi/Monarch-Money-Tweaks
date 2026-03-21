@@ -949,8 +949,8 @@ function MF_GridCalcRowPercent(inCol,inX, inY) {
     }
 }
 
-function MF_GridCalcColPercent(inCol, inX, inOnTotal,inGrand) {
-    let basedTotal = MF_GridGetValue(inGrand, inX),basedOn = 0,p = 0;
+function MF_GridCalcColPercent(inCol, inX, inOnTotal) {
+    let basedTotal = MF_GridGetValue(inOnTotal == true ? 1 : 0, inX),basedOn = 0,p = 0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         if (!inOnTotal && basedOn != MTFlexRow[i].BasedOn) {
             basedOn = MTFlexRow[i].BasedOn;
@@ -1105,6 +1105,7 @@ function MF_DrawBarChart(inLocation,inP) {
 
     MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
     MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
+    MF_DrawChartupdateDetail('MTItems','Total Items',items.length);
 
     ctx.font = '13.5px sans-serif';
     ctx.textBaseline = 'middle';
@@ -2508,15 +2509,17 @@ async function MenuReportsInvestmentsGo() {
 
         await InvestmentHoldings();
         await InvestmentCash();
-        if(MTFlex.Button1 == 0) { MF_GridRollup(1,2,1,'Positions');} else {
+        if(MTFlex.Button1 == 0) {
+            MF_GridRollup(1,2,1,'Positions','All|2|8|Total');
+        } else {
             MF_GridGroupByPK(8,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All');
             if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
-            MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
+           MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
         }
         MF_GridCalcRowPercent(11,9,8)
         if(MTFlex.Button2 < 2) {
-            MF_GridCalcColPercent(12, 8,false,0);
-            MF_GridCalcColPercent(13, 8,true,MTFlex.Button1 == 0 ? 1 : 0);
+            MF_GridCalcColPercent(12, 8,false);
+            MF_GridCalcColPercent(13, 8,true);
         }
         await InvestmentCards();
 
@@ -3548,6 +3551,7 @@ async function SummaryDrawer(p) {
     DrawerDrawLine(divTop2,'','0','MTTotal');
     DrawerDrawLine(divTop2,'','0','MTMax');
     DrawerDrawLine(divTop2,'','0','MTMin');
+    DrawerDrawLine(divTop2,'','0','MTItems');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     MF_DrawBarChart(divTop2,p);
     let r = MT_BarChartEmbed(divTop,divTop2);
