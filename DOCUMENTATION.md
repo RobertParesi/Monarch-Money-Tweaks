@@ -130,6 +130,10 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 **Monarch Tweaks Reports / Investments Detail**
 ![Settings](/images/MT_Invest03.png)
 
+**Monarch Tweaks Reports / Investment Category Totals & Subtotals**
+![Settings](/images/MT_Invest04.png)
+
+
 ### Other Monarch Money Tweaks non-report options:
 
 **Monarch Tweaks Split Transaction 50/50**
