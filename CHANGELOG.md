@@ -10,6 +10,7 @@
      - FIX: Accounts Dashboard Pending amount for deposits corrected.
      - FIX: Resolved where sometimes MM-Tweaks settings did not appear.
      - FIX: Changing a non ticker holding type to an Equity type would cause side panel to not display properly.
+     - FIX: Cost per share on Bonds/Fixed Income could be incorrect.
      - INTERNAL: More efficient style sheet & style-sheet updating.
      - INTERNAL: Now using Monarch's data-external-id across the system to avoid UI regressions.
 
