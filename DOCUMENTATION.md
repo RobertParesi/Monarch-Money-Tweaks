@@ -30,7 +30,7 @@ You can further specify expenses at the Group level by choosing between "Fixed S
 You can further specify MM-Tweaks special Account settings by going to **Reports** and **Accounts** and select the **>** for each account. Click on the **...** in the upper-right in the side-panel to access this screen.
 
 <br>
-<img src="images/MTAccountSettings.png" style="width:60%; height:auto;">
+<img src="images/MTAccountSettings.png">
 
 #### Account Group
 
