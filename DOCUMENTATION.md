@@ -77,7 +77,7 @@ Monarch Money assigns each holding a type, which you can change inside Monarch M
 All four reports use the same flex-grid, structure and options:
 
 <br>
-<img src="images/MT_V3_99.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_99.png">
 
 * The "Sub Report" feature enables you to view the report from different perspectives.
 * The "How report is grouped" option allows you to select the data grouping. Click on any column header to sort the report in ascending or descending order.
