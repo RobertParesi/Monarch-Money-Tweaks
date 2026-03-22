@@ -128,6 +128,7 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 ![Settings](/images/MT_Invest02.png)
 
 **Monarch Tweaks Reports / Investments Detail**
+<br>
 <img src="images/MT_Invest03.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Investment Category Totals & Subtotals**
