@@ -105,7 +105,7 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Trends > History Drill-down**
 <br>
-<img src="images/MT_History.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Net Income (based on Tags)**
 <br>
