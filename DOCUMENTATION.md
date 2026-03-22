@@ -13,19 +13,24 @@ It's recommended to start with the following steps, all explained further below:
 
 ### Monarch Money Tweaks - Settings
 
-![Settings](/images/MT_V3_01.png)
+<br>
+<img src="images/MT_V3_01" style="width:60%; height:auto;">
+
 
 ### Monarch Money Tweaks - Fixed vs Flexible
 
 You can further specify expenses at the Group level by choosing between "Fixed Spending" and "Flexible Spending" within the Trends and Net Income reports. To do this, navigate to **Settings > Categories** and select the appropriate option. Please note, MMT does not utilize the Fixed and Flexible Spending settings within Monarch, as MMT operates solely at the Group level.
 
-![Settings](/images/MTFixed.png)
+<br>
+<img src="images/MTFixed" style="width:60%; height:auto;">
+
 
 ### Monarch Money Tweaks - Account Settings 
 
 You can further specify MM-Tweaks special Account settings by going to **Reports** and **Accounts** and select the **>** for each account. Click on the **...** in the upper-right in the side-panel to access this screen.
 
-![Settings](/images/MTAccountSettings.png)
+<br>
+<img src="images/MTAccountSettings.png" style="width:60%; height:auto;">
 
 #### Account Group
 
@@ -71,39 +76,53 @@ Monarch Money assigns each holding a type, which you can change inside Monarch M
 
 All four reports use the same flex-grid, structure and options:
 
-![Settings](/images/MT_V3_99.png)
+<br>
+<img src="images/MT_V3_99.png" style="width:60%; height:auto;">
 
 * The "Sub Report" feature enables you to view the report from different perspectives.
 * The "How report is grouped" option allows you to select the data grouping. Click on any column header to sort the report in ascending or descending order.
 * The "Account Group Filter" will appear only after you have edited your accounts and assigned your custom account groups.
 
 **Monarch Tweaks Reports - Trends Compare, Monthly & Yearly sub-reports**
-![Settings](/images/MT_V3_04.png)
+<br>
+<img src="images/MT_V3_04.png" style="width:60%; height:auto;">
+
 
 **Monarch Tweaks Reports / Trends Compare**
-![Settings](/images/MTTrendInfo.png)
+<br>
+<img src="images/MTTrendInfo.png" style="width:60%; height:auto;">
+
 
 **Monarch Tweaks Reports / Trends Monthly**
-![Settings](/images/MT_V3_05.png)
+<br>
+<img src="images/MT_V3_05.png" style="width:60%; height:auto;">
+
 
 **Monarch Tweaks Reports / Trends Yearly**
-![Settings](/images/MT_V3_06.png)
+<br>
+<img src="images/MT_V3_06.png" style="width:60%; height:auto;">
+
 
 **Monarch Tweaks Reports / Trends > History Drill-down**
-![Settings](/images/MT_V3_History.png)
+<br>
+<img src="images/MT_History.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Net Income (based on Tags)**
-![Settings](/images/MT_V3_09.png)
+<br>
+<img src="images/MT_V3_09.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Net Income (based on Notes Field)**
 ![Settings](/images/MT_TagNotes.png)
 ![Settings](/images/MT_TagsNotes2.png)
 
 **Monarch Tweaks Reports / Accounts**
-![Settings](/images/MT_V3_07.png)
+<br>
+<img src="images/MT_V3_07.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Accounts**
-![Settings](/images/MT_V3_08.png)
+<br>
+<img src="images/MT_V3_08.png" style="width:60%; height:auto;">
+
 
 ### Monarch Money Tweaks Reports / Accounts [Overall Cash Statement] - Information on how Investment cash is computed
 
