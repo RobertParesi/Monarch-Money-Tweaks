@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36
+// @version      4.37
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1621,7 +1621,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
 
     let divTop = document.getElementById('root'),ff = null;
     let div = cec('div','MTModelContainer',divTop);
-    addStyle('.MTField1 {width: ' + f1 + 'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}');
+    addStyle('.MTField1 {width: ' + f1 + ';white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}');
     addStyle('.MTField2 {width: ' + f2 + '}');
     div = cec('div','MTModelWindow',div,'','',css.FontFamily,'','',t.id);
     divTop = cec('div','MTModelWindow2',div);
@@ -4785,7 +4785,7 @@ function onClickOpenWindow(cn) {
             for (let i = 0; i < accountsData.accounts.length; i ++) {
                 let ad = accountsData.accounts[i];
                 if(ad.id == item) {
-                    d.push({sort: 1, field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance), style2: ''});
+                    d.push({sort: 1, field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance)});
                     tot+=ad.displayBalance;
                     break;
                 }
@@ -4802,15 +4802,15 @@ function onClickOpenWindow(cn) {
             if(useAmt < 0) useColor = css.red;
         }
         d.push({field1: useLit, style1: '', field2: getDollarValue(useAmt), style2: useColor});
-        if(t.pending == true) {d.push({field1: 'Status', style1: '', field2: 'Pending', style2: ''});}
-        d.push({field1: 'Account', style1: '', field2: t.account.name, style2: ''});
-        d.push({field1: 'Date', style1: '', field2: getMonthName(t.date,2), style2: ''});
-        d.push({field1: 'Group', style1: '', field2: t.category.group.name, style2: ''});
-        d.push({field1: 'Category', style1: '', field2: t.category.name, style2: ''});
-        d.push({field1: 'Owner', style1: '', field2: t.ownedByUser != null ? t.ownedByUser.displayName : 'Shared', style2: ''});
-        d.push({field1: 'Goal', style1: '', field2: t.goal != null ? t.goal : '(None)', style2: ''});
-        d.push({field1: 'Tags', style1: '', field2: t.tags.length == 0 ? '(None)' : getTags(t.tags), style2: ''});
-        d.push({field1: t.notes, style1: '', field2: null, style2: ''});
+        if(t.pending == true) {d.push({field1: 'Status', style1: '', field2: 'Pending'});}
+        d.push({field1: 'Account', style1: '', field2: t.account.name});
+        d.push({field1: 'Date', style1: '', field2: getMonthName(t.date,2)});
+        d.push({field1: 'Group', style1: '', field2: t.category.group.name});
+        d.push({field1: 'Category', style1: '', field2: t.category.name});
+        d.push({field1: 'Owner', style1: '', field2: t.ownedByUser != null ? t.ownedByUser.displayName : 'Shared'});
+        d.push({field1: 'Goal', style1: '', field2: t.goal != null ? t.goal : '(None)'});
+        d.push({field1: 'Tags', style1: '', field2: t.tags.length == 0 ? '(None)' : getTags(t.tags)});
+        d.push({field1: t.notes, style1: '', field2: null});
         b.push({name: 'Edit', id: 'TransEdit'});
         b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
         cn[1] = t.merchant.name;cn[2] = t.id;
