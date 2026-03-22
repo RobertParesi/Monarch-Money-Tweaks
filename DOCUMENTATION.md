@@ -14,7 +14,7 @@ It's recommended to start with the following steps, all explained further below:
 ### Monarch Money Tweaks - Settings
 
 <br>
-<img src="images/MT_V3_01.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_01.png" style="width:66%; height:auto;">
 
 
 ### Monarch Money Tweaks - Fixed vs Flexible
@@ -22,7 +22,7 @@ It's recommended to start with the following steps, all explained further below:
 You can further specify expenses at the Group level by choosing between "Fixed Spending" and "Flexible Spending" within the Trends and Net Income reports. To do this, navigate to **Settings > Categories** and select the appropriate option. Please note, MMT does not utilize the Fixed and Flexible Spending settings within Monarch, as MMT operates solely at the Group level.
 
 <br>
-<img src="images/MTFixed.png" style="width:60%; height:auto;">
+<img src="images/MTFixed.png" style="width:66%; height:auto;">
 
 
 ### Monarch Money Tweaks - Account Settings 
@@ -90,17 +90,17 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Trends Compare**
 <br>
-<img src="images/MTTrendInfo.png" style="width:60%; height:auto;">
+<img src="images/MTTrendInfo.png" style="width:66%; height:auto;">
 
 
 **Monarch Tweaks Reports / Trends Monthly**
 <br>
-<img src="images/MT_V3_05.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_05.png" style="width:66%; height:auto;">
 
 
 **Monarch Tweaks Reports / Trends Yearly**
 <br>
-<img src="images/MT_V3_06.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_06.png" style="width:66%; height:auto;">
 
 
 **Monarch Tweaks Reports / Trends > History Drill-down**
