@@ -113,9 +113,9 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Net Income (based on Notes Field)**
 <br>
-<img src="imagesMT_TagNotes.png" style="width:60%; height:auto;">
+<img src="images/MT_TagNotes.png" style="width:60%; height:auto;">
 <br>
-<img src="images//MT_TagsNotes2.png" style="width:60%; height:auto;">
+<img src="images/MT_TagsNotes2.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Accounts**
 <br>
