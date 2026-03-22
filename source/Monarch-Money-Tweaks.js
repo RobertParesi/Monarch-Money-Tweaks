@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.36.49
+// @version      4.36
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -315,7 +315,7 @@ function MF_GridDraw(inRedraw) {
         if(inRedraw == false) {MT_GridDrawCards();}
     }
     if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);}
-    if(glo.debug == 1) addConsole(MTFlex,MTFlexTitle,MTFlexRow);
+    if(glo.debug == 1) addConsole('Flex Grid',[MTFlex,MTFlexTitle],MTFlexRow);
     document.body.style.cursor = "";
 }
 
