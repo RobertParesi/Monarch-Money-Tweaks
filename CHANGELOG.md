@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.36 (Beta)**
+* **Version 4.36 (March 22, 2026)**
      - NEW: Report cards enhanced — now sorted and showing percentages.
      - NEW: Reports / Investments: add custom holding categories and new "By category" & "By account/category" reports.
      - NEW: Reports / Investments: custom holding category can be overridden at the Account level (Reports / Accounts).
