@@ -165,8 +165,8 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 
 **Monarch Tweaks Split Transaction 50/50**
 <br>
-<img src="images/MT__V3_03.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_03.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Household Breakdown on Accounts**
 <br>
-<img src="images/MT__V3_13.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_13.png" style="width:60%; height:auto;">
