@@ -462,20 +462,21 @@ function MT_GridDrawDetails() {
                 // Calc Percentages
                 if((thisTitle.ShowPercent != null)) {
                     const sp = thisTitle.ShowPercent;
-                    let w1 = 0, w2 = 0,sumCols=null;
-
+                    let w1 = 0, w2 = 0;
                     switch (sp.Type) {
                         case 'Dif':
-                            sumCols = (cols) => {
-                                let first = true, sum = 0;
-                                for (const c of cols) {
-                                    const v = useRow[c];
-                                    if (v == null) continue;
-                                    if (first) { sum = v; first = false; } else { sum += (sp.Operand === '+' ? v : -v); }
+                            for (let k = 0; k < sp.Col1.length; k++) {
+                                rowVal = useRow[sp.Col1[k]];
+                                if(rowVal != null) {
+                                    if(k == 0) {w1 = rowVal;} else { w1 += (sp.Operand == '+') ? rowVal : -rowVal;}
                                 }
-                                return sum;
-                            };
-                            w1 = sumCols(sp.Col1);w2 = sumCols(sp.Col2);
+                            }
+                            for (let k = 0; k < sp.Col2.length; k++) {
+                                rowVal = useRow[sp.Col2[k]];
+                                if(rowVal != null) {
+                                    if(k == 0) {w2 = rowVal;} else {w2 += (sp.Operand == '+') ? rowVal : -rowVal;}
+                                }
+                            }
                             break;
                         case 'Column':
                             if(sp.Col1 != undefined) {
@@ -2351,7 +2352,7 @@ async function MenuReportsAccountsGo() {
                 for (let i = 0; i < 5; i++) {
                     if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {
                         if(acard[i] != 0) {
-                            MTP = [];MTP.Col = cards;MTP.Title = getDollarValue(acard[i],MTFlexTitle[4].Format == 2 ? true : false);;MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
+                            MTP = [];MTP.Col = cards;MTP.Title = getDollarValue(acard[i],MTFlexTitle[4].Format == 2 ? true : false);MTP.Subtitle = 'Total ' + ['Checking', 'Savings', 'Credit Cards', 'Investments','401k'][i];
                             MTP.Style = [css.green,css.green,css.red,css.green,css.green][i];MF_QueueAddCard(MTP);
                         }
                     }
@@ -2516,7 +2517,7 @@ async function MenuReportsInvestmentsGo() {
             if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
            MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
         }
-        MF_GridCalcRowPercent(11,9,8)
+        MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
             MF_GridCalcColPercent(12, 8,false);
             MF_GridCalcColPercent(13, 8,true);
@@ -3688,7 +3689,7 @@ async function InvestmentsDrawer(inP) {
     DrawerDrawLine(divTop2,'Unrealized Gain/Loss',getDollarValue(useGainLoss) + ' (' + useGainLossPct + '%)','','',null,'',useGainLoss < 0 ? css.red : css.green);
 
     if(thisHld.type == 'fixed_income') {
-        useGainLoss = (allQty / allCost) * 100;
+        if (allQty > 0) {useGainLoss = (allCost / allQty) * 100;} else {useGainLoss = 0;}
         DrawerDrawLine(divTop2,'Cost Per Share',getDollarValue(useGainLoss));
     }
 
