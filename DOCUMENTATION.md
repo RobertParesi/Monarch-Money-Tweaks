@@ -85,7 +85,7 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports - Trends Compare, Monthly & Yearly sub-reports**
 <br>
-<img src="images/MT_V3_04.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
 
 **Monarch Tweaks Reports / Trends Compare**
@@ -109,7 +109,7 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Net Income (based on Tags)**
 <br>
-<img src="images/MT_V3_09.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_09.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Net Income (based on Notes Field)**
 <br>
@@ -119,11 +119,11 @@ All four reports use the same flex-grid, structure and options:
 
 **Monarch Tweaks Reports / Accounts**
 <br>
-<img src="images/MT_V3_07.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Accounts**
 <br>
-<img src="images/MT_V3_08.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_08.png" style="width:66%; height:auto;">
 
 
 ### Monarch Money Tweaks Reports / Accounts [Overall Cash Statement] - Information on how Investment cash is computed
@@ -138,27 +138,27 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 
 **Monarch Tweaks Reports / Accounts / Personal Statement**
 <br>
-<img src="images/MT_V3_12.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_12.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports tag multiple cells**
 <br>
-<img src="images/MT_V3_10.png" style="width:60%; height:auto;">
+<img src="images/MT_V3_10.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Investments**
 <br>
-<img src="images/MT_Invest01.png" style="width:60%; height:auto;">
+<img src="images/MT_Invest01.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Investments**
 <br>
-<img src="images/MT_Invest02.png" style="width:60%; height:auto;">
+<img src="images/MT_Invest02.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Investments Detail**
 <br>
-<img src="images/MT_Invest03.png" style="width:60%; height:auto;">
+<img src="images/MT_Invest03.png" style="width:66%; height:auto;">
 
 **Monarch Tweaks Reports / Investment Category Totals & Subtotals**
 <br>
-<img src="images/MT_Invest04.png" style="width:60%; height:auto;">
+<img src="images/MT_Invest04.png" style="width:66%; height:auto;">
 
 
 ### Other Monarch Money Tweaks non-report options:
