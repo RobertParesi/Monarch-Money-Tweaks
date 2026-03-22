@@ -14,7 +14,7 @@ It's recommended to start with the following steps, all explained further below:
 ### Monarch Money Tweaks - Settings
 
 <br>
-<img src="images/MT_V3_01" style="width:60%; height:auto;">
+<img src="images/MT_V3_01.png" style="width:60%; height:auto;">
 
 
 ### Monarch Money Tweaks - Fixed vs Flexible
@@ -22,7 +22,7 @@ It's recommended to start with the following steps, all explained further below:
 You can further specify expenses at the Group level by choosing between "Fixed Spending" and "Flexible Spending" within the Trends and Net Income reports. To do this, navigate to **Settings > Categories** and select the appropriate option. Please note, MMT does not utilize the Fixed and Flexible Spending settings within Monarch, as MMT operates solely at the Group level.
 
 <br>
-<img src="images/MTFixed" style="width:60%; height:auto;">
+<img src="images/MTFixed.png" style="width:60%; height:auto;">
 
 
 ### Monarch Money Tweaks - Account Settings 
@@ -112,8 +112,10 @@ All four reports use the same flex-grid, structure and options:
 <img src="images/MT_V3_09.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Net Income (based on Notes Field)**
-![Settings](/images/MT_TagNotes.png)
-![Settings](/images/MT_TagsNotes2.png)
+<br>
+<img src="imagesMT_TagNotes.png" style="width:60%; height:auto;">
+<br>
+<img src="images//MT_TagsNotes2.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Reports / Accounts**
 <br>
@@ -162,7 +164,9 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 ### Other Monarch Money Tweaks non-report options:
 
 **Monarch Tweaks Split Transaction 50/50**
-![Settings](/images/MT_V3_03.png)
+<br>
+<img src="images/MT__V3_03.png" style="width:60%; height:auto;">
 
 **Monarch Tweaks Household Breakdown on Accounts**
-![Settings](/images/MT_V3_13.png)
+<br>
+<img src="images/MT__V3_13.png" style="width:60%; height:auto;">
