@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+* **Version 4.39 (beta)**
+     - CHANGE: All Reports / Accounts except Credit Card report will follow "Always hide decimals".
+
+
 * **Version 4.37-4.38 (March 22, 2026)**
      - NEW: Report cards enhanced — now sorted and showing percentages.
      - NEW: Reports / Investments: add custom holding categories and new "By category" & "By account/category" reports.
@@ -44,7 +48,7 @@
      - FIX: Step chart labels clearer what the data is. (Jan - Feb 2024)
      
 
-* **Version 4.30 (January 31, 2026)**
+* **Version 4.30 (January 31, 2026)** reoret.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be resized.
      - NEW: Reports / Trends & Reports / Accounts side drawer transactions can be exported to CSV.
      - NEW: Reports / Accounts [Credit Card Statement] added to help with reconciliation.
