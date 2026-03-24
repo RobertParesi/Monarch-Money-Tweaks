@@ -6,7 +6,8 @@
      - CHANGE: Side Drawer Transaction drill-down "Expand" button will start in better initial state.
      - CHANGE: Side Drawer Transaction drill-down secondary key will be Transaction ID order for better reconciliation.
      - CHANGE: Reports / Investments - Corrected repetitive columns found in headers/sub-headers
-     - REGRESSION: Reports / Accounts extended reports did not work properly based on report selection.    
+     - REGRESSION: Reports / Accounts extended reports did not work properly based on report selection.
+     - REGRESSIONL Reports / Investments Portfolio % was incorrect.
 
 * **Version 4.37-4.38 (March 22, 2026)**
      - NEW: Report cards enhanced — now sorted and showing percentages.
