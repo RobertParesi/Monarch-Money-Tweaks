@@ -2205,7 +2205,7 @@ async function MenuReportsAccountsGo() {
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP,getCookie('MT_AccountsHidePer1',true) == 1 ? true : false);
                 MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP,getCookie('MT_AccountsHidePending',true) == 1 ? true : false);
-                MF_QueueAddTitle(12,'Projected',MTP);
+                MF_QueueAddTitle(12,'Projected',MTP,getCookie('MT_AccountsHidePending',true) == 1 ? true : false);
         }
 
         accountsData = await dataGetAccounts();
