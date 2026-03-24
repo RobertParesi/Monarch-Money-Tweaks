@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.4
+// @version      4.39.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2186,7 +2186,6 @@ async function MenuReportsAccountsGo() {
 
         switch(MTFlex.Button2) {
             case 4:
-                MTP.IsHidden = false;
                 MTP.ShowPercent = {Type: 'Row', Col1: [10], Col2: [9]};
                 MF_QueueAddTitle(10,'Credit Limit',MTP);
                 MTP.ShowPercent = null;
@@ -2199,17 +2198,13 @@ async function MenuReportsAccountsGo() {
                 cats = rtnCategoryGroupList(null, 'transfer', true);
                 [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
                 MTP.ShowPercent = null;
-                if(getCookie('MT_AccountsHideBSPos',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MF_QueueAddTitle(11,'Positions',MTP);
-                if(getCookie('MT_AccountsHideBSCash',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MF_QueueAddTitle(12,'Cash Balance',MTP);
+                MF_QueueAddTitle(11,'Positions',MTP,getCookie('MT_AccountsHideBSPos',true) == 1 ? true : false);
+                MF_QueueAddTitle(12,'Cash Balance',MTP,getCookie('MT_AccountsHideBSCash',true) == 1 ? true : false);
                 break;
             case 0:
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9]};
-                if(getCookie('MT_AccountsHidePer1',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MF_QueueAddTitle(10,'Net Change',MTP);
-                if(getCookie('MT_AccountsHidePending',true) == 1) MTP.IsHidden = true; else MTP.IsHidden = false;
-                MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP);
+                MF_QueueAddTitle(10,'Net Change',MTP,getCookie('MT_AccountsHidePer1',true) == 1 ? true : false);
+                MTP.ShowPercent = null;MF_QueueAddTitle(11,'Pending',MTP,getCookie('MT_AccountsHidePending',true) == 1 ? true : false);
                 MF_QueueAddTitle(12,'Projected',MTP);
         }
 
