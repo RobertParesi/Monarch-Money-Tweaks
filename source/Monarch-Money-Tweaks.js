@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.3
+// @version      4.39.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2263,15 +2263,15 @@ async function MenuReportsAccountsGo() {
                                                         tE += tx.amount;
                                                 }
                                             }
-                                        }
-
-                                        if(tx.category.group.type == 'transfer') {
-                                            tT += tx.amount;
                                         } else {
-                                            if(MTFlex.Button2 == 4) {
-                                                if(tx.amount > 0) {tE += tx.amount;} else {tI -= tx.amount;}
+                                            if(tx.category.group.type == 'transfer') {
+                                                tT += tx.amount;
                                             } else {
-                                                if(tx.category.group.type == 'expense') {tE -= tx.amount;} else {tI += tx.amount;}
+                                                if(MTFlex.Button2 == 4) {
+                                                    if(tx.amount > 0) {tE += tx.amount;} else {tI -= tx.amount;}
+                                                } else {
+                                                    if(tx.category.group.type == 'expense') {tE -= tx.amount;} else {tI += tx.amount;}
+                                                }
                                             }
                                         }
                                     }
@@ -2325,7 +2325,7 @@ async function MenuReportsAccountsGo() {
                 MTFlexCard = [];
                 MF_GridCardAdd(1,9,9,'HV','Total Brokerage','Total Brokerage',css.green,css.red,'', '',-9999999);
                 MF_GridCardAdd(1,10,10,'HV','Net Change','Net Change',css.green,css.red,'', '',-9999998);
-                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',-9999997);
+                MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',9999999);
                 MF_GridCardAddAll({section: 2, x: 10, y: 'AutoCard', sort: 'D', xf: 2, isPos: css.green, isNeg: css.red});
                 break;
             case 4:
