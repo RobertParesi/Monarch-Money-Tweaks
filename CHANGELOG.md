@@ -5,7 +5,7 @@
      - CHANGE: Reports / Accounts [Credit Card Statement] cleaned up  & refunds showing.
      - CHANGE: Side Drawer Transaction drill-down "Expand" button will start in better initial state.
      - CHANGE: Side Drawer Transaction drill-down secondary key will be Transaction ID order for better reconciliation.
-     - CHANGE: Corrected repetitive columns found in headers/sub-headers     
+     - CHANGE: Reports / Investments - Corrected repetitive columns found in headers/sub-headers     
 
 * **Version 4.37-4.38 (March 22, 2026)**
      - NEW: Report cards enhanced — now sorted and showing percentages.
