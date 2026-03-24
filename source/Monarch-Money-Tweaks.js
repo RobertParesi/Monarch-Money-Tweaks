@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.2
+// @version      4.39.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -952,7 +952,7 @@ function MF_GridCalcRowPercent(inCol,inX, inY) {
 }
 
 function MF_GridCalcColPercent(inCol, inX, inOnTotal) {
-    let basedTotal = MF_GridGetValue(inOnTotal == true ? 1 : 0, inX),basedOn = 0,p = 0;
+    let basedTotal = MF_GridGetValue(0, inX),basedOn = 0,p = 0;
     for (let i = 0; i < MTFlexRow.length; i++) {
         if (!inOnTotal && basedOn != MTFlexRow[i].BasedOn) {
             basedOn = MTFlexRow[i].BasedOn;
@@ -2479,9 +2479,8 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '108px';MTP.Format = 4;
         MF_QueueAddTitle(11,'Gain/loss %',{ ...MTP, ShowPercent: { Type: 'Dif', Col1: [9], Col2: [8], AsRaw: true }});
         if(MTFlex.Button2 < 2) {
-            MTP.Width = '85px';MF_QueueAddTitle(12,'Acct %',MTP);
+            MTP.Width = '85px';MF_QueueAddTitle(12,MTFlex.Button1 == 4 ? 'Type %' : 'Acct %',MTP);
             MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP);
-            if(MTFlex.Button1 == 4) { MTFlexTitle[12].Title = 'Type %';}
         } else {
             MTP.IgnoreTotals = true;
             const db = daysBetween(MTFlexDate1,MTFlexDate2,true);
@@ -2501,7 +2500,8 @@ async function MenuReportsInvestmentsGo() {
         }
         MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
-            MF_GridCalcColPercent(12, 8,false);MF_GridCalcColPercent(13, 8,true);
+            MF_GridCalcColPercent(12, 8,false);
+            MF_GridCalcColPercent(13, 8,true);
         }
         await InvestmentCards();
 
