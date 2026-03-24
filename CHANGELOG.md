@@ -2,7 +2,7 @@
 
 * **Version 4.39 (beta)**
      - CHANGE: All Reports will follow "Always hide decimals" except Credit Card Statement.
-     - CHANGE: Reports / Accounts [Credit Card Statement] cleaned up (refunds showing and correct order)
+     - CHANGE: Reports / Accounts [Credit Card Statement] cleaned up  & refunds showing.
      - CHANGE: Side Drawer Transaction drill-down "Expand" button will start in better initial state.
      - CHANGE: Side Drawer Transaction drill-down secondary key will be Transaction ID order for better reconciliation.
      - CHANGE: Corrected repetitive columns found in headers/sub-headers     
