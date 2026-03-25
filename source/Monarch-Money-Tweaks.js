@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.9
+// @version      4.39.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1960,6 +1960,7 @@ async function MenuReportsAccountsDup() {
         arr.reduce((acc, r, i) => {
             let key = `${r.date}|${r.amount}|${r.account?.id}`;
             if(MTFlex.Button1 == 1) key+= '|' + r.dataProviderDescription;
+            if(getCookie('MT_DuplicateNotes',true) == 1) key+= '|' + r.notes ?? '';
             (acc[key] ||= []).push(i);
             return acc;
         }, {})
@@ -4326,7 +4327,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Recurring','MT_Recurring','checkbox');
     MenuDisplay_Input('Hide Goals','MT_Goals','checkbox');
     MenuDisplay_Input('Hide Investments','MT_Investments','checkbox');
-  //  MenuDisplay_Input('Hide Forecast','MT_Forecast','checkbox');
+    MenuDisplay_Input('Hide Forecast','MT_Forecast','checkbox');
     MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
     MenuDisplay_Input('Hide AI Assistant','MT_Assistant','checkbox');
     MenuDisplay_Input('Accounts','','spacer');
@@ -4375,7 +4376,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
     MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
     MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
-    MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement (Adjusted Portfolio Performance)','MT_AccountsNetTransfers','checkbox');
+    MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement for Adjusted Performance','MT_AccountsNetTransfers','checkbox');
+    MenuDisplay_Input('Ignore Duplicate Transactions that have Notes','MT_DuplicateNotes','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
