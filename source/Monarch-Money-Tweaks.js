@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.1
+// @version      4.40.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2567,6 +2567,7 @@ async function MenuReportsInvestmentsGo() {
                 let CardShown = false,hld=0;
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
+                let currentStockTicker = edge.node.security?.ticker ?? '';
                 if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT';}
 
                 for (const holding of holdings) {
@@ -2628,9 +2629,10 @@ async function MenuReportsInvestmentsGo() {
                     }
 
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
-
-                    if (holding.ticker != null) {
-                        useTicker = holding.ticker.trim();
+                    useTicker = holding.ticker;
+                    if(useTicker === null) useTicker = currentStockTicker;
+                    if (useTicker != null) {
+                        useTicker = useTicker.trim();
                         if(MTFlex.Button2 == 1) {
                             if(MTFlex.Button1 == 0 || MTFlex.Button1 == 1 || MTFlex.Button1 == 4) {
                                 if(MF_GridUpdateUID(useTicker,7,holding.quantity,false,true)) {
@@ -2640,7 +2642,7 @@ async function MenuReportsInvestmentsGo() {
                                 }
                             }
                         }
-                    }
+                    } else {useTicker = '';}
 
                     if (holding.name != null) {longTitle = holding.name.trim();}
                     if(useTicker == '' && longTitle == '') {
