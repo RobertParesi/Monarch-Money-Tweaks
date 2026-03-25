@@ -1,6 +1,7 @@
 # Change Log (Version History)
 
 * **Version 4.39 (beta)**
+     - NEW: Reports / Duplicates will show you duplicate transactions.
      - CHANGE: All Reports will follow "Always hide decimals" except Credit Card Statement.
      - CHANGE: Reports / Accounts [Credit Card Statement] cleaned up  & refunds showing.
      - CHANGE: Side Drawer Transaction drill-down "Expand" button will start in better initial state.
