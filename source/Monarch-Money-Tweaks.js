@@ -1943,6 +1943,8 @@ async function MenuReportsAccountsDup() {
     MTFlex.Title1 = 'Accounts Report';
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
+    MTFlex.DateEvent = 2;
+    MTFlex.TriggerEvents = true;
     MTP = [];MTP.Format = -1;MTP.IsSortable = 1;
     MF_QueueAddTitle(0,'Date',MTP);
     MTP.Format = 0;
@@ -1969,10 +1971,12 @@ async function MenuReportsAccountsDup() {
     MTP.IsHeader = false;
 
     for (let j = 0; j < duplicateIndexes.length; j++) {
-        const x = duplicateIndexes[j];
-        const t = transData.allTransactions.results[x];
+        const rrn = duplicateIndexes[j];
+        const t = transData.allTransactions.results[rrn];
         MTP.UID = t.id;
         MTP.PK = t.account.name;
+        MTP.SKTriggerEvent = '!TransData|' + rrn;
+        MTP.SKHRef = '/transactions/' + MTP.UID;
         MF_QueueAddRow(MTP);
         MF_AddCol(0, t.date);
         MF_AddCol(1, t.dataProviderDescription ?? '');
@@ -3464,7 +3468,8 @@ function HistoryDrawerUpdate(inMonth,inYear) {
 
 async function AccountsDrawer(inP) {
 
-    let sObj = {},transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,divTop = null, divTop2 = null,p1 = inP[0],acc = null;
+    let sObj = {},transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,p1 = inP[0],divTop, divTop2, acc;
+
     if(p1 == 'Group') {
         sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2].slice(2) + '|' + inP[2];
         accts = MF_GridPKUIDs(inP[2]);
@@ -5122,6 +5127,7 @@ function onClickMTFlexArrow(inP) {
         }
         SummaryDrawer(p);return;
     }
+    if(p[0] == '!TransData') {onClickOpenWindow(p);return;}
     switch(MTFlex.Name) {
         case 'MTTrends':
         case 'MTNet_Income':
