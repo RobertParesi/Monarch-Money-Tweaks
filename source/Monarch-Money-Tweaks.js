@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39
+// @version      4.40.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.39';
+const VERSION = '4.40';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2531,8 +2531,9 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '108px';MTP.Format = 4;
         MF_QueueAddTitle(11,'Gain/loss %',{ ...MTP, ShowPercent: { Type: 'Dif', Col1: [9], Col2: [8], AsRaw: true }});
         if(MTFlex.Button2 < 2) {
-            MTP.Width = '85px';MF_QueueAddTitle(12,MTFlex.Button1 == 4 ? 'Type %' : 'Acct %',MTP);
-            MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP);
+            let lit = MTFlex.Button1 == 4 ? 'Type %' : (MTFlex.Button1 == 0 ? 'Port %' : 'Acct %');
+             MTP.Width = '85px';MF_QueueAddTitle(12,lit,MTP);
+            MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,false,[0]);
         } else {
             MTP.IgnoreTotals = true;
             const db = daysBetween(MTFlexDate1,MTFlexDate2,true);
@@ -5773,7 +5774,7 @@ async function dataPortfolio(startDate,endDate,inAccounts) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n ticker \n name \n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) addConsole('dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
