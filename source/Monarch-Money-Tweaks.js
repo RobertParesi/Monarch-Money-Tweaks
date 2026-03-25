@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.5
+// @version      4.39.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -27,7 +27,7 @@ let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], Tr
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
-const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
+const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments','MTDuplicates'];
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
@@ -852,7 +852,7 @@ function MF_GridGroupByPK(inCol,ru) {
         MTFlexRow[i].Section = useSec;
     }
     for (let i = 2; i <= useSec; i += 2) {
-        MF_GridRollup(i - 1, i, i - 1, null, ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i, -1));
+        MF_GridRollup(i - 1, i, i - 1, null, ru ? ru + '|' + i + '|' + inCol + '|' + MF_GridGetValue(i, -1) : '');
     }
 }
 
@@ -1758,8 +1758,60 @@ function MenuReportsGo() {
         case 'MTTrends': MenuReportsTrendsGo();break;
         case 'MTNet_Income': MenuReportsNetIncomeGo();break;
         case 'MTAccounts': MenuReportsAccountsGo();break;
-        case 'MTInvestments': MenuReportsInvestmentsGo();
+        case 'MTInvestments': MenuReportsInvestmentsGo();break;
+        case 'MTDuplicates': MenuReportsDuplicates();
     }
+}
+
+async function MenuReportsDuplicates() {
+
+    MF_GridInit('MTDuplicates', 'Duplicates');
+    MTFlex.DateEvent = 2;
+    MTFlex.TriggerEvents = true;
+    MF_SetupDates();
+    MF_GridOptions(4,customGroupInfo());
+    MTFlex.SortSeq = ['1'];
+    MTFlex.Title1 = 'Duplicate Transactions';
+    MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
+    MTFlex.Title3 = '';
+    MTP = [];MTP.IsSortable = 1; MTP.Format = -1;
+    MF_QueueAddTitle(0,'Date',MTP);
+    MTP.Format = 0;
+    MF_QueueAddTitle(1,'Merchant',MTP);
+    MF_QueueAddTitle(2,'Category',MTP);
+    MF_QueueAddTitle(3,'Owner',MTP);
+    MTP.Format = 1;
+    MF_QueueAddTitle(4,'Amount',MTP);
+    transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null);
+
+    const arr = transData.allTransactions.results;
+    const duplicateIndexes = Object.values(
+        arr.reduce((acc, r, i) => {
+            const key = `${r.date}|${r.amount}|${r.account?.id}`;
+            (acc[key] ||= []).push(i);
+            return acc;
+        }, {})
+    )
+    .filter(g => g.length > 1)
+    .flat();
+
+    MTP = [];
+    MTP.IsHeader = false;
+
+    for (let j = 0; j < duplicateIndexes.length; j++) {
+        const x = duplicateIndexes[j];
+        const t = transData.allTransactions.results[x];
+        MTP.UID = t.id;
+        MTP.PK = t.account.name;
+        MF_QueueAddRow(MTP);
+        MF_AddCol(0, t.date);
+        MF_AddCol(1, t.merchant.name);
+        MF_AddCol(2, t.category.name);
+        MF_AddCol(3, t.ownedByUser?.displayName);
+        MF_AddCol(4, t.amount);
+    }
+    MF_GridGroupByPK();
+    glo.spawnProcess = 1;
 }
 
 async function MenuReportsNetIncomeGo() {
@@ -1807,7 +1859,7 @@ async function MenuReportsNetIncomeGo() {
     do {
         recCnt = 0;
         snapshotData4 = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,MTFlexAccountFilter.filter,HiddenFilter,hasNotes,hasGoals);
-        for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
+        for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt++;recIdx++;
             if(MTFlex.Button2 == 3) {if(rec.notes.startsWith('*') == false) continue;}
