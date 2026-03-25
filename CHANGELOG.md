@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-* **Version 4.39 (beta)**
+* **Version 4.39 (March 24, 2026)**
      - NEW: Reports / Accounts [Duplicate Transactions] will show you duplicate transactions.
      - CHANGE: All Reports will follow "Always hide decimals" except Credit Card Statement.
      - CHANGE: Reports / Accounts [Credit Card Statement] cleaned up  & refunds showing.
