@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.39.7
+// @version      4.39.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -27,7 +27,7 @@ let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], Tr
 let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
 
 // flex container
-const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments','MTDuplicates'];
+const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
@@ -1759,59 +1759,7 @@ function MenuReportsGo() {
         case 'MTNet_Income': MenuReportsNetIncomeGo();break;
         case 'MTAccounts': MenuReportsAccountsGo();break;
         case 'MTInvestments': MenuReportsInvestmentsGo();break;
-        case 'MTDuplicates': MenuReportsDuplicates();
     }
-}
-
-async function MenuReportsDuplicates() {
-
-    MF_GridInit('MTDuplicates', 'Duplicates');
-    MTFlex.DateEvent = 2;
-    MTFlex.TriggerEvents = true;
-    MF_SetupDates();
-    MF_GridOptions(4,customGroupInfo());
-    MTFlex.SortSeq = ['1'];
-    MTFlex.Title1 = 'Duplicate Transactions';
-    MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
-    MTFlex.Title3 = '';
-    MTP = [];MTP.IsSortable = 1; MTP.Format = -1;
-    MF_QueueAddTitle(0,'Date',MTP);
-    MTP.Format = 0;
-    MF_QueueAddTitle(1,'Merchant',MTP);
-    MF_QueueAddTitle(2,'Category',MTP);
-    MF_QueueAddTitle(3,'Owner',MTP);
-    MTP.Format = 1;
-    MF_QueueAddTitle(4,'Amount',MTP);
-    transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null);
-
-    const arr = transData.allTransactions.results;
-    const duplicateIndexes = Object.values(
-        arr.reduce((acc, r, i) => {
-            const key = `${r.date}|${r.amount}|${r.account?.id}`;
-            (acc[key] ||= []).push(i);
-            return acc;
-        }, {})
-    )
-    .filter(g => g.length > 1)
-    .flat();
-
-    MTP = [];
-    MTP.IsHeader = false;
-
-    for (let j = 0; j < duplicateIndexes.length; j++) {
-        const x = duplicateIndexes[j];
-        const t = transData.allTransactions.results[x];
-        MTP.UID = t.id;
-        MTP.PK = t.account.name;
-        MF_QueueAddRow(MTP);
-        MF_AddCol(0, t.date);
-        MF_AddCol(1, t.merchant.name);
-        MF_AddCol(2, t.category.name);
-        MF_AddCol(3, t.ownedByUser?.displayName);
-        MF_AddCol(4, t.amount);
-    }
-    MF_GridGroupByPK();
-    glo.spawnProcess = 1;
 }
 
 async function MenuReportsNetIncomeGo() {
@@ -1989,14 +1937,65 @@ async function MenuReportsNetIncomeGo() {
     }
 }
 
+async function MenuReportsAccountsDup() {
+
+    MF_SetupDates();
+    MTFlex.Title1 = 'Accounts Report';
+    MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
+    MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
+    MTP = [];MTP.Format = -1;MTP.IsSortable = 1;
+    MF_QueueAddTitle(0,'Date',MTP);
+    MTP.Format = 0;
+    MF_QueueAddTitle(1,'Original Merchant',MTP);
+    MF_QueueAddTitle(2,'Merchant',MTP);
+    MF_QueueAddTitle(3,'Category',MTP);
+    MTP.Format = 1;MTP.IsSortable = 2;
+    MF_QueueAddTitle(4,'Amount',MTP);
+    transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null);
+
+    const arr = transData.allTransactions.results;
+    const duplicateIndexes = Object.values(
+        arr.reduce((acc, r, i) => {
+            let key = `${r.date}|${r.amount}|${r.account?.id}`;
+            if(MTFlex.Button1 == 1) key+= '|' + r.dataProviderDescription;
+            (acc[key] ||= []).push(i);
+            return acc;
+        }, {})
+    )
+    .filter(g => g.length > 1)
+    .flat();
+
+    MTP = [];
+    MTP.IsHeader = false;
+
+    for (let j = 0; j < duplicateIndexes.length; j++) {
+        const x = duplicateIndexes[j];
+        const t = transData.allTransactions.results[x];
+        MTP.UID = t.id;
+        MTP.PK = t.account.name;
+        MF_QueueAddRow(MTP);
+        MF_AddCol(0, t.date);
+        MF_AddCol(1, t.dataProviderDescription ?? '');
+        MF_AddCol(2, t.merchant.name ?? '');
+        MF_AddCol(3, t.category.name);
+        MF_AddCol(4, t.amount);
+    }
+    MF_GridGroupByPK();
+    glo.spawnProcess = 1;
+}
+
 async function MenuReportsAccountsGo() {
 
     await MF_GridInit('MTAccounts', 'Accounts');
-    MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10'];
+    MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10','11'];
     MTFlex.ChartOptions = ['1Y', '2Y','3Y','4Y','5Y'];
-    MF_GridOptions(1,['by Class','by Account Type','by Account Subtype','by Account Group']);
-    MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Overall Cash Statement','Credit Card Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years']);
+    MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Overall Cash Statement','Credit Card Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years','Duplicate Transactions']);
     MF_GridOptions(4,customGroupInfo());
+    if(MTFlex.Button2 == 10) {
+        MF_GridOptions(1,['All Merchants','Same Merchants']);
+        MenuReportsAccountsDup();return;
+    }
+    MF_GridOptions(1,['by Class','by Account Type','by Account Subtype','by Account Group']);
 
     if(MTFlex.Button2 != 1) MTFlex.TriggerEvents = true;
     if(MTFlex.Button1 > 0 && MTFlex.Button2 != 4) MTFlex.Subtotals = true;
@@ -5725,7 +5724,7 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     inCat = await dataFixCats(inCat);
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date \n hideFromReports \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order \n type {\n group}} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount \n pending \n date \n hideFromReports \n dataProviderDescription \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order \n type {\n group}} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
