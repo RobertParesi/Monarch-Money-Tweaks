@@ -1961,7 +1961,8 @@ async function MenuReportsAccountsDup() {
             let key = `${r.date}|${r.amount}|${r.account?.id}`;
             if(MTFlex.Button1 == 1) key+= '|' + r.dataProviderDescription;
             if(getCookie('MT_DuplicateNotes',true) == 1) key+= '|' + r.notes ?? '';
-            (acc[key] ||= []).push(i);
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(i);
             return acc;
         }, {})
     )
