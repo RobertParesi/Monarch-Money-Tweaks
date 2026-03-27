@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.2
+// @version      4.40.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -76,7 +76,7 @@ function MM_Init() {
     addStyle('.MTInputTitle {font-size: 14px; height: 30px; font-weight: 500;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
-    addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; ' + panelBackground + bs + '}');
+    addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; padding: 16px 16px 0px 16px;' + panelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
     addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
@@ -1057,16 +1057,30 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawBarChart(inLocation,inP) {
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
-    let div = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;');
+    let divHead;
+    if(inLocation) {
+        divHead = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;','parms',inP.join('||'),'MTDrawBarChart');
+    } else {
+        divHead = document.getElementById('MTDrawBarChart');
+        if(!divHead) return;
+        let divR = document.getElementById('MTChartCanvas');
+        if(divR) divR.remove();
+        inP = divHead.getAttribute('parms');
+        if(inP) inP=inP.split('||');
+    }
+
     let divTop = document.createElement('div');
     divTop.className = 'MTChartContainer';
     divTop.id = 'MTChartCanvas';
-    divTop = div.insertAdjacentElement('afterend', divTop);
+    divTop = divHead.insertAdjacentElement('afterend', divTop);
     let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 660; divChart.height = 660;
+
     cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
 
     // load items
     let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
+    let useKey1 = 'MTSummary1-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
+    let useKey2 = 'MTSummary2-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         const secMatch = row.Section == inP[1];
@@ -1083,13 +1097,6 @@ function MF_DrawBarChart(inLocation,inP) {
             sumTotal += row[un];
         }
     }
-    for (let i = 0; i < items.length; i++) {
-        let ii = (items[i].value / sumTotal) * 100;
-        items[i].percent = get2dec(ii,1) + '%';
-        if(items[i].value > maxValue) maxValue = items[i].value;
-        if(items[i].value < minValue || i == 0) minValue = items[i].value;
-    }
-    MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
 
     const ctx = divChart.getContext('2d');
     const w = divChart.width, h = divChart.height;
@@ -1105,18 +1112,32 @@ function MF_DrawBarChart(inLocation,inP) {
     const rowHeight = (h - topPadding - bottomPadding) / maxItems;
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
+    MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
     MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
     MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
     MF_DrawChartupdateDetail('MTItems','Total Items',items.length);
 
-    ctx.font = '13.5px sans-serif';
-    ctx.textBaseline = 'middle';
+    for (let i = 0; i < items.length; i++) {
+        let ii = (items[i].value / sumTotal) * 100;
+        items[i].percent = get2dec(ii,1);
+        if(items[i].value > maxValue) maxValue = items[i].value;
+        if(items[i].value < minValue || i == 0) minValue = items[i].value;
+        let cvalue = getCookie(useKey2 + items[i].title,true);
+        if(cvalue > 0) {
+            items[i].target = Number(cvalue);
+            items[i].targetV = (sumTotal * (items[i].target * .01));
+            items[i].targetV = get2dec(items[i].targetV);
+        }
+    }
+
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
     entries.forEach((entry, i) => {
         let it = entry.it;
         const v = entry.v;
+        ctx.font = '13.5px sans-serif';
+        ctx.textBaseline = 'middle';
         if(i > 19) {
-            let pct = getCleanValue(it.percent,2);pct=Number(pct);
+            let pct = it.percent;
             sumP+=pct;sumA+=it.value;sumC++;
             if(i != items.length-1) skipThis = true;
             if(i == items.length-1) {
@@ -1128,10 +1149,16 @@ function MF_DrawBarChart(inLocation,inP) {
             const yCenter = topPadding + rowHeight * i + rowHeight / 2;
 
             // left label
+            let cvalue = getCookie(useKey1 + it.title);
             ctx.fillStyle = standardText;
             ctx.textAlign = 'right';
-            if(it.title.length < 19) {
-                ctx.fillText(it.title, leftLabelWidth - 5, yCenter);
+            if(it.title.length < 19 || cvalue) {
+                ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (cvalue ? 8 : 0));
+                if(cvalue) {
+                    ctx.font = 'italic 13px sans-serif';
+                    ctx.fillText(cvalue, leftLabelWidth - 5, yCenter+12);
+                    ctx.font = '13.5px sans-serif';
+                }
             } else {
                 ctx.fillText(getStringPart(it.title,' ','left'), leftLabelWidth - 5, yCenter-8);
                 let sp = getStringPart(it.title,' ','right');sp = sp.slice(0,14);
@@ -1157,7 +1184,12 @@ function MF_DrawBarChart(inLocation,inP) {
 
             // value right after the bar
             ctx.fillStyle = standardText;ctx.textAlign = 'left';
-            ctx.fillText(String(it.percent), barX + barLength + 8, yCenter);
+            ctx.fillText(String(it.percent + '%'), barX + barLength + 8, it.target ? yCenter-8 : yCenter);
+            if(it.target) {
+                cvalue = it.percent - it.target;
+                if(cvalue < -5 || cvalue > 5) ctx.fillStyle = css.redRaw;
+                ctx.fillText(String('(' + cvalue.toFixed(1) + '%)'), barX + barLength + 8, yCenter+8);
+            }
             hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
         }
     });
@@ -1195,7 +1227,16 @@ function attachTooltip(canvas, hitboxes, inCol) {
         }
         if (found) {
             let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value) + '</td></tr>';
-            tt += '<tr><td colspan="2" style="text-align: right;">' + found.item.percent + '</td></tr></table>';
+            tt += '<tr><td>Current</td><td style="text-align: right;">' + found.item.percent + '%</td></tr>';
+            if(found.item.target) {
+                let am = found.item.value - found.item.targetV;
+                let am2 = get2dec(found.item.percent - found.item.target,1);
+                tt += '<tr><td>Target</td><td style="text-align: right;">' + found.item.target + '%</td></tr>';
+                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2 + '%</td></tr>';
+                tt += '<tr><td>Target Amount</td><td style="text-align: right;">' + getDollarValue(found.item.targetV) + '</td></tr>';
+                tt += '<tr><td>Difference</td><td style="text-align: right;">' + getDollarValue(am) + '</td></tr>';
+            }
+            tt += '</table>';
             tooltip.style.display = 'block';
             tooltip.innerHTML = tt;
             tooltip.style.left = (Math.min(x,450) + rect.left) + 'px';
@@ -1625,15 +1666,24 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
     addStyle('.MTField1 {width: ' + f1 + ';white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}');
     addStyle('.MTField2 {width: ' + f2 + '}');
     div = cec('div','MTModelWindow',div,'','',css.FontFamily,'','',t.id);
-    divTop = cec('div','MTModelWindow2',div);
+    divTop = cec('div','MTModelWindow2',div,'','','');
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
-    cec('div','',divTop,t.title,'','padding: 16px 16px 0px 16px; font-weight: 600; font-size: 18px;');
+    let divH = cec('div','',divTop,'','','display: flex; font-weight: 600; font-size: 18px;');
+    cec('span','',divH,t.title,'','flex: 1 1 auto;');
+    if(t.percent == true) {
+        divTop.addEventListener('focusout', e => {
+            onClickUpdateTotal();
+        });
+        cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
+    }
+    if(t.subtitle) cec('div','',divTop,t.subtitle,'','font-size: 14px;font-weight: 500;');
     let st = 'max-height: 524px;padding: 16px;';
-    if(d.length > 10) st+= 'overflow-y: auto;';
+    if(d.length > 9) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
     if(typeof d !== 'string') {
         d.forEach(data => {
-            let div2 = cec('div','MTRow',div), div3 = null;
+            let div2 = cec('div','MTRow',div),divD,div3;
+            if(data.style1 == undefined) data.style1='';if(data.style2 == undefined) data.style2='';
             if(Array.isArray(data.field2)) {
                 cec('span','MTField1',div2,data.field1,'',data.style1);
                 div3 = cec('span','MTField2',div2,'','','justify-content: flex-end; align-items: center;display: flex;' + data.style2);
@@ -1641,12 +1691,13 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
             } else if(data.field2 == null) {
                 if(data.type != undefined) {
                     if(data.type == 'Input') {
-                        cec('div','MTInputTitle',div,data.field1);
-                        let divD = cec('div','',div);
+                        cec('div','MTInputTitle',data.same == true ? div2 : div,data.field1,'',data.style1);
+                        if(data.same != true) {divD = cec('div','',div);} else {divD = div2;}
                         const ci = data.key.indexOf(':');
-                        div3 = cec('input','MTInputClass',divD,'','',ci > -1 ? 'width: 88%;' : '','','',data.key);
+                        div3 = cec('input','MTInputClass',divD,'','',ci > -1 && data.style2 == '' ? 'width: 88%;' : data.style2,'','',data.key);
                         div3.value = getCookie(data.key,false);
                         if(data.uid) {div3.setAttribute('uid',data.uid); div3.setAttribute('uidcol',data.uidcol);}
+                        div3.setAttribute('col',0);
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
                             const lk = data.key.slice(0, ci+1);
@@ -1659,11 +1710,18 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                             }
                         }
                         if(ff == null) ff = div3;
+                        if(data.key2) {
+                            div3 = cec('input','MTInputClass',divD,'','','margin-left: 10px; width: 50px;','','',data.key2);
+                            div3.value = getCookie(data.key2,false);
+                            if(data.placeholder2) {div3.setAttribute('placeholder',data.placeholder2);}
+                            div3.setAttribute('col',1);
+                        }
                     }
                     if(data.type == 'Checkbox') {
                         div3 = cec('label','',div2,data.field1,'','','htmlFor',data.key);
                         div3 = cec('input','MTCheckboxClass',div3,'','','float:left;','','',data.key);
                         div3.type = 'checkbox';
+                        div3.setAttribute('col',0);
                         if(getCookie(data.key,true) == true) {div3.checked = 'true';}
                     }
                 } else {cec('div','MTField1',div2,data.field1,'','width: 100%;' + data.style1);}
@@ -1678,6 +1736,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
         if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','','',but.id);});}
     }
     cec('button','MTWindowButton',div,'Close','','','','',t.name);
+    if(t.percent == true) onClickUpdateTotal();
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
 }
 
@@ -3582,13 +3641,13 @@ async function SummaryDrawer(p) {
     sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
     sObj.big = MTFlex.Desc;
     sObj.small = MTFlex.Button1Options[MTFlex.Button1];
+    sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' ' + MTFlex.Button1Options[MTFlex.Button1];
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
     DrawerDrawLine(divTop2,'','0','MTTotal');
     DrawerDrawLine(divTop2,'','0','MTMax');
     DrawerDrawLine(divTop2,'','0','MTMin');
-    DrawerDrawLine(divTop2,'','0','MTItems');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     MF_DrawBarChart(divTop2,p);
     let r = MT_BarChartEmbed(divTop,divTop2);
@@ -4701,7 +4760,6 @@ function onClickMTButton() {
         let cn = glo.pathName.slice(1);cn = cn.replace('/','|');
         onClickMTFlexArrow(cn); return;
     }
-
     let divs = document.querySelector('div.MTModelWindow');
     if(divs) {
         let windowId = divs.id;
@@ -4720,6 +4778,7 @@ function onClickMTButton() {
         }
         removeAllSections('div.MTModelContainer');
     }
+    if(bt == '!SummaryDrawerTotal') {MF_DrawBarChart();}
 }
 
 function onClickMTButtonSmall() {
@@ -4769,8 +4828,21 @@ function onClickMTButtonSmall() {
 }
 
 function onClickOpenWindow(cn) {
-
-    let d=[],b=[],w=480,f1='65%',f2='35%',tot=0;
+    // here
+    let d=[],b=[],w=480,f1='65%',f2='35%',st='',tot=0,usePct=false;
+    if(cn[0] == '!SummaryDrawerTotal') {
+        st = MTFlex.Button4Options[MTFlex.Button4];
+        for (let i = 0; i < MTFlexRow.length; i ++) {
+            let row = MTFlexRow[i];
+            if(row.Section == 0) continue;
+            if(row.IsHeader == true) {
+                let rn = 'MTSummary1-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':' + row[0];
+                let rn2 = 'MTSummary2-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':' + row[0];
+                d.push({field1: row[0], style1: 'font-weight: 600;width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%'});
+            }
+        }
+        w=558;usePct=true;
+    }
     if(cn[0] == '!SaveSettings') {
         d.push({field1: 'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + cn[3]});
         d.push({field1: 'Skip Save Settings reminder', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MT:LastBackupSkip'});
@@ -4865,7 +4937,7 @@ function onClickOpenWindow(cn) {
             return fb - fa;
         });
     }
-    MF_ModelWindowOpen({width: w, name: cn[0], title: cn[1], id: cn[2]},d,b,f1,f2);
+    MF_ModelWindowOpen({width: w, name: cn[0], title: cn[1], subtitle: st, id: cn[2], percent: usePct},d,b,f1,f2);
 }
 
 function onClickMTFlexConfig() {
@@ -4893,6 +4965,20 @@ function onClickFixDate() {
         const mtID = document.getElementById('MTEndDate');
         if(mtID) {mtID.value = getDates('s_YMD');}
     }
+}
+
+function onClickUpdateTotal() {
+    const div = document.getElementById('MTModelWindowTotal');
+    if(!div) return;
+    const nodes = document.querySelectorAll('.MTInputClass[col="1"]');
+    let sum = 0;
+    nodes.forEach(el => {
+        const v = (el.value ?? el.textContent ?? '').toString().trim();
+        const normalized = v.replace(/,/g, '');
+        const n = parseFloat(normalized);
+        if (!Number.isNaN(n)) sum += n;
+    });
+    div.innerText = sum + '%';
 }
 
 function onClickUpdateTicker() {
@@ -5029,10 +5115,10 @@ function onClickSetupDropdown(et) {
         const pDiv = et.parentNode.parentNode;
         pDiv.childNodes[0].textContent = et.innerText.trim() + ' ';
     } else {
-        let pDiv = et.parentNode?.parentNode;
-        let pc = pDiv.parentNode.childNodes[0];
+        let pDiv = et.parentNode;
+        let id = pDiv.id.slice(10);
+        let pc = document.getElementById(id);
         if(pc) pc.value = cn;
-        pDiv = pDiv.childNodes[1];
         onClickMTDropdownRelease();
     }
 }
@@ -5581,7 +5667,9 @@ function uploadfileSettings(inType) {
     link.click();
 }
 
-function setCookie(cName, cValue) {localStorage.setItem(cName,cValue);}
+function setCookie(cName, cValue) {
+    if(cValue.length === 0) {localStorage.removeItem(cName);} else {localStorage.setItem(cName,cValue);}
+}
 
 function getCookie(cName, isNum = false, useDefault) {
     let value = localStorage.getItem(cName);
