@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.5
+// @version      4.40.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2557,6 +2557,7 @@ async function MenuReportsInvestmentsGo() {
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
     let sumPortfolio = 0, cashValue = 0, sumCash = 0, Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
+    let skipCash = getCookie('MT_InvestmentCardNoCash',true);
     let tickers = getCookie('MTInvestmentTickers',false).split(',');
     accountQueue = [];
 
@@ -2765,11 +2766,11 @@ async function MenuReportsInvestmentsGo() {
         }
         async function InvestmentCash() {
 
-            if(MTFlex.Button2 == 2) return;
-            if(getCookie('MT_InvestmentCardNoCash',true) == 1) return;
             for (const acc of accountQueue) {
                 sumPortfolio += acc.portfolioBalance;
+                if(MTFlex.Button2 == 2) continue;
                 if(acc.isManual == true) continue;
+                if(skipCash) continue;
                 cashValue = acc.portfolioBalance - acc.holdingBalance;
                 if(acc.crypto > 0 && cashValue < 1) continue;
                 if(acc.crypto == 0 && cashValue <= 0) continue;
@@ -2812,7 +2813,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button4 > 0) allTitle = MTFlex.Button4Options[MTFlex.Button4];
                      if(maxCards > 0) {
                         if(MTFlex.Button1 == 0) {
-                            MF_QueueAddCard({Col: 1, Title: getDollarValue(sumCash,true), Subtitle: 'Cash & Money Market', Style: css.green});
+                            if(!skipCash) MF_QueueAddCard({Col: 1, Title: getDollarValue(sumCash,true), Subtitle: 'Cash & Money Market', Style: css.green});
                             MF_QueueAddCard({Col: 1, Title: getDollarValue(sumPortfolio-sumCash,true), Subtitle: 'Total Invested', Style: css.green});
                         } else {
                             MF_GridCardAddAll({section: 'odd', x: 8, y: 0, z: 13, xf: 2, zf: 4, max: maxCards, sort: 'D', isPos: css.green, isNeg: css.red});
