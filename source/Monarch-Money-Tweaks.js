@@ -1113,9 +1113,6 @@ function MF_DrawBarChart(inLocation,inP) {
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
     MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
-    MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
-    MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
-    MF_DrawChartupdateDetail('MTItems','Total Items',items.length);
 
     for (let i = 0; i < items.length; i++) {
         let ii = (items[i].value / sumTotal) * 100;
@@ -1129,6 +1126,10 @@ function MF_DrawBarChart(inLocation,inP) {
             items[i].targetV = get2dec(items[i].targetV);
         }
     }
+
+    MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
+    MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
+    MF_DrawChartupdateDetail('MTItems','Total Items',items.length);
 
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
     entries.forEach((entry, i) => {
