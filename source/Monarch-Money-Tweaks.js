@@ -3644,7 +3644,9 @@ async function SummaryDrawer(p) {
     sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
     sObj.big = MTFlex.Desc;
     sObj.small = MTFlex.Button1Options[MTFlex.Button1];
-    sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' ' + MTFlex.Button1Options[MTFlex.Button1];
+    if(p[0] == 'Total' && p[1] == 'odd') {
+        sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' ' + MTFlex.Button1Options[MTFlex.Button1];
+    }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
@@ -3657,7 +3659,9 @@ async function SummaryDrawer(p) {
     let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
-    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');
+    if(p[0] == 'Total' && p[1] == 'odd') {
+        cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');
+    }
 }
 
 async function InvestmentsDrawerCash(inP) {
@@ -3952,8 +3956,8 @@ function ExportSummaryDrawer(inType,inFile) {
     let csvField='',csvContent='',j = 0,Cols = 0;
     csvContent = 'Title,Note,Current Value,Current,Target Value,Target, Difference Value, Difference' + CRLF;
     targetData.forEach(t => {
-        let am = t.value - t.targetV;
-        let am2 = get2dec(t.percent - t.target,1);
+        let am = t.targetV != null ? t.value - t.targetV : 0;
+        let am2 = t.target != null ? get2dec(t.percent - t.target,1) : 0;
         csvField = '"' + t.title + '","' + t.subtitle + '",';
         csvField += get2dec(t.value,2) + C;
         csvField += get2dec(t.percent,1) + C;
