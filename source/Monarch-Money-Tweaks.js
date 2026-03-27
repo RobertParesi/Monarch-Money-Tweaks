@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.4
+// @version      4.40.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -24,7 +24,7 @@ const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 let css = {headStyle: null, mItems: 0, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
-let portfolioData = null, performanceData=null, performanceDataType = null, accountsData = null, transData=null;
+let portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
@@ -1077,8 +1077,9 @@ function MF_DrawBarChart(inLocation,inP) {
 
     cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
 
-    // load items
-    let items = [], hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
+    // load new targetData
+    targetData = [];
+    let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
     let useKey1 = 'MTSummary1-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
     let useKey2 = 'MTSummary2-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
     for (let i = 0; i < MTFlexRow.length; i++) {
@@ -1088,11 +1089,11 @@ function MF_DrawBarChart(inLocation,inP) {
             let usePart = getStringPart(row[0], ' • ', 'left');
             if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
             if(inP[4]) {if(inP[4] != row.PK) continue;}
-            items.push({ percent: '', title: usePart, value: row[un], record: useRec, section: useSec });sumTotal += row[un];
+            targetData.push({ percent: '', title: usePart, value: row[un], record: useRec, section: useSec });sumTotal += row[un];
         } else if (secMatch) {
             pkTotal += row[un];
             if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                items.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal, record: row.PK, section: row.Section});pkTotal = 0;
+                targetData.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal, record: row.PK, section: row.Section});pkTotal = 0;
             }
             sumTotal += row[un];
         }
@@ -1101,10 +1102,10 @@ function MF_DrawBarChart(inLocation,inP) {
     const ctx = divChart.getContext('2d');
     const w = divChart.width, h = divChart.height;
     ctx.clearRect(0,0,w,h);
-    const values = items.map(it => it.value);
-    const entries = items.map((it, i) => ({ it, v: values[i] }));
+    const values = targetData.map(it => it.value);
+    const entries = targetData.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
-    const maxItems = items.length > 20 ? 20 : items.length;
+    const maxItems = targetData.length > 20 ? 20 : targetData.length;
     const max = Math.max(...values, 1);
     const topPadding = 20,bottomPadding = 20,leftLabelWidth = 120,rightValueWidth = 60;
     const barAreaWidth = w - leftLabelWidth - rightValueWidth - 20;
@@ -1114,22 +1115,24 @@ function MF_DrawBarChart(inLocation,inP) {
 
     MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
 
-    for (let i = 0; i < items.length; i++) {
-        let ii = (items[i].value / sumTotal) * 100;
-        items[i].percent = get2dec(ii,1);
-        if(items[i].value > maxValue) maxValue = items[i].value;
-        if(items[i].value < minValue || i == 0) minValue = items[i].value;
-        let cvalue = getCookie(useKey2 + items[i].title,true);
+    for (let i = 0; i < targetData.length; i++) {
+        let ii = (targetData[i].value / sumTotal) * 100;
+        targetData[i].percent = get2dec(ii,1);
+        if(targetData[i].value > maxValue) maxValue = targetData[i].value;
+        if(targetData[i].value < minValue || i == 0) minValue = targetData[i].value;
+        let cvalue = getCookie(useKey2 + targetData[i].title,true);
         if(cvalue > 0) {
-            items[i].target = Number(cvalue);
-            items[i].targetV = (sumTotal * (items[i].target * .01));
-            items[i].targetV = get2dec(items[i].targetV);
+            targetData[i].target = Number(cvalue);
+            targetData[i].targetV = (sumTotal * (targetData[i].target * .01));
+            targetData[i].targetV = get2dec(targetData[i].targetV);
         }
+        cvalue = getCookie(useKey1 + targetData[i].title,false);
+        targetData[i].subtitle = cvalue;
     }
 
     MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
     MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
-    MF_DrawChartupdateDetail('MTItems','Total Items',items.length);
+    MF_DrawChartupdateDetail('MTItems','Total Items',targetData.length);
 
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
     entries.forEach((entry, i) => {
@@ -1140,8 +1143,8 @@ function MF_DrawBarChart(inLocation,inP) {
         if(i > 19) {
             let pct = it.percent;
             sumP+=pct;sumA+=it.value;sumC++;
-            if(i != items.length-1) skipThis = true;
-            if(i == items.length-1) {
+            if(i != targetData.length-1) skipThis = true;
+            if(i == targetData.length-1) {
                 let div = cec('div','SideDrawerHeader',divTop);
                 cec('div','MTSideDrawerGroup',div,' ' + sumC + ' items not shown ' + getDollarValue(sumA) + ' (' + get2dec(sumP,1) + '%)','',css.font + 'font-size:14.5px;');
             }
@@ -1150,14 +1153,13 @@ function MF_DrawBarChart(inLocation,inP) {
             const yCenter = topPadding + rowHeight * i + rowHeight / 2;
 
             // left label
-            let cvalue = getCookie(useKey1 + it.title);
             ctx.fillStyle = standardText;
             ctx.textAlign = 'right';
-            if(it.title.length < 19 || cvalue) {
-                ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (cvalue ? 8 : 0));
-                if(cvalue) {
+            if(it.title.length < 19 || it.subtitle) {
+                ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
+                if(it.subtitle) {
                     ctx.font = 'italic 13px sans-serif';
-                    ctx.fillText(cvalue, leftLabelWidth - 5, yCenter+12);
+                    ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+12);
                     ctx.font = '13.5px sans-serif';
                 }
             } else {
@@ -1187,9 +1189,9 @@ function MF_DrawBarChart(inLocation,inP) {
             ctx.fillStyle = standardText;ctx.textAlign = 'left';
             ctx.fillText(String(it.percent + '%'), barX + barLength + 8, it.target ? yCenter-8 : yCenter);
             if(it.target) {
-                cvalue = it.percent - it.target;
-                if(cvalue < -5 || cvalue > 5) ctx.fillStyle = css.redRaw;
-                ctx.fillText(String('(' + cvalue.toFixed(1) + '%)'), barX + barLength + 8, yCenter+8);
+                let dif = it.percent - it.target;
+                if(dif < -5 || dif > 5) ctx.fillStyle = css.redRaw;
+                ctx.fillText(String('(' + dif.toFixed(1) + '%)'), barX + barLength + 8, yCenter+8);
             }
             hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
         }
@@ -1232,10 +1234,10 @@ function attachTooltip(canvas, hitboxes, inCol) {
             if(found.item.target) {
                 let am = found.item.value - found.item.targetV;
                 let am2 = get2dec(found.item.percent - found.item.target,1);
-                tt += '<tr><td>Target</td><td style="text-align: right;">' + found.item.target + '%</td></tr>';
-                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2 + '%</td></tr>';
                 tt += '<tr><td>Target Amount</td><td style="text-align: right;">' + getDollarValue(found.item.targetV) + '</td></tr>';
-                tt += '<tr><td>Difference</td><td style="text-align: right;">' + getDollarValue(am) + '</td></tr>';
+                tt += '<tr><td>Target</td><td style="text-align: right;">' + found.item.target + '%</td></tr>';
+                tt += '<tr><td>Difference Amount</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + getDollarValue(am,2) + '</td></tr>';
+                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2 + '%</td></tr>';
             }
             tt += '</table>';
             tooltip.style.display = 'block';
@@ -3422,7 +3424,7 @@ function HistoryDrawerDraw() {
         HistoryDrawerTotals('Highest','line-height: 20px;');
         HistoryDrawerTotals('Lowest','line-height: 20px;');
         div = cec('div','MTSideDrawerHeader',divTop);
-        div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;');
+        div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSideDrawer');
     }
     function HistoryDrawerTotals(inTitle,inStyle) {
         let maxCol = 4;
@@ -3614,7 +3616,7 @@ async function AccountsDrawer(inP) {
     cec('div','MTSideDrawerDetail',div2,getDollarValue(tots));
     cec('div','MTSideDrawerDetail3',div2);
     cec('div','MTSideDrawerDetail',div2,getDollarValue(trns));
-    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;');
+    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSideDrawer');
 
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
 
@@ -3649,11 +3651,13 @@ async function SummaryDrawer(p) {
     DrawerDrawLine(divTop2,'','0','MTTotal');
     DrawerDrawLine(divTop2,'','0','MTMax');
     DrawerDrawLine(divTop2,'','0','MTMin');
+    DrawerDrawLine(divTop2,'','0','MTItems');
     divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     MF_DrawBarChart(divTop2,p);
     let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
-    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+    divTop2 = cec('div','MTSideDrawerHeader',divTop);
+    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');
 }
 
 async function InvestmentsDrawerCash(inP) {
@@ -3915,10 +3919,10 @@ function DrawerDrawSpacer(inDiv) {
     cec('span','MTFlexSpacer',inDiv,'','','display: block;height:20px;margin-bottom:20px;');
 }
 
-function MenuHistoryExport(inType,inFile) {
+function ExportSideDrawer(inType,inFile) {
 
     const C = ',';
-    let q='',csvField = '',csvContent = '',j = 0,Cols = 0,lc=null,spans=null;
+    let q='',csvField='',csvContent='',lc,spans;
     if(inType == 'Summary') {
         lc = MTFlex.Name == 'MTAccounts' ? 'Transfers' : 'Average';
         spans = document.querySelectorAll('span.MTSideDrawerDetail,span.MTSideDrawerDetailS,span.MTSideDrawerSummaryTag' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
@@ -3926,6 +3930,7 @@ function MenuHistoryExport(inType,inFile) {
         lc = 'Amount';
         spans = document.querySelectorAll('td.MTGeneralLink,td.MTSideDrawerSummaryData,td.MTSideDrawerSummaryData2');
     }
+    let j = 0,Cols = 0;
     spans.forEach(span => {
         j++;
         if(Cols > 0 && inType == 'Detail' && j < 3 ) {q = '"';}
@@ -3937,6 +3942,26 @@ function MenuHistoryExport(inType,inFile) {
         csvContent = csvContent + q + csvField + q;q='';
         if(Cols == 0) { if(span.innerText.startsWith(lc)) { Cols = j;}}
         if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + C;}
+    });
+    downloadFile(inFile,csvContent);
+}
+
+function ExportSummaryDrawer(inType,inFile) {
+
+    const C = ',';
+    let csvField='',csvContent='',j = 0,Cols = 0;
+    csvContent = 'Title,Note,Current Value,Current,Target Value,Target, Difference Value, Difference' + CRLF;
+    targetData.forEach(t => {
+        let am = t.value - t.targetV;
+        let am2 = get2dec(t.percent - t.target,1);
+        csvField = '"' + t.title + '","' + t.subtitle + '",';
+        csvField += get2dec(t.value,2) + C;
+        csvField += get2dec(t.percent,1) + C;
+        csvField += get2dec(t.targetV,2) + C;
+        csvField += get2dec(t.target,1) + C;
+        csvField += get2dec(am,2) + C;
+        csvField += get2dec(am2,1);
+        csvContent = csvContent + csvField + CRLF;
     });
     downloadFile(inFile,csvContent);
 }
@@ -4660,7 +4685,14 @@ window.onclick = function(event) {
                 if(MTFlex.Name =='MTInvestments') InvestmentsDrawer(null);
                 return;
             case 'MTPanelLink':
-                MenuHistoryExport('Summary','Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'));return;
+                cn = event.target.id;
+                if(cn == 'MTSideDrawer') {
+                    ExportSideDrawer('Summary','Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'));return;
+                }
+                if(cn == 'MTSummaryDrawer') {
+                    ExportSummaryDrawer('Summary','Monarch ' + MTFlex.Desc + ' ' + MTFlex.Button2Options[MTFlex.Button2] );return;
+                }
+                return;
             case 'MTFlexBig':
                 onClickMTDropdownRelease();
                 onClickMTFlexBig();return;
@@ -4820,7 +4852,7 @@ function onClickMTButtonSmall() {
             onClickMTFlexConfig();return;
         case 'FlexSideExport':
             v = event.target.getAttribute('data');
-            MenuHistoryExport('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + v);return;
+            ExportSideDrawer('Detail','Monarch ' + MTFlex.Desc + ' Detail ' + v);return;
         case 'FlexSideExpand':
             divs = document.querySelector('div.MTSideDrawerSummary');
             if(divs) {divs.style.height = (divs.style.height == '' || divs.style.height == '200px') ? 'auto' : '200px';}
