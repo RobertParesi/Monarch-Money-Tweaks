@@ -1,5 +1,10 @@
 # Change Log (Version History)
 
+ **Version 4.40 (Beta)**
+     - NEW: Reports / Investments now have target allocations by any classification.
+     - FIX: Reports / Investments "Cash/Money Market" card should not show if disabled.
+     - FIX: Reports / Accounts Brokerage Statement should not show Positions and Cash Balance column if end date is not today.     
+
 * **Version 4.39 (March 24, 2026)**
      - NEW: Reports / Accounts [Duplicate Transactions] will show you duplicate transactions.
      - CHANGE: All Reports will follow "Always hide decimals" except Credit Card Statement.
