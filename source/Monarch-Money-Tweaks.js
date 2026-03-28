@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.6
+// @version      4.40.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -270,7 +270,7 @@ function MF_GridTip() {
                 case 0: return "Shows Income & Spending by tags. Click on date to change date range.";
                 case 1: return "Shows Income & Spending by tags, including hidden transactions.";
                 case 2: return "Shows Income & Spending by tags for only hidden transactions.";
-                case 3: return "Shows Income & Spending by note tags (notes which start with an asterisk, like *Vacation or *Hawaii).";
+                case 3: return "Shows Income & Spending by note tags (notes which start with an asterisk, like * Vacation or * Hawaii).";
                 case 4: return "Shows Income & Spending by accounts. Great for account reconciliation and comparing with institution websites and statements.";
                 case 5: return "Shows Income & Spending related to a goal.";
                 case 6: return "Shows Income & Spending related to Shared Views, either Shared or Owner.";
@@ -287,6 +287,7 @@ function MF_GridTip() {
                 case 6: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
                 case 7: return "Shows account balances over time for this year. Click on date range for the last month.";
                 case 8: return "Shows account balances over time by quarter for the past three years. Click on date range for the last month.";
+                case 9: return "Shows transactions that may be duplicates. See Ignore Duplicate Transactions that have Notes in settings.";
             }
             break;
     }
