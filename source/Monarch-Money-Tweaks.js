@@ -307,10 +307,10 @@ function MF_GridOptions(Num,Options) {
 
 function MF_GridTargetKeys() {
     let to = MTFlex.TargetOptions[MTFlex.Button1];
-    let x = MTFlex.Button4 === 1 ? 0 : MTFlex.Button4;
-    let ao = MTFlex.Button4Options[x];
-    let useKey1 = 'MTSummary1-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
-    let useKey2 = 'MTSummary2-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
+    let ao = MTFlex.Button4Options[MTFlex.Button4];
+    let useKey1 = 'MTSummary1-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    let useKey2 = 'MTSummary2-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
     return([useKey1,useKey2,to,ao]);
 }
 
@@ -4882,13 +4882,13 @@ function onClickMTButtonSmall() {
 function onClickOpenWindow(cn) {
     // here
     let d=[],b=[],w=480,f1='65%',f2='35%',st='',tot=0,usePct=false;
+    let targetKeys = MF_GridTargetKeys();
     if(cn[0] == '!SummaryDrawerTotal') {
-        st = MTFlex.Button4Options[MTFlex.Button4];
+        st = targetKeys[3];
         for (let i = 0; i < MTFlexRow.length; i ++) {
             let row = MTFlexRow[i];
             if(row.Section == 0) continue;
             if(row.IsHeader == true) {
-                let targetKeys = MF_GridTargetKeys();
                 let rn = targetKeys[0] + row[0];
                 let rn2 = targetKeys[1] + row[0];
                 d.push({field1: row[0], style1: 'font-weight: 600;width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%'});
