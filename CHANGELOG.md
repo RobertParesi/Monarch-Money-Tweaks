@@ -2,6 +2,7 @@
 
  * **Version 4.40 (Beta)**
      - NEW: Reports / Investments now have target allocations by any classification.
+     - CHANGE: Reports percentages will now export better and show as percentage in export.
      - FIX: Reports / Investments "Cash/Money Market" card should not show if disabled.
      - FIX: Reports / Accounts Brokerage Statement should not show Positions and Cash Balance column if end date is not today.     
 
