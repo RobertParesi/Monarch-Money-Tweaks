@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.10
+// @version      4.40.11
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -63,6 +63,7 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
+    if(getCookie('MT_BudgetHighlight',true) == 1) {addStyle('.hiuIBv {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');}
     addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; ' + css.font + '}');
@@ -4296,11 +4297,19 @@ function MenuDashboard(OnFocus) {
 function MenuPlan(OnFocus) {
     if (glo.pathName.startsWith('/plan')) {
         if(OnFocus == true) {
-            if(glo.plan == false) {
-                glo.plan == true;
-                if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.earyfo, .gwrczp, .hIruVD, .jduSPT {height: 36px; font-size: 14px;}');addStyle('.dzNuLu, .fgtPHG, .dVgTYt, .djwbSf {height: 26px; font-size: 14px;}');}
+          if (glo.plan) return;
+            if (getCookie('MT_PlanCompressed', true) == 1) {
+                const keys = ['PlanGrid__GroupHeaderRow','PlanGrid__PlanGridRow','PlanGrid__PlanGridColumn','PlanCellAmountPill','PlanCell__AmountInput'];
+                const classes = [];
+                for (const k of keys) {
+                    const cls = getFullClassName(k);
+                    if (!cls) {glo.pathName = '';return;}
+                    classes.push(cls);
+                }
+                const selector = classes.map(c => `.${c}`).join(', ');
+                addStyle(`${selector} { height: 36px !important; font-size: 14px !important; }`);
+                glo.plan = true;
             }
-            glo.spawnProcess = 3;
         }
     }
 }
@@ -4500,6 +4509,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
     MenuDisplay_Input('Budget','','spacer');
     MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
+    MenuDisplay_Input('Make green & red progress bars full height','MT_BudgetHighlight','checkbox');
     MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
     MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
@@ -5379,6 +5389,7 @@ function hideAllSections(qList,InValue,inStartsWith) {
 function getFullClassName(a) {
     let el = document.querySelector('[class*=' + a + ']');
     if(el) {
+        console.log(el);
         for (let i = 0; i < el.classList.length; i++) {
             if(el.classList[i]) {
                 if(el.classList[i].startsWith(a)) return el.classList[i];
