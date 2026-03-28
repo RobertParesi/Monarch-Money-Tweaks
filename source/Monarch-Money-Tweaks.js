@@ -63,7 +63,6 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
-    if(getCookie('MT_BudgetHighlight',true) == 1) {addStyle('.hiuIBv {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');}
     addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; ' + css.font + '}');
@@ -4297,17 +4296,21 @@ function MenuDashboard(OnFocus) {
 function MenuPlan(OnFocus) {
     if (glo.pathName.startsWith('/plan')) {
         if(OnFocus == true) {
-          if (glo.plan) return;
+            if (glo.plan) return;
             if (getCookie('MT_PlanCompressed', true) == 1) {
-                const keys = ['PlanGrid__GroupHeaderRow','PlanGrid__PlanGridRow','PlanGrid__PlanGridColumn','PlanCellAmountPill','PlanCell__AmountInput'];
-                const classes = [];
+                const keys = ['PlanGrid__GroupHeaderRow','PlanGrid__PlanGridRow','PlanGrid__PlanGridColumn','PlanCellAmountPill','PlanCell__AmountInput'],classes = [];
+                let cls = '';
                 for (const k of keys) {
-                    const cls = getFullClassName(k);
+                    cls = getFullClassName(k);
                     if (!cls) {glo.pathName = '';return;}
                     classes.push(cls);
                 }
                 const selector = classes.map(c => `.${c}`).join(', ');
                 addStyle(`${selector} { height: 36px !important; font-size: 14px !important; }`);
+                if(getCookie('MT_BudgetHighlight',true) == 1) {
+                    cls = getFullClassName('ProgressBar__Root-sc');
+                    addStyle('.' + cls + ' {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');
+                }
                 glo.plan = true;
             }
         }
