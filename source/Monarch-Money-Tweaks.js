@@ -1219,7 +1219,6 @@ function MF_DrawBarChart(inLocation,inP) {
 function attachTooltip(canvas, hitboxes, inCol) {
 
     const tooltip = document.getElementById('MTChartTip');
-
     canvas.onmousemove = function (e) {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -1232,12 +1231,14 @@ function attachTooltip(canvas, hitboxes, inCol) {
             let tt = '<table><tr><td>' + found.item.title + '</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value) + '</td></tr>';
             tt += '<tr><td>Current</td><td style="text-align: right;">' + found.item.percent + '%</td></tr>';
             if(found.item.target) {
-                let am = found.item.value - found.item.targetV;
-                let am2 = get2dec(found.item.percent - found.item.target,1);
+                let aml = '',am = found.item.value - found.item.targetV;
+                let am2l = '',am2 = get2dec(found.item.percent - found.item.target,1);
+                if(am > 0) aml = '+';
+                if(am2 > 0) am2l = '+';
                 tt += '<tr><td>Target Amount</td><td style="text-align: right;">' + getDollarValue(found.item.targetV) + '</td></tr>';
                 tt += '<tr><td>Target</td><td style="text-align: right;">' + found.item.target + '%</td></tr>';
-                tt += '<tr><td>Difference Amount</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + getDollarValue(am,2) + '</td></tr>';
-                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2 + '%</td></tr>';
+                tt += '<tr><td>' + (am > 0 ? 'Over ' : 'Short ') + ' Amount</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + aml + getDollarValue(am,2) + '</td></tr>';
+                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2l + am2 + '%</td></tr>';
             }
             tt += '</table>';
             tooltip.style.display = 'block';
@@ -2215,7 +2216,7 @@ async function MenuReportsAccountsGo() {
     }
     async function MenuReportsAccountsGoCash(){
 
-        let summaryData = null,manualHoldData = null,cashHoldData = null;
+        let summaryData,manualHoldData,cashHoldData;
         MTFlex.DateEvent = 0;
 
         accountsData = await dataGetAccounts();
@@ -2315,10 +2316,12 @@ async function MenuReportsAccountsGo() {
                 if(incTrans == 1) MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9,8]}; else MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9]};
                 MF_QueueAddTitle(10,'Net Change',MTP);
                 cats = rtnCategoryGroupList(null, 'transfer', true);
-                [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
                 MTP.ShowPercent = null;
-                MF_QueueAddTitle(11,'Positions',MTP,getCookie('MT_AccountsHideBSPos',true) == 1 ? true : false);
-                MF_QueueAddTitle(12,'Cash Balance',MTP,getCookie('MT_AccountsHideBSCash',true) == 1 ? true : false);
+                if(isToday) {
+                    [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
+                    MF_QueueAddTitle(11,'Positions',MTP,getCookie('MT_AccountsHideBSPos',true) == 1 ? true : false);
+                    MF_QueueAddTitle(12,'Cash Balance',MTP,getCookie('MT_AccountsHideBSCash',true) == 1 ? true : false);
+                }
                 break;
             case 0:
                 if(getCookie('MT_AccountsHidePer2',true) == 0) MTP.ShowPercent = {Type: 'Dif', Col1: [5], Col2: [9]};
@@ -2404,10 +2407,12 @@ async function MenuReportsAccountsGo() {
                                      MF_AddCol(10,get2dec(useBalance - MTFlexRow[MTFlexCR][5]));
                                 }
                                 if(MTFlex.Button2 == 2) {
-                                    let pd = portfolioData[MTP.UID];
-                                    if(pd != undefined) {
-                                        MF_AddCol(11,get2dec(pd));
-                                        if (manualHoldData?.[MTP.UID] != true) { MF_AddCol(12,useBalance - pd);}
+                                    if(isToday) {
+                                        let pd = portfolioData[MTP.UID];
+                                        if(pd != undefined) {
+                                            MF_AddCol(11,get2dec(pd));
+                                            if (manualHoldData?.[MTP.UID] != true) { MF_AddCol(12,useBalance - pd);}
+                                        }
                                     }
                                 } else {
                                     MF_AddCol(11,get2dec(AccountsGetPendingBalance(ad.id)));
@@ -5014,7 +5019,7 @@ function onClickUpdateTotal() {
         const v = (el.value ?? el.textContent ?? '').toString().trim();
         const normalized = v.replace(/,/g, '');
         const n = parseFloat(normalized);
-        if (!Number.isNaN(n)) sum += n;
+        if (Number.isNaN(n)) {el.value = '';} else {sum += n;}
     });
     div.innerText = sum + '%';
 }
