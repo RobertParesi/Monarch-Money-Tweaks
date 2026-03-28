@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.9
+// @version      4.40.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -527,7 +527,7 @@ function MT_GridDrawDetails() {
         function MT_GridDrawTriggerEvents() {
             if(useRow.IsHeader) HeaderStyle = 'border-radius: 0px 10px 10px 0px;' + css.header;
             if(MTFlex.TriggerEvents) {
-                elx = cec('td',isSubTotal ? 'MTFlexGridSCell2' : '',el,'','','width: 34px;'+ HeaderStyle);
+                elx = cec('td',isSubTotal ? 'MTFlexGridSCell2' : '',el,'','','text-align: right; width: 34px;'+ HeaderStyle);
                 if ((isSubTotal && useRow.PKTriggerEvent != null) || (!isSubTotal && useRow.SKTriggerEvent != null)) {
                     elx = cec('button', 'MTFlexCellGo MTFlexCellArrow', elx);
                     const triggerEvent = isSubTotal ? useRow.PKTriggerEvent : useRow.SKTriggerEvent;
@@ -750,6 +750,7 @@ function MT_GridExport() {
                     if(fr.IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
                         if(fr[j] != undefined && fr[j] != null) {
                             v = MT_GetFormattedValue(MTFlexTitle[k].Format,fr[j],true);
+                            if(MTFlexTitle[k].Format == 4) v+='%';
                         }
                     }
                     if(MTFlex.Subtotals == true && j == 0) {
@@ -3975,12 +3976,12 @@ function ExportSummaryDrawer(inType,inFile) {
         let am2 = t.target != null ? get2dec(t.percent - t.target,1) : 0;
         csvField = '"' + t.title + '","' + t.subtitle + '",';
         csvField += get2dec(t.value,2) + C;
-        csvField += get2dec(t.percent,1) + C;
+        csvField += get2dec(t.percent,1) + '%' + C;
         csvField += get2dec(t.targetV,2) + C;
-        csvField += get2dec(t.target,1) + C;
+        csvField += get2dec(t.target,1) + '%' + C;
         csvField += get2dec(am,2) + C;
-        csvField += get2dec(am2,1);
-        csvContent = csvContent + csvField + CRLF;
+        csvField += get2dec(am2,1) + '%' + CRLF;
+        csvContent = csvContent + csvField;
     });
     downloadFile(inFile,csvContent);
 }
