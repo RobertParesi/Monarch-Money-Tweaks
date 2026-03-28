@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.7
+// @version      4.40.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -303,6 +303,14 @@ function MF_GridOptions(Num,Options) {
             MTFlexAccountFilter.filter = customGroupInfo(MTFlexAccountFilter.name);
         }
     }
+}
+
+function MF_GridTargetKeys() {
+    let to = MTFlex.TargetOptions[MTFlex.Button1];
+    let ao = MTFlex.Button4Options[MTFlex.Button4];
+    let useKey1 = 'MTSummary1-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    let useKey2 = 'MTSummary2-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    return([useKey1,useKey2]);
 }
 
 function MF_GridDraw(inRedraw) {
@@ -1057,6 +1065,9 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 
 function MF_DrawBarChart(inLocation,inP) {
 
+    let to = MTFlex.TargetOptions[MTFlex.Button1];
+    if(!to) return;
+
     const standardText = ['#333333','#cccccc'][isDarkMode()];
     let divHead;
     if(inLocation) {
@@ -1081,8 +1092,7 @@ function MF_DrawBarChart(inLocation,inP) {
     // load new targetData
     targetData = [];
     let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
-    let useKey1 = 'MTSummary1-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
-    let useKey2 = 'MTSummary2-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':';
+    let targetKeys = MF_GridTargetKeys();
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         const secMatch = row.Section == inP[1];
@@ -1121,13 +1131,13 @@ function MF_DrawBarChart(inLocation,inP) {
         targetData[i].percent = get2dec(ii,1);
         if(targetData[i].value > maxValue) maxValue = targetData[i].value;
         if(targetData[i].value < minValue || i == 0) minValue = targetData[i].value;
-        let cvalue = getCookie(useKey2 + targetData[i].title,true);
+        let cvalue = getCookie(targetKeys[1] + targetData[i].title,true);
         if(cvalue > 0) {
             targetData[i].target = Number(cvalue);
             targetData[i].targetV = (sumTotal * (targetData[i].target * .01));
             targetData[i].targetV = get2dec(targetData[i].targetV);
         }
-        cvalue = getCookie(useKey1 + targetData[i].title,false);
+        cvalue = getCookie(targetKeys[0] + targetData[i].title,false);
         targetData[i].subtitle = cvalue;
     }
 
@@ -1160,7 +1170,7 @@ function MF_DrawBarChart(inLocation,inP) {
                 ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
                 if(it.subtitle) {
                     ctx.font = 'italic 13px sans-serif';
-                    ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+12);
+                    ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
                     ctx.font = '13.5px sans-serif';
                 }
             } else {
@@ -2549,6 +2559,7 @@ async function MenuReportsInvestmentsGo() {
     MTFlex.TriggerEvents = true;
     MTFlex.SortSeq = ['1','2','3'];
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y'];
+    MTFlex.TargetOptions = ['','Institution','Account','Account','Holding Type','Account','Category','Account'];
 
     MF_SetupDates();
     MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category', 'by Account/Category']);
@@ -3647,12 +3658,15 @@ async function AccountsDrawer(inP) {
 }
 async function SummaryDrawer(p) {
 
-    let sObj = {};
+    let sObj = {},to='';
     sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
     sObj.big = MTFlex.Desc;
     sObj.small = MTFlex.Button1Options[MTFlex.Button1];
     if(p[0] == 'Total' && p[1] == 'odd') {
-        sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' ' + MTFlex.Button1Options[MTFlex.Button1];
+        to = MTFlex.TargetOptions[MTFlex.Button1];
+        if(to) {
+            sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;
+        }
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
@@ -3666,7 +3680,7 @@ async function SummaryDrawer(p) {
     let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
-    if(p[0] == 'Total' && p[1] == 'odd') {
+    if(to) {
         cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');
     }
 }
@@ -4880,8 +4894,9 @@ function onClickOpenWindow(cn) {
             let row = MTFlexRow[i];
             if(row.Section == 0) continue;
             if(row.IsHeader == true) {
-                let rn = 'MTSummary1-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':' + row[0];
-                let rn2 = 'MTSummary2-' + MTFlex.Button1 + MTFlex.Button2 + MTFlex.Button4 + ':' + row[0];
+                let targetKeys = MF_GridTargetKeys();
+                let rn = targetKeys[0] + row[0];
+                let rn2 = targetKeys[1] + row[0];
                 d.push({field1: row[0], style1: 'font-weight: 600;width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%'});
             }
         }
