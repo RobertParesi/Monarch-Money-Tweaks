@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.8
+// @version      4.40.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -307,10 +307,11 @@ function MF_GridOptions(Num,Options) {
 
 function MF_GridTargetKeys() {
     let to = MTFlex.TargetOptions[MTFlex.Button1];
-    let ao = MTFlex.Button4Options[MTFlex.Button4];
+    let x = MTFlex.Button4 === 1 ? 0 : MTFlex.Button4;
+    let ao = MTFlex.Button4Options[x];
     let useKey1 = 'MTSummary1-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
     let useKey2 = 'MTSummary2-' + MTFlex.Button2 + to.replace(':','') + '|' + ao.replace(':','') + ':';
-    return([useKey1,useKey2]);
+    return([useKey1,useKey2,to,ao]);
 }
 
 function MF_GridDraw(inRedraw) {
@@ -1064,9 +1065,6 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 }
 
 function MF_DrawBarChart(inLocation,inP) {
-
-    let to = MTFlex.TargetOptions[MTFlex.Button1];
-    if(!to) return;
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
     let divHead;
@@ -3664,9 +3662,7 @@ async function SummaryDrawer(p) {
     sObj.small = MTFlex.Button1Options[MTFlex.Button1];
     if(p[0] == 'Total' && p[1] == 'odd') {
         to = MTFlex.TargetOptions[MTFlex.Button1];
-        if(to) {
-            sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;
-        }
+        if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
@@ -3680,9 +3676,7 @@ async function SummaryDrawer(p) {
     let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
-    if(to) {
-        cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');
-    }
+    if(to) {cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');}
 }
 
 async function InvestmentsDrawerCash(inP) {
