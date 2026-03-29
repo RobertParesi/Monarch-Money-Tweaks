@@ -4,6 +4,7 @@
      - NEW: Reports / Investments now have target allocations by any classification.
      - NEW: Added _Make green & red progress bars full height_ for Budget Settings
      - NEW: Added new logic so Budget compression always works with no regressions.
+     - NEW: Ability to add notes to stock tickers.
      - CHANGE: Report percentages will now export better and show as percentage in export.
      - FIX: Reports / Investments "Cash/Money Market" card should not show if disabled.
      - FIX: Reports / Accounts Brokerage Statement should not show Positions and Cash Balance columns if end date is not today.     
