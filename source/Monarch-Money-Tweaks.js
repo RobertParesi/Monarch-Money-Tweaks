@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40.11
+// @version      4.40
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -218,7 +218,7 @@ function MF_QueueAddTitle(inCol,inTitle,p,hideAll = false,hideBut1,hideBut2) {
 function MF_QueueAddRow(p) {
     MTFlexCR = MTFlexRow.length;
     p.PK = p.PK ?? '';p.SK = p.SK ?? '';p.IsHeader = p.IsHeader ?? false;
-    MTFlexRow.push({"Num": MTFlexCR, "IsHeader": p.IsHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKlogoUrl": p.SKlogoUrl, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
+    MTFlexRow.push({"Num": MTFlexCR, "IsHeader": p.IsHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "NoteId1": p.NoteId1, "NoteId2": p.NoteId2, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKlogoUrl": p.SKlogoUrl, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
     for (let j = 1; j < MTFlexTitle.length; j++) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][j] = 0;}}}
 
 function MF_QueueAddCard(p) {
@@ -1133,7 +1133,7 @@ function MF_DrawBarChart(inLocation,inP) {
         let cvalue = getCookie(targetKeys[1] + targetData[i].title,true);
         if(cvalue > 0) {
             targetData[i].target = Number(cvalue);
-            targetData[i].targetV = (sumTotal * (targetData[i].target * .01));
+            targetData[i].targetV = (sumTotal * (targetData[i].target * 0.01));
             targetData[i].targetV = get2dec(targetData[i].targetV);
         }
         cvalue = getCookie(targetKeys[0] + targetData[i].title,false);
@@ -2742,6 +2742,7 @@ async function MenuReportsInvestmentsGo() {
                         if (longTitle.length > 45) {longTitle = longTitle.slice(0, 45) + ' ...';}
                         MTP = [];
                         MTP.Icon = holding.isManual == true ? '' : '';
+                        if(useTicker && getCookie('MT_InvestmentsStockNote_' + useTicker,false)) MTP.Icon+='';
                         MTP.RRN = RRN;
                         if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;} else {MTP.UID = holding.id;}
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
@@ -3826,12 +3827,10 @@ async function InvestmentsDrawer(inP) {
         divTop2 = cec('span','MTSideDrawerHeader',divTop);
         cec('button','MTInputButton',divTop2,'Close','','float:right;' );
         if(glo.debug == 1) {cec('button','MTInputButton',divTop2,'Debug','','float:right;','','',p0);}
-        if(MTFlex.Button2 == 2) {
-            if(thisHld.ticker != 'null') {
-                let bName = 'Watch Ticker';
-                if(getCookie('MTInvestmentTickers',false).split(',').includes(thisHld.ticker)) bName = 'Remove Ticker';
-                cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','','',thisHld.ticker);
-            }
+        if(thisHld.ticker != 'null') {
+            let bName = 'Watch Ticker';
+            if(getCookie('MTInvestmentTickers',false).split(',').includes(thisHld.ticker)) bName = 'Remove Ticker';
+            cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','','',thisHld.ticker);
         }
     }
 }
@@ -3969,7 +3968,7 @@ function ExportSideDrawer(inType,inFile) {
 function ExportSummaryDrawer(inType,inFile) {
 
     const C = ',';
-    let csvField='',csvContent='',j = 0,Cols = 0;
+    let csvField='',csvContent='';
     csvContent = 'Title,Note,Current Value,Current,Target Value,Target, Difference Value, Difference' + CRLF;
     targetData.forEach(t => {
         let am = t.targetV != null ? t.value - t.targetV : 0;
@@ -4918,6 +4917,7 @@ function onClickOpenWindow(cn) {
     if(cn[0] == '!Investments') {
         if(cn[2]) {
             d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
+            d.push({field1: 'Note', style1: 'font-weight: 600;', type: 'Input', style2: 'width: 415px;', key: 'MT_InvestmentsStockNote_' + cn[2]});
         } else {
             d.push({field1: 'Holding Category', field2: cn[3], style1: 'font-weight: 600;'});
             d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
@@ -5749,7 +5749,7 @@ function getCookie(cName, isNum = false, useDefault) {
 function flipCookie(inCookie,spin) {
     let OldValue = parseInt(getCookie(inCookie,true)) + 1;
     if(spin == null) {spin = 1;}
-    if(OldValue > spin) { setCookie(inCookie,0); } else {setCookie(inCookie,OldValue); }
+    if(OldValue > spin) { setCookie(inCookie,0); return 0; } else {setCookie(inCookie,OldValue);return OldValue; }
 }
 
 const listCookies = (cName) => {
