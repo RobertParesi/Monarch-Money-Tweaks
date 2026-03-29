@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.40
+// @version      4.41
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.40';
+const VERSION = '4.41';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -306,6 +306,7 @@ function MF_GridOptions(Num,Options) {
 }
 
 function MF_GridTargetKeys() {
+    if(MTFlex.TargetOptions == undefined) return;
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
@@ -2069,6 +2070,7 @@ async function MenuReportsAccountsGo() {
     MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10','11'];
     MTFlex.ChartOptions = ['1Y', '2Y','3Y','4Y','5Y'];
     MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Overall Cash Statement','Credit Card Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years','Duplicate Transactions']);
+    MTFlex.TargetOptions = ['Account Class','Account Type', 'Account Subtype', 'Account Group'];
     MF_GridOptions(4,customGroupInfo());
     if(MTFlex.Button2 == 10) {
         MF_GridOptions(1,['All Merchants','Same Merchants']);
@@ -3662,9 +3664,11 @@ async function SummaryDrawer(p) {
     sObj.urltext = MTFlex.Button2Options[MTFlex.Button2];
     sObj.big = MTFlex.Desc;
     sObj.small = MTFlex.Button1Options[MTFlex.Button1];
-    if(p[0] == 'Total' && p[1] == 'odd') {
-        to = MTFlex.TargetOptions[MTFlex.Button1];
-        if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
+    if(MTFlex.TargetOptions) {
+        if(p[0] == 'Total' && p[1] == 'odd') {
+            to = MTFlex.TargetOptions[MTFlex.Button1];
+            if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
+        }
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
