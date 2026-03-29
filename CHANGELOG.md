@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- * **Version 4.40 (Beta)**
+ * **Version 4.40 (March 29, 2026)**
      - NEW: Reports / Investments now have target allocations by any classification.
      - NEW: Added _Make green & red progress bars full height_ for Budget Settings
      - NEW: Added new logic so Budget compression always works with no regressions.
