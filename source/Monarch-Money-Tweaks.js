@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.1
+// @version      4.41.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -41,7 +41,7 @@ function MM_Init() {
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
-    const sidepanelBackground = 'background: ' + ['#f6fdff;','#373736;'][a];
+    const sidepanelBackground = 'background: ' + ['#ecfbff;','#373736;'][a];
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
     const accentColor = '#ff692d;';
@@ -307,12 +307,13 @@ function MF_GridOptions(Num,Options) {
 
 function MF_GridTargetKeys() {
     if(MTFlex.TargetOptions == undefined) return null;
+    console.log(MTFlex.TargetOptions);
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
-    let useKey1 = 'MTSummary1-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
-    let useKey2 = 'MTSummary2-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
-    return([useKey1,useKey2,to,ao]);
+    let useKey0 = 'MTSummary1-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    let useKey1 = 'MTSummary2-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    return([useKey0,useKey1,to,ao]);
 }
 
 function MF_GridDraw(inRedraw) {
@@ -3683,7 +3684,7 @@ async function SummaryDrawer(p) {
     let r = MT_BarChartEmbed(divTop,divTop2);
     if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
     divTop2 = cec('div','MTSideDrawerHeader',divTop);
-    if(to) {cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSummaryDrawer');}
+    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','triggers',to,'MTSummaryDrawer');
 }
 
 async function InvestmentsDrawerCash(inP) {
@@ -3970,22 +3971,30 @@ function ExportSideDrawer(inType,inFile) {
     downloadFile(inFile,csvContent);
 }
 
-function ExportSummaryDrawer(inType,inFile) {
+function ExportSummaryDrawer(inType,inFile,inTriggers) {
 
     const C = ',';
     let csvField='',csvContent='';
-    csvContent = 'Title,Note,Current Value,Current,Target Value,Target, Difference Value, Difference' + CRLF;
+    if(inTriggers) {
+        csvContent = 'Title,Note,Current Value,Current,Target Value,Target, Difference Value, Difference' + CRLF;
+    } else {
+        csvContent = 'Title,Current Value,Current' + CRLF;
+    }
+
     targetData.forEach(t => {
         let am = t.targetV != null ? t.value - t.targetV : 0;
         let am2 = t.target != null ? get2dec(t.percent - t.target,1) : 0;
-        csvField = '"' + t.title + '","' + t.subtitle + '",';
-        csvField += get2dec(t.value,2) + C;
-        csvField += get2dec(t.percent,1) + '%' + C;
-        csvField += get2dec(t.targetV,2) + C;
-        csvField += get2dec(t.target,1) + '%' + C;
-        csvField += get2dec(am,2) + C;
-        csvField += get2dec(am2,1) + '%' + CRLF;
-        csvContent = csvContent + csvField;
+        csvField = '"' + t.title + '"';
+        if(inTriggers) csvField+= ',"' + t.subtitle + '"';
+        csvField += C + get2dec(t.value,2);
+        csvField += C + get2dec(t.percent,1) + '%';
+        if(inTriggers) {
+            csvField += C + get2dec(t.targetV,2);
+            csvField += C + get2dec(t.target,1) + '%';
+            csvField += C + get2dec(am,2);
+            csvField += C + get2dec(am2,1) + '%'
+        }
+        csvContent = csvContent + csvField + CRLF;
     });
     downloadFile(inFile,csvContent);
 }
@@ -4727,7 +4736,7 @@ window.onclick = function(event) {
                     ExportSideDrawer('Summary','Monarch ' + MTFlex.Desc + ' History ' + getDates('s_FullDate'));return;
                 }
                 if(cn == 'MTSummaryDrawer') {
-                    ExportSummaryDrawer('Summary','Monarch ' + MTFlex.Desc + ' ' + MTFlex.Button2Options[MTFlex.Button2] );return;
+                    ExportSummaryDrawer('Summary','Monarch ' + MTFlex.Desc + ' ' + MTFlex.Button2Options[MTFlex.Button2],event.target.getAttribute('triggers'));return;
                 }
                 return;
             case 'MTFlexBig':
