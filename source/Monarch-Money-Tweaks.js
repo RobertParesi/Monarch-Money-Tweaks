@@ -2562,7 +2562,7 @@ async function MenuReportsInvestmentsGo() {
     MTFlex.TriggerEvents = true;
     MTFlex.SortSeq = ['1','2','3'];
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y'];
-    MTFlex.TargetOptions = ['','Institution','Account','Account','Holding Type','Account','Category','Account'];
+    MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account'];
 
     MF_SetupDates();
     MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category', 'by Account/Category']);
