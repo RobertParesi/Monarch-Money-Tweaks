@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.2
+// @version      4.41.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1694,7 +1694,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
         });
         cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
     }
-    if(t.subtitle) cec('div','',divTop,t.subtitle,'','font-size: 14px;font-weight: 500;');
+    if(t.subtitle) cec('div','',divTop,t.subtitle,'','font-size: 14px;font-weight: 600;');
     let st = 'max-height: 520px;';
     if(d.length > 9) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
@@ -4910,6 +4910,7 @@ function onClickOpenWindow(cn) {
 
     let d=[],b=[],w=480,f1='65%',f2='35%',st='',tot=0,usePct=false;
     if(cn[0] == '!SummaryDrawerTotal') {
+        if(MTFlex.Button4 > 0) st=MTFlex.Button4Options[MTFlex.Button4];
         let targetKeys = MF_GridTargetKeys();
         if(targetKeys == null) return;
         for (let i = 0; i < MTFlexRow.length; i ++) {
