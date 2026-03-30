@@ -164,7 +164,14 @@ To make cash appear in Cash Holdings, go to Accounts, select the account, scroll
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
 <br>
-You can set Allocation Targets by clicking the [...] button in the upper-right of the Summary bar chart - on the **Total** line. Targets can be defined by Institution, Account, Holding Type, or Category, and each set of targets can be different. Allocations do not need to total 100% — for example, you might set 70% to Fixed Income and leave the rest unspecified, or set 5% to Cash and leave the remainder blank.
+You can set Allocation Targets by clicking the [...] button in the upper-right of the Summary bar chart - on the **Total** line. 
+
+❗️Different target settings are defined either by Portfolio/Allocation OR Performance
+❗️Different target settings are also defined either by Institution, Account, Holding Type, or Category
+❗️Different target settings are also defined by any Account Group 
+
+📌 Allocations do not need to total 100% — for example, you might set 70% to Fixed Income and leave the rest unspecified, or set 5% to Cash and leave the remainder blank.
+
 
 ### Other Monarch Money Tweaks non-report options:
 
