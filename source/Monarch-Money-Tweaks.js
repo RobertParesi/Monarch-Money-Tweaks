@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41
+// @version      4.41.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -41,7 +41,7 @@ function MM_Init() {
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
-    const sidepanelBackground = 'background: ' + ['#eef9fd;','#373736;'][a];
+    const sidepanelBackground = 'background: ' + ['#f6fdff;','#373736;'][a];
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
     const accentColor = '#ff692d;';
@@ -77,7 +77,7 @@ function MM_Init() {
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; padding: 16px 16px 0px 16px;' + panelBackground + bs + '}');
-    addStyle('.MTRow {display: flex;  width: 100%;  padding-top: 12px;}');
+    addStyle('.MTRow {display: flex;  width: 100%;  padding-left: 2px; padding-right: 2px; padding-top: 12px;}');
     addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
@@ -306,7 +306,7 @@ function MF_GridOptions(Num,Options) {
 }
 
 function MF_GridTargetKeys() {
-    if(MTFlex.TargetOptions == undefined) return;
+    if(MTFlex.TargetOptions == undefined) return null;
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
@@ -1131,14 +1131,16 @@ function MF_DrawBarChart(inLocation,inP) {
         targetData[i].percent = get2dec(ii,1);
         if(targetData[i].value > maxValue) maxValue = targetData[i].value;
         if(targetData[i].value < minValue || i == 0) minValue = targetData[i].value;
-        let cvalue = getCookie(targetKeys[1] + targetData[i].title,true);
-        if(cvalue > 0) {
-            targetData[i].target = Number(cvalue);
-            targetData[i].targetV = (sumTotal * (targetData[i].target * 0.01));
-            targetData[i].targetV = get2dec(targetData[i].targetV);
+        if(targetKeys != null) {
+            let cvalue = getCookie(targetKeys[1] + targetData[i].title,true);
+            if(cvalue > 0) {
+                targetData[i].target = Number(cvalue);
+                targetData[i].targetV = (sumTotal * (targetData[i].target * 0.01));
+                targetData[i].targetV = get2dec(targetData[i].targetV);
+            }
+            cvalue = getCookie(targetKeys[0] + targetData[i].title,false);
+            targetData[i].subtitle = cvalue;
         }
-        cvalue = getCookie(targetKeys[0] + targetData[i].title,false);
-        targetData[i].subtitle = cvalue;
     }
 
     MF_DrawChartupdateDetail('MTMax','Largest Value - ' + entries[0].it.title.slice(0,35),getDollarValue(maxValue));
@@ -1169,7 +1171,7 @@ function MF_DrawBarChart(inLocation,inP) {
             if(it.title.length < 19 || it.subtitle) {
                 ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
                 if(it.subtitle) {
-                    ctx.font = 'italic 13px sans-serif';
+                    ctx.font = '12px sans-serif';
                     ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
                     ctx.font = '13.5px sans-serif';
                 }
@@ -1692,7 +1694,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
         cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
     }
     if(t.subtitle) cec('div','',divTop,t.subtitle,'','font-size: 14px;font-weight: 500;');
-    let st = 'max-height: 524px;padding: 16px;';
+    let st = 'max-height: 520px;';
     if(d.length > 9) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
     if(typeof d !== 'string') {
@@ -1746,7 +1748,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
             }
         });
     } else { let div2 = cec('div','MTRow',div); cec('div','MTField1',div2,d,'','width: 100%;'); }
-    div = cec('div','MTButtons',divTop,'','','margin-top: 4px;');
+    div = cec('div','MTButtons',divTop,'','','padding-right: 0px; margin-top: 4px;');
     if(b != null) {
         if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','','',but.id);});}
     }
@@ -2070,7 +2072,6 @@ async function MenuReportsAccountsGo() {
     MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10','11'];
     MTFlex.ChartOptions = ['1Y', '2Y','3Y','4Y','5Y'];
     MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Overall Cash Statement','Credit Card Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years','Duplicate Transactions']);
-    MTFlex.TargetOptions = ['Account Class','Account Type', 'Account Subtype', 'Account Group'];
     MF_GridOptions(4,customGroupInfo());
     if(MTFlex.Button2 == 10) {
         MF_GridOptions(1,['All Merchants','Same Merchants']);
@@ -4897,11 +4898,11 @@ function onClickMTButtonSmall() {
 }
 
 function onClickOpenWindow(cn) {
-    // here
+
     let d=[],b=[],w=480,f1='65%',f2='35%',st='',tot=0,usePct=false;
-    let targetKeys = MF_GridTargetKeys();
     if(cn[0] == '!SummaryDrawerTotal') {
-        st = targetKeys[3];
+        let targetKeys = MF_GridTargetKeys();
+        if(targetKeys == null) return;
         for (let i = 0; i < MTFlexRow.length; i ++) {
             let row = MTFlexRow[i];
             if(row.Section == 0) continue;
@@ -4921,7 +4922,7 @@ function onClickOpenWindow(cn) {
     if(cn[0] == '!Investments') {
         if(cn[2]) {
             d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
-            d.push({field1: 'Note', style1: 'font-weight: 600;', type: 'Input', style2: 'width: 415px;', key: 'MT_InvestmentsStockNote_' + cn[2]});
+            d.push({field1: 'Note', style1: 'font-weight: 600;', type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2]});
         } else {
             d.push({field1: 'Holding Category', field2: cn[3], style1: 'font-weight: 600;'});
             d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
