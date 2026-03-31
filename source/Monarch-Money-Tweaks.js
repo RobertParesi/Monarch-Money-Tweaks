@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.6
+// @version      4.41.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -232,11 +232,11 @@ async function MF_GridInit(inName, inDesc) {
     MM_GridFont();
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-    portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;
+    if(glo.forceRefresh != true) {portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;}
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
-    glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;glo.forceRefresh = false;
+    glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
@@ -330,6 +330,7 @@ function MF_GridDraw(inRedraw) {
         if(glo.debug == 1) addConsole('Flex Grid',[MTFlex,MTFlexTitle],MTFlexRow);
     }
     if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);MTFlex.ErrorMsg = '';}
+    glo.forceRefresh = false;
     document.body.style.cursor = "";
 }
 
@@ -883,11 +884,7 @@ function MF_GridGetValue(inSection,inCol) {
 function MF_GridUpdateUID(inUID,inCol,inValue,addMissing, increment) {
     for (const Row of MTFlexRow) {
         if(Row.UID == inUID) {
-            if(increment == true) {
-                Row[inCol] += inValue;
-            } else {
-                Row[inCol] = inValue;
-            }
+            if(increment == true) {Row[inCol] += inValue;} else {Row[inCol] = inValue;}
             let x = document.getElementById(inUID + '-' + inCol);
             if(x) x.innerText = inValue;
             return true;
@@ -2626,7 +2623,7 @@ async function MenuReportsInvestmentsGo() {
             MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP);
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
-        portfolioData = await dataPortfolio(lowerDate, higherDate);
+        if(glo.forceRefresh != true) portfolioData = await dataPortfolio(lowerDate, higherDate);
 
         await InvestmentHoldings();
         await InvestmentCash();
