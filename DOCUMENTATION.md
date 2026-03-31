@@ -4,7 +4,9 @@
 
 To install Monarch Money Tweaks, visit the [Extensions area](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/README.md) for your browser.   Click here for detailed information on [License](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/LICENSE.md) and [Security](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/SECURITY.md).   Once you have installed the extension, simply refresh the Monarch Money app website.
 
-It's recommended to start with the following steps, all explained further below:
+MM-Tweaks settings are found in Monarch Money app website itself by clicking on your name in bottom-left and then selecting **Settings**.
+
+It is recommended to start with the following steps, each explained further below:
 
 1. **Settings / Display** for initial Monarch Money Tweaks Settings.
 2. **Settings / Categories** to further setup Fixed vs Flexible Spending.
