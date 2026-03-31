@@ -4,7 +4,7 @@
 
 ### ⚙️ Installing MM-Tweaks for Monarch Money 
 
-Visit the Extensions area for your browser using the following links: 
+Visit the official Extensions area for your browser using the following links: 
 
 🌐  [Google Chrome / Microsoft Edge browser](https://chromewebstore.google.com/detail/monarch-money-tweaks/bjfcejklblacnehdgcjjlnejbdjlnohn) - Version 4.39
 
