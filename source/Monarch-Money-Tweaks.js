@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.3
+// @version      4.41.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -248,7 +248,7 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return 'Displays all your holdings for each account. Use Allocation report to combine same holdings.';
                 case 1: return 'Displays all your holdings with same holdings combined.  Use Portfolio report to split like holdings.';
-                case 2: return 'Displays your Stock, ETF, Mutual Fund & Crypto holdings with price performance over time.';
+                case 2: return 'Displays all your equity holdings ignoring Fixed Income & Cash.  Shows equity price performance over selected time frame.';
             }
             break;
         case 'MTTrends':
@@ -307,7 +307,6 @@ function MF_GridOptions(Num,Options) {
 
 function MF_GridTargetKeys() {
     if(MTFlex.TargetOptions == undefined) return null;
-    console.log(MTFlex.TargetOptions);
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
@@ -881,8 +880,11 @@ function MF_GridGetValue(inSection,inCol) {
 function MF_GridUpdateUID(inUID,inCol,inValue,addMissing, increment) {
     for (const Row of MTFlexRow) {
         if(Row.UID == inUID) {
-            if(increment == true) {Row[inCol] += inValue;
-            } else {Row[inCol] = inValue;}
+            if(increment == true) {
+                Row[inCol] += inValue;
+            } else {
+                Row[inCol] = inValue;
+            }
             let x = document.getElementById(inUID + '-' + inCol);
             if(x) x.innerText = inValue;
             return true;
@@ -1125,7 +1127,7 @@ function MF_DrawBarChart(inLocation,inP) {
     const rowHeight = (h - topPadding - bottomPadding) / maxItems;
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
-    MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
+    MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' - ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
 
     for (let i = 0; i < targetData.length; i++) {
         let ii = (targetData[i].value / sumTotal) * 100;
@@ -1714,7 +1716,6 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         const ci = data.key.indexOf(':');
                         div3 = cec('input','MTInputClass',divD,'','',ci > -1 && data.style2 == '' ? 'width: 88%;' : data.style2,'','',data.key);
                         div3.value = getCookie(data.key,false);
-                        if(data.uid) {div3.setAttribute('uid',data.uid); div3.setAttribute('uidcol',data.uidcol);}
                         div3.setAttribute('col',0);
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
@@ -4850,9 +4851,13 @@ function onClickMTButton() {
             default:
                 divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
                 for (const div of divs) {
-                    if(div.type == 'checkbox') {setCookie(div.id,div.checked == true ? 1 : 0);} else {setCookie(div.id,div.value.trim());}
-                    let ui = div.getAttribute('uid');
-                    if(ui) {MF_GridUpdateUID(ui,div.getAttribute('uidcol'),div.value.trim());}
+                    let vt = div.value.trim();
+                    if(div.type == 'checkbox') {
+                        setCookie(div.id,div.checked == true ? 1 : 0);
+                    } else {
+                        if(getCookie(div.id,false) != vt) glo.forceRefresh = true;
+                        setCookie(div.id,vt);
+                    }
                 }
         }
         removeAllSections('div.MTModelContainer');
@@ -4939,7 +4944,7 @@ function onClickOpenWindow(cn) {
         }
     }
     if(cn[0] == '!Accounts') {
-        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], uid: cn[2], uidcol: 3});
+        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2]});
         d.push({field1: 'Subtype override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[2]});
         d.push({field1: 'Holding Category override for all holdings in account', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
@@ -5102,7 +5107,7 @@ async function onClickExpandSidePanelDetail(inTarget) {
 
 function onClickCloseDrawer() {
 
-    let divs = null,returnV=false;
+    let divs,returnV=false;
     switch(event.target.innerText.trim()) {
         case 'Apply':
             if(MTFlex.DateEvent == 2) {
@@ -5148,6 +5153,7 @@ function onClickCloseDrawer() {
             onClickDumpDebug(Number(event.target.getAttribute('id')));
             return;
     }
+    if(glo.forceRefresh == true) {returnV = true;glo.forceRefresh = false;}
     removeAllSections('div.MTHistoryPanel');
     return returnV;
 }
@@ -5407,7 +5413,6 @@ function hideAllSections(qList,InValue,inStartsWith) {
 function getFullClassName(a) {
     let el = document.querySelector('[class*=' + a + ']');
     if(el) {
-        console.log(el);
         for (let i = 0; i < el.classList.length; i++) {
             if(el.classList[i]) {
                 if(el.classList[i].startsWith(a)) return el.classList[i];
