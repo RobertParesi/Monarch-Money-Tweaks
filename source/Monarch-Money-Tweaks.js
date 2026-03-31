@@ -20,6 +20,7 @@ const VERSION = '4.41';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
+const BOLD = 'font-weight: 600;';
 
 let css = {headStyle: null, mItems: 0, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
@@ -65,20 +66,20 @@ function MM_Init() {
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
     addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
-    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; font-weight: 600; ' + css.font + '}');
+    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; ' + css.font + BOLD + '}');
     addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
-    addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
+    addStyle('.MTPanelLink, .MTBudget a {' + BOLD + 'background-color: transparent; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-top: 2px; width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
     addStyle('.MTItemClass {padding-top: 6px;padding-bottom: 6px;}');
     addStyle('.MTInputClass {margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
-    addStyle('.MTInputTitle {font-size: 14px; height: 30px; font-weight: 500;}');
+    addStyle('.MTInputTitle {' + BOLD + 'font-size: 14px; height: 30px;}');
     addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
     addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
     addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; padding: 16px 16px 0px 16px;' + panelBackground + bs + '}');
     addStyle('.MTRow {display: flex;  width: 100%;  padding-left: 2px; padding-right: 2px; padding-top: 12px;}');
-    addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; font-weight: 600; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; ' + BOLD + 'padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
     addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
@@ -92,10 +93,10 @@ function MM_Init() {
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 20px 20px 20px; border-spacing: 0px;}');
     addStyle('.MTFlexGrid th,.MTFlexGrid td { padding-right: 6px; padding-left: 6px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
-    addStyle('.MTFlexGridTitleRow {font-size: 15.1px; font-weight: 600; height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
+    addStyle('.MTFlexGridTitleRow {font-size: 15.1px; ' + BOLD + 'height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px; border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow {font-size: 15.1px; font-weight: 600; height: 30px;}');
+    addStyle('.MTFlexGridRow {font-size: 15.1px; ' + BOLD + 'height: 30px;}');
     addStyle('.MTFlexSpacer, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
     addStyle('.MTSpacerClass {' + bdrb2 + '}');
     addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
@@ -103,46 +104,46 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 {font-size: 15px;}');
     addStyle('.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align: right !important;}');
-    addStyle('.MTFlexGridSHCell {font-size: 13px; font-weight: 600; padding-top:6px; padding-bottom: 0px;}');
+    addStyle('.MTFlexGridSHCell {font-size: 13px; ' + BOLD + 'padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
     addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + ' font-weight: 600; }');
-    addStyle('.MTFlexError{text-align: center;  font-weight: bold; width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
-    addStyle('.MTFlexBig{font-size: 18px; font-weight: 600; padding-top: 6px; padding-bottom: 6px;}');
-    addStyle('.MTFlexCardBig{font-size: 20px;font-weight: 600; padding-top: 6px; text-align: center;}');
-    addStyle('.MTFlexText{font-size: 14px;' + panelText + 'font-weight: 600;margin-left: 12px;}');
-    addStyle('.MTFlexSmall{font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + BOLD + '}');
+    addStyle('.MTFlexError{text-align: center; ' + BOLD + 'width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
+    addStyle('.MTFlexBig{font-size: 18px; ' + BOLD + 'padding-top: 6px; padding-bottom: 6px;}');
+    addStyle('.MTFlexCardBig{font-size: 20px;' + BOLD + 'padding-top: 6px; text-align: center;}');
+    addStyle('.MTFlexText{font-size: 14px;' + panelText + BOLD + 'margin-left: 12px;}');
+    addStyle('.MTFlexSmall{font-size: 12px;' + panelText + BOLD + 'padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexImage{border-radius: 100%; width: 23px; height: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; }');
     addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; ' + css.font + 'padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerHeader {' + standardText + ' padding: 8px; }');
-    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + ' padding-left: 12px;padding-top: 3px; height: 30px;font-weight: 600; border-radius: 6px; ' + css.font + '}');
+    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + BOLD + ' padding-left: 12px;padding-top: 3px; height: 30px;border-radius: 6px; ' + css.font + '}');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth {margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 {place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
-    addStyle('.MTSideDrawerDetail3 {' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; }');
+    addStyle('.MTSideDrawerDetail3 {' + standardText + BOLD + ' width: 13px; text-align: center; font-size: 13.5px;}');
     addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor: pointer; color: rgb(50, 170, 240) !important;');
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 200px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
-    addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white; font-weight: bold;}');
+    addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + BOLD + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white;}');
     addStyle('.MTSideDrawerSummaryTable {text-align: left; width: 100%;}');
-    addStyle('.MTSideDrawerSummaryTableTH {font-weight:600; position: sticky; top: 0; ' + panelBackground + '}');
+    addStyle('.MTSideDrawerSummaryTableTH {position: sticky; top: 0; ' + panelBackground + BOLD + '}');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 278px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
     addStyle('.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none; margin-bottom: 14px; padding: 12px; min-width: 278px; ' + bdr + bs + '8px ; z-index: 1;}');
     addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
     addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.trH {height: 4px;}');addStyle('.trH2 {height: 20px; vertical-align: top;}');addStyle('.show {display: block;}');
-    addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;font-weight: 600;margin-left: 10px;cursor:pointer;}');
+    addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;' + BOLD + ';margin-left: 10px;cursor:pointer;}');
     addStyle('.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}');
     addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
     addStyle('.ReportsTooltipRow__Diff-k9pa1b-3 {display: ' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}');
     addStyle('.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display: ' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}');
     addStyle('.tooltip {position: relative; display: inline-block;}');
-    addStyle('.tooltip .tooltiptext {width: 270px; font-size: 14px; font-weight: 600; text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
+    addStyle('.tooltip .tooltiptext {width: 270px; font-size: 14px; ' + BOLD + 'text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
     addStyle('.tooltip .tooltiptext::after {position: absolute; top:100%; left: 50%; border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
     addStyle('input::placeholder {font-size: 12px;}');
@@ -665,7 +666,7 @@ function MT_GridDrawContainer() {
     createDropdown('2',MTFlex.Button2Options,MTFlex.Button2);
 
     div2 = cec('div','MTdropdown',tbs);
-    div2 = cec('label','',div2,'Compress Grid','','margin-top: 6px; font-size: 14px; font-weight:500;display: inline-block;','htmlFor','CompressGrid');
+    div2 = cec('label','',div2,'Compress Grid','','margin-top: 6px; font-size: 14px; ' + BOLD + 'display: inline-block;','htmlFor','CompressGrid');
     div2 = cec('input','MTFlexCheckbox',div2,'','','','','','CompressGrid');
     div2.type = 'checkbox';if(MTFlex.Button3 == 1) {div2.checked = 'true';}
 
@@ -825,13 +826,13 @@ function MT_GetInput(inputs) {
     let div = cec('span','MTSideDrawerHeader',divTop);
     for (let i = 0; i < inputs.length; i++) {
         let div2 = cec('div','MTInputDesc',div,'','','padding-bottom: 20px; padding-top: 10px; display: grid;');
-        cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
+        cec('div','',div2,inputs[i].NAME,'',BOLD + 'padding: 6px;');
         let div3 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
         div3.value = inputs[i].VALUE;
         if(inputs[i].ID) {div3.id = inputs[i].ID;}
         if(i == inputs.length-1) {
             div2 = cec('div','MTdropdown',div2);
-            div2 = cec('label','',div2,"Always use today's date",'','margin-top: 10px; font-size: 14px; font-weight: 600; display: inline-block;','htmlFor','TodayDate');
+            div2 = cec('label','',div2,"Always use today's date",'',BOLD + 'margin-top: 10px; font-size: 14px; display: inline-block;','htmlFor','TodayDate');
             div2 = cec('input','MTDateCheckbox',div2,'','','','','','TodayDate');
             div2.type = 'checkbox';if(getCookie(MTFlex.Name + 'HigherDate',false) == 'd_Today') {div2.checked = true;}
         }
@@ -1090,7 +1091,7 @@ function MF_DrawBarChart(inLocation,inP) {
     divTop = divHead.insertAdjacentElement('afterend', divTop);
     let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 660; divChart.height = 660;
 
-    cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
+    cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
 
     // load new targetData
     targetData = [];
@@ -1283,7 +1284,7 @@ function MF_DrawChart(inLocation) {
         divTop.id = 'MTChartCanvas';
         divTop = div.insertAdjacentElement('afterend', divTop);
         divChart = cec('canvas','',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 400;
-        divTooltip = cec('div','',divTop,'','','position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; font-weight: 600; display: none;','','','MTChartTip');
+        divTooltip = cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
     } else {
         divChart = document.getElementById('MTChart');
         divTooltip = document.getElementById('MTChartTip');
@@ -1688,15 +1689,13 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
     div = cec('div','MTModelWindow',div,'','',css.FontFamily,'','',t.id);
     divTop = cec('div','MTModelWindow2',div,'','','');
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
-    let divH = cec('div','',divTop,'','','display: flex; font-weight: 600; font-size: 18px;');
+    let divH = cec('div','',divTop,'','',BOLD + 'display: flex; font-size: 18px;');
     cec('span','',divH,t.title,'','flex: 1 1 auto;');
     if(t.percent == true) {
-        divTop.addEventListener('focusout', e => {
-            onClickUpdateTotal();
-        });
+        divTop.addEventListener('focusout', e => {onClickUpdateTotal();});
         cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
     }
-    if(t.subtitle) cec('div','',divTop,t.subtitle,'','font-size: 14px;font-weight: 600;');
+    if(t.subtitle) cec('div','',divTop,t.subtitle,'',BOLD + 'font-size: 14px;');
     let st = 'max-height: 520px;';
     if(d.length > 9) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
@@ -1717,6 +1716,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         div3 = cec('input','MTInputClass',divD,'','',ci > -1 && data.style2 == '' ? 'width: 88%;' : data.style2,'','',data.key);
                         div3.value = getCookie(data.key,false);
                         div3.setAttribute('col',0);
+                        if(data.refresh == true) div3.setAttribute('refresh','true');
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
                             const lk = data.key.slice(0, ci+1);
@@ -3361,7 +3361,7 @@ function HistoryDrawerDraw() {
 
     let sumQue = [], detailQue = [];
     const hideDetail = 'display: ' + getDisplay(getCookie(MTFlex.Name + '_SidePanel',true),'');
-    const titleStyle = 'font-weight: 600;';
+    const titleStyle = BOLD;
     const titleLStyle = 'text-align: left;';
     const startYear = getDates('n_CurYear') - 2;
     const curYear = getDates('n_CurYear');
@@ -3396,7 +3396,7 @@ function HistoryDrawerDraw() {
             if(skiprow == false || j > startYear) {
                 div3 = cec('span','MTSideDrawerDetail',div2,j,'',titleStyle);
                 if(j == curYear) {
-                    cec('span','',div3,' o','','font-weight: 900; font-size: 21px; color: ' + css.legend[curYear-j]);
+                    cec('span','',div3,' o','',BOLD + 'font-size: 21px; color: ' + css.legend[curYear-j]);
                 } else {
                     cec('span','',div3,' ●','','color: ' + css.legend[curYear-j]);
                 }
@@ -3410,7 +3410,7 @@ function HistoryDrawerDraw() {
 
         for (let i = 0; i < 12; i++) {
             if(i > 0 && i == curMonth) {
-                HistoryDrawerTotals('Sub Total','font-weight: 600; margin-bottom: 14px');
+                HistoryDrawerTotals('Sub Total',BOLD + 'margin-bottom: 14px');
                 curSubTotal = T[3];
             }
             if(sumQue[i].YR2 == sumQue[i].YR3){
@@ -3441,7 +3441,7 @@ function HistoryDrawerDraw() {
             T[1] = T[1] + sumQue[i].YR1;T[2] = T[2] + sumQue[i].YR2;T[3] = T[3] + sumQue[i].YR3;
             if(inGroup == 2) { HistoryDrawerDetail(i+1,div); }
         }
-        HistoryDrawerTotals('Total','font-weight: 600; margin-bottom: 14px;');
+        HistoryDrawerTotals('Total',BOLD + 'margin-bottom: 14px;');
         HistoryDrawerTotals('Pending','');
         HistoryDrawerTotals('Average','line-height: 20px;margin-top:10px;');
         HistoryDrawerTotals('Highest','line-height: 20px;');
@@ -3606,7 +3606,7 @@ async function AccountsDrawer(inP) {
     transQueue.sort((a, b) => a.date.localeCompare(b.date));
 
     let divTable = cec('div','MTSideDrawerHeader',divTop2,'','',css.FontFamily);
-    let div2 = cec('div','MTSideDrawerItem',divTable,'','','font-weight: 600;text-align: right;');
+    let div2 = cec('div','MTSideDrawerItem',divTable,'','',BOLD + 'text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,accountFields[1]);
     cec('span','MTSideDrawerDetail',div2,accountFields[2]);
@@ -3620,7 +3620,7 @@ async function AccountsDrawer(inP) {
 
     for (let m = 0; m < transQueue.length; m++) {
         div2 = cec('div','MTSideDrawerItem',divTable);
-        cec('span','MTSideDrawerDetail',div2,getMonthName(transQueue[m].date,3),'','font-weight: 600;text-align: left;');
+        cec('span','MTSideDrawerDetail',div2,getMonthName(transQueue[m].date,3),'',BOLD + 'text-align: left;');
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].inc),'','','data',bt1 + '|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
         cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].exp),'','','data',bt2 + '|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
         let tot = transQueue[m].inc - transQueue[m].exp;
@@ -3633,7 +3633,7 @@ async function AccountsDrawer(inP) {
     cec('span','MTFlexSpacer',divTable);
 
     div2 = cec('div','MTSideDrawerItem',divTable);
-    cec('div','MTSideDrawerDetail',div2,'Totals','','font-weight: 600;text-align: left;');
+    cec('div','MTSideDrawerDetail',div2,'Totals','',BOLD + 'text-align: left;');
     cec('div','MTSideDrawerDetail',div2,getDollarValue(incs));
     cec('div','MTSideDrawerDetail',div2,getDollarValue(exps));
     cec('div','MTSideDrawerDetail',div2,getDollarValue(tots));
@@ -4155,14 +4155,14 @@ async function MenuPlanRefresh() {
     writePlan('Total in Checking',getDollarValue(bCK,true),'','');
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
     writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','');
-    writePlan('Total Available',getDollarValue(bCK-bCC-pendingAmt,true),'','font-weight: 500;');
+    writePlan('Total Available',getDollarValue(bCK-bCC-pendingAmt,true),'',BOLD);
     if(noBudget == false) {
         if(getCookie('MT_PlanShowAll',true) == 1) {
             if(getCookie('MT_PlanLTBII',true) == 0) writePlan('Budget Income',getDollarValue(budgetI[3],true),'','','', true);
             if(getCookie('MT_PlanLTBIE',true) == 0) writePlan(ExLit,getDollarValue(budgetE[3],true),'','');
         }
-        writePlan('Budget Remaining',getDollarValue(BudgetRemain,true),'','font-weight: 500;','', true);
-        writePlan('Left to Spend',getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);
+        writePlan('Budget Remaining',getDollarValue(BudgetRemain,true),'',BOLD,'', true);
+        writePlan('Left to Spend',getDollarValue(LeftToSpend,true),'',BOLD,LeftToSpendStyle, true);
     }
     if(bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
 
@@ -4451,7 +4451,7 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
-    const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text','font-size: 18px; font-weight: 500;');
+    const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text',BOLD + 'font-size: 18px;');
     MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button','','id','SaveSettings');
     MenuDisplay_Input(p,'Restore Settings', 'button','','id','RestoreSettings');
@@ -4548,7 +4548,7 @@ function MenuSettingsDisplay(inDiv) {
                 return cec('button','MTButton',inValue,inCookie,'','float:right;',optValue,optValue2);
             case 'spacer':
                 cec('div','MTSpacerClass',qs);
-                return cec('div','MTItemClass',qs,inValue,'','font-size: 17px; font-weight: 500;');
+                return cec('div','MTItemClass',qs,inValue,'','font-size: 17px;' + BOLD);
             case 'text':
                 return cec('div','MTItemClass',qs,inValue,'',inStyle);
             case 'dropdown':
@@ -4583,7 +4583,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2.parentNode.insertBefore(e3, e2.nextSibling);
                 break;
             case 'number':
-                cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                cec('div','',e1,inValue,'','font-size: 14px;' + BOLD);
                 e2 = cec('input','MTInputClass',e1,'','','','type',inType);
                 e2.min = optValue;
                 e2.max = optValue2;
@@ -4591,7 +4591,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
                 break;
             case 'string':
-                cec('div','',e1,inValue,'','font-size: 14px; font-weight: 500;');
+                cec('div','',e1,inValue,'','font-size: 14px;' + BOLD);
                 e2 = cec('input','MTInputClass',e1,'','',inStyle,'value',OldValue);
                 e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
                 break;
@@ -4855,7 +4855,10 @@ function onClickMTButton() {
                     if(div.type == 'checkbox') {
                         setCookie(div.id,div.checked == true ? 1 : 0);
                     } else {
-                        if(getCookie(div.id,false) != vt) glo.forceRefresh = true;
+                        if(getCookie(div.id,false) != vt) {
+                            let fr = div.getAttribute('refresh');
+                            if(fr == 'true') glo.forceRefresh = true;
+                        }
                         setCookie(div.id,vt);
                     }
                 }
@@ -4924,30 +4927,30 @@ function onClickOpenWindow(cn) {
             if(row.IsHeader == true) {
                 let rn = targetKeys[0] + row[0];
                 let rn2 = targetKeys[1] + row[0];
-                d.push({field1: row[0], style1: 'font-weight: 600;width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%'});
+                d.push({field1: row[0], style1: BOLD + 'width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%', refresh: true});
             }
         }
         w=558;usePct=true;
     }
     if(cn[0] == '!SaveSettings') {
         d.push({field1: 'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + cn[3]});
-        d.push({field1: 'Skip Save Settings reminder', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MT:LastBackupSkip'});
+        d.push({field1: 'Skip Save Settings reminder', style1: BOLD, type: 'Checkbox', key: 'MT:LastBackupSkip'});
         b.push({name: 'Save Settings', id: 'SaveSettings'});
     }
     if(cn[0] == '!Investments') {
         if(cn[2]) {
-            d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2]});
-            d.push({field1: 'Note', style1: 'font-weight: 600;', type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2]});
+            d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: BOLD, type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2], refresh: true});
+            d.push({field1: 'Note', style1: BOLD, type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2], refresh: true});
         } else {
-            d.push({field1: 'Holding Category', field2: cn[3], style1: 'font-weight: 600;'});
+            d.push({field1: 'Holding Category', field2: cn[3], style1: BOLD});
             d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
         }
     }
     if(cn[0] == '!Accounts') {
-        d.push({field1: 'Account Group', style1: 'font-weight: 600;', type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2]});
-        d.push({field1: 'Subtype override [' + cn[3] + ']', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsSub:' + cn[2]});
-        d.push({field1: 'Holding Category override for all holdings in account', style1: 'font-weight: 600;', type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...'});
-        d.push({field1: 'Add to Accounts List on Dashboard', style1: 'font-weight: 600;', type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
+        d.push({field1: 'Account Group', style1: BOLD, type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], refresh: true});
+        d.push({field1: 'Subtype override [' + cn[3] + ']', style1: BOLD, type: 'Input', key: 'MTAccountsSub:' + cn[2],refresh: true});
+        d.push({field1: 'Holding Category override for all holdings in account', style1: BOLD, type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...', refresh: true});
+        d.push({field1: 'Add to Accounts List on Dashboard', style1: BOLD, type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
     if(cn[0] == '!BarChart') {
         document.body.style.cursor = "";
@@ -4958,13 +4961,13 @@ function onClickOpenWindow(cn) {
                 const t = MTFlexTitle[i];
                 if(t.IsHidden != true) {
                     let fd2 = MT_GetFormattedValue(t.Format,MTFlexRow[z][i]);
-                    d.push({sort: 0, field1: MTFlexTitle[i].Title, style1: 'font-weight: 600;;',field2: fd2});
+                    d.push({sort: 0, field1: MTFlexTitle[i].Title, style1: BOLD, field2: fd2});
                 }
             }
          } else {
              f1='400px;';f2='120px;';
              if(z=='') x+=1;
-             d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: 'font-weight: 600;;',field2: MTFlexTitle[y].Title, style2: 'font-weight: 600;', val: 0});
+             d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: BOLD,field2: MTFlexTitle[y].Title, style2: BOLD, val: 0});
              for (let i = 0; i < MTFlexRow.length; i ++) {
                  const useRow = MTFlexRow[i];
                  if(useRow.Section == x) {
@@ -4980,7 +4983,7 @@ function onClickOpenWindow(cn) {
     }
     if(cn[0] == '!CombinedAccounts') {
         let p = MF_GridPKUIDs(cn[2]);
-        d.push({sort: 0, field1: 'Account', style1: 'font-weight: 600;', field2: 'Balance', style2: 'font-weight: 600;'});
+        d.push({sort: 0, field1: 'Account', style1: BOLD, field2: 'Balance', style2: BOLD});
         p.forEach(item => {
             for (let i = 0; i < accountsData.accounts.length; i ++) {
                 let ad = accountsData.accounts[i];
@@ -5016,7 +5019,7 @@ function onClickOpenWindow(cn) {
         cn[1] = t.merchant.name;cn[2] = t.id;
     }
     if(tot != 0) {
-        d.push({sort: 3, field1: 'Total', style1: 'font-weight: 600;', field2: getDollarValue(tot), style2: 'font-weight: 600;', val: tot});
+        d.push({sort: 3, field1: 'Total', style1: BOLD, field2: getDollarValue(tot), style2: BOLD, val: tot});
         d.sort((a, b) => {
             if (a.sort !== b.sort) return a.sort - b.sort;
             const fa = parseFloat(a.val);
