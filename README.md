@@ -70,6 +70,7 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
     - Show Positions and Performance.
     - Show gain/loss, cost basis, stock price, stock chart, and more.
     - Sort holdings data by any column.
+    - Set target allocations at the institution, account, holding type or custom category level.
     - Export to Excel or Numbers.
              
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
