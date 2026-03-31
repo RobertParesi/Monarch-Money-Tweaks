@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.5
+// @version      4.41.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -288,7 +288,8 @@ function MF_GridTip() {
                 case 6: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
                 case 7: return "Shows account balances over time for this year. Click on date range for the last month.";
                 case 8: return "Shows account balances over time by quarter for the past three years. Click on date range for the last month.";
-                case 9: return "Shows transactions that may be duplicates. See Ignore Duplicate Transactions that have Notes in settings.";
+                case 9: return "Shows starting account balances for each year as of a selected date.";
+                case 10: return "Shows transactions that may be duplicates. See Ignore Duplicate Transactions that have Notes in settings.";
             }
             break;
     }
@@ -318,16 +319,17 @@ function MF_GridTargetKeys() {
 
 function MF_GridDraw(inRedraw) {
     removeAllSections('div.MTWaitContainer');
+    removeAllSections('div.MTFlexError');
     removeAllSections(['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]);
     if(inRedraw == false) {MT_GridDrawContainer();}
-    if(MTFlex.ErrorMsg == undefined) {
+    if(!MTFlex.ErrorMsg) {
         MT_GridDrawSort();
         MT_GridDrawDetails();
         MT_GridDrawExpand();
         if(inRedraw == false) {MT_GridDrawCards();}
+        if(glo.debug == 1) addConsole('Flex Grid',[MTFlex,MTFlexTitle],MTFlexRow);
     }
-    if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);}
-    if(glo.debug == 1) addConsole('Flex Grid',[MTFlex,MTFlexTitle],MTFlexRow);
+    if(MTFlex.ErrorMsg) {cec('div','MTFlexError',MTFlexTable,MTFlex.ErrorMsg);MTFlex.ErrorMsg = '';}
     document.body.style.cursor = "";
 }
 
@@ -2548,7 +2550,7 @@ async function MenuReportsAccountsGo() {
         MF_QueueAddRow(MTP);
         MF_AddCol(0,ad.displayName);
         MF_AddCol(1,ad.type.display);
-        MF_AddCol(2,ad.subtype.display);
+        MF_AddCol(2,useSubType);
         MF_AddCol(3,accountName);
         return accountName;
     }
