@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.4
+// @version      4.41.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -235,7 +235,7 @@ async function MF_GridInit(inName, inDesc) {
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
-    glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
+    glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;glo.forceRefresh = false;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
@@ -5153,7 +5153,7 @@ function onClickCloseDrawer() {
             onClickDumpDebug(Number(event.target.getAttribute('id')));
             return;
     }
-    if(glo.forceRefresh == true) {returnV = true;glo.forceRefresh = false;}
+    if(glo.forceRefresh == true) {returnV = true;}
     removeAllSections('div.MTHistoryPanel');
     return returnV;
 }
