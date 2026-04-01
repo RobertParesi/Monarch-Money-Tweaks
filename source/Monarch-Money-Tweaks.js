@@ -3743,7 +3743,7 @@ async function InvestmentsDrawer(inP) {
         sObj.big = bondInfo[0];
         sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
     } else {
-        sObj.button = '!Investments|' + sObj.big + '|' + useTicker + '|' + sObj.small + '|' + thisHld.account.displayName;
+        sObj.button = '!Investments|' + useTicker + ' - ' + sObj.big + '|' + useTicker + '|' + sObj.small + '|' + thisHld.account.displayName;
         if(useTicker != '') {
             sObj.big = useTicker + ' • ' + thisHld.name;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
@@ -4946,7 +4946,7 @@ function onClickOpenWindow(cn) {
             d.push({field1: 'Note', style1: BOLD, type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2], refresh: true});
         } else {
             d.push({field1: 'Holding Category', field2: cn[3], style1: BOLD});
-            d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.'});
+            d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.', style1: 'white-space: normal;'});
         }
     }
     if(cn[0] == '!Accounts') {
