@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.10
+// @version      4.41.11
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2619,7 +2619,7 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '108px';MTP.Format = 4;
         MF_QueueAddTitle(11,'Gain/loss %',{ ...MTP, ShowPercent: { Type: 'Dif', Col1: [9], Col2: [8], AsRaw: true }});
         if(MTFlex.Button2 < 2) {
-            let lit = MTFlex.Button1 == 4 ? 'Type %' : (MTFlex.Button1 == 0 ? 'Port %' : 'Acct %');
+            let lit = MTFlex.Button1 == 4 || MTFlex.Button1 == 6 ? 'Type %' : (MTFlex.Button1 == 0 ? 'Port %' : 'Acct %');
              MTP.Width = '85px';MF_QueueAddTitle(12,lit,MTP);
             MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,false,[0]);
         } else {
@@ -4154,11 +4154,15 @@ async function MenuPlanRefresh() {
         } else {budgetE[3] = 0;ExLit += ' (Over Budget)';}
     }
     let LeftToSpendStyle = LeftToSpend < 0 ? css.red : css.green;
-
+    let TotAvail = bCK-bCC-pendingAmt;
     writePlan('Total in Checking',getDollarValue(bCK,true),'','');
+    let useSavings = getCookie('MT_PlanSavings',true);
+    if(useSavings == 1) {
+        TotAvail+=bSV;writePlan('Total Savings',getDollarValue(bSV,true),'','');
+    }
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
     writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','');
-    writePlan('Total Available',getDollarValue(bCK-bCC-pendingAmt,true),'',BOLD);
+    writePlan('Total Available',getDollarValue(TotAvail,true),'',BOLD,TotAvail < 0 ? css.red : css.green);
     if(noBudget == false) {
         if(getCookie('MT_PlanShowAll',true) == 1) {
             if(getCookie('MT_PlanLTBII',true) == 0) writePlan('Budget Income',getDollarValue(budgetI[3],true),'','','', true);
@@ -4167,7 +4171,7 @@ async function MenuPlanRefresh() {
         writePlan('Budget Remaining',getDollarValue(BudgetRemain,true),'',BOLD,'', true);
         writePlan('Left to Spend',getDollarValue(LeftToSpend,true),'',BOLD,LeftToSpendStyle, true);
     }
-    if(bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
+    if(useSavings == 0 && bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
 
     function writePlan(inDesc,inValue,inHref,inStyle,inStyle2,isSpace) {
         let div2 = cec('div','',div,'','',isSpace == true ? 'margin-top: 10px;' : '');
@@ -4531,6 +4535,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
     MenuDisplay_Input('Make green & red progress bars full height','MT_BudgetHighlight','checkbox');
     MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
+    MenuDisplay_Input('Move Savings up to Total Available','MT_PlanSavings','checkbox');
     MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
