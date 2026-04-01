@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.8
+// @version      4.41.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -90,26 +90,26 @@ function MM_Init() {
     addStyle('.MTFlexContainerPanel {display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexContainerHeader {display: flex; justify-content: space-between;  padding: 16px 24px;');
     addStyle('.MTFlexContainerCard {display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
-    addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 20px 20px 20px; border-spacing: 0px;}');
+    addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 12px 20px 12px; border-spacing: 0px;}');
     addStyle('.MTFlexGrid th,.MTFlexGrid td { padding-right: 6px; padding-left: 6px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow {font-size: 15.1px; ' + BOLD + 'height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px; border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow {font-size: 15.1px; ' + BOLD + 'height: 30px;}');
+    addStyle('.MTFlexGridRow {font-size: 14px; ' + BOLD + 'height: 30px;}');
     addStyle('.MTFlexSpacer, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
     addStyle('.MTSpacerClass {' + bdrb2 + '}');
     addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
     addStyle('.MTFlexGridItem:hover {' + selectBackground + '}');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
-    addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 {font-size: 15px;}');
+    //addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 {font-size: 15px;}');
     addStyle('.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align: right !important;}');
     addStyle('.MTFlexGridSHCell {font-size: 13px; ' + BOLD + 'padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
     addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + BOLD + '}');
-    addStyle('.MTFlexError{text-align: center; ' + BOLD + 'width: 525px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
+    addStyle('.MTFlexError{text-align: center; ' + BOLD + 'padding: 16px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 8px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig{font-size: 18px; ' + BOLD + 'padding-top: 6px; padding-bottom: 6px;}');
     addStyle('.MTFlexCardBig{font-size: 20px;' + BOLD + 'padding-top: 6px; text-align: center;}');
     addStyle('.MTFlexText{font-size: 14px;' + panelText + BOLD + 'margin-left: 12px;}');
@@ -200,7 +200,7 @@ function MF_PleaseWait(inDiv,inDesc) {
 
 function MF_SetupDates() {
     let ckd = getCookie(MTFlex.Name + 'LowerDate', false);
-    ckd = ckd || (MTFlex.DateEvent == 2 ? 'd_StartofMonth' : '');
+    ckd = ckd || 'd_StartofMonth';
     MTFlexDate1 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
 
     ckd = getCookie(MTFlex.Name + 'HigherDate', false);
@@ -208,13 +208,13 @@ function MF_SetupDates() {
     MTFlexDate2 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
 }
 
-function MF_QueueAddTitle(inCol,inTitle,p,hideAll = false,hideBut1,hideBut2) {
-    let useHide = hideAll;
-    if(hideBut1) {if(hideBut1.includes(MTFlex.Button1)) useHide = true;}
-    if(hideBut2) {if(hideBut2.includes(MTFlex.Button2)) useHide = true;}
-    if(p.ShowPercent == undefined) p.ShowPercent = null;
-    MTFlexTitle.push({"Col": inCol, "Title": inTitle,"IsSortable": p.IsSortable, "Width": p.Width, "Format": p.Format, "FormatExtended": [], "ShowPercent": p.ShowPercent, "ShowPercentShade": p.ShowPercentShade, "ShowSort": p.ShowSort, "IsHidden": useHide, "IgnoreTotals": p.IgnoreTotals, "Indicator": p.Indicator});
-    MTFlexTitle.sort((a, b) => (a.Col - b.Col));}
+function MF_QueueAddTitle(inCol,inTitle,p,hideAll,hideBut1,hideBut2) {
+    let useHide = hideAll || (hideBut1 && hideBut1.includes(MTFlex.Button1)) || (hideBut2 && hideBut2.includes(MTFlex.Button2));
+    if(useHide == null) useHide = false;
+    p.ShowPercent = p.ShowPercent ?? null;
+    MTFlexTitle.push({"Col": inCol,"Title": inTitle,"IsSortable": p.IsSortable,"Width": p.Width,"Format": p.Format,"FormatExtended": [], "ShowPercent": p.ShowPercent, "ShowPercentShade": p.ShowPercentShade, "ShowSort": p.ShowSort, "IsHidden": useHide, "IgnoreTotals": p.IgnoreTotals, "Indicator": p.Indicator});
+    MTFlexTitle.sort((a, b) => a.Col - b.Col);
+}
 
 function MF_QueueAddRow(p) {
     MTFlexCR = MTFlexRow.length;
@@ -236,7 +236,7 @@ async function MF_GridInit(inName, inDesc) {
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
-    glo.spawnProcess = 0;MTFlex.Name = inName;MTFlex.Desc = inDesc;
+    MTFlex.Name = inName;MTFlex.Desc = inDesc;glo.spawnProcess = 0;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
@@ -312,15 +312,13 @@ function MF_GridTargetKeys() {
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
-    let useKey0 = 'MTSummary1-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
-    let useKey1 = 'MTSummary2-' + x + to.replace(':','') + '|' + ao.replace(':','') + ':';
+    let base = x + to.replace(':','') + '|' + ao.replace(':','') + ':'
+    let useKey0 = 'MTSummary1-' + base, useKey1 = 'MTSummary2-' + base;
     return([useKey0,useKey1,to,ao]);
 }
 
 function MF_GridDraw(inRedraw) {
-    removeAllSections('div.MTWaitContainer');
-    removeAllSections('div.MTFlexError');
-    removeAllSections(['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]);
+    removeAllSections(['div.MTWaitContainer','div.MTFlexError',['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]]);
     if(inRedraw == false) {MT_GridDrawContainer();}
     if(!MTFlex.ErrorMsg) {
         MT_GridDrawSort();
@@ -335,7 +333,7 @@ function MF_GridDraw(inRedraw) {
 }
 
 function MT_GridDrawDetails() {
-    let el = null, elx = null, Header = null, SubHeader = false;
+    let el, elx, Header,SubHeader = false;
     let useDesc = '', S1 = '', S2 = '', V1 = 0, V2 = '',Grouptotals = [];
     let rowVal = 0, rowI = 0, rowsInc = 0, rowIs = MTFlexRow.length -1;
     let hide = getChecked(MTFlex.Button3,'');
@@ -355,13 +353,13 @@ function MT_GridDrawDetails() {
 
     function MT_GridDrawClear() {rowsInc = 0; for (let j=0; j < MTFlexTitle.length; j++) {Grouptotals[j] = null;}}
 
+
     function MT_GridDrawTitles() {
 
         Header = cec('table','MTFlexGrid',MTFlexTable,'','',css.FontFamily + MTFlex.TableStyle);
         if(MTFlex.HideDetails == true) return;
         el = cec('tr','MTFlexGridTitleRow',Header,'','',MTFlex.CanvasTitle);
-        for (rowI = 0; rowI < MTFlexTitle.length; rowI++) {
-            const title = MTFlexTitle[rowI];
+        for (const [rowI, title] of MTFlexTitle.entries()) {
             if(title.IsHidden == true) continue;
             S1 = (title.ShowPercent == null && title.Format < 1) ? 'MTFlexGridTitleCell' :'MTFlexGridTitleCell2';
             if(title.Indicator != null) {
@@ -555,7 +553,7 @@ function MT_GridDrawDetails() {
 
         function MT_GridDrawRowSub(inColumn, inStart, inEnd) {
             const titles = MTFlexTitle;
-            let sum = 0, count = 0, t = null, val = null;
+            let sum = 0, count = 0, t, val;
             for (let j = inStart; j <= inEnd; ++j) {
                 t = titles[j];val = useRow[j];
                 if (!t.IsHidden && val != null) { sum += val; ++count; }
@@ -603,10 +601,10 @@ function MT_GridDrawExpand() {
         if(x > 0) {
             if(tr.className == 'MTFlexGridRow') {
                 cv = getCookie(cName + (x+1),true);
-                if(cv == 1) {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);} else {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);}
+                tr.firstChild.innerText = (cv == 1 ? ' ' : ' ') + tr.firstChild.innerText.slice(2);
             } else {
                 cv = getCookie(cName + x,true);
-                cv == 1 ? tr.style.display = 'none' : tr.style.display = '';
+                tr.style.display = (cv == 1) ? 'none' : '';
             }
         }
     });
@@ -650,13 +648,13 @@ function MT_GridDrawContainer() {
     let cht = cec('div','MTFlexContainerHeader',MTFlexTable);
     let div = cec('div','MTFlexTitle',cht);
     div = cec('div','MTFlexTitle2',div);
-    let div2 = cec('span','MTFlexSmall',div,MTFlex.Title1);
-    if(MTFlex.DateEvent > 0) { div2 = cec('a','MTFlexBig MThRefClass',div,MTFlex.Title2); } else {div2 = cec('span','MTFlexBig',div,MTFlex.Title2);}
-    div2 = cec('span','MTFlexSmall',div,MTFlex.Title3,'','font-size: 10px;');
+    cec('span','MTFlexSmall',div,MTFlex.Title1);
+    cec(MTFlex.DateEvent > 0 ? 'a' : 'span', MTFlex.DateEvent > 0 ? 'MTFlexBig MThRefClass' : 'MTFlexBig', div, MTFlex.Title2);
+    cec('span','MTFlexSmall',div,MTFlex.Title3,'','font-size: 10px;');
 
     let tbs = cec('span','MTFlexButtonContainer',cht);
 
-    div2 = cec('span','',tbs,'','','height: 38px; display: block; align-content: end;');
+    let div2 = cec('span','',tbs,'','','height: 38px; display: block; align-content: end;');
     MTFlex.bub = cec('div','MTBub',div2,'','','display: none;');
     MTFlex.bub5 = cec('div','MTBub1',MTFlex.bub);
     MTFlex.bub2 = cec('div','MTBub1',MTFlex.bub);
@@ -675,11 +673,12 @@ function MT_GridDrawContainer() {
 
     cht = cec('div','MTFlexContainerHeader',MTFlexTable,'','','padding-top: 0px; padding-bottom: 0px;');
     div2 = cec('div','',cht,'','','display:flex; gap:6px;');
-    let div3 = cec('span','MTButtonSmall',div2,'','','','title','Collapse / Expand');div3.id = 'FlexExpand';
+
+    createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
-    div3 = cec('span','MTButtonSmall',div2,'','','','title','Restore Favorite View');div3.id = 'FlexRestore';
-    div3 = cec('span','MTButtonSmall',div2,'','','','title','Save as Favorite View');div3.id = 'FlexSave';
-    div3 = cec('span','MTButtonSmall',div2,'','','margin-left:6px;','title',MTFlex.Title1 + ' Settings');div3.id='FlexConfig';
+    createSmall('','Restore Favorite View','FlexRestore');
+    createSmall('','Save as Favorite View','FlexSave');
+    createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left:6px;');
 
     function createDropdown(inName,inOpt,inBut) {
         if(inOpt != null && inOpt.length > 0) {
@@ -688,6 +687,9 @@ function MT_GridDrawContainer() {
             let divContent = cec('div','MTFlexdown-content',div2,'','','','','','MTDropdown' + inName);
             for (let i = 0; i < inOpt.length; i++) { div2 = cec('a','MTButton' + inName,divContent,inOpt[i],'','','MTOption',i); }
         }
+    }
+    function createSmall(inS,inTitle,inId,inStyle) {
+        cec('span','MTButtonSmall',div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
     }
 }
 
@@ -806,10 +808,10 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
             return '';
         case 'MTAccounts':
             if(MTFlex.Button2 == 0) {
-                if (inSection == 2 && inCol == 9) {return inValue < 0 ? css.red : '';}
-                if (inSection == 2 && inCol == 11 && inValue < 0) {return css.red;}
-                if (inSection == 4 && inCol == 9) {return inValue < 0 ? css.red : '';}
-                if (inSection == 4 && inCol == 11 && inValue < 0) {return css.red;}
+                if(inSection == 2 && (inCol == 9 || inCol == 10 || inCol == 12)) {return inValue < 0 ? css.red : '';}
+            }
+            if(MTFlex.Button2 == 2) {
+                if (inSection == 2 && inCol == 10) {return inValue < 0 ? css.red : '';}
             }
             return '';
         case 'MTInvestments':
@@ -1683,8 +1685,10 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
 
     let divTop = document.getElementById('root'),ff = null;
     let div = cec('div','MTModelContainer',divTop);
-    addStyle('.MTField1 {width: ' + f1 + ';white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}');
+    if(f1) {f1 = 'width: ' + f1 + ';white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'} else {f1 = '';}
+    addStyle('.MTField1 {' + f1 + '}');
     addStyle('.MTField2 {width: ' + f2 + '}');
+
     div = cec('div','MTModelWindow',div,'','',css.FontFamily,'','',t.id);
     divTop = cec('div','MTModelWindow2',div,'','','');
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
@@ -2348,7 +2352,9 @@ async function MenuReportsAccountsGo() {
         let txLen = -1;
         if(MTFlex.Button2 != 1) {
             if(MTFlex.Button2 == 3) {MTFlexDate1 == getDates('d_StartofYear');}
-            transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
+            if(glo.forceRefresh != true) {
+                transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
+            }
             txLen = transData.allTransactions.results.length;
             if(txLen > 5999) {MTFlex.ErrorMsg = 'The date range is too extensive to display ' + fields[1] + ' & ' + fields[2] + ' by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
         }
@@ -4012,7 +4018,7 @@ function MenuAccountSummaryHide() {
 async function MenuAccountsSummary() {
 
     MenuAccountSummaryHide();
-
+    MenuAccountCheckMsg();
     const divTop = document.querySelector('div.MTAccountSummary');
     if(divTop) return;
     if(getCookie('MT_Ownership',true) == 1 && glo.owners == false) {
@@ -4033,14 +4039,12 @@ async function MenuAccountsSummary() {
         aSummary.sort();
         MenuAccountSummaryShow(elements[0],true);
         MenuAccountSummaryShow(elements[1],false);
-        MenuAccountCheckMsg();
     } else { glo.spawnProcess = 4; }
 
     function MenuAccountCheckMsg() {
         if(getCookie('MT_AssignGroups',true) == 0) {
             setCookie('MT_AssignGroups',1);
-            let d = [{field1: 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.', style1: ''}];
-            MF_ModelWindowOpen({width: 480, name: 'MT_AssignGroups', title: MNAME},d,[]);
+            MF_ModelWindowOpen({title: 'MM-Tweaks'},'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
         }
     }
 
@@ -5403,8 +5407,11 @@ function gde(e,a,h) {
 
 // Generic Functions
 function removeAllSections(inDiv) {
-    const els = document.querySelectorAll(inDiv);
-    for (let i = 0; i < els.length; i++) { els[i].remove(); }
+    if(Array.isArray(inDiv) == false) {inDiv = [inDiv];}
+    for (const div of inDiv) {
+        const els = document.querySelectorAll(div);
+        for (let i = 0; i < els.length; i++) { els[i].remove(); }
+    }
 }
 
 function hideAllSections(qList,InValue,inStartsWith) {
