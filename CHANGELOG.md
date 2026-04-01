@@ -1,8 +1,9 @@
 # Change Log (Version History)
 
  * **Version 4.41 (Beta)**
-     - NEW: Changing Account Groups and Categories will update grid.
- 
+     - NEW: Changing Account Groups and Investment Categories will update grid.
+     - NEW: Show stock ticker notes in the grid by hovering over note icon.  
+        
  * **Version 4.40 (March 29, 2026)**
      - NEW: Reports / Investments now have target allocations by any classification.
      - NEW: Added _Make green & red progress bars full height_ for Budget Settings
