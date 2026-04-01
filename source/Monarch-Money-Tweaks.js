@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.9
+// @version      4.41.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -219,7 +219,7 @@ function MF_QueueAddTitle(inCol,inTitle,p,hideAll,hideBut1,hideBut2) {
 function MF_QueueAddRow(p) {
     MTFlexCR = MTFlexRow.length;
     p.PK = p.PK ?? '';p.SK = p.SK ?? '';p.IsHeader = p.IsHeader ?? false;
-    MTFlexRow.push({"Num": MTFlexCR, "IsHeader": p.IsHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "NoteId1": p.NoteId1, "NoteId2": p.NoteId2, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKlogoUrl": p.SKlogoUrl, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
+    MTFlexRow.push({"Num": MTFlexCR, "IsHeader": p.IsHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "NoteId1": p.NoteId1, "NoteId2": p.NoteId2, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKlogoUrl": p.SKlogoUrl, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon, "Title": p.Title });
     for (let j = 1; j < MTFlexTitle.length; j++) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][j] = 0;}}}
 
 function MF_QueueAddCard(p) {
@@ -417,6 +417,7 @@ function MT_GridDrawDetails() {
                 if(MTFlexTitle[0].IsHidden != true) {
                     if(useRow.SKHRef) {
                         elx = cec('td',S1,el,'','',HeaderStyle);
+                        if(useRow.Title) elx.title = useRow.Title;
                         if(useRow.SKlogoUrl) {cec('td','MTFlexImage',elx,'','','background-image: url("' + useRow.SKlogoUrl + '");');}
                         cec('a',S1,elx,useDesc,useRow.SKHRef);
                     } else {
@@ -736,7 +737,7 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 
 function MT_GridExport() {
     const c = ',';
-    let csvContent = '',v = '', k = 0,Cols = 0;
+    let csvContent = '',v = '',Cols = 0;
     for (const Title of MTFlexTitle) {
         if(Title.IsHidden == false) {
             Cols++;
@@ -750,14 +751,13 @@ function MT_GridExport() {
         for (let i = 0; i < MTFlexRow.length; i++) {
             const fr = MTFlexRow[i];
             if(i > 0 && fr.Section != MTFlexRow[i-1].Section && fr.IsHeader == true) { csvContent += c + CRLF; }
-            k = 0;
             for (let j = 0; j < MTFlexTitle.length; j++) {
-                if(MTFlexTitle[k].IsHidden == false) {
+                if(MTFlexTitle[j].IsHidden == false) {
                     v = '';
-                    if(fr.IsHeader == false || MTFlexTitle[k].IgnoreTotals != true) {
+                    if(fr.IsHeader == false || MTFlexTitle[j].IgnoreTotals != true) {
                         if(fr[j] != undefined && fr[j] != null) {
-                            v = MT_GetFormattedValue(MTFlexTitle[k].Format,fr[j],true);
-                            if(MTFlexTitle[k].Format == 4) v+='%';
+                            v = MT_GetFormattedValue(MTFlexTitle[j].Format,fr[j],true);
+                            if(MTFlexTitle[j].Format == 4) v+='%';
                         }
                     }
                     if(MTFlex.Subtotals == true && j == 0) {
@@ -769,7 +769,6 @@ function MT_GridExport() {
                         if(fr.IsHeader == true) { csvContent += ' ' + c; }
                     }
                 }
-                k++;
             }
             csvContent = csvContent + CRLF;
         }
@@ -2752,7 +2751,8 @@ async function MenuReportsInvestmentsGo() {
                         if (longTitle.length > 45) {longTitle = longTitle.slice(0, 45) + ' ...';}
                         MTP = [];
                         MTP.Icon = holding.isManual == true ? '' : '';
-                        if(useTicker && getCookie('MT_InvestmentsStockNote_' + useTicker,false)) MTP.Icon+='';
+                        let stockN = getCookie('MT_InvestmentsStockNote_' + useTicker,false);
+                        if(stockN) {MTP.Icon+='';MTP.Title = stockN;}
                         MTP.RRN = RRN;
                         if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;} else {MTP.UID = holding.id;}
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
