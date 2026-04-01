@@ -2,7 +2,8 @@
 
  * **Version 4.41 (Beta)**
      - NEW: Changing Account Groups and Investment Categories will update grid.
-     - NEW: Show stock ticker notes in the grid by hovering over note icon.  
+     - NEW: Show stock ticker notes in the grid by hovering over note icon.
+     - NEW: In Budget Settings, you can now move Savings up to the Total Available section.
         
  * **Version 4.40 (March 29, 2026)**
      - NEW: Reports / Investments now have target allocations by any classification.
