@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.11
+// @version      4.41.13
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -223,9 +223,21 @@ function MF_QueueAddRow(p) {
     for (let j = 1; j < MTFlexTitle.length; j++) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][j] = 0;}}}
 
 function MF_QueueAddCard(p) {
-    MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style});}
+    MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style, "Extra": p.Extra});}
 
 function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
+
+function MF_AddBenchCards(benchData) {
+    for (let i = 0; i < benchData.securityHistoricalPerformance.length; i++) {
+        let sp = benchData.securityHistoricalPerformance[i];
+        MTP = [];MTP.Col = 100 + i; MTP.Subtitle = sp.security.name;
+        let x = sp.historicalChart.length-1;
+        let y = sp.historicalChart[x].returnPercent - sp.historicalChart[x-1].returnPercent;y = Math.round(y * 100) / 100;
+        MTP.Title = 'Period ' + sp.historicalChart[x].returnPercent + '% | Today ' + y + '%';
+        MTP.Extra = true;MTP.Style = 'font-size: 17px;';
+        MF_QueueAddCard(MTP);
+    }
+}
 
 async function MF_GridInit(inName, inDesc) {
 
@@ -704,11 +716,20 @@ function MT_GridDrawCards() {
     let div = document.createElement('div');
     div.className = 'MTFlexContainer';
     divTop.prepend(div);
-    divTop = cec('div','MTFlexContainer2',div);
-    for (let i = 0; i < MTFlexCard.length; i++) {
-        let div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
-        cec('span','MTFlexCardBig fs-exclude',div2,MTFlexCard[i].Title,'',MTFlexCard[i].Style);
-        cec('span','MTFlexSmall',div2,MTFlexCard[i].Subtitle,'','text-align:center');
+
+    drawCardsGo(false);
+    drawCardsGo(true);
+
+    function drawCardsGo(inT) {
+        let firstpass = false;
+        for (let i = 0; i < MTFlexCard.length; i++) {
+            let fc = MTFlexCard[i];
+            if ((fc.Extra ?? false) !== inT) continue;
+            if(!firstpass) {firstpass = true;divTop = cec('div','MTFlexContainer2',div,'','',inT == true ? 'margin-top: 20px;' : '');}
+            let div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
+            cec('span','MTFlexCardBig fs-exclude',div2,fc.Title,'',fc.Style);
+            cec('span','MTFlexSmall',div2,fc.Subtitle,'','text-align:center');
+        }
     }
 }
 
@@ -2286,7 +2307,7 @@ async function MenuReportsAccountsGo() {
     }
     async function MenuReportsAccountsGoStd(){
 
-        let snapshotData3, manualHoldData, pendingData, cashHoldData;
+        let snapshotData3, manualHoldData, pendingData, cashHoldData,benchData;
         let cards = 0,acard=[0,0,0,0,0],cats = [],aSelected = false,hideCol = false, useBalance = 0, begBalance = 0;
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
@@ -2336,6 +2357,7 @@ async function MenuReportsAccountsGo() {
                 MTP.ShowPercent = null;
                 if(isToday) {
                     [portfolioData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
+                    console.log(benchData);
                     MF_QueueAddTitle(11,'Positions',MTP,getCookie('MT_AccountsHideBSPos',true) == 1 ? true : false);
                     MF_QueueAddTitle(12,'Cash Balance',MTP,getCookie('MT_AccountsHideBSCash',true) == 1 ? true : false);
                 }
@@ -2349,17 +2371,18 @@ async function MenuReportsAccountsGo() {
 
         accountsData = await dataGetAccounts();
         let txLen = -1;
+        let lowerDate = formatQueryDate(MTFlexDate1),higherDate = formatQueryDate(MTFlexDate2);
         if(MTFlex.Button2 != 1) {
             if(MTFlex.Button2 == 3) {MTFlexDate1 == getDates('d_StartofYear');}
             if(glo.forceRefresh != true) {
-                transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,MTFlexAccountFilter.filter,false,null,null,cats);
+                transData = await dataTransactions(lowerDate,higherDate,0,false,MTFlexAccountFilter.filter,false,null,null,cats);
             }
             txLen = transData.allTransactions.results.length;
             if(txLen > 5999) {MTFlex.ErrorMsg = 'The date range is too extensive to display ' + fields[1] + ' & ' + fields[2] + ' by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
         }
-        if(MTFlex.Button2 != 4) {snapshotData3 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate1));}
-        pendingData = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
-        if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
+        if(MTFlex.Button2 != 4) {snapshotData3 = await dataDisplayBalanceAt(lowerDate);}
+        pendingData = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),higherDate,0,true,null,false);
+        if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(higherDate);}
         for (let i = 0; i < 5; i++) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards++;}}
         for (let i = 0; i < accountsData.accounts.length; i ++) {
             let ad = accountsData.accounts[i];
@@ -2465,6 +2488,8 @@ async function MenuReportsAccountsGo() {
                 MF_GridCardAdd(1,10,10,'HV','Net Change','Net Change',css.green,css.red,'', '',-9999998);
                 MF_GridCardAdd(1,8,8,'HV','Transfers','Transfers',css.green,css.red,'', '',9999999);
                 MF_GridCardAddAll({section: 2, x: 10, y: 'AutoCard', sort: 'D', xf: 2, isPos: css.green, isNeg: css.red});
+                benchData = await dataBenchmarks(lowerDate,higherDate);
+                MF_AddBenchCards(benchData);
                 break;
             case 4:
                 MTFlexCard = [];
@@ -2628,8 +2653,7 @@ async function MenuReportsInvestmentsGo() {
             MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP);
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
-        if(glo.forceRefresh != true) portfolioData = await dataPortfolio(lowerDate, higherDate);
-
+        if (glo.forceRefresh !== true) portfolioData = await dataPortfolio(lowerDate, higherDate);
         await InvestmentHoldings();
         await InvestmentCash();
         if(MTFlex.Button1 == 0) {
@@ -5961,12 +5985,20 @@ async function dataGoals() {
         .then((response) => response.json())
         .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
-
-async function dataPortfolio(startDate,endDate,inAccounts) {
+async function dataBenchmarks(startDate,endDate) {
+    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78665972690706707","119563102644090322", "77359007828247560"],"startDate": startDate,"endDate": endDate}},
+                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id name}\n historicalChart {date returnPercent }}}"});
+    return fetch(GRAPHQL, options)
+        .then((response) => response.json())
+        .then((data) => { if(glo.debug == 1) addConsole('dataBenchmarks',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+}
+async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
-    const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n security {\n ticker \n name \n currentPrice \n currentPriceUpdatedAt } \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n isManual \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n includeBalanceInNetWorth \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+    let qy = 'query Web_GetPortfolio($portfolioInput: PortfolioInput) { portfolio(input: $portfolioInput) {\n ';
+    if (inBm) qy += '\n performance {totalValue totalChangePercent totalChangeDollars  \n benchmarks {security {id ticker name oneDayChangePercent } \n historicalChart {date returnPercent } } }';
+    qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeBalanceInNetWorth institution { id name } type { name display } subtype { name display } } } } } } } }';
+    let options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) addConsole('dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
@@ -6025,8 +6057,8 @@ function addConsole(a,b,c) {console.log(MNAME,a,b,c);}
 
 // Build Query functions
 async function buildPortfolioHoldings(getData) {
-    if(getData == true) {portfolioData = await dataPortfolio();}
-    const totals = {}, manual = {}, cash = {};
+    if(getData == true) {portfolioData = await dataPortfolio(null,null,null,true);}
+    const totals = {}, manual = {}, cash = {}, benches = [];
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(3) ?? 0);
         edge.node.holdings.forEach(holding => {
