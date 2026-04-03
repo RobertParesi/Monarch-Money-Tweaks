@@ -64,9 +64,9 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
-    addStyle('.cb { -webkit-appearance: none;-moz-appearance: none;appearance: none;width: 22px;height: 22px;border-radius: 4px;' + bdr + 'background: transparent;display: inline-block;vertical-align: middle;cursor: pointer;position: relative;transition: background 120ms, border-color 120ms;}');
+    addStyle('.cb {width: 22px;height: 22px;border-radius: 4px;' + bdr + 'background: transparent;display: inline-block;vertical-align: middle;cursor: pointer;position: relative;transition: background 120ms, border-color 120ms;}');
     addStyle('.cb:checked {background: ' + accentColor + 'border-color: ' + accentColor +'}');
-    addStyle('.cb:checked::after {content: "";position: absolute;left: 6px; top: 1px;width: 6px;height: 12px;border: solid #fff;border-width: 0 2.5px 2.5px 0;transform: rotate(40deg);box-sizing: content-box;}');
+    addStyle('.cb:checked::after {content: "";position: absolute;left: 7px; top: 2px;width: 5px;height: 11px;border: solid #fff;border-width: 0 2.5px 2.5px 0;transform: rotate(40deg);box-sizing: content-box;}');
     addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; ' + css.font + BOLD + '}');
