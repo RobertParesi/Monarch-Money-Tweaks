@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.14
+// @version      4.41.15
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -64,14 +64,16 @@ function MM_Init() {
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
+    addStyle('.cb { -webkit-appearance: none;-moz-appearance: none;appearance: none;width: 22px;height: 22px;border-radius: 4px;' + bdr + 'background: white;display: inline-block;vertical-align: middle;cursor: pointer;position: relative;transition: background 120ms, border-color 120ms;}');
+    addStyle('.cb:checked {background: ' + accentColor + 'border-color: ' + accentColor +'}');
+    addStyle('.cb:checked::after {content: "";position: absolute;left: 6px; top: 1px;width: 6px;height: 12px;border: solid #fff;border-width: 0 2.5px 2.5px 0;transform: rotate(40deg);box-sizing: content-box;}');
     addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
     addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
     addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; ' + css.font + BOLD + '}');
     addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
     addStyle('.MTPanelLink, .MTBudget a {' + BOLD + 'background-color: transparent; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-top: 2px; width: 19px; height: 19px; margin-right: 10px; float: inline-start; ' + (!isSafari ? 'color: #FFFFFF;accent-color:' + accentColor : '') + '}');
+    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-right: 10px; float: inline-start;}');
     addStyle('.MTItemClass {padding-top: 6px;padding-bottom: 6px;}');
     addStyle('.MTInputClass {margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
     addStyle('.MTInputTitle {' + BOLD + 'font-size: 14px; height: 30px;}');
@@ -686,7 +688,7 @@ function MT_GridDrawContainer() {
 
     div2 = cec('div','MTdropdown',tbs);
     div2 = cec('label','',div2,'Compress Grid','','margin-top: 6px; font-size: 14px; ' + BOLD + 'display: inline-block;','htmlFor','CompressGrid');
-    div2 = cec('input','MTFlexCheckbox',div2,'','','','','','CompressGrid');
+    div2 = cec('input','MTFlexCheckbox cb',div2,'','','','','','CompressGrid');
     div2.type = 'checkbox';if(MTFlex.Button3 == 1) {div2.checked = 'true';}
 
     cht = cec('div','MTFlexContainerHeader',MTFlexTable,'','','padding-top: 0px; padding-bottom: 0px;');
@@ -863,7 +865,7 @@ function MT_GetInput(inputs) {
         if(i == inputs.length-1) {
             div2 = cec('div','MTdropdown',div2);
             div2 = cec('label','',div2,"Always use today's date",'',BOLD + 'margin-top: 10px; font-size: 14px; display: inline-block;','htmlFor','TodayDate');
-            div2 = cec('input','MTDateCheckbox',div2,'','','','','','TodayDate');
+            div2 = cec('input','MTDateCheckbox cb',div2,'','','','','','TodayDate');
             div2.type = 'checkbox';if(getCookie(MTFlex.Name + 'HigherDate',false) == 'd_Today') {div2.checked = true;}
         }
 
@@ -1766,7 +1768,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                     }
                     if(data.type == 'Checkbox') {
                         div3 = cec('label','',div2,data.field1,'','','htmlFor',data.key);
-                        div3 = cec('input','MTCheckboxClass',div3,'','','float:left;','','',data.key);
+                        div3 = cec('input','MTCheckboxClass cb',div3,'','','float:left;','','',data.key);
                         div3.type = 'checkbox';
                         div3.setAttribute('col',0);
                         if(getCookie(data.key,true) == true) {div3.checked = 'true';}
@@ -4468,7 +4470,7 @@ function MenuSetttingsCategory() {
         if(isExp && isExp.innerText.startsWith('Expenses')) {
             div = cec ('div','',divs[i],'','','flex:1;');
             div = cec('label','',div,'Fixed Expense (' + MNAME + ')','','font-size: 13px;float:right;','htmlFor','MTFixed');
-            div = cec('input','MTFixedCheckbox',div,'','','','grp',grp,'MTFixed');
+            div = cec('input','MTFixedCheckbox cb',div,'','','','grp',grp,'MTFixed');
             div.type = 'checkbox';
             if(getCookie('MTGroupFixed:' + grp,true) == true) {div.checked = 'true';}
         }
@@ -4605,7 +4607,7 @@ function MenuSettingsDisplay(inDiv) {
 
         switch(inType) {
             case 'checkbox':
-                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.id = inCookie;
                 if(OldValue == 1) {e2.checked = 'checked';}
                 e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
@@ -4615,7 +4617,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2.parentNode.insertBefore(e3, e2.nextSibling);
                 break;
             case 'color':
-                e2 = cec('input','MTCheckboxClass',e1,'','',inStyle,'type',inType);
+                e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.value = OldValue;
                 e2.id = inCookie;
                 e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
