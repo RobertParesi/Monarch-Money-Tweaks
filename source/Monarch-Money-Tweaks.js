@@ -325,7 +325,7 @@ function MF_GridTargetKeys() {
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options[MTFlex.Button4];
-    let base = x + to.replace(':','') + '|' + ao.replace(':','') + ':'
+    let base = x + to.replace(':','') + '|' + ao.replace(':','') + ':';
     let useKey0 = 'MTSummary1-' + base, useKey1 = 'MTSummary2-' + base;
     return([useKey0,useKey1,to,ao]);
 }
@@ -2876,6 +2876,10 @@ async function MenuReportsInvestmentsGo() {
                     if(maxCards > 0) {MF_QueueAddCard({Col: 1, Title: Cards[0] + '%', Subtitle: 'Top Gainer: ' + InvestmentCardDesc(Cards[1]), Style: css.green});}
                     if(maxCards > 1) {MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});}
                     if(maxCards > 2) {MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});}
+                    if(MTFlex.Button1 == 0) {
+                        let benchData = await dataBenchmarks(lowerDate,higherDate);
+                        MF_AddBenchCards(benchData);
+                    }
                     break;
             }
         }
@@ -4023,7 +4027,7 @@ function ExportSummaryDrawer(inType,inFile,inTriggers) {
             csvField += C + get2dec(t.targetV,2);
             csvField += C + get2dec(t.target,1) + '%';
             csvField += C + get2dec(am,2);
-            csvField += C + get2dec(am2,1) + '%'
+            csvField += C + get2dec(am2,1) + '%';
         }
         csvContent = csvContent + csvField + CRLF;
     });
@@ -6059,7 +6063,7 @@ function addConsole(a,b,c) {console.log(MNAME,a,b,c);}
 // Build Query functions
 async function buildPortfolioHoldings(getData) {
     if(getData == true) {portfolioData = await dataPortfolio(null,null,null,true);}
-    const totals = {}, manual = {}, cash = {}, benches = [];
+    const totals = {}, manual = {}, cash = {};
     portfolioData.portfolio.aggregateHoldings.edges.forEach(edge => {
         let currentPrice = Number(edge.node.security?.currentPrice?.toFixed(3) ?? 0);
         edge.node.holdings.forEach(holding => {
