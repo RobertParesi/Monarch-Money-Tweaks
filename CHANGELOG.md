@@ -5,7 +5,7 @@
      - NEW: Show stock ticker notes in the grid by hovering over note icon.
      - NEW: In Budget Settings, you can now move Savings up to the Total Available section.
      - CHANGE: Changing Account Groups and Investment Categories will update grid.
-     - CHANGE: Chcekboxes will now follow the orange/white color scheme of Monarch.
+     - CHANGE: Checkboxes will now follow the orange/white color scheme of Monarch.
         
  * **Version 4.40 (March 29, 2026)**
      - NEW: Reports / Investments now have target allocations by any classification.
