@@ -174,14 +174,13 @@ You can set Allocation Targets by clicking the [...] button in the upper-right o
 
 📌 When configuring allocation targets, set them at the Reports, Subreport, and Account Group levels.
 
-<br>
-<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
-<br>
-
    1. Portfolio/Allocation OR Performance.
    2. Institution, by Account, by Account Subtype, by Holding type or by Category.
    3. Account Group if selected.
-
+   4. 
+<br>
+<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
+<br>
 
 ### Other Monarch Money Tweaks non-report options:
 
