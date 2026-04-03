@@ -168,13 +168,20 @@ You can set Allocation Targets by clicking the [...] button in the upper-right o
 
 📌 Allocations do not need to total 100% — for example, you might set 70% to Fixed Income and leave the rest unspecified, or set 5% to Cash and leave the remainder blank.
 
+
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
 <br>
 
-   1. Different target settings are defined either by Portfolio/Allocation OR Performance.
-   2. Different target settings are also defined either by Institution, by Account, by Account Subtype, by Holding type or by Category.
-   3. Different target settings are also defined by any Account Group if selected.
+📌 When configuring allocation targets, set them at the Reports, Subreport, and Account Group levels.
+
+<br>
+<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
+<br>
+
+   1. Portfolio/Allocation OR Performance.
+   2. Institution, by Account, by Account Subtype, by Holding type or by Category.
+   3. Account Group if selected.
 
 
 <br>
