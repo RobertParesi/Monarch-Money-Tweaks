@@ -172,12 +172,12 @@ You can set Allocation Targets by clicking the [...] button in the upper-right o
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
 <br>
 
-📌 When configuring allocation targets, set them at the Reports, Subreport, and Account Group levels.
+📌 When configuring allocation targets, set them at the Reports, Subreport, and Account Group levels as shown below:
 
    1. Portfolio/Allocation OR Performance.
    2. Institution, by Account, by Account Subtype, by Holding type or by Category.
    3. Account Group if selected.
-   4. 
+      
 <br>
 <img src="images/MT_Invest06.png" style="width:50%; height:auto;">
 <br>
