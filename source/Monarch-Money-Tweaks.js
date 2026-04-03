@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.13
+// @version      4.41.14
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -228,14 +228,18 @@ function MF_QueueAddCard(p) {
 function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
 
 function MF_AddBenchCards(benchData) {
-    [1,0,3,2].forEach(i => {
+    let ht = getCookie('MT_InvestmentCardShort',true);
+    [1,3,0,2].forEach(i => {
         const sp = benchData.securityHistoricalPerformance[i];
         if (!sp) return;
-        MTP = []; MTP.Subtitle = sp.security.name;
+        MTP = [];
+        if(ht == 0) {MTP.Subtitle = sp.security.name} else {
+            MTP.Subtitle = ['US Stocks','DOW','US Bonds','S&P 500'][i];
+        }
         let x = sp.historicalChart.length-1;
         let y = sp.historicalChart[x].returnPercent - sp.historicalChart[x-1].returnPercent;y = Math.round(y * 100) / 100;
-        MTP.Title = 'Period ' + sp.historicalChart[x].returnPercent + '% | Today ' + y + '%';
-        MTP.Extra = true;MTP.Style = 'font-size: 17px;';
+        MTP.Title = 'Period ' + sp.historicalChart[x].returnPercent + '%  |  Today ' + y + '%';
+        MTP.Extra = true;MTP.Style = 'font-size: 16px;';
         MF_QueueAddCard(MTP);
     });
 }
@@ -2876,7 +2880,7 @@ async function MenuReportsInvestmentsGo() {
                     if(maxCards > 0) {MF_QueueAddCard({Col: 1, Title: Cards[0] + '%', Subtitle: 'Top Gainer: ' + InvestmentCardDesc(Cards[1]), Style: css.green});}
                     if(maxCards > 1) {MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});}
                     if(maxCards > 2) {MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});}
-                    if(MTFlex.Button1 == 0) {
+                    if(MTFlex.Button1 == 0 && getCookie('MT_InvestmentHideBM',true) == 0) {
                         let benchData = await dataBenchmarks(lowerDate,higherDate);
                         MF_AddBenchCards(benchData);
                     }
@@ -4553,6 +4557,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
+    MenuDisplay_Input('Hide Benchmarks from Performance','MT_InvestmentHideBM','checkbox');
     MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
@@ -5992,7 +5997,7 @@ async function dataGoals() {
 }
 async function dataBenchmarks(startDate,endDate) {
     const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
-                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id name}\n historicalChart {date returnPercent }}}"});
+                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) addConsole('dataBenchmarks',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
@@ -6012,7 +6017,7 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
 async function dataPerformance(startDate,endDate,securityIds) {
     const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
     const options = callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
-    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n  securityHistoricalPerformance(input: $input) {\n security {\n id\n  __typename\n    }\n historicalChart {\n date\n returnPercent\n value\n __typename\n }\n __typename\n  }\n}"});
+    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
         .then((data) => { if(glo.debug == 1) addConsole('dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
