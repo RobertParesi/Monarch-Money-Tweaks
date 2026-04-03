@@ -228,7 +228,7 @@ function MF_QueueAddCard(p) {
 function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
 
 function MF_AddBenchCards(benchData) {
-    [2, 0, 1].forEach(i => {
+    [1,0,3,2].forEach(i => {
         const sp = benchData.securityHistoricalPerformance[i];
         if (!sp) return;
         MTP = []; MTP.Subtitle = sp.security.name;
@@ -5991,7 +5991,7 @@ async function dataGoals() {
         .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
 async function dataBenchmarks(startDate,endDate) {
-    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
+    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
                                  "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id name}\n historicalChart {date returnPercent }}}"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
