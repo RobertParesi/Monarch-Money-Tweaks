@@ -228,15 +228,16 @@ function MF_QueueAddCard(p) {
 function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
 
 function MF_AddBenchCards(benchData) {
-    for (let i = 0; i < benchData.securityHistoricalPerformance.length; i++) {
-        let sp = benchData.securityHistoricalPerformance[i];
-        MTP = [];MTP.Col = 100 + i; MTP.Subtitle = sp.security.name;
+    [2, 0, 1].forEach(i => {
+        const sp = benchData.securityHistoricalPerformance[i];
+        if (!sp) return;
+        MTP = []; MTP.Subtitle = sp.security.name;
         let x = sp.historicalChart.length-1;
         let y = sp.historicalChart[x].returnPercent - sp.historicalChart[x-1].returnPercent;y = Math.round(y * 100) / 100;
         MTP.Title = 'Period ' + sp.historicalChart[x].returnPercent + '% | Today ' + y + '%';
         MTP.Extra = true;MTP.Style = 'font-size: 17px;';
         MF_QueueAddCard(MTP);
-    }
+    });
 }
 
 async function MF_GridInit(inName, inDesc) {
@@ -5986,7 +5987,7 @@ async function dataGoals() {
         .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
 }
 async function dataBenchmarks(startDate,endDate) {
-    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78665972690706707","119563102644090322", "77359007828247560"],"startDate": startDate,"endDate": endDate}},
+    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
                                  "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id name}\n historicalChart {date returnPercent }}}"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
