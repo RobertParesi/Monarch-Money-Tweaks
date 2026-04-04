@@ -248,7 +248,7 @@ function MF_AddBenchCards(benchData) {
             yp = sp.historicalChart[x-2].returnPercent;
         }
         let y = tp2 - yp;y = Math.round(y * 100) / 100;
-        MTP.Title = [tp + '%',per,isOpen ? 'Today' : 'Closed',y + '%'];
+        MTP.Title = [per,tp + '%',isOpen ? 'Today' : 'Closed',y + '%'];
         MTP.Extra = true;MTP.Style = 'font-size: 16px;';
         MF_QueueAddCard(MTP);
     });
