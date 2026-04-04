@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- * **Version 4.41 (Beta)**
+ * **Version 4.41 (April 4, 2026)**
      - NEW: Benchmarks added to Reports → Accounts → Brokerage Statement & Investments → Performance. (DOW, S&P 500, US Stocks & Bonds)
      - NEW: Hover the note icon to view stock ticker notes in the grid.
      - NEW: In Budget Settings, you can move Savings into the Total Available section.
