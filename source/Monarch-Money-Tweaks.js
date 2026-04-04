@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.17
+// @version      4.41.18
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -338,12 +338,17 @@ function MF_GridTargetKeys() {
 }
 
 function MF_GridDraw(inRedraw) {
+    console.log('GridDraw',inRedraw);
     removeAllSections(['div.MTWaitContainer','div.MTFlexError',['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]]);
     if(inRedraw == false) {MT_GridDrawContainer();}
     if(!MTFlex.ErrorMsg) {
+        console.log('GridDrawSort');
         MT_GridDrawSort();
+        console.log('GridDrawDetails');
         MT_GridDrawDetails();
+        console.log('GridDrawExpand');
         MT_GridDrawExpand();
+        console.log('GridDrawCards');
         if(inRedraw == false) {MT_GridDrawCards();}
         if(glo.debug == 1) addConsole('Flex Grid',[MTFlex,MTFlexTitle],MTFlexRow);
     }
@@ -1800,12 +1805,14 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
 // [ Reports Menu ]
 function MenuReports(OnFocus) {
     if (glo.pathName.startsWith('/reports/')) {
+        console.log('loading reports menu',OnFocus);
         if(OnFocus == false) {MTFlex = [];}
         if(OnFocus == true) {MenuReportsCustom();}
     }
 }
 
 function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
+    console.log('loading report filter');
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
@@ -1864,18 +1871,23 @@ function MenuReportsPanels(inType) {
 }
 
 function MenuReportsGo() {
+    console.log('MenuReportsGo');
     if(document.getElementById('MTWait')) return;
+    console.log('MenuReportsGo2');
     document.body.style.cursor = "wait";
     removeAllSections('.MTFlexContainer');
     MenuReportsPanels('display:none;');
     let div = css.mItems + inList(MTFlex.Name,FlexOptions) -1;
+    console.log('MenuReportsGo3');
     MenuReportsCustomUpdate(div);
+    console.log('MenuReportsGo4',MTFlex.Name);
     switch(MTFlex.Name) {
         case 'MTTrends': MenuReportsTrendsGo();break;
         case 'MTNet_Income': MenuReportsNetIncomeGo();break;
         case 'MTAccounts': MenuReportsAccountsGo();break;
         case 'MTInvestments': MenuReportsInvestmentsGo();break;
     }
+    console.log('MenuReportsGo_end');
 }
 
 async function MenuReportsNetIncomeGo() {
@@ -5427,7 +5439,7 @@ function addStyle(aCss) {
 
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra],id)
 function cec(e, c, p, it, hr, st, a1, a2, id) {
-    if(glo.cecIgnore == true) return;
+    if(glo.cecIgnore == true) return null;
     const div = document.createElement(e);
     if (c) div.className = c;
     if (it) div.innerText = it;
