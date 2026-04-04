@@ -189,7 +189,3 @@ Overview, detail, and allocation views:
 <img src="images/MT_V3_13.png" style="width:60%; height:auto;">
 
 ---
-
-If you'd like, I can:
-- Turn this into a README.md file ready to paste, or
-- Produce a compact CHANGELOG or FEATURE list for the repo front page.
