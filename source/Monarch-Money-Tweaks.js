@@ -232,16 +232,23 @@ function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
 function MF_AddBenchCards(benchData) {
     let ht = getCookie('MT_InvestmentCardShort',true);
     let per = daysBetween(MTFlexDate1,MTFlexDate2, 3);
+    let isOpen = isUsMarketOpenLocal();
     [1,3,0,2].forEach(i => {
         const sp = benchData.securityHistoricalPerformance[i];
         if (!sp) return;
         MTP = [];
-        if(ht == 0) {MTP.Subtitle = sp.security.name} else {
-            MTP.Subtitle = ['US Stocks','DOW','US Bonds','S&P 500'][i];
-        }
+        MTP.Subtitle = ht == 0 ? sp.security.name : ['US Stocks','DOW','US Bonds','S&P 500'][i];
         let x = sp.historicalChart.length-1;
-        let y = sp.historicalChart[x].returnPercent - sp.historicalChart[x-1].returnPercent;y = Math.round(y * 100) / 100;
-        MTP.Title = [per,sp.historicalChart[x].returnPercent + '%','Today',y + '%'];
+        let hc = sp.historicalChart[x];
+        let tp = hc.returnPercent;
+        let tp2 = tp;
+        let yp = sp.historicalChart[x-1].returnPercent;
+        if(isOpen == false && tp == yp) {
+            tp2 = sp.historicalChart[x-1].returnPercent;
+            yp = sp.historicalChart[x-2].returnPercent;
+        }
+        let y = tp2 - yp;y = Math.round(y * 100) / 100;
+        MTP.Title = [tp + '%',per,isOpen ? 'Today' : 'Closed',y + '%'];
         MTP.Extra = true;MTP.Style = 'font-size: 16px;';
         MF_QueueAddCard(MTP);
     });
@@ -5503,6 +5510,19 @@ function inputTwoFields(InSelector,InValue1,InValue2) {
             document.execCommand('insertText', false, InValue2);
         }
     }
+}
+
+function isUsMarketOpenLocal(now = new Date()) {
+    const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const dow = ny.getDay(); // 0 Sun .. 6 Sat
+    const hour = ny.getHours(), minute = ny.getMinutes();
+    if (dow === 0 || dow === 6) return false;
+    const holidays = ['2026-05-25','2026-06-19','2026-07-03','2026-09-07','2026-11-26','2026-12-25'];
+    const ymd = ny.toISOString().slice(0,10);
+    if (holidays.includes(ymd)) return false;
+    const minutes = hour * 60 + minute;
+    const start = 9 * 60 + 30, end = 16 * 60;
+    return minutes >= start && minutes < end;
 }
 
 function getMonthName(inValue,inType) {
