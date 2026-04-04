@@ -6,8 +6,9 @@ Install Monarch Money Tweaks from the [Extensions area](https://github.com/Rober
 
 Click here for detailed information on [License](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/LICENSE.md) and [Security](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/SECURITY.md). 
 
-After installing, refresh the Monarch Money web app.  
-MM‑Tweaks settings are accessible inside the Monarch UI: click your name (lower-left) → **Settings**.
+🧑‍💻 After installing, refresh the Monarch Money web app.  
+
+⚙️ MM‑Tweaks settings are accessible inside the Monarch UI: click your name (lower-left) → **Settings**.
 
 Quick start (recommended order):
 1. Settings → Display — initial MM‑Tweaks options  
