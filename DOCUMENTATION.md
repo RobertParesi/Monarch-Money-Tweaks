@@ -167,22 +167,21 @@ Overview, detail, and allocation views:
 <br>
 <img src="images/MT_Invest04.png" style="width:50%; height:auto;">
 
-#### Allocation Targets
-- Click `...` on the Summary bar chart — set targets by Portfolio / Institution / Account / Holding type / Category.  
-- Targets need not sum to 100%. Example: set 70% Fixed Income, leave rest unspecified.
+---
+
+📌 **When configuring allocation targets, set them at the following levels (all three where applicable):**
+
+1. Portfolio → Allocation OR Performance (choose the appropriate top‑level view).  
+2. Institution → by Account → by Account Subtype → by Holding Type → or by Category.  
+3. Account Group (if you use Account Groups) — set targets at the Account Group level as needed.
+
+This ensures targets apply correctly in the Reports → Investments Allocation and Performance views across portfolio, accounts, and grouped reports.
 
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
-
 <br>
 <img src="images/MT_Invest06.png" style="width:50%; height:auto;">
-<br>
-📌 When configuring allocation targets, set them at the following levels (all three where applicable):
 
-Portfolio → Allocation OR Performance (choose the appropriate top‑level view).
-Institution → by Account → by Account Subtype → by Holding Type → or by Category.
-Account Group (if you use Account Groups) — set targets at the Account Group level as needed.
-This ensures targets apply correctly in the Reports → Investments Allocation and Performance views across portfolio, accounts, and grouped reports.
 ---
 
 ### Other MM‑Tweaks features
