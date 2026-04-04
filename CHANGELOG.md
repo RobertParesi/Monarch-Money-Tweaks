@@ -1,11 +1,11 @@
 # Change Log (Version History)
 
  * **Version 4.41 (Beta)**
-     - NEW: Added benchmarks to Reports / Accounts / Brokerage Statement.
-     - NEW: Show stock ticker notes in the grid by hovering over note icon.
-     - NEW: In Budget Settings, you can now move Savings up to the Total Available section.
-     - CHANGE: Changing Account Groups and Investment Categories will update grid.
-     - CHANGE: Checkboxes will now follow the orange/white color scheme of Monarch.
+     - NEW: Benchmarks added to Reports → Accounts → Brokerage Statement.
+     - NEW: Hover the note icon to view stock ticker notes in the grid.
+     - NEW: In Budget Settings, you can move Savings into the Total Available section.
+     - CHANGE: Updating Account Groups or Investment Categories now refreshes the grid.
+     - CHANGE: Checkboxes updated to match Monarch’s orange/white color scheme.
         
  * **Version 4.40 (March 29, 2026)**
      - NEW: Reports / Investments now have target allocations by any classification.
