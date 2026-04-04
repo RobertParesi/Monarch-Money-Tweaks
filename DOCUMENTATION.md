@@ -136,11 +136,12 @@ Detailed views:
 ### Allocation targets and notes
 
 <br>
+<img src="images/MT_Invest05.png" style="width:50%; height:auto;">
+
+<br>
 <img src="images/MT_InvestAlloc.png" style="width:50%; height:auto;">
 
-📌 **Important instructions**
-
-When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
+📌 When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
 
 1. **Portfolio** → Allocation OR Performance (top-level portfolio view).  
 2. **Institution** → by **Account** → by **Account Subtype** → by **Holding Type** → or by **Category** (choose the breakdown you need).  
@@ -153,8 +154,6 @@ Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
 - Verify targets in both Allocation and Performance views — behavior can differ depending on selected report and grouping.
 
-<br>
-<img src="images/MT_Invest05.png" style="width:50%; height:auto;">
 
 ---
 
