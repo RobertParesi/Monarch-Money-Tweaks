@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.16
+// @version      4.41.17
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -87,7 +87,7 @@ function MM_Init() {
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child {margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexContainer {display: block; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
+    addStyle('.MTFlexContainer {display: grid; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
     addStyle('.MTFlexContainerPanel {display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexContainerHeader {display: flex; justify-content: space-between;  padding: 16px 24px;');
@@ -267,9 +267,9 @@ function MF_GridTip() {
     switch (MTFlex.Name) {
         case 'MTInvestments':
             switch (MTFlex.Button2) {
-                case 0: return 'Displays all your holdings for each account. Use Allocation report to combine same holdings.';
-                case 1: return 'Displays all your holdings with same holdings combined.  Use Portfolio report to split like holdings.';
-                case 2: return 'Displays all your equity holdings ignoring Fixed Income & Cash.  Shows equity price performance over selected time frame.';
+                case 0: return 'Displays all your current holdings for each account. Use Allocation report to combine same holdings.';
+                case 1: return 'Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.';
+                case 2: return 'Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame.';
             }
             break;
         case 'MTTrends':
