@@ -135,6 +135,9 @@ Detailed views:
 ---
 ### Allocation targets and notes
 
+
+Set targets for any account, holding type, or category by clicking the > on the Total row in the grid.
+
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
 
