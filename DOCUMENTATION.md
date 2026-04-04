@@ -10,105 +10,82 @@ Click here for detailed information on [License](https://github.com/RobertParesi
 
 ⚙️ MM‑Tweaks settings are accessible inside the Monarch UI: click your name (lower-left) → **Settings**.
 
-Quick start (recommended order):
+Recommended initial steps (details below):
+
 1. Settings → Display — initial MM‑Tweaks options  
-2. Settings → Categories — configure Fixed vs Flexible spending grouping  
+2. Settings → Categories — configure Fixed vs Flexible spending (group level)  
 3. Reports → Accounts → click **>** for each account to set Account Groups  
 4. Explore Reports → Trends, Net Income, Accounts, Investments
 
 ---
 
-### Monarch Money Tweaks — Settings
+### MM‑Tweaks — Settings (overview)
 
 <br>
 <img src="images/MT_V3_01.png" style="width:66%; height:auto;">
 
+MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web app. Most settings live in Monarch’s Settings panel after installation.
+
 ---
 
-### Fixed vs Flexible Spending
+### Fixed vs Flexible Spending (group level)
 
-MM‑Tweaks classifies spending at the *Group* level (not Monarch’s built‑in Fixed/Flexible). To set this:
-- Go to **Settings → Categories** and mark groups as Fixed or Flexible.
-- MM‑Tweaks uses those group flags in Trends and Net Income reports.
+MM‑Tweaks classifies spending at the *group* level (MM‑Tweaks uses Group-level flags rather than Monarch’s internal Fixed/Flexible).  
+To configure: **Settings → Categories** → mark groups Fixed or Flexible. These flags are used by Trends and Net Income reports.
 
 <br>
 <img src="images/MTFixed.png" style="width:66%; height:auto;">
 
 ---
 
-### Account Settings (Per‑account overrides)
+### Account Settings (per-account overrides)
 
-Open **Reports → Accounts** and click **>** for an account, then the `...` in the side panel.
+Open **Reports → Accounts**, click **>** on an account, open the side panel `...` to access MM‑Tweaks account options.
 
 <br>
-<img src="images/MTAccountSettings.png">
+<img src="images/MTAccountSettings.png" style="width:66%; height:auto;">
 
-#### Account Group
-Use account groups to organize reports by any label you want:
-- Personal vs Business (e.g., `Personal`, `Business`)  
-- Household members (`You`, `Partner`, `Kids`)  
-- Tax treatment (`Taxed`, `Tax Deferred`)  
-- Management (`Managed`, `Non Managed`)  
-- Types (`Credit Cards`, `Retirement`, `Trust`, `Homes`, `Loans`)  
-
-Examples (author preference):
-- Investments → `Managed` / `Non Managed`  
-- Credit cards → `Credit Cards`  
-- Property / vehicles → `Trust` or `Non Trust`
-
-#### Subtype override
-Override the account subtype shown in reports (optional). Leave blank to use Monarch’s subtype.
-
-#### Holding Category override (account‑level)
-Set a default holding category applied to all holdings in the account (useful when all holdings share the same sector/type).
-
-#### Add to Dashboard Accounts list
-Enable to include this account’s summary on the Monarch Dashboard.
+Key options:
+- **Account Group** — group reports by any label you prefer (Personal, Business, Managed, Credit Cards, Trust, etc.). Useful examples:
+  - Investments → `Managed` / `Non Managed`  
+  - Credit cards → `Credit Cards`  
+  - Property / vehicles → `Trust` or `Non Trust`
+- **Subtype override** — replace the account subtype shown in reports (optional).
+- **Holding Category override (account‑level)** — default holding category for all holdings in the account.
+- **Add to Dashboard Accounts list** — include account summary on the Dashboard.
 
 ---
 
 ### Investment Holding Settings
 
-Open **Reports → Investments**, select a holding and click the `...` in the holding side panel.
+Open **Reports → Investments**, select a holding and click `...` in the holding side panel for MM‑Tweaks options.
 
 ![Settings](/images/MTInvestmentSettings.png)
 
-#### Holding Category override (ticker or account)
-- Override a holding’s assigned type (Sector, Asset Class, Bond Type, etc.) at the holding or account level.
-- Account-level override applies to all holdings without a ticker.
+- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, Bond Type, etc.) either per‑ticker or at the account level.
 
 ---
 
-### Reports (Trends, Net Income, Accounts, Investments)
+### Reports — Overview (Trends, Net Income, Accounts, Investments)
 
-All four reports use the same flex‑grid layout.
+All four reports use the same flexible grid layout and share many features.
 
 <br>
-<img src="images/MT_V3_99.png">
+<img src="images/MT_V3_99.png" style="width:66%; height:auto;">
 
 Highlights:
-- Use **Sub Report** to view different perspectives of the same data.
-- Choose **Group By** to change grouping for the report.
-- Click any column header to sort ascending/descending.
-- After assigning Account Groups, the **Account Group Filter** appears.
+- **Sub Report**: view the report from different perspectives.  
+- **Group By**: change how the report groups data (category, group, account, etc.).  
+- Click any column header to sort ascending/descending.  
+- **Account Group Filter** appears after you assign account groups.
 
-#### Trends — Compare, Monthly & Yearly sub‑reports
+#### Trends — Compare, Monthly & Yearly
 <br>
 <img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
-#### Trends — Compare
-<br>
-<img src="images/MTTrendInfo.png" style="width:66%; height:auto;">
+- Compare views, monthly/yearly rollups, and drilldowns into history are supported.
+- History drilldowns show per‑month details and allow opening side‑panel details.
 
-#### Trends — Monthly
-<br>
-<img src="images/MT_V3_05.png" style="width:66%; height:auto;">
-
-#### Trends — Yearly
-<br>
-<img src="images/MT_V3_06.png" style="width:66%; height:auto;">
-
-#### Trends — History drill‑down
 <br>
 <img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
@@ -119,7 +96,7 @@ Highlights:
 <img src="images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="images/MT_TagsNotes2.png" style="width:60%; height:auto;">
 
-#### Accounts
+#### Accounts (Standard, Brokerage, Cash Statement, Personal Statement)
 <br>
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
@@ -127,55 +104,47 @@ Highlights:
 
 ---
 
-### Accounts — Overall Cash Statement (How cash is computed)
+### Accounts — Overall Cash Statement (how cash is computed)
 
-Monarch provides both an *Account Balance* and *holdings* snapshot.  
-Uninvested cash = Account Balance − sum(holdings value) at the snapshot.
+Monarch returns an *Account Balance* and holdings snapshot.  
+Uninvested cash = Account Balance − sum(holdings value) at that snapshot.
 
-If cash looks wrong:
-1. Verify holdings are present in the account (missing holdings cause mismatch).  
-2. If the account contains crypto or manual holdings, MM‑Tweaks may skip cash computation for that account (these can skew the balance).  
-3. If data seems correct but numbers still differ, contact Monarch support or reach out via the repo discussion / email.
+If cash looks incorrect:
+1. Verify no holdings are missing in the account.  
+2. If the account contains crypto or manually added holdings, MM‑Tweaks may skip computing uninvested cash for that account.  
+3. If everything looks correct but the amount still differs, contact Monarch support or reach out via repo discussion / email.
 
-To make cash appear in Cash Holdings:
-- Go to Accounts → select account → Holdings → click `>` next to holding → set Type to **Cash**.
-
----
-
-#### Personal Statement (example)
-<br>
-<img src="images/MT_V3_12.png" style="width:66%; height:auto;">
-
-#### Tag multiple cells (example)
-<br>
-<img src="images/MT_V3_10.png" style="width:66%; height:auto;">
+To show cash as a holding: Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
 
 ---
 
-### Investments — Reports & Details
+### Investments — reports, details and allocation
 
-Overview, detail, and allocation views:
+Portfolio, account, holding, and allocation views are supported.
 
 <br>
 <img src="images/MT_Invest01.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_Invest02.png" style="width:66%; height:auto;">
 
-#### Investment detail & holdings
+Detailed views:
 <br>
 <img src="images/MT_Invest03.png" style="width:50%; height:auto;">
-<br>
 <img src="images/MT_Invest04.png" style="width:50%; height:auto;">
 
 ---
 
-📌 **When configuring allocation targets, set them at the following levels (all three where applicable):**
+📌 **Allocation Targets — important instructions**
 
-1. Portfolio → Allocation OR Performance (choose the appropriate top‑level view).  
-2. Institution → by Account → by Account Subtype → by Holding Type → or by Category.  
-3. Account Group (if you use Account Groups) — set targets at the Account Group level as needed.
+When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
 
-This ensures targets apply correctly in the Reports → Investments Allocation and Performance views across portfolio, accounts, and grouped reports.
+1. **Portfolio** → Allocation OR Performance (top-level portfolio view).  
+2. **Institution** → by **Account** → by **Account Subtype** → by **Holding Type** → or by **Category** (choose the breakdown you need).  
+3. **Account Group** (if you use Account Groups) — set targets per Account Group so filtered/grouped reports honor the group allocations.
+
+Notes:
+- Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
+- Verify targets in both Allocation and Performance views — behavior can differ depending on selected report and grouping.
 
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
@@ -184,9 +153,25 @@ This ensures targets apply correctly in the Reports → Investments Allocation a
 
 ---
 
+### Examples & UI tips
+
+- Personal Statement, multi‑cell tagging, and allocation examples:
+<br>
+<img src="images/MT_V3_12.png" style="width:66%; height:auto;">
+<br>
+<img src="images/MT_V3_10.png" style="width:66%; height:auto;">
+
+- Investments cards, holdings and allocation examples:
+<br>
+<img src="images/MT_Invest01.png" style="width:66%; height:auto;">
+<img src="images/MT_Invest02.png" style="width:66%; height:auto;">
+<img src="images/MT_Invest03.png" style="width:50%; height:auto;">
+
+---
+
 ### Other MM‑Tweaks features
 
-- Split Transaction 50/50
+- Split transaction 50/50
 <br>
 <img src="images/MT_V3_03.png" style="width:60%; height:auto;">
 
