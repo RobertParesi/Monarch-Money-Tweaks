@@ -136,7 +136,7 @@ Detailed views:
 ### Allocation targets and notes
 
 <br>
-<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
+<img src="images/MT_InvestAlloc.png" style="width:50%; height:auto;">
 
 📌 **Important instructions**
 
