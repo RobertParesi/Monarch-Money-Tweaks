@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41.20
+// @version      4.41
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -87,7 +87,7 @@ function MM_Init() {
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child {margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexContainer {display: grid; padding-left: 16px; padding-bottom: 20px; padding-right: 20px;}');
+    addStyle('.MTFlexContainer {display: grid; padding: 16px 16px 0px 16px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
     addStyle('.MTFlexContainerPanel {display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexContainerHeader {display: flex; justify-content: space-between;  padding: 16px 24px;');
@@ -228,31 +228,6 @@ function MF_QueueAddCard(p) {
     MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style, "Extra": p.Extra});}
 
 function MF_AddCol(x,y) {MTFlexRow[MTFlexCR][x] = y;}
-
-function MF_AddBenchCards(benchData) {
-    let ht = getCookie('MT_InvestmentCardShort',true);
-    let per = daysBetween(MTFlexDate1,MTFlexDate2, 3);
-    let isOpen = isUsMarketOpenLocal();
-    [1,3,0,2].forEach(i => {
-        const sp = benchData.securityHistoricalPerformance[i];
-        if (!sp) return;
-        MTP = [];
-        MTP.Subtitle = ht == 0 ? sp.security.name : ['US Stocks','DOW','US Bonds','S&P 500'][i];
-        let x = sp.historicalChart.length-1;
-        let hc = sp.historicalChart[x];
-        let tp = hc.returnPercent;
-        let tp2 = tp;
-        let yp = sp.historicalChart[x-1].returnPercent;
-        if(isOpen == false && tp == yp) {
-            tp2 = sp.historicalChart[x-1].returnPercent;
-            yp = sp.historicalChart[x-2].returnPercent;
-        }
-        let y = tp2 - yp;y = Math.round(y * 100) / 100;
-        MTP.Title = [per,tp + '%',isOpen ? 'Today' : 'Closed',y + '%'];
-        MTP.Extra = true;MTP.Style = 'font-size: 16px;';
-        MF_QueueAddCard(MTP);
-    });
-}
 
 async function MF_GridInit(inName, inDesc) {
 
@@ -727,28 +702,31 @@ function MT_GridDrawCards() {
     if(!divTop) return;
 
     MTFlexCard.sort((a, b) => (a.Col - b.Col));
-    let splitCards = 'flex-flow: column;';
     let div = document.createElement('div');
     div.className = 'MTFlexContainer';
     divTop.prepend(div);
 
+    let splitCards = 'flex-flow: column;';
     drawCardsGo(false);
+    splitCards += 'padding-top: 8px; padding-bottom: 8px;';
     drawCardsGo(true);
 
     function drawCardsGo(inT) {
         let firstpass = false;
-        for (let i = 0; i < MTFlexCard.length; i++) {
-            let fc = MTFlexCard[i];
+        for (const fc of MTFlexCard) {
             if ((fc.Extra ?? false) !== inT) continue;
-            if(!firstpass) {firstpass = true;divTop = cec('div','MTFlexContainer2',div,'','',inT == true ? 'margin-top: 20px;' : '');}
-            let div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
-            if(inT == false) {
+            if (!firstpass) {
+                firstpass = true;
+                divTop = cec('div','MTFlexContainer2',div,'','', inT ? 'margin-top: 16px;' : '');
+            }
+            const div2 = cec('div','MTFlexContainerCard',divTop,'','',splitCards);
+            if (!inT) {
                 cec('span','MTFlexCardBig fs-exclude',div2,fc.Title,'',fc.Style);
             } else {
-                let div3 = cec('div','MTFlexCardBig fs-exclude',div2,'','','display: inline-flex;' + fc.Style);
-                cec('div','',div3,fc.Title[0] + '\n' + fc.Title[1],'','width: 80px;');
+                const div3 = cec('div','MTFlexCardBig fs-exclude',div2,'','','display: inline-flex;' + fc.Style);
+                cec('div','',div3, fc.Title[0] + '\n' + fc.Title[1], '', 'width: 80px;');
                 cec('div','MTSpacerVertical',div3);
-                cec('div','',div3,fc.Title[2] + '\n' + fc.Title[3],'','width: 80px;');
+                cec('div','',div3, fc.Title[2] + '\n' + fc.Title[3], '', 'width: 80px;');
             }
             cec('span','MTFlexSmall',div2,fc.Subtitle,'','text-align:center');
         }
@@ -1665,7 +1643,7 @@ function MF_DrawChartupdateDetail(inE,val1,val2,stl,ttl) {
     const csp = document.getElementById(inE);
     if(csp) {
         if(val1) csp.childNodes[0].innerText = val1;
-        if(val2) csp.childNodes[1].innerText = val2;
+        if(val2) {csp.childNodes[1].innerText = val2; csp.style.display = '';}
         if(stl) csp.childNodes[1].style = stl;
         if(ttl) {
             csp.childNodes[1].className = 'MTSideDrawerDetails tooltip';
@@ -1727,7 +1705,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
 
     let divTop = document.getElementById('root'),ff = null;
     let div = cec('div','MTModelContainer',divTop);
-    if(f1) {f1 = 'width: ' + f1 + ';white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'} else {f1 = '';}
+    if(f1) {f1 = 'width: ' + f1 + ';white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';} else {f1 = '';}
     addStyle('.MTField1 {' + f1 + '}');
     addStyle('.MTField2 {width: ' + f2 + '}');
 
@@ -1762,6 +1740,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         div3.value = getCookie(data.key,false);
                         div3.setAttribute('col',0);
                         if(data.refresh == true) div3.setAttribute('refresh','true');
+                        if(data.update) div3.setAttribute('update',data.update);
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
                             const lk = data.key.slice(0, ci+1);
@@ -2606,6 +2585,31 @@ async function MenuReportsAccountsGo() {
         MF_AddCol(3,accountName);
         return accountName;
     }
+}
+
+function MF_AddBenchCards(benchData) {
+    let ht = getCookie('MT_InvestmentCardShort',true);
+    let per = daysBetween(MTFlexDate1,MTFlexDate2, 3);
+    let isOpen = isUsMarketOpenLocal();
+    [1,3,0,2].forEach(i => {
+        const sp = benchData.securityHistoricalPerformance[i];
+        if (!sp) return;
+        MTP = [];
+        MTP.Subtitle = ht == 0 ? sp.security.name : ['US Stocks','DOW','US Bonds','S&P 500'][i];
+        let x = sp.historicalChart.length-1;
+        let hc = sp.historicalChart[x];
+        let tp = hc.returnPercent;
+        let tp2 = tp;
+        let yp = sp.historicalChart[x-1].returnPercent;
+        if(isOpen == false && tp == yp) {
+            tp2 = sp.historicalChart[x-1].returnPercent;
+            yp = sp.historicalChart[x-2].returnPercent;
+        }
+        let y = tp2 - yp;y = Math.round(y * 100) / 100;
+        MTP.Title = [per,tp + '%',isOpen ? 'Today' : 'Closed',y + '%'];
+        MTP.Extra = true;MTP.Style = 'font-size: 16px;';
+        MF_QueueAddCard(MTP);
+    });
 }
 
 async function MenuReportsInvestmentsGo() {
@@ -3820,6 +3824,8 @@ async function InvestmentsDrawer(inP) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
             DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
             DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
+            let sn = getCookie('MT_InvestmentsStockNote_'+thisHld.ticker,false);
+            DrawerDrawLine(divTop2,'Note',sn,'MTStockNote',sn ? '' : 'display:none;');
             DrawerDrawLine(divTop2,'Price Change','','MTPriceChange','margin-top:20px;');
             performanceData = await dataPerformance(formatQueryDate(getDates('d_Minus3Years')),formatQueryDate(getDates('d_Today')),edg.id);
             MF_DrawChart(divTop2);
@@ -4920,8 +4926,11 @@ function onClickMTButton() {
                         if(getCookie(div.id,false) != vt) {
                             let fr = div.getAttribute('refresh');
                             if(fr == 'true') glo.forceRefresh = true;
+                            fr = div.getAttribute('update');
+                            if(fr) MF_DrawChartupdateDetail(fr,'',vt + ' ');
                         }
                         setCookie(div.id,vt);
+
                     }
                 }
         }
@@ -5002,7 +5011,7 @@ function onClickOpenWindow(cn) {
     if(cn[0] == '!Investments') {
         if(cn[2]) {
             d.push({field1: 'Holding Category Override [' + cn[3] + ']', style1: BOLD, type: 'Input', placeholder: 'Communications, Discretionary, Staples, Energy, Financials, Health Care, Industrials, ...', key: 'MTStockCategory:' + cn[2], refresh: true});
-            d.push({field1: 'Note', style1: BOLD, type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2], refresh: true});
+            d.push({field1: 'Note', style1: BOLD, type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2], refresh: true, update: 'MTStockNote'});
         } else {
             d.push({field1: 'Holding Category', field2: cn[3], style1: BOLD});
             d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.', style1: 'white-space: normal;'});
