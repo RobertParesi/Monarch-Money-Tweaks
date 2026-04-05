@@ -168,17 +168,12 @@ Notes:
 
 ---
 
-### Examples & UI tips
+### Other MM-Tweak features
 
-- Multi‑cell tagging, and allocation examples:
+- Multi‑cell tagging:
 
 <br>
 <img src="images/MT_V3_10.png" style="width:66%; height:auto;">
-
-
----
-
-### Other MM‑Tweaks features
 
 - Split transaction 50/50
 <br>
