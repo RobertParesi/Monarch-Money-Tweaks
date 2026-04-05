@@ -106,15 +106,15 @@ Highlights:
 
 ### Accounts — Overall Cash Statement (how cash is computed)
 * Monarch returns an **Account Balance** at each snapshot.  
-* Monarch returns the **Sum of all holdings** at each snapshot.
-* MM-Tweaks calculates the cash uninvested as **Account Balance - Sum of all holdings**.
+* Monarch returns the **Sum of all h_oldings** at each snapshot.
+* MM-Tweaks calculates the _Idle Cash (cash uninvested) as **Account Balance - Sum of all holdings**.
 
 If cash looks incorrect:
 1. Verify no holdings are missing in the account.  
 2. If the account contains crypto or manually added holdings, MM‑Tweaks may skip computing uninvested cash for that account.  
 3. If everything looks correct but the amount still differs, contact Monarch support or reach out via repo discussion / email.
 
-To show holding as invested cash (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
+To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
 
 ---
 
