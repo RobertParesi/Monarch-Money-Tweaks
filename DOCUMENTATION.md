@@ -168,10 +168,9 @@ Notes:
 
 ---
 
-### Other MM-Tweak features
+### Other MM-Tweaks features
 
 - Multi‑cell tagging:
-
 <br>
 <img src="images/MT_V3_10.png" style="width:66%; height:auto;">
 
