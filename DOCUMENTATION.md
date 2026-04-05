@@ -101,7 +101,8 @@ Highlights:
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_V3_08.png" style="width:66%; height:auto;">
-
+<br>
+<img src="images/MT_V3_12.png" style="width:66%; height:auto;">
 ---
 
 ### Accounts — Overall Cash Statement (how cash is computed)
@@ -162,9 +163,8 @@ Notes:
 
 ### Examples & UI tips
 
-- Personal Statement, multi‑cell tagging, and allocation examples:
-<br>
-<img src="images/MT_V3_12.png" style="width:66%; height:auto;">
+- Multi‑cell tagging, and allocation examples:
+
 <br>
 <img src="images/MT_V3_10.png" style="width:66%; height:auto;">
 
