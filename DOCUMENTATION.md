@@ -107,7 +107,7 @@ Highlights:
 ### Accounts — Overall Cash Statement (how cash is computed)
 * Monarch returns an **Account Balance** at each snapshot.  
 * Monarch returns the **Sum of all h_oldings** at each snapshot.
-* MM-Tweaks calculates the _Idle Cash (cash uninvested) as **Account Balance - Sum of all holdings**.
+* MM-Tweaks calculates the _Idle Cash_ (cash uninvested) as **Account Balance - Sum of all holdings**.
 
 If cash looks incorrect:
 1. Verify no holdings are missing in the account.  
