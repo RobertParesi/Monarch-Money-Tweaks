@@ -96,7 +96,7 @@ Highlights:
 <img src="images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="images/MT_TagsNotes2.png" style="width:60%; height:auto;">
 
-#### Accounts (Standard, Brokerage, Cash Statement, Personal Statement)
+#### Accounts (Standard, Brokerage, Personal Statement, Overall Cash Statement)
 <br>
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
