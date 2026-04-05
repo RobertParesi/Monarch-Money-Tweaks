@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.41';
+const VERSION = '4.42';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
