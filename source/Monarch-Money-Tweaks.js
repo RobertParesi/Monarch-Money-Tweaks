@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.41
+// @version      4.42.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2904,11 +2904,11 @@ async function MenuReportsInvestmentsGo() {
                     if(maxCards > 0) {MF_QueueAddCard({Col: 1, Title: Cards[0] + '%', Subtitle: 'Top Gainer: ' + InvestmentCardDesc(Cards[1]), Style: css.green});}
                     if(maxCards > 1) {MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});}
                     if(maxCards > 2) {MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});}
-                    if(MTFlex.Button1 == 0 && getCookie('MT_InvestmentHideBM',true) == 0) {
-                        let benchData = await dataBenchmarks(lowerDate,higherDate);
-                        MF_AddBenchCards(benchData);
-                    }
                     break;
+            }
+            if(getCookie('MT_InvestmentHideBM',true) == 0) {
+                let benchData = await dataBenchmarks(lowerDate,higherDate);
+                MF_AddBenchCards(benchData);
             }
         }
 
