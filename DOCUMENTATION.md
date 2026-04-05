@@ -113,7 +113,7 @@ Highlights:
 If cash looks incorrect:
 1. Verify no holdings are missing in the account.  
 2. If the account contains crypto or manually added holdings, MM‑Tweaks may skip computing uninvested cash for that account.  
-3. If everything looks correct but the amount still differs, contact Monarch support or reach out via repo discussion / email.
+3. If everything looks correct but the amount still differs, contact Monarch support or reach out via GitHub discussion here, Reddit community forum or by email.
 
 To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
 
