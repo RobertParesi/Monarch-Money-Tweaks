@@ -49,7 +49,7 @@ Key options:
 - **Account Group** — group reports by any label you prefer (Personal, Business, Managed, Credit Cards, Trust, etc.). Useful examples:
   - Investments → `Managed` / `Non Managed` / `Tax Deferred`  
   - Credit cards → `Credit Cards`  
-  - Property / vehicles → `Trust` / `Non Trust` / `Personal` / `John` / `Melonie` / `Kids`
+  - Property / vehicles → `Trust` / `Non Trust` / `Personal` / `Jerry` / `Elaine` / `Kids`
 - **Subtype override** — replace the account subtype shown in reports (ie: "Short Term Liability", "Long Term Liability", "Equities", "Bonds").
 - **Holding Category override (account‑level)** — default holding category for all holdings in the account.
 - **Add to Dashboard Accounts list** — include account summary on the Dashboard.
