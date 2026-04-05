@@ -133,6 +133,13 @@ Detailed views:
 <img src="images/MT_Invest03.png" style="width:50%; height:auto;">
 <img src="images/MT_Invest04.png" style="width:50%; height:auto;">
 
+- Investments cards and holdings examples:
+<br>
+<img src="images/MT_Invest01.png" style="width:66%; height:auto;">
+<img src="images/MT_Invest02.png" style="width:66%; height:auto;">
+<img src="images/MT_Invest03.png" style="width:50%; height:auto;">
+
+
 ---
 ### Allocation targets and notes
 
@@ -168,11 +175,6 @@ Notes:
 <br>
 <img src="images/MT_V3_10.png" style="width:66%; height:auto;">
 
-- Investments cards, holdings and allocation examples:
-<br>
-<img src="images/MT_Invest01.png" style="width:66%; height:auto;">
-<img src="images/MT_Invest02.png" style="width:66%; height:auto;">
-<img src="images/MT_Invest03.png" style="width:50%; height:auto;">
 
 ---
 
