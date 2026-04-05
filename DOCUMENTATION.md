@@ -47,7 +47,7 @@ Open **Reports → Accounts**, click **>** on an account, open the side panel `.
 
 Key options:
 - **Account Group** — group reports by any label you prefer (Personal, Business, Managed, Credit Cards, Trust, etc.). Useful examples:
-  - Investments → `Managed` / `Non Managed` / `Tax Deffered`  
+  - Investments → `Managed` / `Non Managed` / `Tax Deferred`  
   - Credit cards → `Credit Cards`  
   - Property / vehicles → `Trust` / `Non Trust` / `Personal` / `John` / `Melonie` / `Kids`
 - **Subtype override** — replace the account subtype shown in reports (optional).
