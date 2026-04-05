@@ -136,7 +136,7 @@ Detailed views:
 ### Allocation targets and notes
 
 
-Set targets by institution, account, holding type, or category by clicking the > on the Total row (top header) of the grid.
+Set targets by institution, account, holding type, or category by clicking the > on the Total row (top header) of the grid and then [...] in top-right.
 
 <br>
 <img src="images/MT_Invest05.png" style="width:50%; height:auto;">
