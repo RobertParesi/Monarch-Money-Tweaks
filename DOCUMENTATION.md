@@ -105,10 +105,9 @@ Highlights:
 ---
 
 ### Accounts — Overall Cash Statement (how cash is computed)
-
-Monarch returns an *Account Balance* at each snapshot.  
-Monarch returns the **Sum of all holdings** at each snapshot.
-MM-Tweaks calculates the cash ininvested as **Account Balance - Sum of all holdings**.
+* Monarch returns an *Account Balance* at each snapshot.  
+* Monarch returns the **Sum of all holdings** at each snapshot.
+* MM-Tweaks calculates the cash ininvested as **Account Balance - Sum of all holdings**.
 
 If cash looks incorrect:
 1. Verify no holdings are missing in the account.  
