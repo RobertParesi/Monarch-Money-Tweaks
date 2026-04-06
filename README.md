@@ -16,6 +16,8 @@ To run on **Microsoft Edge**, choose Google Chrome above after you Enable "Allow
 
 To run on **Apple iPad**, goto your Apple Store.  First, install/use the **Orion** browser instead of Safari browser and then install the Monarch Money Tweaks extension through Google Chrome store.
 
+To update on Chrome, select three-dots / Settings / Extensions / Enable Developer mode / click Update in upper-left.
+
 ### 📚 Changes and Documentation:
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
