@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- **Version 4.43 (beta)**
+ * **Version 4.43 (beta)**
       - CHANGE: Returns "YTD" instead of xxx days.
 
  * **Version 4.41/4.42 (April 5, 2026)**
