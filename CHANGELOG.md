@@ -1,7 +1,9 @@
 # Change Log (Version History)
 
  * **Version 4.43 (beta)**
-      - CHANGE: Returns "YTD" instead of xxx days.
+      - CHANGE: Returns "YTD" instead of x days.
+      - FIX: Override font issue on FlexGrid header titles.
+      - FIX: Sort Accounts Summary tab figures by amount.
 
  * **Version 4.41/4.42 (April 5, 2026)**
      - NEW: Benchmarks added to Reports → Accounts → Brokerage Statement & Investments → Performance. (DOW, S&P 500, US Stocks & Bonds)
