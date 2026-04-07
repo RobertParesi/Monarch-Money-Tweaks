@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.43
+// @version      4.44.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.43';
+const VERSION = '4.44';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2658,7 +2658,7 @@ async function MenuReportsInvestmentsGo() {
 
     async function MenuReportsInvestmentsStd() {
 
-        MF_QueueAddTitle(3,'Account',MTP,false,[2,3,5,7],[1]);
+        MF_QueueAddTitle(3,'Account',MTP,false,[2,5,7],[1]);
         MF_QueueAddTitle(4,'Subtype',MTP,false,[3],[1]);
         MF_QueueAddTitle(5,MTFlex.Button1 > 5 ? 'Category' : 'Type',MTP,false,[4,5,6,7]);
 
@@ -4394,11 +4394,6 @@ function MenuPlan(OnFocus) {
                 const selector = classes.map(c => `.${c}`).join(', ');
                 addStyle(`${selector} { height: 36px !important; font-size: 14px !important; }`);
             }
-            if(getCookie('MT_BudgetHighlight',true) == 1) {
-                let cls = getFullClassName('ProgressBar__Root-sc');
-                if (!cls) {glo.pathName = '';return;}
-                addStyle('.' + cls + ' {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');
-            }
             glo.plan = true;
         }
     }
@@ -4600,7 +4595,6 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
     MenuDisplay_Input('Budget','','spacer');
     MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
-    MenuDisplay_Input('Make green & red progress bars full height','MT_BudgetHighlight','checkbox');
     MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
     MenuDisplay_Input('Move Savings up to Total Available','MT_PlanSavings','checkbox');
     MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
