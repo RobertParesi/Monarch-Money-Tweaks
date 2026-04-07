@@ -1,8 +1,8 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks for Monarch Money - Web Extension 
 
-**📣 Over 3,400 active users!**
+**📣 Over 3,500 active users!**
 
-### ⚙️ Installing MM-Tweaks for Monarch Money - Version 4.42
+### ⚙️ Installing MM-Tweaks for Monarch Money - Version 4.43
 
 Visit the official Extensions area for your browser using the following links: 
 
