@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+ * **Version 4.44 (Beta)**
+      - FIX: Reports / Investments "Accounts" column would not appear in Posotions / by Account Subtype.
+ 
  * **Version 4.43 (April 7, 2026)**
       - CHANGE: Returns "YTD" instead of x days.
       - FIX: Override font issue on FlexGrid header titles.
