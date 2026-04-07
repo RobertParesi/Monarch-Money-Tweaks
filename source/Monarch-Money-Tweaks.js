@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.42.1
+// @version      4.43.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.42';
+const VERSION = '4.43';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -108,7 +108,7 @@ function MM_Init() {
     addStyle('.MTFlexGridSHCell {font-size: 13px; ' + BOLD + 'padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
-    addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
+   // addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + BOLD + '}');
     addStyle('.MTFlexError{text-align: center; ' + BOLD + 'padding: 16px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 8px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig{font-size: 18px; ' + BOLD + 'padding-top: 6px; padding-bottom: 6px;}');
@@ -2589,7 +2589,7 @@ async function MenuReportsAccountsGo() {
 
 function MF_AddBenchCards(benchData) {
     let ht = getCookie('MT_InvestmentCardShort',true);
-    let per = daysBetween(MTFlexDate1,MTFlexDate2, 3);
+    let per = daysBetween(MTFlexDate1,MTFlexDate2, 'long');
     let isOpen = isUsMarketOpenLocal();
     [1,3,0,2].forEach(i => {
         const sp = benchData.securityHistoricalPerformance[i];
@@ -2629,7 +2629,7 @@ async function MenuReportsInvestmentsGo() {
     MF_GridOptions(4,customGroupInfo());
 
     if(MTFlex.Button2 < 2) {MTFlexDate2 = getDates('d_Today');MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}
-    if(MTFlex.Button2 == 2) {if(daysBetween(MTFlexDate1,MTFlexDate2,false) < 7) { MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}}
+    if(MTFlex.Button2 == 2) {if(daysBetween(MTFlexDate1,MTFlexDate2) < 7) { MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}}
 
     const maxCards = getCookie('MT_InvestmentCards',true);
     const splitTicker = getCookie('MT_InvestmentsSplitTicker',true);
@@ -2678,7 +2678,7 @@ async function MenuReportsInvestmentsGo() {
             MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,false,[0]);
         } else {
             MTP.IgnoreTotals = true;
-            const db = daysBetween(MTFlexDate1,MTFlexDate2,true);
+            const db = daysBetween(MTFlexDate1,MTFlexDate2,'short');
             MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(12,db + ' Chg $',MTP);
             MTP.Width = '106px';MTP.Format = 4;MF_QueueAddTitle(13,db + ' Chg %',MTP);
         }
@@ -4066,87 +4066,94 @@ function ExportSummaryDrawer(inType,inFile,inTriggers) {
 
 // [ Dashboard Accounts ]
 function MenuAccountSummaryHide() {
-    if(getCookie('MT_HideAccountsSummary',true) == 1) {
-        let div = gde('accounts-summary-card');
-        if(div) div.style.display = 'none';
-        div = document.querySelector('[class*="Grid__GridStyled-"]');
-        if(div) div.style.display = 'block';
+    if (getCookie('MT_HideAccountsSummary', true) == 1) {
+        const div = gde('accounts-summary-card');
+        if (div) div.style.display = 'none';
+        const grid = document.querySelector('[class*="Grid__GridStyled-"]');
+        if (grid) grid.style.display = 'block';
     }
 }
 
 async function MenuAccountsSummary() {
-
     MenuAccountSummaryHide();
     MenuAccountCheckMsg();
     const divTop = document.querySelector('div.MTAccountSummary');
-    if(divTop) return;
-    if(getCookie('MT_Ownership',true) == 1 && glo.owners == false) {
-        let cls = getFullClassName('OwnershipAvatar');
-        if(cls) {addStyle('.' + cls + ' {display:none;}');glo.owners = true;}
+    if (divTop) return;
+
+    if (getCookie('MT_Ownership', true) == 1 && glo.owners == false) {
+        const cls = getFullClassName('OwnershipAvatar');
+        if (cls) { addStyle('.' + cls + ' {display:none;}'); glo.owners = true; }
     }
+
     let aSummary = [];
-    const elements = gde('account-summary-card-group',true);
-    if(elements.length > 1) {
-        let snapshotData = await dataGetAccounts();
-        for (let i = 0; i < snapshotData.accounts.length; i++) {
-            let ss = snapshotData.accounts[i];
-            if(ss.hideFromList == false && ss.includeInNetWorth == true) {
-                let AccountGroupFilter = getCookie('MTAccounts:' + ss.id,false);
-                MenuAccountSummaryUpdate(AccountGroupFilter,ss.isAsset,ss.displayBalance,ss.displayName);
+    const elements = gde('account-summary-card-group', true);
+    if (elements.length <= 1) { glo.spawnProcess = 4; return; }
+
+    const snapshotData = await dataGetAccounts();
+    if (snapshotData && snapshotData.accounts) {
+        for (const ss of snapshotData.accounts) {
+            if (ss.hideFromList === false && ss.includeInNetWorth === true) {
+                const AccountGroupFilter = getCookie('MTAccounts:' + ss.id, false);
+                MenuAccountSummaryUpdate(AccountGroupFilter, ss.isAsset, ss.displayBalance, ss.displayName);
             }
         }
-        aSummary.sort();
-        MenuAccountSummaryShow(elements[0],true);
-        MenuAccountSummaryShow(elements[1],false);
-    } else { glo.spawnProcess = 4; }
+    }
+    aSummary.sort((a, b) => (b.Asset - a.Asset) || a.AccountGroup.localeCompare(b.AccountGroup, undefined, { sensitivity: 'base' }));
+
+    MenuAccountSummaryShow(elements[0], true);
+    MenuAccountSummaryShow(elements[1], false);
 
     function MenuAccountCheckMsg() {
-        if(getCookie('MT_AssignGroups',true) == 0) {
-            setCookie('MT_AssignGroups',1);
-            MF_ModelWindowOpen({title: 'MM-Tweaks'},'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
+        if (getCookie('MT_AssignGroups', true) == 0) {
+            setCookie('MT_AssignGroups', 1);
+            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
         }
     }
 
-    function MenuAccountSummaryShow(inParent,isAsset) {
-        let cn = inParent.childNodes[0];
-        let cnClass = cn.className + ' MTAccountSummaryDetail';
-        let div = document.createElement('div');
-        div.className = 'MTAccountSummary';
-        div = inParent.insertBefore(div, cn.nextSibling);
-        let divChild = null,tt='';
-        for (let j = 0; j < aSummary.length; j++) {
-            if((isAsset && aSummary[j].Asset != 0) || (!isAsset && aSummary[j].Liability !=0)) {
-                divChild = cec('div',cnClass,div,'','','margin-bottom: 5px;font-weight: 100;');
-                if(isAsset == true) {tt = aSummary[j].ToolTipAsset;} else {tt = aSummary[j].ToolTipLiability;}
-                cecTip('span','',divChild,aSummary[j].AccountGroup,tt);
-                cec('span','fs-exclude',divChild,isAsset == true ? getDollarValue(aSummary[j].Asset) : getDollarValue(aSummary[j].Liability));
-            }
+    function MenuAccountSummaryShow(inParent, isAsset) {
+        const firstChild = inParent.childNodes[0];
+        const cnClass = (firstChild && firstChild.className ? firstChild.className : '') + ' MTAccountSummaryDetail';
+        let container = document.createElement('div');
+        container.className = 'MTAccountSummary';
+        container = inParent.insertBefore(container, firstChild.nextSibling);
+
+        let divChild = null;
+        for (const item of aSummary) {
+            const hasValue = isAsset ? (item.Asset !== 0) : (item.Liability !== 0);
+            if (!hasValue) continue;
+            divChild = cec('div', cnClass, container, '', '', 'margin-bottom: 5px;font-weight: 100;');
+            const tt = isAsset ? item.ToolTipAsset : item.ToolTipLiability;
+            cecTip('span', '', divChild, item.AccountGroup, tt);
+            cec('span', 'fs-exclude', divChild, isAsset ? getDollarValue(item.Asset) : getDollarValue(item.Liability));
         }
-        if(divChild) {cec('div','',div,'','','margin-bottom: 18px;');}
+        if (divChild) cec('div', '', container, '', '', 'margin-bottom: 18px;');
     }
 
-    function MenuAccountSummaryUpdate(inGroup,inA,inBal,inDesc) {
-        let ttLit = inDesc + ': \xa0\xa0\xa0' + getDollarValue(inBal);
-        let tta='',ttl='';
-        if(inA == true) {tta = ttLit;} else {ttl = ttLit;}
-
-        for (let j = 0; j < aSummary.length; j++) {
-            if(aSummary[j].AccountGroup == inGroup) {
-                if(inA == true) {
-                    aSummary[j].Asset += Number(inBal);
-                    aSummary[j].ToolTipAsset += '\n' + ttLit;
-                    if(aSummary[j].ToolTipAsset.startsWith('\n')) {aSummary[j].ToolTipAsset = aSummary[j].ToolTipAsset.slice(1);}
-                } else {
-                    aSummary[j].Liability += Number(inBal);
-                    aSummary[j].ToolTipLiability += '\n' + ttLit;
-                    if(aSummary[j].ToolTipLiability.startsWith('\n')) {aSummary[j].ToolTipLiability=aSummary[j].ToolTipLiability.slice(1);}
-                }
-                return;
+    function MenuAccountSummaryUpdate(inGroup, inA, inBal, inDesc) {
+        const amt = Number(inBal) || 0;
+        const ttLit = inDesc + ': \xa0\xa0\xa0' + getDollarValue(amt);
+        const isAsset = inA === true;
+        const idx = aSummary.findIndex(x => x.AccountGroup === inGroup);
+        if (idx >= 0) {
+            const grp = aSummary[idx];
+            if (isAsset) {
+                grp.Asset += amt;grp.ToolTipAsset = (grp.ToolTipAsset ? grp.ToolTipAsset + '\n' : '') + ttLit;
+            } else {
+                grp.Liability += amt;grp.ToolTipLiability = (grp.ToolTipLiability ? grp.ToolTipLiability + '\n' : '') + ttLit;
             }
+            return;
         }
-        aSummary.push({"AccountGroup": inGroup, "ToolTipAsset": tta ,"ToolTipLiability":ttl,"Asset": inA == true ? Number(inBal) : 0, "Liability": inA == true ? 0 : Number(inBal) });
+        const newEntry = {
+            AccountGroup: inGroup,
+            ToolTipAsset: isAsset ? ttLit : '',
+            ToolTipLiability: !isAsset ? ttLit : '',
+            Asset: isAsset ? amt : 0,
+            Liability: !isAsset ? amt : 0
+        };
+        aSummary.push(newEntry);
     }
 }
+
 // [ Budgets ]
 async function MenuPlanRefresh() {
 
@@ -4387,12 +4394,13 @@ function MenuPlan(OnFocus) {
                 }
                 const selector = classes.map(c => `.${c}`).join(', ');
                 addStyle(`${selector} { height: 36px !important; font-size: 14px !important; }`);
-                if(getCookie('MT_BudgetHighlight',true) == 1) {
-                    cls = getFullClassName('ProgressBar__Root-sc');
-                    addStyle('.' + cls + ' {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');
-                }
-                glo.plan = true;
             }
+            if(getCookie('MT_BudgetHighlight',true) == 1) {
+                let cls = getFullClassName('ProgressBar__Root-sc');
+                if (!cls) {glo.pathName = '';return;}
+                addStyle('.' + cls + ' {opacity: 0.3; height: 100%; padding-top: 3px; padding-bottom: 3px;}');
+            }
+            glo.plan = true;
         }
     }
 }
@@ -5649,13 +5657,20 @@ function daysInMonth(iMonth, iYear) {return 32 - new Date(iYear, iMonth, 32).get
 
 function daysBetween(date1,date2, asLit) {
 
-    const d1 = date1.setHours(0,0,0,0);
-    const d2 = date2.setHours(0,0,0,0);
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    d1.setHours(0,0,0,0);
+    d2.setHours(0,0,0,0);
     const millisecondsPerDay = 1000 * 3600 * 24;
     const diffInMilliseconds = Math.abs(d2 - d1);
     const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
-
-    if (asLit === true) {
+    if(asLit) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const isThisYear = d1.getFullYear() === today.getFullYear() && d2.getFullYear() === today.getFullYear() && d1.getMonth() === 0 && d1.getDate() === 1 && d2.getTime() === today.getTime();
+        if(isThisYear) return 'YTD';
+    }
+    if (asLit == 'short') {
         switch (diffInDays) {
             case 7: return '1w';
             case 14: return '2w';
@@ -5670,8 +5685,7 @@ function daysBetween(date1,date2, asLit) {
         if (date1.getDate() === 1 && date1.getMonth() === date2.getMonth() && getDates('isToday', date2)) {return 'MTD';}
         return diffInDays + 'd';
     }
-
-    if (asLit === 3) {
+    if (asLit == 'long') {
         switch (diffInDays) {
             case 7: return '1 week';
             case 14: return '2 weeks';
