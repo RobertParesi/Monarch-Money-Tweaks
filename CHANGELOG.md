@@ -3,6 +3,7 @@
  * **Version 4.44 (Beta)**
       - FIX: Reports / Investments "Accounts" column would not appear in Posotions / by Account Subtype.
       - FIX: Reports / Accounts side drawer graph & detail would be incorrect if an Account Group contained both Assets & Liabilities.
+      - REGRESSION: Reports / Investments showed "Watch Ticker" on Fixed Income / Bonds.
  
  * **Version 4.43 (April 7, 2026)**
       - CHANGE: Returns "YTD" instead of x days.
