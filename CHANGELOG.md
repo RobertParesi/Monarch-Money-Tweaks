@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- * **Version 4.43 (beta)**
+ * **Version 4.43 (April 7, 2026)**
       - CHANGE: Returns "YTD" instead of x days.
       - FIX: Override font issue on FlexGrid header titles.
       - FIX: Sort Accounts Summary tab figures by amount.
