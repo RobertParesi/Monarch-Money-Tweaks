@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.43.2
+// @version      4.43
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -83,7 +83,7 @@ function MM_Init() {
     addStyle('.MTRow {display: flex;  width: 100%;  padding-left: 2px; padding-right: 2px; padding-top: 12px;}');
     addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; ' + BOLD + 'padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
-    addStyle('.MTButtons { padding-left: 8px; display: flex; padding-right: 16px;}');
+    addStyle('.MTButtons { display: flex; padding-right: 16px;}');
     addStyle('.MTWindowButton {margin-bottom: 20px;}');
     addStyle('.MTWindowButton:last-child {margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
     addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
@@ -108,7 +108,6 @@ function MM_Init() {
     addStyle('.MTFlexGridSHCell {font-size: 13px; ' + BOLD + 'padding-top:6px; padding-bottom: 0px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
-   // addStyle('.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + BOLD + '}');
     addStyle('.MTFlexError{text-align: center; ' + BOLD + 'padding: 16px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 8px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexBig{font-size: 18px; ' + BOLD + 'padding-top: 6px; padding-bottom: 6px;}');
@@ -121,7 +120,7 @@ function MM_Init() {
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
-    addStyle('.MTSideDrawerHeader {' + standardText + ' padding: 8px; }');
+    addStyle('.MTSideDrawerHeader {' + css.font + standardText + ' padding: 8px; }');
     addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + BOLD + ' padding-left: 12px;padding-top: 3px; height: 30px;border-radius: 6px; ' + css.font + '}');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth {margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 {place-content: stretch space-between; display: flex;');
@@ -1719,7 +1718,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
         cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
     }
     if(t.subtitle) cec('div','',divTop,t.subtitle,'',BOLD + 'font-size: 14px;');
-    let st = 'max-height: 520px;';
+    let st = 'max-height: 500px;';
     if(d.length > 9) st+= 'overflow-y: auto;';
     div = cec('div','',divTop,'','',st );
     if(typeof d !== 'string') {
@@ -1774,9 +1773,9 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
             }
         });
     } else { let div2 = cec('div','MTRow',div); cec('div','MTField1',div2,d,'','width: 100%;'); }
-    div = cec('div','MTButtons',divTop,'','','padding-right: 0px; margin-top: 4px;');
+    div = cec('div','MTButtons',divTop,'','','padding-right: 0px; margin-top: 20px;');
     if(b != null) {
-        if(b.length > 0) {b.forEach(but => {cec('button','MTWindowButton',div,but.name,'','','','',but.id);});}
+        if(b.length > 0) {b.forEach((but, i) => {cec('button','MTWindowButton',div,but.name,'',i === 0 ? 'margin-left: 0' : '','','',but.id);});}
     }
     cec('button','MTWindowButton',div,'Close','','','','',t.name);
     if(t.percent == true) onClickUpdateTotal();
@@ -2138,7 +2137,7 @@ async function MenuReportsAccountsGo() {
     let skipHidden2 = getCookie('MT_AccountsHidden2',true);
     let skipHidden3 = getCookie('MT_AccountsHidden3',true);
     let AccountGroupFilter = customGroupFilter();
-    let snapshotData5 = null;
+    let snapshotData5;
     if(MTFlex.Button2 > 4) {
         await MenuReportsAccountsGoExt();}
     else if(MTFlex.Button2 == 3) {
@@ -5092,7 +5091,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Owner', style1: '', field2: t.ownedByUser != null ? t.ownedByUser.displayName : 'Shared'});
         d.push({field1: 'Goal', style1: '', field2: t.goal != null ? t.goal : '(None)'});
         d.push({field1: 'Tags', style1: '', field2: t.tags.length == 0 ? '(None)' : getTags(t.tags)});
-        d.push({field1: t.notes, style1: '', field2: null});
+        if(t.notes) {d.push({field1: t.notes, style1: '', field2: null});}
         b.push({name: 'Edit', id: 'TransEdit'});
         b.push({name: 'Edit in new Tab', id: 'TransEdit2'});
         cn[1] = t.merchant.name;cn[2] = t.id;
