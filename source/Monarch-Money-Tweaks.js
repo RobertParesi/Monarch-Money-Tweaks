@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.44.1
+// @version      4.44.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1348,12 +1348,15 @@ function MF_DrawChart(inLocation) {
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.ChartIndex]);
         chartTip = 'Month';chartTipB = '<br>';
+        for (const pd of performanceData.accounts) {
+            if (!filterAct.includes(pd.id)) continue;
+            if (!chartGroup) {chartGroup = pd.type.group;continue;}
+            if (pd.type.group !== chartGroup) {chartMixed = true;break;}
+        }
         for (let i = 0; i < performanceData.accounts.length; i++) {
             let pd = performanceData.accounts[i];
             if(filterAct.includes(pd.id)) {
                 let recBal = pd.recentBalances;
-                if(chartGroup) {if(pd.type.group != chartGroup) chartMixed = true;}
-                chartGroup = pd.type.group;
                 let curMonth = getDates('n_CurMonth');
                 let curYear = getDates('n_CurYear');
                 let thisDate = getDates('d_Today');
@@ -1361,7 +1364,7 @@ function MF_DrawChart(inLocation) {
                 for (let j = recBal.length - 1; j > -1; j--) {
                     if(curCnt == 0 || (performanceDataType != 0 || thisDate.getDay() == 0)) {
                         useV = recBal[j];
-                        if(pd.type.group == 'liability') {useV = -useV;}
+                        if(!chartMixed) {if(pd.type.group == 'liability') {useV = -useV;}}
                         useY = getDates('s_YMD',thisDate);
                         let x = yAxis.indexOf(useY);
                         if(x < 0) { xAxis.unshift(useV);yAxis.unshift(useY); } else { xAxis[x] += useV;}
@@ -3622,7 +3625,7 @@ async function AccountsDrawer(inP) {
     let sObj = {},transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,p1 = inP[0],divTop, divTop2, acc;
 
     if(p1 == 'Group') {
-        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2].slice(2) + '|' + inP[2];
+        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2] + '|' + inP[2];
         accts = MF_GridPKUIDs(inP[2]);
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
@@ -3897,7 +3900,7 @@ async function InvestmentsDrawer(inP) {
         divTop2 = cec('span','MTSideDrawerHeader',divTop);
         cec('button','MTInputButton',divTop2,'Close','','float:right;' );
         if(glo.debug == 1) {cec('button','MTInputButton',divTop2,'Debug','','float:right;','','',p0);}
-        if(thisHld.ticker != 'null') {
+        if(thisHld.ticker != null) {
             let bName = 'Watch Ticker';
             if(getCookie('MTInvestmentTickers',false).split(',').includes(thisHld.ticker)) bName = 'Remove Ticker';
             cec('button','MTInputButton',divTop2,bName,'','margin-left: 0px;','','',thisHld.ticker);
@@ -5060,8 +5063,8 @@ function onClickOpenWindow(cn) {
             for (let i = 0; i < accountsData.accounts.length; i ++) {
                 let ad = accountsData.accounts[i];
                 if(ad.id == item) {
-                    d.push({sort: 1, field1: ad.displayName, style1: '', field2: getDollarValue(ad.displayBalance)});
-                    tot+=ad.displayBalance;
+                    let thisA = ad.isAsset ? ad.displayBalance : -ad.displayBalance; tot+=thisA;
+                    d.push({sort: 1, field1: ad.displayName, style1: '', field2: getDollarValue(thisA)});
                     break;
                 }
             }
