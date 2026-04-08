@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.44.2
+// @version      4.44.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -702,10 +702,10 @@ function MT_GridDrawCards() {
 
     MTFlexCard.sort((a, b) => (a.Col - b.Col));
     let div = document.createElement('div');
-    div.className = 'MTFlexContainer';
-    divTop.prepend(div);
+    div.className = 'MTFlexContainer';divTop.prepend(div);
 
-    let splitCards = 'flex-flow: column;';
+    const maxCards = getCookie(MTFlex.Name + '_MaxCards',true,20);
+    let cards=0,splitCards = 'flex-flow: column;';
     drawCardsGo(false);
     splitCards += 'padding-top: 8px; padding-bottom: 8px;';
     drawCardsGo(true);
@@ -714,6 +714,7 @@ function MT_GridDrawCards() {
         let firstpass = false;
         for (const fc of MTFlexCard) {
             if ((fc.Extra ?? false) !== inT) continue;
+            if(inT == false) {cards++;if(cards > maxCards) continue;}
             if (!firstpass) {
                 firstpass = true;
                 divTop = cec('div','MTFlexContainer2',div,'','', inT ? 'margin-top: 16px;' : '');
@@ -1028,14 +1029,12 @@ function MF_GridCardAddAll (cObj,inA,inB,inC) {
         if(cObj.section == 'odd') {
             if(row.Section % 2 !== 0 || row.Section == 0) {
                 MT_GridCardAddAllGo(row[cObj.x],row[cObj.y],row[cObj.z]);
-                if(cards == cObj.max) break;
             }
         } else {
             if(cObj.section == row.Section) {
                 if(cObj.total > 0) {MT_GridCardAddAllGo(row[cObj.total], row[0]);}
                 for( let j = cObj.x; j <= cObj.y; j++) {
                     MT_GridCardAddAllGo(row[j], MTFlexTitle[j].Title);
-                    if(cards == cObj.max) break;
                 }
             }
         }
@@ -1046,8 +1045,7 @@ function MF_GridCardAddAll (cObj,inA,inB,inC) {
         if(inD != undefined) cObj = inD;
         cards++;
         MTP = [];MTP.Col = cards;
-        if (cObj.sort === 'A') MTP.Col = inA;
-        if (cObj.sort === 'D') MTP.Col = inA * -1;
+        MTP.Col = cObj.sort === 'D' ? -inA : inA;
         MTP.Title = cObj.xf == undefined ? inA : MT_GetFormattedValue(cObj.xf,inA);
         if(inC != undefined) MTP.Title += '\n' + MT_GetFormattedValue(cObj.zf,inC);
         MTP.Subtitle = inB;
@@ -1397,6 +1395,7 @@ function MF_DrawChart(inLocation) {
     function MF_DrawChartInvestments() {
         const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year'][MTFlex.ChartIndex]);
         const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
+        if(chart == null) return;
         const xLen = chart.length;
         let moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
         chartTip = 'Day';
@@ -2016,7 +2015,7 @@ async function MenuReportsNetIncomeGo() {
     MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Spending');
     MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(totalCol,1, totalCol-1,'Add');
-    MF_GridCardAddAll({section: 7, x: 1, y: MTFlexTitle.length-2, xf: 2, max: 8, total: MTFlexTitle.length-1, isPos: css.red, isNeg: css.green});
+    MF_GridCardAddAll({section: 7, x: 1, y: MTFlexTitle.length-2, xf: 2, total: MTFlexTitle.length-1, isPos: css.red, isNeg: css.green});
     glo.spawnProcess = 1;
 
     function NetIncomeUpdateQueue(inID,inAmt,inTag,inOrder,inColor,inFirstPass) {
@@ -2115,6 +2114,7 @@ async function MenuReportsAccountsGo() {
     if(MTFlex.Button1 > 0 && MTFlex.Button2 != 4) MTFlex.Subtotals = true;
     if(MTFlex.Button1 == 1 || MTFlex.Button1 == 2 || MTFlex.Button2 == 1) MTFlex.PKSlice = 2;
     accountFields = ['Beg Balance','Income','Expenses','Transfers','Net Income'];
+    let rollUp = MTFlex.Button1 == 0 ? 'All' : 'Total';
 
     MF_SetupDates();
     MTFlex.Title1 = 'Accounts Report';
@@ -2306,7 +2306,7 @@ async function MenuReportsAccountsGo() {
                 MF_AddCol(7,get2dec(totV));
             }
         }
-        MF_GridRollup(1,2,1,'Assets','Total|2|7|Total Assets');
+        MF_GridRollup(1,2,1,'Assets',rollUp + '|2|7|Total Assets');
         MTFlexCard = [];
         MF_GridCardAddAll({section: 2, x: 7, xf: 2, y: 'AutoCard', sort: 'D', isPos: css.green, isNeg: css.red});
         MF_GridCardAdd(1,5,5,'HV','Idle Cash','Overdrawn!',css.green,css.red,'', '',-9999999);
@@ -2485,8 +2485,7 @@ async function MenuReportsAccountsGo() {
                 }
             }
         }
-
-        MF_GridRollup(1,2,1,'Assets','Total|2|9|Total Assets');
+        MF_GridRollup(1,2,1,'Assets',rollUp + '|2|9|Total Assets');
         switch(MTFlex.Button2) {
             case 2:
                 MTFlexCard = [];
@@ -2499,7 +2498,7 @@ async function MenuReportsAccountsGo() {
                 break;
             case 4:
                 MTFlexCard = [];
-                MF_GridRollup(3,4,3,'Credit Cards','All|4|9|Credit Cards');
+                MF_GridRollup(3,4,3,'Credit Cards',rollUp + '|4|9|Credit Cards');
                 MF_GridCardAdd(3,5,5,'HV','Total Spend','Total Spend',css.red,css.green);
                 MF_GridCardAdd(3,6,6,'HV','Total Charges','Total Charges',css.red,css.green);
                 MF_GridCardAdd(3,7,7,'HV','Total Refunds','Total Refunds',css.green,css.red);
@@ -2507,7 +2506,7 @@ async function MenuReportsAccountsGo() {
                 MF_GridCardAdd(3,11,11,'HV','Credit Remaining','Credit Remaining',css.green,css.red);
                 break;
             default:
-                MF_GridRollup(3,4,3,'Liabilities','Total|4|9|Total Liabilities');
+                MF_GridRollup(3,4,3,'Liabilities',rollUp + '|4|9|Total Liabilities');
                 MF_GridRollDifference(5,1,3,1,NetWorthLit,'Add');
                 MF_GridCalcDifference(5,1,3,[5,9,10,12],'Sub');
                 cards=0;
@@ -2633,11 +2632,10 @@ async function MenuReportsInvestmentsGo() {
     if(MTFlex.Button2 < 2) {MTFlexDate2 = getDates('d_Today');MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}
     if(MTFlex.Button2 == 2) {if(daysBetween(MTFlexDate1,MTFlexDate2) < 7) { MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}}
 
-    const maxCards = getCookie('MT_InvestmentCards',true);
     const splitTicker = getCookie('MT_InvestmentsSplitTicker',true);
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let sumPortfolio = 0, cashValue = 0, sumCash = 0, Cards = [0,'',0,''],UpDown = [0,0], numCards = 0;
+    let sumPortfolio = 0, cashValue = 0, sumCash = 0, Cards = [0,'',0,''],UpDown = [0,0];
     let skipCash = getCookie('MT_InvestmentCardNoCash',true);
     let tickers = getCookie('MTInvestmentTickers',false).split(',');
     accountQueue = [];
@@ -2707,7 +2705,7 @@ async function MenuReportsInvestmentsGo() {
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 const secPercent = edge.node.securityPriceChangePercent;
                 const holdings = edge.node.holdings;
-                let CardShown = false,hld=0;
+                let hld=0;
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
                 let currentStockTicker = edge.node.security?.ticker ?? '';
@@ -2771,18 +2769,18 @@ async function MenuReportsInvestmentsGo() {
                         }
                     }
 
+                    let usePK = InvestmentgetPK(useInst,useAccount, useSubType, useCat);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
                     useTicker = holding.ticker;
                     if(useTicker === null) useTicker = currentStockTicker;
                     if (useTicker != null) {
                         useTicker = useTicker.trim();
-                        if(MTFlex.Button2 == 1) {
-                            if(MTFlex.Button1 == 0 || MTFlex.Button1 == 1 || MTFlex.Button1 == 4) {
-                                if(MF_GridUpdateUID(useTicker,7,holding.quantity,false,true)) {
-                                    MF_GridUpdateUID(useTicker,8,useHoldingValue,false,true);
-                                    MF_GridUpdateUID(useTicker,9,useCostBasis,false,true);
-                                    skipRec = true;
-                                }
+                        if (MTFlex.Button2 === 1) {
+                            const pkTrigger = usePK + '|' + useTicker;
+                            if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUpdateUID(pkTrigger, 7, holding.quantity, false, true)) {
+                                MF_GridUpdateUID(pkTrigger, 8, useHoldingValue, false, true);
+                                MF_GridUpdateUID(pkTrigger, 9, useCostBasis, false, true);
+                                skipRec = true;
                             }
                         }
                     } else {useTicker = '';}
@@ -2809,10 +2807,10 @@ async function MenuReportsInvestmentsGo() {
                         let stockN = getCookie('MT_InvestmentsStockNote_' + useTicker,false);
                         if(stockN) {MTP.Icon+='';MTP.Title = stockN;}
                         MTP.RRN = RRN;
-                        if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = useTicker;} else {MTP.UID = holding.id;}
                         if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                         MTP.SKTriggerEvent = MTP.RRN + '|' + (hld-1);
-                        MTP.PK = InvestmentgetPK(useInst,useAccount, useSubType, useCat);
+                        MTP.PK = usePK;
+                        if(MTFlex.Button2 == 1 && useTicker) {MTP.UID = usePK + '|' + useTicker;} else {MTP.UID = holding.id;}
                         if(MTFlex.Button1 == 5 || MTFlex.Button1 == 7) {MTP.PKTriggerEvent = 'All|this|8|' + useCat + '|' + useCat;}
                         MTP.SKHRef = '/accounts/details/' + holding.account.id;
                         MF_QueueAddRow(MTP);
@@ -2834,11 +2832,8 @@ async function MenuReportsInvestmentsGo() {
                             if(secPercent > Cards[0]) {Cards[0] = secPercent;Cards[1]=shortTitle;}
                             if(secPercent < 0) {UpDown[0]++;} else if(secPercent > 0) {UpDown[1]++;}
                             const tickerNdx = inList(holding.ticker,tickers);
-                            if(tickerNdx > 0 && CardShown == false) {
-                                if(numCards + 2 < maxCards) {
-                                    numCards++;CardShown = true;
-                                    MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: InvestmentCardDesc(shortTitle), Style: (secPercent == null ? (secPercent = 0) : secPercent) < 0 ? css.red : (secPercent > 0 ? css.green : '')});
-                                }
+                            if(tickerNdx > 0) {
+                                MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: InvestmentCardDesc(shortTitle), Style: (secPercent == null ? (secPercent = 0) : secPercent) < 0 ? css.red : (secPercent > 0 ? css.green : '')});
                             }
                         }
                     }
@@ -2857,17 +2852,17 @@ async function MenuReportsInvestmentsGo() {
                 if(acc.crypto > 0 && cashValue < 1) continue;
                 if(acc.crypto == 0 && cashValue <= 0) continue;
                 sumCash+=cashValue;
-                let useID = '$$';
+                let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
                 if(MTFlex.Button2 == 1) {
-                    if ([2, 3, 5].includes(MTFlex.Button1)) {useID += '-' + acc.id;}
-                    if(MF_GridUpdateUID(useID,8,cashValue,false,true)) {
-                        MF_GridUpdateUID(useID,9,cashValue,false,true);continue;
+                    const pkTrigger = usePK + '|$$';
+                    if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUpdateUID(pkTrigger,8,cashValue,false,true)) {
+                        MF_GridUpdateUID(pkTrigger,9,cashValue,false,true);continue;
                     }
                 }
                 MTP = [];
-                MTP.UID = useID;
+                MTP.UID = usePK + '|$$';
+                MTP.PK = usePK;
                 if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
-                MTP.PK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
                 if(MTFlex.Button1 == 5 || MTFlex.Button1 == 7) {MTP.PKTriggerEvent = 'All|this|8|Cash|Cash';}
                 MTP.SKHRef = '/accounts/details/' + acc.id;
                 MTP.SKTriggerEvent = 'ACCOUNT|' + acc.id;
@@ -2893,19 +2888,17 @@ async function MenuReportsInvestmentsGo() {
                 case 0:
                 case 1:
                     if(MTFlex.Button4 > 0) allTitle = MTFlex.Button4Options[MTFlex.Button4];
-                     if(maxCards > 0) {
-                        if(MTFlex.Button1 == 0) {
-                            if(!skipCash) MF_QueueAddCard({Col: 1, Title: getDollarValue(sumCash,true), Subtitle: 'Cash & Money Market', Style: css.green});
-                            MF_QueueAddCard({Col: 1, Title: getDollarValue(sumPortfolio-sumCash,true), Subtitle: 'Total Invested', Style: css.green});
-                        } else {
-                            MF_GridCardAddAll({section: 'odd', x: 8, y: 0, z: 13, xf: 2, zf: 4, max: maxCards, sort: 'D', isPos: css.green, isNeg: css.red});
-                        }
+                    if(MTFlex.Button1 == 0) {
+                        if(!skipCash) MF_QueueAddCard({Col: 2, Title: getDollarValue(sumCash,true), Subtitle: 'Cash & Money Market', Style: css.green});
+                        MF_QueueAddCard({Col: 1, Title: getDollarValue(sumPortfolio-sumCash,true), Subtitle: 'Total Invested', Style: css.green});
+                    } else {
+                        MF_GridCardAddAll({section: 'odd', x: 8, y: 0, z: 13, xf: 2, zf: 4, sort: 'D', isPos: css.green, isNeg: css.red});
                     }
                     break;
                 case 2:
-                    if(maxCards > 0) {MF_QueueAddCard({Col: 1, Title: Cards[0] + '%', Subtitle: 'Top Gainer: ' + InvestmentCardDesc(Cards[1]), Style: css.green});}
-                    if(maxCards > 1) {MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});}
-                    if(maxCards > 2) {MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});}
+                    MF_QueueAddCard({Col: 1, Title: Cards[0] + '%', Subtitle: 'Top Gainer: ' + InvestmentCardDesc(Cards[1]), Style: css.green});
+                    MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});
+                    MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});
                     break;
             }
             if(getCookie('MT_InvestmentHideBM',true) == 0) {
@@ -3752,36 +3745,9 @@ async function SummaryDrawer(p) {
     cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','triggers',to,'MTSummaryDrawer');
 }
 
-async function InvestmentsDrawerCash(inP) {
-
-    let sObj = {};
-    let account = accountQueue.find(acc => acc.id === inP[1]);
-    sObj.small = 'CASH';
-    sObj.big = 'CASH/MONEY MARKET';
-    sObj.urltext = account.accountName;
-    sObj.url = '/accounts/details/' + account.id;
-    let divTop = MF_SidePanelOpen(sObj);
-    let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
-    divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
-    divTop2.setAttribute('data',inP);
-    DrawerDrawLine(divTop2,'Institution',account.institutionName);
-    DrawerDrawLine(divTop2,'Account type','Investments');
-    DrawerDrawLine(divTop2,'Account subtype',account.accountSubtype);
-    DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance));
-    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance));
-    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance));
-    DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings));
-    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
-    DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
-    divTop2 = cec('span','MTSideDrawerHeader',divTop);
-    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
-}
-
 async function InvestmentsDrawer(inP) {
 
-    let sObj={},divReload = null,divTop=null,divTop2=null;
+    let sObj={},divReload,divTop,divTop2=null;
     if(inP == null) {
         divReload = document.getElementById('MTSideDrawerGroup');
         inP = divReload.getAttribute('data').split(',');
@@ -3792,9 +3758,10 @@ async function InvestmentsDrawer(inP) {
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p0].node;
     const hld = portfolioData.portfolio.aggregateHoldings.edges[p0].node.holdings;
     const thisHld = hld[p1];
-
+    const useCurrent = getCookie('MT_InvestmentSkipCurrent',true);
     let bondInfo = [],stockInfo = ['',''];
     let useTicker = thisHld.ticker;if(useTicker == null || useTicker == undefined) useTicker = '';
+
     sObj.big = thisHld.name;
     sObj.small = thisHld.typeDisplay;
     if(thisHld.type == 'fixed_income') {
@@ -3849,12 +3816,13 @@ async function InvestmentsDrawer(inP) {
         }
     }
 
-    let allQty = 0,allCost = 0,allValue=0;
+    let allQty = 0,allCost = 0,allValue=0,curValue = 0;
     for (let h = 0; h < hld.length; h++) {
         if(hld[h].account.institution != null) {
+            curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? hld[h].quantity * hld[h].closingPrice : hld[h].value;curValue = get2dec(curValue,2);
             allQty+=hld[h].quantity;
-            allValue+=hld[h].value;
-            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity,hld[h].value);
+            allValue+=curValue;
+            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity,curValue);
         }
     }
 
@@ -3868,8 +3836,9 @@ async function InvestmentsDrawer(inP) {
 
     if(getCookie('MTInvestments_SidePanel',true) == 0) {
         allQty = thisHld.quantity;
-        allValue = thisHld.value;
-        allCost = getCostBasis(thisHld.costBasis,thisHld.type,thisHld.quantity,thisHld.value);
+        curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? thisHld.quantity * thisHld.closingPrice : thisHld.value;curValue = get2dec(curValue,2);
+        allValue = curValue;
+        allCost = getCostBasis(thisHld.costBasis,thisHld.type,thisHld.quantity,curValue);
         DrawerDrawLine(divTop2,'Account',thisHld.account.displayName,'','margin-top:20px;');
         if(thisHld.account.institution != null) {DrawerDrawLine(divTop2,'Institution',thisHld.account.institution.name);}
     }
@@ -3892,7 +3861,8 @@ async function InvestmentsDrawer(inP) {
     for (let h = 0; h < hld.length; h++) {
         let useName = hld[h].account.displayName;
         if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(hld[h].account.id)) {useName += ' (Outside ' + MTFlexAccountFilter.name + ')';} }
-        DrawerDrawLine(divTop2,useName,getDollarValue(hld[h].value),'','',hld[h].account.logoUrl);
+        curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? hld[h].quantity * hld[h].closingPrice : hld[h].value;curValue = get2dec(curValue,2);
+        DrawerDrawLine(divTop2,useName,getDollarValue(curValue),'','',hld[h].account.logoUrl);
         DrawerDrawLine(divTop2,hld[h].account?.institution?.name,hld[h].quantity.toLocaleString('en-US') + ' shares',null,'font-size:13px;margin-bottom:12px;');
     }
 
@@ -3907,7 +3877,32 @@ async function InvestmentsDrawer(inP) {
         }
     }
 }
+async function InvestmentsDrawerCash(inP) {
 
+    let sObj = {};
+    let account = accountQueue.find(acc => acc.id === inP[1]);
+    sObj.small = 'CASH';
+    sObj.big = 'CASH/MONEY MARKET';
+    sObj.urltext = account.accountName;
+    sObj.url = '/accounts/details/' + account.id;
+    let divTop = MF_SidePanelOpen(sObj);
+    let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
+    divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
+    divTop2.setAttribute('data',inP);
+    DrawerDrawLine(divTop2,'Institution',account.institutionName);
+    DrawerDrawLine(divTop2,'Account type','Investments');
+    DrawerDrawLine(divTop2,'Account subtype',account.accountSubtype);
+    DrawerDrawSpacer(divTop2);
+    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance));
+    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance));
+    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance));
+    DrawerDrawSpacer(divTop2);
+    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings));
+    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
+    DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
+    divTop2 = cec('span','MTSideDrawerHeader',divTop);
+    cec('button','MTInputButton',divTop2,'Close','','float:right;' );
+}
 function InvestmentsDrawerRefresh(inT) {
 
     const tickers = getCookie('MTInvestmentTickers',false).split(',');
@@ -4492,7 +4487,7 @@ function MenuSettings(OnFocus) {
 function MenuSetttingsCategory() {
     let divs = gde('manage-category-group-card-header',true);
     if(divs.length == 0) {glo.pathName = '';return;}
-    let div = null,grp=null,isExp=null;
+    let div,grp,isExp;
     for (let i = 0; i < divs.length; i++) {
         grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
         isExp = divs[i].parentNode.parentNode.parentNode;
@@ -4518,10 +4513,11 @@ function MenuSettingsDisplay(inDiv) {
     }
     let OnOff = (inDiv == null),dropDowns = 0;
 
-    if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
     if(getCookie('MT_InvestmentURLStock',false) == '') setCookie('MT_InvestmentURLStock','https://stockanalysis.com/stocks/{ticker}');
     if(getCookie('MT_InvestmentURLETF',false) == '') setCookie('MT_InvestmentURLETF','https://stockanalysis.com/etf/{ticker}');
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
+    FlexOptions.forEach(opt => { if (getCookie(opt + '_MaxCards', false) === '') setCookie(opt + '_MaxCards', 20);});
+    if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
     const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text',BOLD + 'font-size: 18px;');
     MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button','','id','SaveSettings');
@@ -4562,10 +4558,12 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
     MenuDisplay_Input('Hide Savings total','MT_TrendHide3','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
+    MenuDisplay_Input('Maximum cards to show','MTTrends_MaxCards','number',null,0,20);
     MenuDisplay_Input('Reports / Net Income Report','','spacer');
     MenuDisplay_Input('Sort column results by Tag/Account ranking rather than value','MT_NetIncomeRankOrder','checkbox');
     MenuDisplay_Input('Show Note Tags drop-down on Transaction side-panel (Used if tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
+    MenuDisplay_Input('Maximum cards to show','MTNet_Income_MaxCards','number',null,0,20);
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
     MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
     MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
@@ -4585,6 +4583,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Add Transfers to Net Change in Brokerage Statement for Adjusted Performance','MT_AccountsNetTransfers','checkbox');
     MenuDisplay_Input('Ignore Duplicate Transactions that have Notes','MT_DuplicateNotes','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
+    MenuDisplay_Input('Maximum cards to show','MTAccounts_MaxCards','number',null,0,20);
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
@@ -4592,7 +4591,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
-    MenuDisplay_Input('Maximum cards to show','MT_InvestmentCards','number',null,0,20);
+    MenuDisplay_Input('Maximum cards to show','MTInvestments_MaxCards','number',null,0,20);
     MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
     MenuDisplay_Input('ETF Lookup URL - Use {ticker}','MT_InvestmentURLETF','string','width: 380px;');
     MenuDisplay_Input('Mutual Fund Lookup URL - Use {ticker}','MT_InvestmentURLMuni','string','width: 380px;');
