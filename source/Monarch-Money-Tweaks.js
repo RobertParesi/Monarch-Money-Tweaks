@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.44.3
+// @version      4.44.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -597,7 +597,7 @@ function MT_GetFormattedValue(inType,inValue,inRaw = false) {
 function MT_GridDrawExpand() {
 
     const trS = document.querySelectorAll('tr[MTsection]'),cName = MF_GetSeqKey('Expand');
-    let x = null, cv = null;
+    let x, cv;
     trS.forEach((tr) => {
         x = Number(tr.getAttribute('MTsection'));
         if(x > 0) {
@@ -903,9 +903,10 @@ function MF_GridGetValue(inSection,inCol) {
     return 0;
 }
 
-function MF_GridUpdateUID(inUID,inCol,inValue,addMissing, increment) {
+function MF_GridUID(inUID,inCol,inValue,addMissing, increment) {
     for (const Row of MTFlexRow) {
         if(Row.UID == inUID) {
+            if(inValue == null && addMissing == null) return Row[inCol];
             if(increment == true) {Row[inCol] += inValue;} else {Row[inCol] = inValue;}
             let x = document.getElementById(inUID + '-' + inCol);
             if(x) x.innerText = inValue;
@@ -942,7 +943,7 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName,inTrigger) {
 }
 
 function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp, inTrigger) {
-    let p1 = null, p2 = null;
+    let p1, p2;
     for (let i = 0; i < MTFlexRow.length; i++) {
         if(MTFlexRow[i].Section == inA) {p1 = i;}
         if(MTFlexRow[i].Section == inB) {p2 = i;}
@@ -966,7 +967,7 @@ function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp, inTrigge
 }
 
 function MF_GridCalcDifference(inSection,in1,in2,inCols,inOp) {
-    let p1 = null, p2 = null, p3 = null;
+    let p1, p2, p3;
     for (let i = 0; i < MTFlexRow.length; i++) {
         if(MTFlexRow[i].Section == inSection) {p1 = i;}
         if(MTFlexRow[i].Section == in1) {p2 = i;}
@@ -1972,7 +1973,7 @@ async function MenuReportsNetIncomeGo() {
     for (const Tag of TagQueue) {
         ii = NetIncomeIndexQueue(Tag.TagName);
         useID = Tag.ID;
-        if(MF_GridUpdateUID(useID,ii+1,Tag.Amt,false) == false) {
+        if(MF_GridUID(useID,ii+1,Tag.Amt,false) == false) {
             let retGroup = await rtnCategoryGroup(useID);
             MTP = [];
             MTP.IsHeader = false;
@@ -2226,7 +2227,7 @@ async function MenuReportsAccountsGo() {
             snapshotData3 = await dataDisplayBalanceAt(formatQueryDate(workDate));
             if(snapshotData3) {
                 for (let j = 0; j < snapshotData3.accounts.length; j++) {
-                    MF_GridUpdateUID(snapshotData3.accounts[j].id,i+4,snapshotData3.accounts[j].displayBalance,false);
+                    MF_GridUID(snapshotData3.accounts[j].id,i+4,snapshotData3.accounts[j].displayBalance,false);
                     if(snapshotData3.accounts[j].displayBalance != null) used = true;
                 }
                 if(MTFlex.Button2 == 9) {
@@ -2777,9 +2778,9 @@ async function MenuReportsInvestmentsGo() {
                         useTicker = useTicker.trim();
                         if (MTFlex.Button2 === 1) {
                             const pkTrigger = usePK + '|' + useTicker;
-                            if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUpdateUID(pkTrigger, 7, holding.quantity, false, true)) {
-                                MF_GridUpdateUID(pkTrigger, 8, useHoldingValue, false, true);
-                                MF_GridUpdateUID(pkTrigger, 9, useCostBasis, false, true);
+                            if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger, 7, holding.quantity, false, true)) {
+                                MF_GridUID(pkTrigger, 8, useHoldingValue, false, true);
+                                MF_GridUID(pkTrigger, 9, useCostBasis, false, true);
                                 skipRec = true;
                             }
                         }
@@ -2855,8 +2856,8 @@ async function MenuReportsInvestmentsGo() {
                 let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
                 if(MTFlex.Button2 == 1) {
                     const pkTrigger = usePK + '|$$';
-                    if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUpdateUID(pkTrigger,8,cashValue,false,true)) {
-                        MF_GridUpdateUID(pkTrigger,9,cashValue,false,true);continue;
+                    if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger,8,cashValue,false,true)) {
+                        MF_GridUID(pkTrigger,9,cashValue,false,true);continue;
                     }
                 }
                 MTP = [];
@@ -2865,7 +2866,7 @@ async function MenuReportsInvestmentsGo() {
                 if(MTFlex.Button1 == 0) {MTP.Section = 2;MTP.BasedOn = 1;}
                 if(MTFlex.Button1 == 5 || MTFlex.Button1 == 7) {MTP.PKTriggerEvent = 'All|this|8|Cash|Cash';}
                 MTP.SKHRef = '/accounts/details/' + acc.id;
-                MTP.SKTriggerEvent = 'ACCOUNT|' + acc.id;
+                MTP.SKTriggerEvent = MTFlex.Button2 === 1 ? 'UID|' + MTP.UID : 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
                 MF_AddCol(0,splitTicker == 1 ? 'CASH' : 'CASH • CASH/MONEY MARKET');
                 MF_AddCol(1,' Cash/MONEY MARKET');
@@ -3320,7 +3321,7 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
                 useDate = ss.groupBy.year;
                 ndx = Number(useDate.substring(0,4));
                 ndx = ndx - s_ndx;
-                MF_GridUpdateUID(useID,ndx,useAmount,true);}
+                MF_GridUID(useID,ndx,useAmount,true);}
             else if (inCol == 'ot') {
                 useDate = ss.groupBy.month;
                 ndx = Number(useDate.substring(5,7));
@@ -3332,7 +3333,7 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
                         ndx = (12 - s_ndx + 1) + ndx;
                     }
                 }
-                MF_GridUpdateUID(useID,ndx,useAmount,true);
+                MF_GridUID(useID,ndx,useAmount,true);
             } else {
                 let sendCol = inCol;
                 if(inCol == 'fu') {
@@ -3427,7 +3428,7 @@ function HistoryDrawerDraw() {
     let curYears = 1,skiprow = false,useArrow = 0;
     let T = ['Total',0,0,0,0];
     let curSubTotal = 0;
-    let div=null,div2 = null,div3=null;
+    let div,div2,div3;
 
     let divTop = document.getElementById('grouptypes');
     if(divTop) {
@@ -3747,12 +3748,12 @@ async function SummaryDrawer(p) {
 
 async function InvestmentsDrawer(inP) {
 
-    let sObj={},divReload,divTop,divTop2=null;
+    let sObj={},divReload,divTop,divTop2;
     if(inP == null) {
         divReload = document.getElementById('MTSideDrawerGroup');
         inP = divReload.getAttribute('data').split(',');
     }
-    if(inP[0] === 'ACCOUNT') {await InvestmentsDrawerCash(inP);return;}
+    if(inP[0] === 'ACCOUNT' || inP[0] === 'UID') {await InvestmentsDrawerCash(inP);return;}
 
     const p0 = inP[0], p1 = inP[1];
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p0].node;
@@ -3879,27 +3880,39 @@ async function InvestmentsDrawer(inP) {
 }
 async function InvestmentsDrawerCash(inP) {
 
-    let sObj = {};
-    let account = accountQueue.find(acc => acc.id === inP[1]);
+    let sObj = {},useAct;
     sObj.small = 'CASH';
     sObj.big = 'CASH/MONEY MARKET';
-    sObj.urltext = account.accountName;
-    sObj.url = '/accounts/details/' + account.id;
+
+    if(inP[0] != 'UID') {
+        useAct = accountQueue.find(acc => acc.id === inP[1]);
+        sObj.urltext = useAct.accountName;
+        sObj.url = '/accounts/details/' + useAct.id;
+    } else {
+        useAct = inP[1] + '|' + inP[2];
+    }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
     divTop2.setAttribute('data',inP);
-    DrawerDrawLine(divTop2,'Institution',account.institutionName);
-    DrawerDrawLine(divTop2,'Account type','Investments');
-    DrawerDrawLine(divTop2,'Account subtype',account.accountSubtype);
-    DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Account Balance',getDollarValue(account.portfolioBalance));
-    DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(account.holdingBalance));
-    DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(account.portfolioBalance - account.holdingBalance));
-    DrawerDrawSpacer(divTop2);
-    DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(account.cashHoldings));
-    DrawerDrawLine(divTop2,'Total Holdings',account.accountHoldings.toLocaleString('en-US'));
-    DrawerDrawLine(divTop2,'Holdings with no Value',account.zeroHoldings.toLocaleString('en-US'));
+    if(inP[0] == 'UID') {
+         DrawerDrawLine(divTop2,MTFlexTitle[1].Title,inP[1]);
+         DrawerDrawLine(divTop2,MTFlexTitle[8].Title, MT_GetFormattedValue(MTFlexTitle[8].Format,MF_GridUID(useAct, 8)));
+         DrawerDrawLine(divTop2,MTFlexTitle[12].Title,MT_GetFormattedValue(MTFlexTitle[12].Format,MF_GridUID(useAct, 12)));
+         DrawerDrawLine(divTop2,MTFlexTitle[13].Title,MT_GetFormattedValue(MTFlexTitle[13].Format,MF_GridUID(useAct, 13)));
+    } else {
+        DrawerDrawLine(divTop2,'Institution',useAct.institutionName);
+        DrawerDrawLine(divTop2,'Account type','Investments');
+        DrawerDrawLine(divTop2,'Account subtype',useAct.accountSubtype);
+        DrawerDrawSpacer(divTop2);
+        DrawerDrawLine(divTop2,'Account Balance',getDollarValue(useAct.portfolioBalance));
+        DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(useAct.holdingBalance));
+        DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(useAct.portfolioBalance - useAct.holdingBalance));
+        DrawerDrawSpacer(divTop2);
+        DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(useAct.cashHoldings));
+        DrawerDrawLine(divTop2,'Total Holdings',useAct.accountHoldings.toLocaleString('en-US'));
+        DrawerDrawLine(divTop2,'Holdings with no Value',useAct.zeroHoldings.toLocaleString('en-US'));
+    }
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
     cec('button','MTInputButton',divTop2,'Close','','float:right;' );
 }
@@ -4405,7 +4418,7 @@ async function MenuDashboardAccounts() {
     let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     ds = gde('dashboard-droppable-column-0');
     if(ds) {
-        let newDiv = null;
+        let newDiv;
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const aa = snapshotData.accounts[i].id;
             if(getCookie('MTAccountDashboard:' + aa,true) != 1) continue;
@@ -4944,7 +4957,7 @@ function onClickMTButton() {
 
 function onClickMTButtonSmall() {
 
-    let divs = null,v = null;
+    let divs,v;
     switch(event.target.id) {
         case '':
             v = event.target.parentNode.getAttribute('MTSection');
@@ -5756,7 +5769,7 @@ function getCleanValue(inValue,inDec) {
 
 function getBondPieces(inVal) {
 
-    let usePct = null,useDate = null,newStr = inVal, useXtro = '',useAMT = '', useOID = '';
+    let usePct,useDate,newStr = inVal, useXtro = '',useAMT = '', useOID = '';
     if(newStr.endsWith('OID')) {useOID = 'Yes'; newStr = newStr.trim().slice(0, -3).trim();} else {if(newStr.includes('OID ')) {useOID = 'Yes'; newStr = newStr.replace('OID ','');}}
     if(newStr.includes('**CALLED**')) {useDate = '** CALLED **'; newStr = newStr.replace('**CALLED**','');}
     if(newStr.includes('XTRO')) {useXtro = 'Yes'; newStr = newStr.replace('XTRO','');}
