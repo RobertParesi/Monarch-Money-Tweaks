@@ -3,6 +3,7 @@
  * **Version 4.44 (Beta)**
       - ENHANCEMENT: Set a maximum number of Cards independently for each of the four reports.
       - CHANGE: Investments side‑drawer now shows values using current holding prices.
+      - FIX: Better combined totals when selecting Investments → Allocation (by Account Subtype).
       - FIX: Restored missing "Accounts" column in Investments → Positions (by Account Subtype).
       - FIX: Corrected Accounts side‑drawer graph and details when an Account Group contains both assets and liabilities.
       - FIX: Improved bar‑chart detail display in Accounts side‑drawer for assets and liabilities.
