@@ -1,11 +1,13 @@
 # Change Log (Version History)
 
  * **Version 4.44 (Beta)**
-      - FIX: Reports / Investments "Accounts" column would not appear in Posotions / by Account Subtype.
-      - FIX: Reports / Accounts side drawer graph & detail would be incorrect if an Account Group contained both Assets & Liabilities.
-      - FIX: Reports / Accounts Asset & Liability side drawer will show bar chart details better.
-      - REGRESSION: Reports / Investments showed "Watch Ticker" on Fixed Income / Bonds.
- 
+      - ENHANCEMENT: Set a maximum number of Cards independently for each of the four reports.
+      - CHANGE: Investments side‑drawer now shows values using current holding prices.
+      - FIX: Restored missing "Accounts" column in Investments → Positions (by Account Subtype).
+      - FIX: Corrected Accounts side‑drawer graph and details when an Account Group contains both assets and liabilities.
+      - FIX: Improved bar‑chart detail display in Accounts side‑drawer for assets and liabilities.
+      - REGRESSION: “Watch Ticker” was incorrectly shown for fixed‑income/bond holdings in Investments.
+     
  * **Version 4.43 (April 7, 2026)**
       - CHANGE: Returns "YTD" instead of x days.
       - FIX: Override font issue on FlexGrid header titles.
