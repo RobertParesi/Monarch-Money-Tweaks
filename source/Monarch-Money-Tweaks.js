@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.44.4
+// @version      4.44.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -23,7 +23,7 @@ const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;';
 
 let css = {headStyle: null, mItems: 0, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
-let glo = {pathName: '', compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
+let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
 
@@ -31,11 +31,10 @@ let portfolioData, performanceData, performanceDataType, accountsData, transData
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
-let MTFlexCR = 0, MTFlexTable = null, MTP = null, MTFlexSum = [0,0];
+let MTFlexCR = 0, MTFlexTable, MTP, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
-
     MM_RefreshAll();
     let a = isDarkMode();
     if(a == null) {css.reload = true;return;}
@@ -162,19 +161,20 @@ function MM_GridFont() {
 }
 
 function MM_MenuFix() {
+    let divs = gde('nav-bar-link',true);
+    if(divs.length < 10) return;
+    glo.menu = false;
     const wbs = ['/advice','/recurring','/plan','/investments','/goals','/objectives','/forecast'];
     const cks = ['MT_Advice','MT_Recurring','MT_Budget','MT_Investments','MT_Goals','MT_Goals','MT_Forecast'];
-    let divs = gde('nav-bar-link',true);
-    if(divs.length > 10) {
-        for (const div of divs) {
-            if(div.pathname) {
-                let j = startsInList(div.pathname,wbs);
-                if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
-            }
+
+    for (const div of divs) {
+        if(div.pathname) {
+            let j = startsInList(div.pathname,wbs);
+            if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
         }
-        if(getCookie('MT_Assistant',true) == 1) {
-            divs = gde('sidebar-persistent-assistant');if(divs) divs.style.display = 'none';
-        }
+    }
+    if(getCookie('MT_Assistant',true) == 1) {
+        divs = gde('sidebar-persistent-assistant');if(divs) divs.style.display = 'none';
     }
     glo.debug = getCookie('MT_Log',true);
     if(getCookie('MT:LastBackupSkip',true) != 1) {
@@ -4477,7 +4477,7 @@ function MenuTransactions(OnFocus) {
 }
 
 function MenuLogin(OnFocus) {
-    if (glo.pathName.startsWith('/login')) {if(OnFocus == false) { MM_MenuFix(); } }
+    if (glo.pathName.startsWith('/login')) {if(OnFocus == false) { glo.menu = true; } }
 }
 
 function MenuAccounts(OnFocus) {
@@ -4650,7 +4650,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.id = inCookie;
                 if(OldValue == 1) {e2.checked = 'checked';}
-                e2.addEventListener('change', () => { flipCookie(inCookie,1); MM_MenuFix();});
+                e2.addEventListener('change', () => { flipCookie(inCookie,1); glo.menu = true;});
                 e3 = document.createElement("label");
                 e3.innerText = inValue;
                 e3.htmlFor = inCookie;
@@ -4754,15 +4754,15 @@ function MenuCheckSpawnProcess() {
 window.onclick = function(event) {
 
     let cn = event.target.className;
-    if(typeof cn === 'object') {MM_MenuFix();return;}
+    if(typeof cn === 'object') {glo.menu = true;return;}
     if(typeof cn === 'string') {
-        if(glo.debug == 1) addConsole(cn,event.target,event.target.id);
         cn = getStringPart(cn,' ','left');
+        if(glo.debug == 1) addConsole(cn,event.target,event.target.id);
         switch (cn) {
             case '':
                 glo.spawnProcess=6;return;
             case 'AbstractButton__Root-sc-1ebfgjo-0':
-                MM_MenuFix();break;
+                glo.menu = true;break;
             case 'Menu__MenuItem-nvthxu-1':
             case 'Flex-sc-165659u-0':
                 if(event.target.innerText.trim() == 'Last') {onClickLastNumber();}
@@ -5957,13 +5957,13 @@ function sortTableByColumn(inEvent) {
 
 // Main Execution Loop
 (function() {
-   MM_MenuFix();
     setInterval(() => {
+        if(glo.menu == true) MM_MenuFix();
         if(css.reload == true) {css.reload = false; MM_Init();}
         if(window.location.pathname != glo.pathName) {
             if(glo.pathName) {MM_MenuRun(false);}
             glo.pathName = window.location.pathname;
-            MM_MenuFix();MM_MenuRun(true);
+            MM_MenuRun(true);
         }
         MenuCheckSpawnProcess();
     },300);
