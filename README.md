@@ -2,7 +2,7 @@
 
 **📣 Over 3,500 active users!**
 
-### ⚙️ Installing MM-Tweaks for Monarch Money - Version 4.43
+### ⚙️ Installing MM-Tweaks for Monarch Money - Version 4.44
 
 Visit the official Extensions area for your browser using the following links: 
 
