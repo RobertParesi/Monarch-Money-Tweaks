@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.44
+// @version      4.45.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.44';
+const VERSION = '4.45';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
