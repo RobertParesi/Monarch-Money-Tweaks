@@ -29,7 +29,7 @@ let portfolioData, performanceData, performanceDataType, accountsData, transData
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
-let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [], MTFlexSave;
+let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable, MTP, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
@@ -852,8 +852,11 @@ function MT_GridDrawEmbed(inSection,inCol,inValue,inDesc,inRow) {
                 if (inCol == 10 || inCol == 11 ) { return inValue < 0 ? css.red : css.green ;}
             }
             if(inCol == 17) {return MT_Shade(inValue,true,true);}
-            if(inCol == 23) {
-                return MT_Shade((MTFlexRow[inRow][15] - inValue),true,true);
+            if(inCol == 23) {return MT_Shade((MTFlexRow[inRow][15] - inValue),true,true);}
+            if(inSection == 0) {
+                if(inCol == 18 || inCol == 20) {
+                    if(MTFlexRow[inRow][18] != MTFlexRow[inRow][20]) return css.red;
+                }
             }
     }
     return '';
@@ -1040,8 +1043,6 @@ function MF_GridCollapse(inCols) {
         if(MTFlexRow[i].Section != 0) {
             if (MTFlexRow[i].IsHeader) {
                 MTFlexRow[i].IsHeader = false;
-                MTFlexRow[i].oBasedOn = MTFlexRow[i].BasedOn;
-                MTFlexRow[i].oSection = MTFlexRow[i].Section;
                 MTFlexRow[i].BasedOn = 0;
                 MTFlexRow[i].Section = 1;
             } else {MTFlexRow[i].hide = true;}
@@ -1148,7 +1149,6 @@ function MF_DrawBarChart(inLocation,inP) {
     let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
     let targetKeys = MF_GridTargetKeys();
     let inRebalance = MTFlex.Name == 'MTInvestments' && MTFlexTitle[1].Title == 'Note' ? true : false;
-    console.log(MTFlex.Name,MTFlexTitle[1].Title,inRebalance);
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(row.hide) continue;
@@ -1166,8 +1166,6 @@ function MF_DrawBarChart(inLocation,inP) {
             sumTotal += row[un];
         }
     }
-    console.log(targetData);
-
     const ctx = divChart.getContext('2d');
     const w = divChart.width, h = divChart.height;
     ctx.clearRect(0,0,w,h);
@@ -2654,11 +2652,10 @@ function MenuReportsInvestmentsRebalance(redraw) {
     if(!redraw) {
         const inCs = [0,1,8,13,14,15,16,17,18,19,20,21,22,23];
         if(MTFlexTitle[1].Title != 'Note') {
-            MTFlexSave = [...MTFlexRow];
             MF_GridCollapse(inCs);
             MTFlexTitle[1].Title = 'Note';
             cecId('MTReportTitle1','Rebalance Report');
-            cecId('FlexRebalance','');
+            cecId('FlexRebalance','','Investments View');
             MTFlex.SpanHeaderColumns=0;
         } else {
             MenuReportsGo();return;
@@ -5133,7 +5130,6 @@ function onClickOpenWindow(cn) {
     if(cn[0] == '!BarChart') {
         document.body.style.cursor = "";
         let x = glo.barchartSec,y=glo.barchartCol,z=glo.barchartRec;
-        console.log(x,y,z);
         if(x == 0) {
             f1='180px;';f2='340px;';
             for (let i = 0; i < MTFlexTitle.length; i ++) {
@@ -5571,13 +5567,11 @@ function cecTip(e,c,p,it,tip) {
     cec(e,'tooltiptext',tt,tip);
 }
 
-function cecId(e,t,u,s,v) {
+function cecId(e,t,title) {
     const x = document.getElementById(e);
     if(x) {
         if(t != null) x.innerText = t;
-        if(u != null) x.url = u;
-        if(s != null) x.style = s;
-        if(v != null) x.value = v;
+        if(title != null) x.title = title;
     }
 }
 
