@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
  * **Version 4.45 (Beta)**
-      - NEW: Allocation rebalancing in Investments. Click on Rebalance icon in Reports / Investments.
+      - NEW: Allocation rebalancing in Investments. Rebalance allocations at many different levels including a custom category such as "sector".  Click on Rebalance icon in Reports / Investments.
  
  * **Version 4.44 (April 9, 2026)**
       - ENHANCEMENT: Set a maximum number of Cards independently for each of the four reports.
