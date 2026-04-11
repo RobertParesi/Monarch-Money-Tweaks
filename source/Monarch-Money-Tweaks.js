@@ -679,7 +679,7 @@ function MT_GridDrawContainer() {
 
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
-    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], 'MTButton');
+    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],null,'MTButton');
     createSmall('','Restore Favorite View','FlexRestore');
     createSmall('','Save as Favorite View','FlexSave');
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
@@ -692,8 +692,10 @@ function MT_GridDrawContainer() {
             for (let i = 0; i < inOpt.length; i++) { div2 = cec('a','MTButton' + inName,divContent,inOpt[i],'','','MTOption',i); }
         }
     }
-    function createSmall(inS,inTitle,inId,inStyle,inOnly,inClass) {
+    function createSmall(inS,inTitle,inId,inStyle,inOnly,in1,in2,inClass) {
         if(inOnly != null) {if(inList(MTFlex.Name,inOnly) == 0) return;}
+        if(in1) {if (in1.includes(MTFlex.Button1)) return;}
+        if(in2) {if (in2.includes(MTFlex.Button2)) return;}
         cec('span','MTButtonSmall ' + inClass,div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
     }
 }
