@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.45.3
+// @version      4.45.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5126,6 +5126,7 @@ function onClickOpenWindow(cn) {
         if(MTFlex.Button4 > 0) st=MTFlex.Button4Options[MTFlex.Button4];
         let targetKeys = MF_GridTargetKeys();
         if(targetKeys == null) return;
+        d.push({field1: MTFlex.Button1Options[MTFlex.Button1] + ' notes and target (0-100) ...', style1: BOLD});
         for (let i = 0; i < MTFlexRow.length; i ++) {
             let row = MTFlexRow[i];
             if(row.Section == 0 || row.hide) continue;
