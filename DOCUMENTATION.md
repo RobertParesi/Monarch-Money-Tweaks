@@ -154,7 +154,7 @@ Set targets by institution, account, holding type, or category by clicking the >
 
 📌 When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
  
-1. Positions & Allocation are the same.
+1. Positions & Allocation are the same.  You cannot set Targets at the Performance level since Cash & Fixed Income is excluded.
 2. By Institution / Account / Account subtype / Holding type / Category (choose the breakdown you need).  
 3. By all Accounts or by Account Group 
 
