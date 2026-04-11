@@ -851,12 +851,13 @@ function MT_GridDrawEmbed(inSection,inCol,inValue,inDesc,inRow) {
             } else {
                 if (inCol == 10 || inCol == 11 ) { return inValue < 0 ? css.red : css.green ;}
             }
-            if(inCol == 17) {return MT_Shade(inValue,true,true);}
-            if(inCol == 23) {return MT_Shade((MTFlexRow[inRow][15] - inValue),true,true);}
             if(inSection == 0) {
                 if(inCol == 18 || inCol == 20) {
                     if(MTFlexRow[inRow][18] != MTFlexRow[inRow][20]) return css.red;
                 }
+            } else {
+                if(inCol == 17) {return MT_Shade(inValue,true,true);}
+                if(inCol == 23) {return MT_Shade((MTFlexRow[inRow][15] - inValue),true,true);}
             }
     }
     return '';
@@ -2687,15 +2688,17 @@ function MenuReportsInvestmentsRebalance(redraw) {
             let buy = targetKeys[3] + MTFlexRow[i][0];
             let tgtP = getCookie(rn2,true);
             let tgtA = get2dec(portValue * (tgtP * .01),2);
+            let cm1 = getCookie(sell + '...Done',true) == 1 ? '✔︎ ' : '';
+            let cm2 = getCookie(buy + '...Done',true) == 1 ? '✔︎ ' : '';
             MTFlexRow[i][1] = getCookie(rn,false);
             MTFlexRow[i][14] = tgtA;
             MTFlexRow[i][15] = tgtP;
             MTFlexRow[i][16] = MTFlexRow[i][8] - tgtA;
             MTFlexRow[i][17] = MTFlexRow[i][13] - tgtP;
             MTFlexRow[i][18] = getCookie(sell,true);
-            MTFlexRow[i][19] = getCookie(sell + '...Note',false);
+            MTFlexRow[i][19] = cm1 + getCookie(sell + '...Note',false);
             MTFlexRow[i][20] = getCookie(buy,true);
-            MTFlexRow[i][21] = getCookie(buy + '...Note',false);
+            MTFlexRow[i][21] = cm2 + getCookie(buy + '...Note',false);
             MTFlexRow[i][22] = MTFlexRow[i][8] - MTFlexRow[i][18] + MTFlexRow[i][20];
             let pct = portValue === 0 ? 0 : (MTFlexRow[i][22] / portValue) * 100;
             MTFlexRow[i][23] = Math.round(pct * 10) / 10;
