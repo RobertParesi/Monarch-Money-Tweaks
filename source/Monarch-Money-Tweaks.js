@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.45.1
+// @version      4.45.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -29,7 +29,7 @@ let portfolioData, performanceData, performanceDataType, accountsData, transData
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
-let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
+let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [],MTFlexSaveT,MTFlexSaveR;
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable, MTP, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
@@ -237,7 +237,7 @@ async function MF_GridInit(inName, inDesc) {
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
-    MTFlex.Name = inName;MTFlex.Desc = inDesc;glo.spawnProcess = 0;
+    MTFlex.Name = inName;MTFlex.Desc = inDesc;MTFlex.Subname = '';glo.spawnProcess = 0;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
@@ -613,7 +613,7 @@ function MT_GridDrawExpand() {
     });
 }
 
-function MF_GetSeqKey(inType) {return MTFlex.Name + MTFlex.SortSeq[MTFlex.Button2] + inType ;}
+function MF_GetSeqKey(inType) {return MTFlex.Name + MTFlex.Subname + MTFlex.SortSeq[MTFlex.Button2] + inType ;}
 
 function MT_GridDrawSort() {
 
@@ -679,7 +679,7 @@ function MT_GridDrawContainer() {
 
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
-    createSmall('','Rebalance View','FlexRebalance','',['MTInvestments']);
+    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], 'MTButton');
     createSmall('','Restore Favorite View','FlexRestore');
     createSmall('','Save as Favorite View','FlexSave');
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
@@ -692,9 +692,9 @@ function MT_GridDrawContainer() {
             for (let i = 0; i < inOpt.length; i++) { div2 = cec('a','MTButton' + inName,divContent,inOpt[i],'','','MTOption',i); }
         }
     }
-    function createSmall(inS,inTitle,inId,inStyle,inOnly) {
+    function createSmall(inS,inTitle,inId,inStyle,inOnly,inClass) {
         if(inOnly != null) {if(inList(MTFlex.Name,inOnly) == 0) return;}
-        cec('span','MTButtonSmall',div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
+        cec('span','MTButtonSmall ' + inClass,div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
     }
 }
 
@@ -2649,16 +2649,32 @@ function MF_AddBenchCards(benchData) {
 }
 
 function MenuReportsInvestmentsRebalance(redraw) {
-    if(!redraw) {
+    if (!redraw) {
         const inCs = [0,1,8,13,14,15,16,17,18,19,20,21,22,23];
-        if(MTFlexTitle[1].Title != 'Note') {
+        if (MTFlexTitle[1].Title !== 'Note') {
+            if (typeof structuredClone === 'function') {
+                MTFlexSaveT = structuredClone(MTFlexTitle);
+                MTFlexSaveR = structuredClone(MTFlexRow);
+            } else {
+                MTFlexSaveT = JSON.parse(JSON.stringify(MTFlexTitle));
+                MTFlexSaveR = JSON.parse(JSON.stringify(MTFlexRow));
+            }
             MF_GridCollapse(inCs);
             MTFlexTitle[1].Title = 'Note';
+            MTFlex.Subname = 'Rebalance';
             cecId('MTReportTitle1','Rebalance Report');
-            cecId('FlexRebalance','','Investments View');
-            MTFlex.SpanHeaderColumns=0;
+            cecId('FlexRebalance','Investments View','Investments View');
+            MTFlex.SpanHeaderColumns = 0;
         } else {
-            MenuReportsGo();return;
+            MTFlexTitle.splice(0, MTFlexTitle.length, ...MTFlexSaveT);
+            MTFlexRow.splice(0, MTFlexRow.length, ...MTFlexSaveR);
+            MTFlexSaveT = null; MTFlexSaveR = null;
+            MTFlex.SpanHeaderColumns = 3;
+            MTFlex.Subname = '';
+            cecId('MTReportTitle1','Investments Report');
+            cecId('FlexRebalance','Rebalance View','Rebalance View');
+            MF_GridDraw(1);
+            return;
         }
     }
     let targetKeys = MF_GridTargetKeys();
