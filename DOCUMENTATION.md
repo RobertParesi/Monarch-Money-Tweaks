@@ -153,8 +153,8 @@ Set targets by institution, account, holding type, or category by clicking the >
 <img src="images/MT_InvestAlloc.png" style="width:50%; height:auto;">
 
 📌 When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
-
-1. By Portfolio/Allocation or Performance (top-level target).  
+ 
+1. Positions & Allocation are the same.
 2. By Institution / Account / Account subtype / Holding type / Category (choose the breakdown you need).  
 3. By all Accounts or by Account Group 
 
