@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.45.2
+// @version      4.45.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -679,7 +679,7 @@ function MT_GridDrawContainer() {
 
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
-    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],null,'MTButton');
+    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2],'MTButton');
     createSmall('','Restore Favorite View','FlexRestore');
     createSmall('','Save as Favorite View','FlexSave');
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
@@ -2721,6 +2721,7 @@ async function MenuReportsInvestmentsGo() {
     MTFlex.SortSeq = ['1','2','3'];
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y'];
     MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account'];
+    MTFlex.TargetOptionsRun = [0,1];
 
     MF_SetupDates();
     MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category', 'by Account/Category']);
@@ -3835,7 +3836,9 @@ async function SummaryDrawer(p) {
     if(MTFlex.TargetOptions) {
         if(p[0] == 'Total' && p[1] == 'odd') {
             to = MTFlex.TargetOptions[MTFlex.Button1];
-            if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
+            if(MTFlex.TargetOptionsRun.includes(MTFlex.Button2)) {
+                if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
+            }
         }
     }
     let divTop = MF_SidePanelOpen(sObj);
