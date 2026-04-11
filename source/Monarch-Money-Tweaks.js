@@ -1148,7 +1148,7 @@ function MF_DrawBarChart(inLocation,inP) {
     targetData = [];
     let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
     let targetKeys = MF_GridTargetKeys();
-    let inRebalance = MTFlex.Name == 'MTInvestments' && MTFlexTitle[1].Title == 'Note' ? true : false;
+    let inRebalance = MTFlex.Subname == 'MTRebalance' ? true : false;
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(row.hide) continue;
@@ -2651,7 +2651,7 @@ function MF_AddBenchCards(benchData) {
 function MenuReportsInvestmentsRebalance(redraw) {
     if (!redraw) {
         const inCs = [0,1,8,13,14,15,16,17,18,19,20,21,22,23];
-        if (MTFlexTitle[1].Title !== 'Note') {
+        if (MTFlex.Subname != 'MTRebalance') {
             if (typeof structuredClone === 'function') {
                 MTFlexSaveT = structuredClone(MTFlexTitle);
                 MTFlexSaveR = structuredClone(MTFlexRow);
@@ -2661,7 +2661,7 @@ function MenuReportsInvestmentsRebalance(redraw) {
             }
             MF_GridCollapse(inCs);
             MTFlexTitle[1].Title = 'Note';
-            MTFlex.Subname = 'Rebalance';
+            MTFlex.Subname = 'MTRebalance';
             cecId('MTReportTitle1','Rebalance Report');
             cecId('FlexRebalance','Investments View','Investments View');
             MTFlex.SpanHeaderColumns = 0;
@@ -5042,7 +5042,7 @@ function onClickMTButton() {
         removeAllSections('div.MTModelContainer');
     }
     if(bt == '!SummaryDrawerTotal') {MF_DrawBarChart();}
-    if(bt == '!RebalanceData') {MenuReportsInvestmentsRebalance(true);}
+    if(MTFlex.Subname == 'MTRebalance') {MenuReportsInvestmentsRebalance(true);}
 }
 
 function onClickMTButtonSmall() {
@@ -5103,7 +5103,6 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Sell Amount', style1: BOLD, type: 'Input', key: targetKeys[2] + cn[1], nodrop: true});
         d.push({field1: 'Sell Note', style1: BOLD, type: 'Input', key: targetKeys[2] + cn[1] + '...Note',style2: 'width: 100%;',nodrop: true});
         d.push({field1: 'Sell Completed', style1: BOLD, type: 'Checkbox', key: targetKeys[2] + cn[1] + '...Done',nodrop: true});
-
         d.push({field1: 'Buy Amount', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1], nodrop: true});
         d.push({field1: 'Buy Note', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1] + '...Note',style2: 'width: 100%;',nodrop: true});
         d.push({field1: 'Buy Completed', style1: BOLD, type: 'Checkbox', key: targetKeys[3] + cn[1] + '...Done',nodrop: true});
@@ -5114,8 +5113,8 @@ function onClickOpenWindow(cn) {
         if(targetKeys == null) return;
         for (let i = 0; i < MTFlexRow.length; i ++) {
             let row = MTFlexRow[i];
-            if(row.Section == 0) continue;
-            if(row.IsHeader == true) {
+            if(row.Section == 0 || row.hide) continue;
+            if(MTFlex.Subname == 'MTRebalance' || row.IsHeader == true) {
                 let rn = targetKeys[0] + row[0];
                 let rn2 = targetKeys[1] + row[0];
                 d.push({field1: row[0], style1: BOLD + 'width: 180px;', style2: 'width: 220px;', type: 'Input', same: true, key: rn, key2: rn2, placeholder2: '0%', refresh: true});
@@ -5160,12 +5159,13 @@ function onClickOpenWindow(cn) {
              if(z=='') x+=1;
              d.push({sort: 0, field1: MTFlexTitle[0].Title, style1: BOLD,field2: MTFlexTitle[y].Title, style2: BOLD, val: 0});
              for (let i = 0; i < MTFlexRow.length; i ++) {
-                 const useRow = MTFlexRow[i];
-                 if(x == null || useRow.Section == x) {
-                     if(z == '' || useRow.PK == z) {
-                         cn[1] = MT_GetPK(useRow.PK);
-                         d.push({sort: 1, field1: useRow[0], style1: 'font-size: 14px;',field2: getDollarValue(useRow[y]), style2: 'font-size: 14px;',val: useRow[y]});
-                         tot+=useRow[y];
+                 const row = MTFlexRow[i];
+                 if(row.Section == 0) continue;
+                 if(MTFlex.Subname == 'MTRebalance' || row.Section == x) {
+                     if(z == '' || row.PK == z) {
+                         cn[1] = MT_GetPK(row.PK);
+                         d.push({sort: 1, field1: row[0], style1: 'font-size: 14px;',field2: getDollarValue(row[y]), style2: 'font-size: 14px;',val: row[y]});
+                         tot+=row[y];
                      }
                  }
              }
