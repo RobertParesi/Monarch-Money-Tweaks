@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
- * **Version 4.45 (Beta)**
+ * **Version 4.45 (April 11, 2026)**
       - NEW: Allocation rebalancing in Investments. Rebalance allocations at many different levels including a custom category such as "sector".  Click on Rebalance icon in Reports / Investments.
  
  * **Version 4.44 (April 9, 2026)**
