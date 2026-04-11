@@ -1752,8 +1752,8 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
     if(t.width) divTop.style = 'width: ' + t.width + 'px;';
     let divH = cec('div','',divTop,'','',BOLD + 'display: flex; font-size: 18px;');
     cec('span','',divH,t.title,'','flex: 1 1 auto;');
-    if(t.percent == true) {
-        divTop.addEventListener('focusout', e => {onClickUpdateTotal();});
+    if(t.listenPercent == true) {
+        divTop.addEventListener('focusout', e => {onClickUpdateTotalP();});
         cec('span','',divH,'0%','','flex: 0 0 45px','','','MTModelWindowTotal');
     }
     if(t.subtitle) cec('div','',divTop,t.subtitle,'',BOLD + 'font-size: 14px;');
@@ -1780,6 +1780,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         div3.setAttribute('col',0);
                         if(data.refresh == true) div3.setAttribute('refresh','true');
                         if(data.update) div3.setAttribute('update',data.update);
+                        if(data.money) div3.addEventListener('blur', () => { onClickUpdateMoney(event.target)});
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
                             const lk = data.key.slice(0, ci+1);
@@ -1818,7 +1819,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
         if(b.length > 0) {b.forEach((but, i) => {cec('button','MTWindowButton',div,but.name,'',i === 0 ? 'margin-left: 0' : '','','',but.id);});}
     }
     cec('button','MTWindowButton',div,'Close','','','','',t.name);
-    if(t.percent == true) onClickUpdateTotal();
+    if(t.listenPercent == true) onClickUpdateTotalP();
     if(ff) {ff.focus();ff.setSelectionRange(0, 0);}
 }
 
@@ -5105,10 +5106,10 @@ function onClickOpenWindow(cn) {
     if(cn[0] == '!RebalanceData') {
         let targetKeys = MF_GridTargetKeys();
         if(targetKeys == null) return;
-        d.push({field1: 'Sell Amount', style1: BOLD, type: 'Input', key: targetKeys[2] + cn[1], nodrop: true});
+        d.push({field1: 'Sell Amount', style1: BOLD, type: 'Input', key: targetKeys[2] + cn[1], money: true, nodrop: true});
         d.push({field1: 'Sell Note', style1: BOLD, type: 'Input', key: targetKeys[2] + cn[1] + '...Note',style2: 'width: 100%;',nodrop: true});
         d.push({field1: 'Sell Completed', style1: BOLD, type: 'Checkbox', key: targetKeys[2] + cn[1] + '...Done',nodrop: true});
-        d.push({field1: 'Buy Amount', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1], nodrop: true});
+        d.push({field1: 'Buy Amount', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1], money: true, nodrop: true});
         d.push({field1: 'Buy Note', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1] + '...Note',style2: 'width: 100%;',nodrop: true});
         d.push({field1: 'Buy Completed', style1: BOLD, type: 'Checkbox', key: targetKeys[3] + cn[1] + '...Done',nodrop: true});
     }
@@ -5223,7 +5224,7 @@ function onClickOpenWindow(cn) {
             return fb - fa;
         });
     }
-    MF_ModelWindowOpen({width: w, name: cn[0], title: cn[1], subtitle: st, id: cn[2], percent: usePct},d,b,f1,f2);
+    MF_ModelWindowOpen({width: w, name: cn[0], title: cn[1], subtitle: st, id: cn[2], listenPercent: usePct},d,b,f1,f2);
 }
 
 function onClickMTFlexConfig() {
@@ -5253,7 +5254,16 @@ function onClickFixDate() {
     }
 }
 
-function onClickUpdateTotal() {
+function onClickUpdateMoney(inV) {
+    if(inV) {
+        let v = inV.value;
+        v = v.replace(/[^\d.]/g,'');
+        const parts = v.split('.');
+        inV.value = parts[0].replace(/^0+(?=\d)/,'') + (parts[1] ? '.' + parts[1].slice(0,2) : '');
+    }
+}
+
+function onClickUpdateTotalP() {
     const div = document.getElementById('MTModelWindowTotal');
     if(!div) return;
     const nodes = document.querySelectorAll('.MTInputClass[col="1"]');
