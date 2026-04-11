@@ -3837,7 +3837,7 @@ async function SummaryDrawer(p) {
         if(p[0] == 'Total' && p[1] == 'odd') {
             to = MTFlex.TargetOptions[MTFlex.Button1];
             if(MTFlex.TargetOptionsRun.includes(MTFlex.Button2)) {
-                if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' - ' + MTFlex.Button2Options[MTFlex.Button2] + ' by ' + to;}
+                if(to) {sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' by ' + to;}
             }
         }
     }
@@ -5126,7 +5126,7 @@ function onClickOpenWindow(cn) {
         if(MTFlex.Button4 > 0) st=MTFlex.Button4Options[MTFlex.Button4];
         let targetKeys = MF_GridTargetKeys();
         if(targetKeys == null) return;
-        d.push({field1: MTFlex.Button1Options[MTFlex.Button1] + ' notes and target (0-100) ...', style1: BOLD});
+        d.push({field1: MTFlex.TargetOptions[MTFlex.Button1] + ' notes and targets (0-100) ...', style1: BOLD});
         for (let i = 0; i < MTFlexRow.length; i ++) {
             let row = MTFlexRow[i];
             if(row.Section == 0 || row.hide) continue;
