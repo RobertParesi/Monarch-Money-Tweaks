@@ -147,10 +147,10 @@ Detailed views:
 Set targets by institution, account, holding type, or category by clicking the > on the Total row (top header) of the grid and then [...] in top-right.
 
 <br>
-<img src="images/MT_Invest05.png" style="width:50%; height:auto;">
+<img src="images/MT_InvestAlloc.png" style="width:50%; height:auto;">
 
 <br>
-<img src="images/MT_InvestAlloc.png" style="width:50%; height:auto;">
+<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
 
 📌 When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
  
