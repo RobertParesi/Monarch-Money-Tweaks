@@ -5020,6 +5020,11 @@ function onClickMTButton() {
         let cn = glo.pathName.slice(1);cn = cn.replace('/','|');
         onClickMTFlexArrow(cn); return;
     }
+    if(bt == 'ClearAll') {
+        let divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
+        for (const div of divs) {if(div.type == 'checkbox') {div.checked = false;div.removeAttribute('checked');} else {div.value = '';}}
+        return;
+    }
     let divs = document.querySelector('div.MTModelWindow');
     if(divs) {
         let windowId = divs.id;
@@ -5112,6 +5117,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Buy Amount', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1], money: true, nodrop: true});
         d.push({field1: 'Buy Note', style1: BOLD, type: 'Input', key: targetKeys[3] + cn[1] + '...Note',style2: 'width: 100%;',nodrop: true});
         d.push({field1: 'Buy Completed', style1: BOLD, type: 'Checkbox', key: targetKeys[3] + cn[1] + '...Done',nodrop: true});
+        b.push({name: 'Clear All', id: 'ClearAll'});
     }
     if(cn[0] == '!SummaryDrawerTotal') {
         if(MTFlex.Button4 > 0) st=MTFlex.Button4Options[MTFlex.Button4];
