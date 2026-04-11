@@ -156,10 +156,7 @@ Set targets by institution, account, holding type, or category by clicking the >
  
 1. Positions & Allocation are the same.  You cannot set Targets at the Performance level since Cash & Fixed Income is excluded.
 2. By Institution / Account / Account subtype / Holding type / Category (choose the breakdown you need).  
-3. By all Accounts or by Account Group 
-
-<br>
-<img src="images/MT_Invest06.png" style="width:50%; height:auto;">
+3. By all Accounts or by Account Group. 
 
 Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
