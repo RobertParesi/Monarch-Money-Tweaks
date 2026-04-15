@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+ * **Version 4.46 (April 15, 2026)**
+      - NEW: Detail/Summary option on Reports / Investments / Performance
+      - REGRESSION: Budget Summary stopped working because of MM change.
+    
  * **Version 4.45 (April 11, 2026)**
       - NEW: Allocation rebalancing in Investments. Rebalance allocations at many different levels including a custom category such as "sector".  Click on Rebalance icon in Reports / Investments.
  
