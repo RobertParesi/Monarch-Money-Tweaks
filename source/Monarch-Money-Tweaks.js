@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.46.1
+// @version      4.46
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -755,7 +755,7 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
     p[0] = inA > 0 ? (inPercent === 1 ? (inB - inA) / inA : Math.max(inB / inA, 0)) : 1;
     p[0] = Math.round(p[0] * 1000) / 10;
     p[2] = p[0];
-    if (inHighlight && !inIgnoreShade) {p[1] = MT_Shade(p[0])}
+    if (inHighlight && !inIgnoreShade) {p[1] = MT_Shade(p[0]);}
     p[0] = (p[0] > 1000) ? '(>1,000%)' : (p[0] < -1000) ? '(<1,000%)' : ` (${p[0].toFixed(1)}%)`;
     return p;
 }
@@ -1785,7 +1785,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         div3.setAttribute('col',0);
                         if(data.refresh == true) div3.setAttribute('refresh','true');
                         if(data.update) div3.setAttribute('update',data.update);
-                        if(data.money) div3.addEventListener('blur', () => { onClickUpdateMoney(event.target)});
+                        if(data.money) div3.addEventListener('blur', () => { onClickUpdateMoney(event.target);});
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
                             const lk = data.key.slice(0, ci+1);
@@ -2662,13 +2662,8 @@ function MenuReportsInvestmentsRebalance(redraw) {
         let inCs = MTFlex.Button2 != 2 ? [0,1,8,13,14,15,16,17,18,19,20,21,22,23] : [0,8,9,10,11,13];
         let inS = MTFlex.Button2 != 2 ? false : true;
         if (MTFlex.Subname != 'MTRebalance') {
-            if (typeof structuredClone === 'function') {
-                MTFlexSaveT = structuredClone(MTFlexTitle);
-                MTFlexSaveR = structuredClone(MTFlexRow);
-            } else {
-                MTFlexSaveT = JSON.parse(JSON.stringify(MTFlexTitle));
-                MTFlexSaveR = JSON.parse(JSON.stringify(MTFlexRow));
-            }
+            MTFlexSaveT = JSON.parse(JSON.stringify(MTFlexTitle));
+            MTFlexSaveR = JSON.parse(JSON.stringify(MTFlexRow));
             MF_GridCollapse(inCs,inS);
             MTFlexTitle[1].Title = 'Note';
             MTFlex.Subname = 'MTRebalance';
@@ -4181,8 +4176,6 @@ function ExportSummaryDrawer(inType,inFile) {
     csvContent = 'Title,Current Value,Current' + CRLF;
 
     targetData.forEach(t => {
-        let am = t.targetV != null ? t.value - t.targetV : 0;
-        let am2 = t.target != null ? get2dec(t.percent - t.target,1) : 0;
         csvField = '"' + t.title + '"';
         csvField += C + get2dec(t.value,2);
         csvField += C + get2dec(t.percent,1) + '%';
@@ -4294,7 +4287,7 @@ async function MenuPlanRefresh() {
         for (let i = 0; i < cas.length - 1; i++) {
             let cText = cas[i];
             if(cText == 'x') continue;
-            ca[j] = cText;j++
+            ca[j] = cText;j++;
         }
         if(ca[0] == 'Income') {
             budgetI[1] = getCleanValue(ca[1]);budgetI[2]=getCleanValue(ca[2]);
