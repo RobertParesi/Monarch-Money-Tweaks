@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 4.47 (beta)**
+      - FIX: MM-Tweaks reports fails if Business Tax Prep on.
+ 
  * **Version 4.46 (April 15, 2026)**
       - NEW: Detail/Summary option on Reports / Investments / Performance
       - REGRESSION: Budget Summary stopped working because of MM change.
