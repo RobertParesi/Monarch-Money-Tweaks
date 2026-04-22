@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.47.1
+// @version      4.47.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -32,12 +32,13 @@ const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [],MTFlexSaveT,MTFlexSaveR;
 let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexTable, MTP, MTFlexSum = [0,0];
-let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
+let MTFlexDate1 = getDates('d_StartofMonth'), MTFlexDate2 = getDates('d_Today');
 
 function MM_Init() {
     MM_RefreshAll();
     let a = isDarkMode();
     if(a == null) {css.reload = true;return;}
+
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
@@ -60,7 +61,6 @@ function MM_Init() {
     css.gGreen = 'color: #3dd68c;'; css.gRed = 'color: #f9918e;';
     css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
 
-    MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
     addStyle('.cb { -webkit-appearance: none;-moz-appearance: none;appearance: none;width: 22px;height: 22px;border-radius: 4px;' + bdr + 'background: transparent;display: inline-block;vertical-align: middle;cursor: pointer;position: relative;transition: background 120ms, border-color 120ms;}');
@@ -288,6 +288,20 @@ function MF_GridTip() {
             }
             break;
     }
+}
+
+function MF_Tips(inT) {
+
+    if (getCookie(inT, true) == 1) return;
+    setCookie(inT,1);
+    switch(inT) {
+        case 'MT_TipAssignGroups':
+            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
+            break;
+        case 'MT_TipRebalance':
+            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'To set Targets, use > on Total line and press [...] in upper right.\n\nTo set Sells & Buys, use > on each detail line.');
+            break;
+        }
 }
 
 function MF_GridOptions(Num,Options) {
@@ -1860,7 +1874,8 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     localStorage.setItem('persist:reports',reportsObj,JSON.stringify(reportsObj));
 }
 
-function MenuReportsCustom() {
+function MenuReportsCustom(f) {
+    if(f === true) {gde('reports-header-MMTweaks',true,'delete');}
     let div = gde('reports-header-tabs');
     if(div) {
         let mItems = div.parentNode.childNodes.length;
@@ -2668,6 +2683,7 @@ function MF_AddBenchCards(benchData) {
 }
 
 function MenuReportsInvestmentsRebalance(redraw) {
+    MF_Tips('MT_TipRebalance');
     if (!redraw) {
         let inCs = MTFlex.Button2 != 2 ? [0,1,8,13,14,15,16,17,18,19,20,21,22,23] : [0,8,9,10,11,13];
         let inS = MTFlex.Button2 != 2 ? false : true;
@@ -2822,7 +2838,7 @@ async function MenuReportsInvestmentsGo() {
         } else {
             MF_GridGroupByPK(8,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All');
             if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
-            MF_GridRollup(0,0,0,'Total','Total|odd|8|Total');
+            MF_GridRollup(0,0,0,'Total ' + (MTFlex.Button4 > 0 ? MTFlex.Button4Options[MTFlex.Button4] : ''),'Total|odd|8|Total');
         }
         MF_GridCalcRowPercent(11,9,8);
         if(MTFlex.Button2 < 2) {
@@ -4249,10 +4265,7 @@ async function MenuAccountsSummary() {
     MenuAccountSummaryShow(elements[1], false);
 
     function MenuAccountCheckMsg() {
-        if (getCookie('MT_AssignGroups', true) == 0) {
-            setCookie('MT_AssignGroups', 1);
-            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
-        }
+        MF_Tip('MT_AssignGroups');
     }
 
     function MenuAccountSummaryShow(inParent, isAsset) {
@@ -4501,7 +4514,7 @@ function MM_SearchMerchants(inDiv) {
 function MenuHistory(OnFocus) {
     if (glo.pathName.startsWith('/categor')) {
         if(OnFocus == true) {
-            if(getCookie('MT_Budget',true) == 1) { gde('cashflow-budget-card',true,true);}
+            if(getCookie('MT_Budget',true) == 1) { gde('cashflow-budget-card',true,'hide');}
         }
         let div = findButton('Filters');
         if(div) {
@@ -4872,7 +4885,7 @@ function MenuCheckSpawnProcess() {
             case 2:HistoryDrawerDraw();break;
             case 3:MenuPlanRefresh();MenuPlanBudgetReorder();break;
             case 4:MenuAccountsSummary();break;
-            case 5:MM_Init();break;
+            case 5:MM_Init();if(MTFlex.Name) {MenuReportsCustom(true);MenuReportsCustomUpdate();MF_GridDraw(1);} break;
             case 6:if(getCookie('MT_MerAssist',true)) {onClickContainer();}break;
             case 7:MM_SplitTransaction();break;
             case 9:if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag();}break;
@@ -5027,9 +5040,8 @@ window.onclick = function(event) {
             MTFlexDate1 = getDates('d_Today');MTFlexDate2 = getDates('d_Today');MTFlex.Name = cn;
             MenuReportsGo();return;
         }
-        if(cn.startsWith('TabNavLink-sc') || cn.startsWith('NavLink-sc') || cn == 'hidden') {
-            removeAllSections('.MTFlexContainer');
-            MTFlex = [];MenuReportsPanels('');MenuReportsCustomUpdate();return;
+        if (cn === 'hidden' || cn.startsWith('TabNavLink-sc') || cn.startsWith('NavLink-sc')) {
+            removeAllSections('.MTFlexContainer');MTFlex = [];MenuReportsPanels('');MenuReportsCustomUpdate();return;
         }
     }
     onClickMTDropdownRelease();
@@ -5666,10 +5678,13 @@ function cecId(e,t,title) {
     }
 }
 
-function gde(e,a,h) {
-    if(h === true) {
+function gde(e,a,f) {
+    if(f) {
         let divs = document.querySelectorAll('[data-external-id="' + e + '"]');
-        for (let i = 0; i < divs.length; i++) { divs[i].style.display = 'none';}
+        for (let i = 0; i < divs.length; i++) {
+            if(f === 'hide') {divs[i].style.display = 'none';}
+            if(f === 'delete') {divs[i].remove();}
+        }
     } else {
         if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
         return document.querySelector('[data-external-id="' + e + '"]');
