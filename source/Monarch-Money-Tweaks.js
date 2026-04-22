@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.47
+// @version      4.48.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,13 +16,13 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.47';
+const VERSION = '4.48';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;';
 
-let css = {headStyle: null, mItems: 0, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
+let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
@@ -35,9 +35,10 @@ let MTFlexCR = 0, MTFlexTable, MTP, MTFlexSum = [0,0];
 let MTFlexDate1 = getDates('d_StartofMonth'), MTFlexDate2 = getDates('d_Today');
 
 function MM_Init() {
-    MM_RefreshAll();
+    css.reload = false;
     let a = isDarkMode();
     if(a == null) {css.reload = true;return;}
+    MM_RefreshAll();
 
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
@@ -120,7 +121,7 @@ function MM_Init() {
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
     addStyle('.MTSideDrawerHeader {' + css.font + standardText + ' padding: 8px; }');
-    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + BOLD + ' padding-left: 12px;padding-top: 3px; height: 30px;border-radius: 6px; ' + css.font + '}');
+    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + BOLD + ' padding-left: 12px;padding-top: 3px; height: 30px; border-radius: 6px; ' + css.font + '}');
     addStyle('.MTSideDrawerItem, .MTSideDrawerMonth {margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 {place-content: stretch space-between; display: flex;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
@@ -167,8 +168,10 @@ function MM_MenuFix() {
             if(j > 0) {getCookie(cks[j-1],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
         }
     }
-    if(getCookie('MT_Assistant',true) == 1) {
-        divs = gde('sidebar-persistent-assistant');if(divs) divs.style.display = 'none';
+    if(getCookie('MT_Assistant',true) == 1) {divs = gde('sidebar-persistent-assistant');if(divs) divs.style.display = 'none';}
+    if(getCookie('MT_HidePlus',true) == 1) {
+        let cn = getFullClassName('SideBarDefaultContent__PopupsContainer');
+        if(cn) addStyle('.' + cn + ' {display: none !important;}');
     }
     glo.debug = getCookie('MT_Log',true);
     if(getCookie('MT:LastBackupSkip',true) != 1) {
@@ -1878,10 +1881,8 @@ function MenuReportsCustom(f) {
     if(f === true) {gde('reports-header-MMTweaks',true,'delete');}
     let div = gde('reports-header-tabs');
     if(div) {
-        let mItems = div.parentNode.childNodes.length;
-        if(mItems == 2) {
-            let useClass = div.childNodes[1].className;
-            useClass = useClass.replace(' tab-nav-item-active','');
+        if(div.parentNode.childNodes.length == 2) {
+            let useClass = div.childNodes[1].className.replace(' tab-nav-item-active','');
             div.style = 'margin-left: 12px;';
             let newDiv = cec('div',useClass,div.parentNode,'','','','data-external-id','reports-header-MMTweaks');
             for (let i = 0; i < FlexOptions.length; i++) {cec('a',FlexOptions[i] + ' ' + useClass,newDiv,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 12px; flex-shrink: 1;  white-space: nowrap; overflow: hidden;');}
@@ -4697,6 +4698,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Forecast','MT_Forecast','checkbox');
     MenuDisplay_Input('Hide Advice','MT_Advice','checkbox');
     MenuDisplay_Input('Hide AI Assistant','MT_Assistant','checkbox');
+    MenuDisplay_Input('Hide Plus Free Trial','MT_HidePlus','checkbox');
     MenuDisplay_Input('Accounts','','spacer');
     MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
     MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
@@ -4812,7 +4814,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.value = OldValue;
                 e2.id = inCookie;
-                e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} MM_Init();});
+                e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} css.reload=true;});
                 e3 = document.createElement("label");
                 e3.innerText = inValue;
                 e3.htmlFor = inCookie;
@@ -5700,9 +5702,9 @@ function removeAllSections(inDiv) {
     }
 }
 
-function hideAllSections(qList,InValue,inStartsWith) {
+function hideAllSections(qList,InValue,innerTextIs) {
     const els = document.querySelectorAll(qList);
-    for (const el of els) { if(inStartsWith == null || el.innerText.startsWith(inStartsWith)) {el.style.display = InValue == 1 ? 'none' : '';}}
+    for (const el of els) { if(innerTextIs == null || el.innerText.startsWith(innerTextIs)) {el.style.display = InValue == 1 ? 'none' : '';}}
 }
 
 function getFullClassName(a) {
@@ -6161,7 +6163,7 @@ function sortTableByColumn(inEvent) {
 (function() {
     setInterval(() => {
         if(glo.menu == true) MM_MenuFix();
-        if(css.reload == true) {css.reload = false; MM_Init();}
+        if(css.reload == true) {MM_Init();}
         if(window.location.pathname != glo.pathName) {
             if(glo.pathName) {MM_MenuRun(false);}
             glo.pathName = window.location.pathname;
