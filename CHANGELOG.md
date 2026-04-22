@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-  * **Version 4.47 (beta)**
+  * **Version 4.47 (April 22, 2026)**
       - NEW: Reports / Investments toggle to include proposed sells/buys.
       - CHANGE: Better MM-Tweaks Reports navigation & Light/Dark mode changes.
  
