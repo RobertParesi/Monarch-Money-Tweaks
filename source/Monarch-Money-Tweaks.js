@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.47.2
+// @version      4.47
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -299,7 +299,7 @@ function MF_Tips(inT) {
             MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
             break;
         case 'MT_TipRebalance':
-            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'To set Targets, use > on Total line and press [...] in upper right.\n\nTo set Sells & Buys, use > on each detail line.');
+            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Targets can be set under Positions & Allocation.\n\nTo set Targets, use > on Total line and press [...] in upper right.\n\nTo set Sells & Buys, use > on each detail line.');
             break;
         }
 }
