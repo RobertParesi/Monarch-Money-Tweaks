@@ -2,8 +2,7 @@
 
   * **Version 4.47 (beta)**
       - NEW: Reports / Investments toggle to include proposed sells/buys.
-      - FIX: MM-Tweaks reports fail if Business Tax Prep on.
-        
+      - CHANGE: Better MM-Tweaks Reports navigation & Light/Dark mode changes.
  
  * **Version 4.46 (April 15, 2026)**
       - NEW: Detail/Summary option on Reports / Investments / Performance
