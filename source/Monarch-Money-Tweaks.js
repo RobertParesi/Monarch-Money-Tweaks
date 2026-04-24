@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.48.1
+// @version      4.48
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -20,7 +20,7 @@ const VERSION = '4.48';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
-const BOLD = 'font-weight: 600;';
+const BOLD = 'font-weight: 600;',SS='\\~';
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
@@ -149,6 +149,7 @@ function MM_Init() {
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
     addStyle('input::placeholder {font-size: 12px;}');
 }
+
 
 function MM_GridFont() {
     css.FontFamily = getCookie('MT_MonoMT', false) || 'System';
@@ -1880,6 +1881,8 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
 function MenuReportsCustom(f) {
     if(f === true) {gde('reports-header-MMTweaks',true,'delete');}
     let div = gde('reports-header-tabs');
+    console.log('MENUREPORTSCUSTOM',f,div);
+    if(!div) {glo.pathName='';return;}
     if(div) {
         if(div.parentNode.childNodes.length == 2) {
             let useClass = div.childNodes[1].className.replace(' tab-nav-item-active','');
@@ -1893,6 +1896,7 @@ function MenuReportsCustom(f) {
 function MenuReportsCustomUpdate() {
     let div = gde('reports-header-tabs');
     let mmtDiv = gde('reports-header-MMTweaks');
+    console.log('MenuReportsCustomUpdate',div,mmtDiv);
     if(div && mmtDiv) {
         MenuReportsCustomUpdateGo(mmtDiv);
         if(MTFlex.Name) {
@@ -3767,7 +3771,7 @@ async function AccountsDrawer(inP) {
     let sObj = {},transQueue = [],accts = [],incs=0,exps=0,trns=0,tots=0,p1 = inP[0],divTop, divTop2, acc;
 
     if(p1 == 'Group') {
-        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts|' + inP[2] + '|' + inP[2];
+        sObj.type = 'Group';sObj.type2=inP[2];sObj.big = 'Accounts';sObj.small='(Combined)';sObj.urltext=MT_GetPK(inP[2]);sObj.url='!CombinedAccounts' + SS + inP[2] + SS + inP[2];
         accts = MF_GridPKUIDs(inP[2]);
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
@@ -3778,7 +3782,7 @@ async function AccountsDrawer(inP) {
         let gn = getCookie('MTAccounts:' + acc.id,false);
         if(!gn) sObj.header = 'Use  button to edit ' + MNAME + ' Account settings and Account group.';
         sObj.type = acc.type;sObj.type2=acc.type.display;sObj.big='Account';sObj.small=acc.type.display;sObj.urltext=acc.displayName;sObj.url='/accounts/details/' + acc.id;
-        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts|' + acc.displayName + '|' + acc.id + '|' + acc.subtype.display;
+        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts' + SS + acc.displayName + SS + acc.id + SS + acc.subtype.display;
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
@@ -3827,12 +3831,12 @@ async function AccountsDrawer(inP) {
     for (let m = 0; m < transQueue.length; m++) {
         div2 = cec('div','MTSideDrawerItem',divTable);
         cec('span','MTSideDrawerDetail',div2,getMonthName(transQueue[m].date,3),'',BOLD + 'text-align: left;');
-        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].inc),'','','data',bt1 + '|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
-        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].exp),'','','data',bt2 + '|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
+        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].inc),'','','data',bt1 + SS + transQueue[m].date.substring(0,4) + SS + transQueue[m].date.substring(5,7));
+        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].exp),'','','data',bt2 + SS + transQueue[m].date.substring(0,4) + SS + transQueue[m].date.substring(5,7));
         let tot = transQueue[m].inc - transQueue[m].exp;
-        cec('span','MTSideDrawerDetailS',div2,getDollarValue(tot),'','','data','|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
+        cec('span','MTSideDrawerDetailS',div2,getDollarValue(tot),'','','data',SS + transQueue[m].date.substring(0,4) + SS + transQueue[m].date.substring(5,7));
         cec('span','MTSideDrawerDetail3',div2);
-        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].trn),'','','data','transfer|' + transQueue[m].date.substring(0,4) + '|' + transQueue[m].date.substring(5,7));
+        cec('span','MTSideDrawerDetailS',div2,getDollarValue(transQueue[m].trn),'','','data','transfer' + SS + transQueue[m].date.substring(0,4) + SS + transQueue[m].date.substring(5,7));
         incs+=transQueue[m].inc;exps+=transQueue[m].exp;tots+=tot;trns+=transQueue[m].trn;
     }
     div2 = cec('div','MTSideDrawerItem',divTable);
@@ -3884,7 +3888,7 @@ async function SummaryDrawer(inP) {
             to = MTFlex.TargetOptions[MTFlex.Button1];
             if(MTFlex.TargetOptionsRun.includes(MTFlex.Button2)) {
                 if(to) {
-                    sObj.button = '!SummaryDrawerTotal|' + MTFlex.Desc + ' by ' + to;
+                    sObj.button = '!SummaryDrawerTotal' + SS + MTFlex.Desc + ' by ' + to;
                     sObj.toggletip = 'Exclude/Include Sells & Buys';
                     sObj.toggle=['',''];
                     inP[5] = 1;
@@ -3933,9 +3937,9 @@ async function InvestmentsDrawer(inP) {
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
-        sObj.button = '!Investments|' + sObj.big + '||' + sObj.small + '|' + thisHld.account.displayName;
+        sObj.button = '!Investments' + SS + sObj.big + SS + sObj.small + SS + thisHld.account.displayName;
     } else {
-        sObj.button = '!Investments|' + useTicker + ' - ' + sObj.big + '|' + useTicker + '|' + sObj.small + '|' + thisHld.account.displayName;
+        sObj.button = '!Investments' + SS + useTicker + ' - ' + sObj.big + SS + useTicker + SS + sObj.small + SS + thisHld.account.displayName;
         if(useTicker != '') {
             sObj.big = useTicker + ' • ' + thisHld.name;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
@@ -4054,7 +4058,7 @@ async function InvestmentsDrawerCash(inP) {
         sObj.urltext = useAct.accountName;
         sObj.url = '/accounts/details/' + useAct.id;
     } else {
-        useAct = inP[1] + '|' + inP[2];
+        useAct = inP[1] + SS + inP[2];
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
@@ -4147,7 +4151,7 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
         filterCnt+=1;
         newRow = cec('tr','MTSideDrawerSummaryRow',inDiv);
         useDate = unformatQueryDate(rec.date);
-        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','!TransData|' + j);
+        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','!TransData'+ SS + j);
         cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name);
         cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
         useColor = '';
@@ -4933,7 +4937,7 @@ window.onclick = function(event) {
             case 'MTGeneralLink':
             case 'MTGeneralCell':
                 onClickMTDropdownRelease();
-                cn = event.target.getAttribute('link').split('|');
+                cn = event.target.getAttribute('link').split(SS);
                 if(cn) onClickOpenWindow(cn);
                 return;
             case 'MTBarChart':
