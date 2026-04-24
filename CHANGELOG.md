@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-  * **Version 4.48 (April 23, 2026)**
+  * **Version 4.49 (April 23, 2026)**
       - FIX: Issue with Account Descriptions having pipe character.
   
   * **Version 4.47 (April 22, 2026)**
