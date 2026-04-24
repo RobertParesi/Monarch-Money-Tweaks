@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.48
+// @version      4.49
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.48';
+const VERSION = '4.49';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -4242,7 +4242,7 @@ function MenuAccountSummaryHide() {
 
 async function MenuAccountsSummary() {
     MenuAccountSummaryHide();
-    MenuAccountCheckMsg();
+    MF_Tips('MT_AssignGroups');
     const divTop = document.querySelector('div.MTAccountSummary');
     if (divTop) return;
 
@@ -4268,10 +4268,6 @@ async function MenuAccountsSummary() {
 
     MenuAccountSummaryShow(elements[0], true);
     MenuAccountSummaryShow(elements[1], false);
-
-    function MenuAccountCheckMsg() {
-        MF_Tip('MT_AssignGroups');
-    }
 
     function MenuAccountSummaryShow(inParent, isAsset) {
         const firstChild = inParent.childNodes[0];
