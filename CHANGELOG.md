@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 4.48 (April 23, 2026)**
+      - FIX: Issue with Account Descriptions having pipe character.
+  
   * **Version 4.47 (April 22, 2026)**
       - NEW: Reports / Investments toggle to include proposed sells/buys.
       - CHANGE: Better MM-Tweaks Reports navigation & Light/Dark mode changes.
