@@ -36,7 +36,7 @@ To configure: **Settings → Categories** → mark groups Fixed or Flexible. The
 <br>
 <img src="images/MTFixed.png" style="width:66%; height:auto;">
 
-One reason is Monarch uses three category levels; the third level is intended for budgeting, not for pacing/actuals. If that causes confusion, split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
+One reason is Monarch uses three category levels; the third level is intended for budgeting, not for pacing/actuals. If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
 
 ---
 
