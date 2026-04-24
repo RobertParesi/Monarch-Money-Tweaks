@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+    * **Version 4.49 (April 23, 2026)**
+      - CHANGE: Reports / Investments side drawer "Current Price" will show up to 3 decimals.
+      - REGRESSION: Reports / Investments 52-Week Closing Range could be incorrect.
+              
   * **Version 4.49 (April 23, 2026)**
       - FIX: Issue with Account Descriptions having pipe character.
   
