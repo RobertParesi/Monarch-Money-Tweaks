@@ -2,6 +2,7 @@
 
   * **Version 4.50 (beta)**
       - CHANGE: Reports / Investments side drawer "Current Price" will show up to 3 decimals.
+      - CHANGE: Reports / Investments 1w change % subtotal corrected.
       - REGRESSION: Reports / Investments 52-Week Closing Range could be incorrect.
               
   * **Version 4.49 (April 23, 2026)**
