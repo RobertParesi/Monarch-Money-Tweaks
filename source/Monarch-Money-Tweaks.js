@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.50.1
+// @version      4.50.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1932,7 +1932,7 @@ function MenuReportsPanels(inType) {
     }
     divs = document.querySelector('[class*="Grid__GridStyled-"]');
     if(divs) {divs.style=inType;}
-    divs = document.querySelector('[class*="shared__Root-sc-1uil23"]');
+    divs = gde('business-tax-prep-root',false);
     if(divs) {divs.style=inType;}
 }
 
@@ -5310,7 +5310,7 @@ function onClickSideToggle(t) {
     if(!ops) return;
 
     let x = document.querySelector('div.MTSideDrawerContainer');
-    if(x.id) {subPanel = x.id}
+    if(x.id) {subPanel = x.id;}
 
     let bn = ops[MF_SidePanelflipElement(MTFlex.Name + '_' + subPanel)];
     t.innerText = bn;
@@ -5693,11 +5693,13 @@ function gde(e,a,f) {
     if(f) {
         let divs = document.querySelectorAll('[data-external-id="' + e + '"]');
         for (let i = 0; i < divs.length; i++) {
-            if(f === 'hide') {divs[i].style.display = 'none';}
+            if(f === 'hide') {divs[i].style = 'display: none;';}
             if(f === 'delete') {divs[i].remove();}
         }
     } else {
         if(a) return document.querySelectorAll('[data-external-id="' + e + '"]');
+        if(f === 'hide') {a.style = 'display: none;';}
+        if(f === 'delete') {a.remove();}
         return document.querySelector('[data-external-id="' + e + '"]');
     }
 }
