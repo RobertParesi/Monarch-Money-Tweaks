@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.50.2
+// @version      4.50
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2739,7 +2739,7 @@ function MenuReportsInvestmentsRebalance(redraw) {
                 let sell = targetKeys[2] + MTFlexRow[i][0];
                 let buy = targetKeys[3] + MTFlexRow[i][0];
                 let tgtP = getCookie(rn2,true);
-                let tgtA = get2dec(portValue * (tgtP * .01),2);
+                let tgtA = get2dec(portValue * (tgtP * 0.01),2);
                 let cm1 = getCookie(sell + '...Done',true) == 1 ? '✔︎ ' : '';
                 let cm2 = getCookie(buy + '...Done',true) == 1 ? '✔︎ ' : '';
                 MTFlexRow[i][1] = getCookie(rn,false);
