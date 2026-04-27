@@ -68,7 +68,13 @@ Open **Reports → Investments**, select a holding and click `...` in the holdin
 
 ---
 
-### Reports — Overview (Trends, Net Income, Accounts, Investments)
+### Reports — Overview 
+
+Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments. MM‑Tweaks derives all its insights from transactions and transaction history only — it does not rely on Budget, Goals, or Recurring data. Personally I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain extra data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
+
+---
+
+### Reports — Trends, Net Income, Accounts, Investments
 
 All four reports use the same flexible grid layout and share many features.
 
