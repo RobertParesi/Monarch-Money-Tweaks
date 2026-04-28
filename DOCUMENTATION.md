@@ -32,12 +32,10 @@ Click on **Settings** in lower-left of Monarch Money web app and then **Display*
 ### Fixed vs Flexible Spending (group level)
 
 MM‑Tweaks classifies spending at the *group* level (MM‑Tweaks uses Group-level flags rather than Monarch’s internal Fixed/Flexible).  
-To configure: **Settings → Categories** → mark groups Fixed or Flexible. These flags are used by Trends and Net Income reports.
+To configure: **Settings → Categories** → mark groups Fixed or Flexible. These flags are used by Trends and Net Income reports.  One reason is Monarch uses three category levels; the third level is intended for budgeting, not for pacing/actuals. If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
 
 <br>
 <img src="images/MTFixed.png" style="width:66%; height:auto;">
-
-One reason is Monarch uses three category levels; the third level is intended for budgeting, not for pacing/actuals. If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
 
 ---
 
