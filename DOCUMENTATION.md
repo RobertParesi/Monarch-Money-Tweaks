@@ -21,8 +21,8 @@ Recommended initial steps (details below):
 
 ### MM‑Tweaks — Settings (overview)
 
-MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web app. Most settings live in Monarch’s Settings panel after installation.
-
+MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web app. Most settings live in Monarch’s Settings panel after installation.  Click on **Settings** in lower-left of Monarch Money web app and then **Display**.
+ 
 <img src="images/MT_V3_01.png" style="width:66%; height:auto;">
 
 ---
