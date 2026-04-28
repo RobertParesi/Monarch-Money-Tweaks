@@ -58,26 +58,9 @@ Key options:
 
 ---
 
-### Reports — Overview 
-
-Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments. 
-
-For Reports / Trends:
-
-MM‑Tweaks derives all its insights from transactions and transaction history only — it does not rely on Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
-
-For Reports / Investments:
-
-1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
-2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
-3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
-
----
-
-### Reports — Trends, Net Income, Accounts, Investments
-
-All four reports use the same flexible grid layout and share many features.
-
+### Overview Reports — Trends, Net Income, Accounts, Investments
+<br>
+Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
 <br>
 <img src="images/MT_V3_99.png" style="width:66%; height:auto;">
 
@@ -87,8 +70,12 @@ Highlights:
 - Click any column header to sort ascending/descending.  
 - **Account Group Filter** appears after you assign account groups.
 
+---
+
 #### Reports / Trends — Compare, Monthly & Yearly
 <br>
+MM‑Tweaks derives Trends from transactions and transaction history only — it does not use any Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
+
 <img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
 - Compare views, monthly/yearly rollups, and drilldowns into history are supported.
@@ -129,6 +116,10 @@ To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts
 ---
 
 ### Investments — reports, details and allocation
+
+1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
+2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
+3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
 
 Portfolio, account, holding, and allocation views are supported.
 
