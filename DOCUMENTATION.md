@@ -58,7 +58,7 @@ Highlights:
 
 ### Use Reports / Accounts for special MM-Tweaks Account Settings
 
-Select **Reports → Accounts**, click **>** (far right) on an account, open the side panel `...` to access MM‑Tweaks account options.
+Select **Reports → Accounts**, click **>** (far right) on an account to open the side panel, then `...` to access MM‑Tweaks account options.
 
 <br>
 <img src="images/MTAccountSettings.png" style="width:66%; height:auto;">
