@@ -58,16 +58,6 @@ Key options:
 
 ---
 
-### Investment Holding Settings
-
-Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
-
-![Settings](/images/MTInvestmentSettings.png)
-
-- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, Bond Type, etc.) either per‑ticker or at the account level.
-
----
-
 ### Reports — Overview 
 
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments. 
@@ -157,6 +147,15 @@ Detailed views:
 <img src="images/MT_Invest02.png" style="width:66%; height:auto;">
 <img src="images/MT_Invest03.png" style="width:50%; height:auto;">
 
+---
+
+### Investment Holding Settings
+
+Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
+
+![Settings](/images/MTInvestmentSettings.png)
+
+- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, Bond Type, etc.) either per‑ticker or at the account level.
 
 ---
 ### Allocation targets and notes
