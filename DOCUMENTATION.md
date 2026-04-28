@@ -22,10 +22,10 @@ Recommended initial steps (details below):
 ### MM‑Tweaks — Settings (overview)
 
 <br>
-<img src="images/MT_V3_01.png" style="width:66%; height:auto;">
-
 MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web app. Most settings live in Monarch’s Settings panel after installation.
-
+<br>
+<img src="images/MT_V3_01.png" style="width:66%; height:auto;">
+<br>
 ---
 
 ### Fixed vs Flexible Spending (group level)
