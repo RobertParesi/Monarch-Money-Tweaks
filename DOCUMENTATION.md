@@ -104,6 +104,7 @@ MM‑Tweaks derives Trends from transactions and transaction history only — it
 ---
 
 ### Accounts — Overall Cash Statement (how cash is computed)
+
 * Monarch returns an **Account Balance** at each snapshot.  
 * Monarch returns the **Sum of all holdings** at each snapshot.
 * MM-Tweaks calculates the _Idle Cash_ (cash uninvested) as **Account Balance - Sum of all holdings**.
@@ -117,7 +118,7 @@ To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts
 
 ---
 
-### Investments — reports, details and allocation
+### Reports / Investments
 
 1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
 2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
