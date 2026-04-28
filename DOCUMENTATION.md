@@ -41,7 +41,21 @@ If you need to, simply split those categories into two groups—for example, “
 
 ---
 
-### Account Settings (per-account overrides)
+### Overview Reports — Trends, Net Income, Accounts, Investments
+
+Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
+<br>
+<img src="images/MT_V3_99.png" style="width:66%; height:auto;">
+
+Highlights:
+- **Sub Report**: view the report from different perspectives.  
+- **Group By**: change how the report groups data (category, group, account, etc.).  
+- Click any column header to sort ascending/descending.  
+- **Account Group Filter** appears after you assign account groups.
+
+---
+
+### Use Reports / Accounts for special MM-Tweaks Account Settings
 
 Select **Reports → Accounts**, click **>** (far right) on an account, open the side panel `...` to access MM‑Tweaks account options.
 
@@ -56,20 +70,6 @@ Key options:
 - **Subtype override** — replace the account subtype shown in reports (ie: "Short Term Liability", "Long Term Liability", "Equities", "Bonds").
 - **Holding Category override (account‑level)** — default holding category for all holdings in the account.
 - **Add to Dashboard Accounts list** — include account summary on the Dashboard.
-
----
-
-### Overview Reports — Trends, Net Income, Accounts, Investments
-<br>
-Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
-<br>
-<img src="images/MT_V3_99.png" style="width:66%; height:auto;">
-
-Highlights:
-- **Sub Report**: view the report from different perspectives.  
-- **Group By**: change how the report groups data (category, group, account, etc.).  
-- Click any column header to sort ascending/descending.  
-- **Account Group Filter** appears after you assign account groups.
 
 ---
 
