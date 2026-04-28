@@ -70,7 +70,15 @@ Select **Reports → Investments**, click on **>** (far right) of any equity hol
 
 ### Reports — Overview 
 
-Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments. MM‑Tweaks derives all its insights from transactions and transaction history only — it does not rely on Budget, Goals, or Recurring data. Personally I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain extra data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
+Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments. 
+
+For Trends, MM‑Tweaks derives all its insights from transactions and transaction history only — it does not rely on Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
+
+For Reports / Investments:
+
+1. **Positions**: Displays all your current holdings for each account. Use Allocation report to combine same holdings.
+2. **Allocation** Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
+3. **Performance** Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
 
 ---
 
