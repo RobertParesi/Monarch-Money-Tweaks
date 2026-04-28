@@ -45,6 +45,7 @@ If you need to, simply split those categories into two groups—for example, “
 
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
 <br>
+
 <img src="images/MT_V3_99.png" style="width:66%; height:auto;">
 
 Highlights:
