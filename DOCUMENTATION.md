@@ -78,9 +78,9 @@ MM‑Tweaks derives all its insights from transactions and transaction history o
 
 For Reports / Investments:
 
-1. **Positions**: Displays all your current holdings for each account. Use Allocation report to combine same holdings.
-2. **Allocation** Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
-3. **Performance** Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
+1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
+2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
+3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
 
 ---
 
