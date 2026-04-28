@@ -20,7 +20,6 @@ Recommended initial steps (details below):
 ---
 
 ### MM‑Tweaks — Settings (overview)
-
 <br>
 MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web app. Most settings live in Monarch’s Settings panel after installation.
 <br>
