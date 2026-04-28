@@ -42,7 +42,7 @@ One reason is Monarch uses three category levels; the third level is intended fo
 
 ### Account Settings (per-account overrides)
 
-Open **Reports → Accounts**, click **>** (far right) on an account, open the side panel `...` to access MM‑Tweaks account options.
+Select **Reports → Accounts**, click **>** (far right) on an account, open the side panel `...` to access MM‑Tweaks account options.
 
 <br>
 <img src="images/MTAccountSettings.png" style="width:66%; height:auto;">
@@ -60,7 +60,7 @@ Key options:
 
 ### Investment Holding Settings
 
-Open **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
+Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
 
 ![Settings](/images/MTInvestmentSettings.png)
 
