@@ -87,7 +87,7 @@ Highlights:
 - Click any column header to sort ascending/descending.  
 - **Account Group Filter** appears after you assign account groups.
 
-#### Trends — Compare, Monthly & Yearly
+#### Reports / Trends — Compare, Monthly & Yearly
 <br>
 <img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
@@ -97,20 +97,21 @@ Highlights:
 <br>
 <img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
-#### Net Income (Tags / Notes)
+#### Reports / Net Income (by Tags, by Account, by Notes, by Owner)
 <br>
 <img src="images/MT_V3_09.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="images/MT_TagsNotes2.png" style="width:60%; height:auto;">
 
-#### Accounts (Standard, Brokerage, Personal Statement, Overall Cash Statement)
+#### Reports / Accounts (Standard, Brokerage, Personal Statement, Overall Cash Statement)
 <br>
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_V3_08.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_V3_12.png" style="width:66%; height:auto;">
+
 ---
 
 ### Accounts — Overall Cash Statement (how cash is computed)
