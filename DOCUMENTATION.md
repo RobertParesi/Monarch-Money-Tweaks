@@ -98,6 +98,16 @@ Columns 4–6 show year‑to‑date comparisons: this year vs. last year and the
 
 Shading highlights the rows that need attention — focus only on shaded lines. Three levels indicate degree of deviation: >25%, >50%, and >100%.
 
+🔮 **Upcoming expenses**
+The final two columns are optional (toggle in Settings: “Hide future month columns — Remaining ‘this month’ & next month”).  
+
+The first of these shows last year’s expenses from tomorrow through the end of the month.
+(Example: on March 16, 2026 it displays transactions from March 17–31, 2025.)
+
+The second shows the total for the entire next month from last year.
+Use them to compare expected remaining spend against the same period from the prior year.
+
+
 ### Reports / Trends 
 
 Click on the > for  History drilldowns show per‑month details and allow opening side‑panel details.
