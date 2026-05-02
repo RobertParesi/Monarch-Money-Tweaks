@@ -53,8 +53,9 @@ Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accou
 Highlights:
 - **Sub Report**: view the report from different perspectives.  
 - **Group By**: change how the report groups data (category, group, account, etc.).  
-- Click any column header to sort ascending/descending.  
 - **Account Group Filter** appears after you assign account groups.
+- Click any column header to sort ascending/descending.
+- Click any date header to change date or in Trends change it to end of previous month.
 
 ---
 
