@@ -96,7 +96,7 @@ When enabled, comparisons use full month totals for the prior period rather than
 
 Columns 4–6 show year‑to‑date comparisons: this year vs. last year and the difference. This is your pacing view — an easy way to track whether you’re on track without using Monarch’s budget features. I recommend separating Fixed vs. Flexible categories: Fixed spending tends to be steady, while Flexible spending swings more (vacations, seasonal purchases) and can shift between months.
 
-The shading makes this easy.  Only focus on the shaded lines which alert you to being far out of face.   There are three levels of shading (> 25%, > 50%, > 100%)
+Shading highlights the rows that need attention — focus only on shaded lines. Three levels indicate degree of deviation: >25%, >50%, and >100%.
 
 ### Reports / Trends 
 
