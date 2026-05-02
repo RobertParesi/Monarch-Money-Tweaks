@@ -83,13 +83,13 @@ MM‑Tweaks derives Trends from transactions and transaction history only — it
 
 <img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
-The first three columns are designed by selecting a "Compare by" Sub Report:
+The first three columns are designed by selecting a "Compare ..." Sub Report:
 
-* **Compare by last month** — Column 1 shows last month’s total, Column 2 shows this month’s total, and Column 3 shows the difference. Recommended only for brand‑new Monarch users without historical data.  
+* **Compare last month** — Column 1 shows last month’s total, Column 2 shows this month’s total, and Column 3 shows the difference. Recommended only for brand‑new Monarch users without historical data.  
 
-* **Compare by same month** — Column 1 shows the total for the same month last year, Column 2 shows this month’s total, and Column 3 shows the difference. This is the usual preferred view.  
+* **Compare same month** — Column 1 shows the total for the same month last year, Column 2 shows this month’s total, and Column 3 shows the difference. This is the usual preferred view.  
 
-* **Compare by same quarter** — Column 1 shows the total for the same quarter last year, Column 2 shows this quarter’s total, and Column 3 shows the difference. Good choice for retirees, those making estimated IRS payments, or anyone tracking spending on a quarterly basis.
+* **Compare same quarter** — Column 1 shows the total for the same quarter last year, Column 2 shows this quarter’s total, and Column 3 shows the difference. Good choice for retirees, those making estimated IRS payments, or anyone tracking spending on a quarterly basis.
 
 
 
