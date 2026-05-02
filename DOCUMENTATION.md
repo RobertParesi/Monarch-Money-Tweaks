@@ -151,12 +151,6 @@ Click on the **>** in the far right of any Total or Group for a Summary or Alloc
 
 <img src="images/MT_Invest04.png" style="width:50%; height:auto;">
 
-- Investments cards and holdings examples:
-<br>
-<img src="images/MT_Invest01.png" style="width:66%; height:auto;">
-<img src="images/MT_Invest02.png" style="width:66%; height:auto;">
-<img src="images/MT_Invest03.png" style="width:50%; height:auto;">
-
 ---
 
 ### Investment Holding Settings
