@@ -91,6 +91,10 @@ The first three columns are designed by selecting a "Compare ..." Sub Report:
 
 * **Compare same quarter** — Column 1 shows the total for the same quarter last year, Column 2 shows this quarter’s total, and Column 3 shows the difference. Good choice for retirees, those making estimated IRS payments, or anyone tracking spending on a quarterly basis.
 
+📌 **“Always compare to End of Month” option**
+When enabled, comparisons use full month totals for the prior period rather than truncating at today’s date. Normally both columns show values up to today (e.g., on March 16 both Column 1 and Column 2 reflect data through March 16). Turn on this setting (⚙️) to make Column 1 represent the full prior month (e.g., March 1–31) so you’re comparing this partial month to a complete month. I prefer having this option on for a clearer month‑to‑month view without surprises.
+
+Columns 4–6 show year‑to‑date comparisons: this year vs. last year and the difference. This is your pacing view — an easy way to track whether you’re on track without using Monarch’s budget features. I recommend separating Fixed vs. Flexible categories: Fixed spending tends to be steady, while Flexible spending swings more (vacations, seasonal purchases) and can shift between months.
 
 
 ### Reports / Trends 
