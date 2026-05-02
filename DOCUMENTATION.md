@@ -132,11 +132,11 @@ To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts
 
 ### Reports / Investments
 
+There are three types of Investment reports:
+
 1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
 2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
 3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
-
-Portfolio, account, holding, and allocation views are supported.
 
 <br>
 <img src="images/MT_Invest01.png" style="width:66%; height:auto;">
