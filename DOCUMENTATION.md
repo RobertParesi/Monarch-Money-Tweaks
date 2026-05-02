@@ -77,7 +77,7 @@ Key options:
 
 ---
 
-#### Reports / Trends — Compare, Monthly & Yearly
+### Reports / Trends — Compare, Monthly & Yearly
 
 MM‑Tweaks derives Trends from transactions and transaction history only — it does not use any Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
 
@@ -89,14 +89,14 @@ MM‑Tweaks derives Trends from transactions and transaction history only — it
 <br>
 <img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
-#### Reports / Net Income (by Tags, by Account, by Notes, by Owner)
+### Reports / Net Income (by Tags, by Account, by Notes, by Owner)
 <br>
 <img src="images/MT_V3_09.png" style="width:66%; height:auto;">
 <br>
 <img src="images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="images/MT_TagsNotes2.png" style="width:60%; height:auto;">
 
-#### Reports / Accounts (Standard, Brokerage, Personal Statement, Overall Cash Statement)
+### Reports / Accounts (Standard, Brokerage, Personal Statement, Overall Cash Statement)
 <br>
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
