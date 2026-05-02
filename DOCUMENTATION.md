@@ -102,15 +102,15 @@ Shading highlights the rows that need attention — focus only on shaded lines. 
 The final two columns are optional (toggle in Settings: “Hide future month columns — Remaining ‘this month’ & next month”).  
 
 The first of these shows last year’s expenses from tomorrow through the end of the month.
-(Example: on March 16, 2026 it displays transactions from March 17–31, 2025.)
+(Example: on March 16, 2026 it displays what happened from March 17–31, 2025.)
 
 The second shows the total for the entire next month from last year.
 Use them to compare expected remaining spend against the same period from the prior year.
 
 
-### Reports / Trends 
+### Reports / Trends details and charts
 
-Click on the > for  History drilldowns show per‑month details and allow opening side‑panel details.
+Click the **>** on the far right for history drill‑downs, month‑by‑month details, and the Month/Step charts.
 
 <img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
