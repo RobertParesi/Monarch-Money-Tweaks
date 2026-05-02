@@ -55,7 +55,7 @@ Highlights:
 - **Group By**: change how the report groups data (category, group, account, etc.).  
 - **Account Group Filter** appears after you assign account groups.
 - Click any column header to sort ascending/descending.
-- Click any date header to change date or in Trends change it to end of previous month.
+- Click any date header to change date or in Trends change to end of previous month.
 
 ---
 
