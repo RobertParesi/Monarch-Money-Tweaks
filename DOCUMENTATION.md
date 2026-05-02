@@ -77,16 +77,26 @@ Key options:
 
 ---
 
-### Reports / Trends — Compare, Monthly & Yearly
+### Reports / Trends 
 
 MM‑Tweaks derives Trends from transactions and transaction history only — it does not use any Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
 
 <img src="images/MT_V3_04.png" style="width:66%; height:auto;">
 
-- Compare views, monthly/yearly rollups, and drilldowns into history are supported.
-- History drilldowns show per‑month details and allow opening side‑panel details.
+The first three columns shows information designated the Sub Report:
 
-<br>
+* **Compare by last month** — Column 1 shows last month’s total, Column 2 shows this month’s total, and Column 3 shows the difference. Recommended only for brand‑new Monarch users without historical data.  
+
+* **Compare by same month** — Column 1 shows the total for the same month last year, Column 2 shows this month’s total, and Column 3 shows the difference. This is the usual preferred view.  
+
+* **Compare by same quarter** — Column 1 shows the total for the same quarter last year, Column 2 shows this quarter’s total, and Column 3 shows the difference. Good choice for retirees, those making estimated IRS payments, or anyone tracking spending on a quarterly basis.
+
+
+
+### Reports / Trends 
+
+Click on the > for  History drilldowns show per‑month details and allow opening side‑panel details.
+
 <img src="images/MT_V3_History.png" style="width:60%; height:auto;">
 
 ---
