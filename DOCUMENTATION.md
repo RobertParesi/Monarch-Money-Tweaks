@@ -143,7 +143,7 @@ There are three types of Investment reports:
 <br>
 <img src="images/MT_Invest02.png" style="width:66%; height:auto;">
 
-Detailed views:
+Click on the **>** in the far right of any investment holding for a Detailed view:
 <br>
 <img src="images/MT_Invest03.png" style="width:50%; height:auto;">
 <img src="images/MT_Invest04.png" style="width:50%; height:auto;">
