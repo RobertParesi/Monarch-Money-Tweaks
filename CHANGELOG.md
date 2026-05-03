@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
   * **Version 4.52 (May 3, 2026)**
-      - NEW: Better looking graphs.
+      - ENHANCEMENT: Better looking graphs.
       - CHANGE: Reports / Investments - Fixed Income investment category override setting was incorrect.  It is now enhanced as well to allow for all holdings to have an override.
       - CHANGE: Reports / Trends - Better handling of Ignores Current Month in Reports
       - REGRESSION: Reports / Investments will pickup new userCostBasis for Manual holdings.
