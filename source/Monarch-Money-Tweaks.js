@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.52
+// @version      4.53.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.52';
+const VERSION = '4.53';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2911,9 +2911,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     let skipRec = false;
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
-                    let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHoldingValue);
-                    if(holding.isManual == true && holding.userCostBasis > 0) useCostBasis = holding.userCostBasis;
-                    if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHoldingValue;}
+                    let useCostBasis = getCostBasis(holding,useHoldingValue);
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
@@ -4038,7 +4036,7 @@ async function InvestmentsDrawer(inP) {
             curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? hld[h].quantity * hld[h].closingPrice : hld[h].value;curValue = get2dec(curValue,2);
             allQty+=hld[h].quantity;
             allValue+=curValue;
-            allCost+=getCostBasis(hld[h].costBasis,hld[h].type,hld[h].quantity,curValue);
+            allCost+=getCostBasis(hld[h],curValue);
         }
     }
 
@@ -4054,7 +4052,7 @@ async function InvestmentsDrawer(inP) {
         allQty = thisHld.quantity;
         curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? thisHld.quantity * thisHld.closingPrice : thisHld.value;curValue = get2dec(curValue,2);
         allValue = curValue;
-        allCost = getCostBasis(thisHld.costBasis,thisHld.type,thisHld.quantity,curValue);
+        allCost = getCostBasis(thisHld,curValue);
         DrawerDrawLine(divTop2,'Account',thisHld.account.displayName,'','margin-top:20px;');
         if(thisHld.account.institution != null) {DrawerDrawLine(divTop2,'Institution',thisHld.account.institution.name);}
     }
@@ -6016,19 +6014,21 @@ function getBondPieces(inVal) {
     return [newStr,usePct,useDate, useXtro,useAMT,useOID];
 }
 
-function getCostBasis(inCost,inType,inQty,inVal) {
+function getCostBasis(inH,inVal) {
 
     let useCostBasis = 0;
-    if(inType == 'fixed_income') {
-        useCostBasis = inCost * 0.01;
+    if(inH.type == 'fixed_income') {
+        useCostBasis = inH.costBasis * 0.01;
         const diffPer = ((inVal - useCostBasis) / useCostBasis) * 100;
-        if(diffPer < -80 || diffPer > 1000) useCostBasis = inCost;
+        if(diffPer < -80 || diffPer > 1000) useCostBasis = inH.costBasis;
     } else {
-        useCostBasis = inCost;
+        useCostBasis = inH.costBasis;
     }
-    if(useCostBasis > 1100000 && inQty > 0) {
-        useCostBasis = get2dec(useCostBasis / inQty);
+    if(useCostBasis > 1100000 && inH.quantity > 0) {
+        useCostBasis = get2dec(useCostBasis / inH.quantity);
     }
+    if(inH.isManual == true && inH.userCostBasis > 0) useCostBasis = inH.userCostBasis;
+    if ((inH.typeDisplay === 'Cash' || inH.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = inVal;}
     return useCostBasis;
 }
 
