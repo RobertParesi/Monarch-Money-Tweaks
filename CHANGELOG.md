@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 4.51 (Beta)**
+      - CHANGE: Fixed Income investment category override setting was incorrect.  It is now enhanced as well to allow for all holdings to have an override.
+
   * **Version 4.50 (April 26, 2026)**
       - CHANGE: Reports / Investments side drawer "Current Price" will show up to 3 decimals.
       - CHANGE: Reports / Investments 1w change % subtotal corrected.
