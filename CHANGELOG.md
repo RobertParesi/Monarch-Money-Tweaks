@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-  * **Version 4.51 (Beta)**
+  * **Version 4.51 (May 3, 2026)**
       - CHANGE: Reports / Investments - Fixed Income investment category override setting was incorrect.  It is now enhanced as well to allow for all holdings to have an override.
       - CHANGE: Reports / Trends - Better handling of Ignores Current Month in Reports
 
