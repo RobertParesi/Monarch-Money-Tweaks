@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.50
+// @version      4.52
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,11 +16,12 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.50';
+const VERSION = '4.52';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~';
+const chartWidth = 664,chartHeight = 550;
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
@@ -36,120 +37,147 @@ let MTFlexDate1 = getDates('d_StartofMonth'), MTFlexDate2 = getDates('d_Today');
 
 function MM_Init() {
     css.reload = false;
-    let a = isDarkMode();
-    if(a == null) {css.reload = true;return;}
+    const a = isDarkMode();
+    if (a == null) { css.reload = true; return; }
     MM_RefreshAll();
-
-    const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
-    const panelText = 'color: ' + ['#777573;','#989691;'][a];
-    const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
-    const sidepanelBackground = 'background: ' + ['#ecfbff;','#373736;'][a];
-    const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
-    const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
-    const accentColor = '#ff692d;';
-    const bdr = 'border: 1px solid ' + ['#e4e1de;','#62605D;'][a];
-    const bdrb = 'border-bottom: 1px solid ' + ['#e4e1de;','#62605D;'][a];
-    const bdrb2 = 'border-bottom: 1px solid ' + ['#e4e1de;','#363532;'][a];
-    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;';
-
-    css.header = getCookie('MT_ColorHigh',false);css.subtotal = getCookie('MT_ColorLow',false);
-    if(css.header == '') {css.header = ['#e6e4e0','rgb(68,68,68)'][a];}
-    if(css.subtotal == '') {css.subtotal = ['#f9f6f3','rgb(48,48,48)'][a];}
-    css.header = 'background-color:' + css.header + ';';css.subtotal = 'background-color:' + css.subtotal + ';';
-
-    css.green = 'color:' + ['#2a7e3b','#3dd68c'][a] + ';';css.greenRaw = ['#2a7e3b','#3dd68c'][a];
-    css.red = 'color:' + ['#d13415','#f9918e'][a] + ';';css.redRaw = ['#d8543a','#f9918e'][a];
-    css.gGreen = 'color: #3dd68c;'; css.gRed = 'color: #f9918e;';
-    css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
-
-    if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
-    if(getCookie('MT_Ownership',true) == 1) {addStyle('.lofHBB {display:none;}');}
-    addStyle('.cb { -webkit-appearance: none;-moz-appearance: none;appearance: none;width: 22px;height: 22px;border-radius: 4px;' + bdr + 'background: transparent;display: inline-block;vertical-align: middle;cursor: pointer;position: relative;transition: background 120ms, border-color 120ms;}');
-    addStyle('.cb:checked {background: ' + accentColor + 'border-color: ' + accentColor +'}');
-    addStyle('.cb:checked::after {content: "";position: absolute;left: 7px; top: 2px;width: 5px;height: 11px;border: solid #fff;border-width: 0 2.5px 2.5px 0;transform: rotate(40deg);box-sizing: content-box;}');
-    addStyle('.MTField1 {width: 65%;}');addStyle('.MTField2 {width: 35%;}');
-    addStyle('.MTBub1 {float: right; margin-bottom: 10px !important; padding: 2px !important; width: 150px; text-align: center;}');
-    addStyle('.MTWait {width: 400px; margin: 100px auto 0; font-size: 15.5px; ' + css.font + BOLD + '}');
-    addStyle('.MTWait2 {color:' + accentColor + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
-    addStyle('.MTWait2 p {' + standardText + 'font-weight: 100;}');
-    addStyle('.MTPanelLink, .MTBudget a {' + BOLD + 'background-color: transparent; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-right: 10px; float: inline-start;}');
-    addStyle('.MTItemClass {padding-top: 6px;padding-bottom: 6px;}');
-    addStyle('.MTInputClass {margin-bottom: 12px; padding: 6px 12px; border-radius: 4px; ' + panelBackground + bdr + standardText +'}');
-    addStyle('.MTInputTitle {' + BOLD + 'font-size: 14px; height: 30px;}');
-    addStyle('.MTModelContainer {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;}');
-    addStyle('.MTModelWindow {position: absolute; top: 20%;left: 35%; }');
-    addStyle('.MTModelWindow2 {position: relative; width: 480px; height: 100%; padding: 16px 16px 0px 16px;' + panelBackground + bs + '}');
-    addStyle('.MTRow {display: flex;  width: 100%;  padding-left: 2px; padding-right: 2px; padding-top: 12px;}');
-    addStyle('.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + ' font-size: 14px; ' + BOLD + 'padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 8px;' + bdr + bs + ' 4px;cursor: pointer;}');
-    addStyle('.MTButtonSmall {' + css.font + ' margin-left: 4px; margin-right: 4px; font-size: 19px; cursor: pointer;}');
-    addStyle('.MTButtons { display: flex; padding-right: 16px;}');
-    addStyle('.MTWindowButton {margin-bottom: 20px;}');
-    addStyle('.MTWindowButton:last-child {margin-left: auto; color: #ffffff; background-color: ' + accentColor + '}');
-    addStyle('.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexContainer {display: grid; padding: 16px 16px 0px 16px;}');
-    addStyle('.MTFlexContainer2 {margin: 0px;  gap: 16px;  display: flex; flex-wrap: wrap;}');
-    addStyle('.MTFlexContainerPanel {display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
-    addStyle('.MTFlexContainerHeader {display: flex; justify-content: space-between;  padding: 16px 24px;');
-    addStyle('.MTFlexContainerCard {display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
-    addStyle('.MTFlexGrid {' + panelBackground + 'padding: 5px 12px 20px 12px; border-spacing: 0px;}');
-    addStyle('.MTFlexGrid th,.MTFlexGrid td { padding-right: 6px; padding-left: 6px;}');
-    addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
-    addStyle('.MTFlexGridTitleRow {font-size: 15.1px; ' + BOLD + 'height: 40px; position: sticky; top: 0; ' + panelBackground + '}');
-    addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px; border-radius:100%;}');
-    addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow {font-size: 14px; ' + BOLD + 'height: 30px;}');
-    addStyle('.MTFlexSpacer, .MTSpacerClass {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
-    addStyle('.MTSpacerClass {' + bdrb2 + '}');
-    addStyle('.MTFlexGridItem { font-size: 14px; height: 30px;}');
-    addStyle('.MTFlexGridItem:hover {' + selectBackground + '}');
-    addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
-    addStyle('.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align: right !important;}');
-    addStyle('.MTFlexGridSHCell {font-size: 13px; ' + BOLD + 'padding-top:6px; padding-bottom: 0px;}');
-    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText +' }');
-    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size: 15px; height: 30px;' + standardText + BOLD + '}');
-    addStyle('.MTFlexError{text-align: center; ' + BOLD + 'padding: 16px; margin: auto; margin-top: 20px; margin-bottom: 20px; border: 0px; border-radius: 8px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
-    addStyle('.MTFlexBig{font-size: 18px; ' + BOLD + 'padding-top: 6px; padding-bottom: 6px;}');
-    addStyle('.MTSpacerVertical {margin-left: 10px;width: 1px;flex-shrink: 0;background: rgb(228, 225, 222);height: 35px;margin-top: 6px;}');
-    addStyle('.MTFlexCardBig{font-size: 20px;' + BOLD + 'padding-top: 6px; text-align: center;}');
-    addStyle('.MTFlexText{font-size: 14px;' + panelText + BOLD + 'margin-left: 12px;}');
-    addStyle('.MTFlexSmall{font-size: 12px;' + panelText + BOLD + 'padding-top: 2px; padding-bottom: 2px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
-    addStyle('.MTFlexImage{border-radius: 100%; width: 23px; height: 23px; float: left; margin-right: 5px; background-size: cover;  background-repeat: no-repeat; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; }');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width: 25px; height: 25px; font-size: 17px; ' + css.font + 'padding: 0px; cursor: pointer; border-radius: 100%; border-style: none;}');
-    addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
-    addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
-    addStyle('.MTSideDrawerContainer {padding: 12px; width: 710px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
-    addStyle('.MTSideDrawerHeader {' + css.font + standardText + ' padding: 8px; }');
-    addStyle('.MTSideDrawerHeaderMsg {color: #ffffff; background-color: ' + accentColor + BOLD + ' padding-left: 12px;padding-top: 3px; height: 30px; border-radius: 6px; ' + css.font + '}');
-    addStyle('.MTSideDrawerItem, .MTSideDrawerMonth {margin-top: 5px; place-content: stretch space-between; display: flex; ');
-    addStyle('.MTSideDrawerItem2 {place-content: stretch space-between; display: flex;');
-    addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px;}');
-    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
-    addStyle('.MTSideDrawerDetail3 {' + standardText + BOLD + ' width: 13px; text-align: center; font-size: 13.5px;}');
-    addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor: pointer; color: rgb(50, 170, 240) !important;');
-    addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 200px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
-    addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + BOLD + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white;}');
-    addStyle('.MTSideDrawerSummaryTable {text-align: left; width: 100%;}');
-    addStyle('.MTSideDrawerSummaryTableTH {position: sticky; top: 0; ' + panelBackground + BOLD + '}');
-    addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 278px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
-    addStyle('.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none; margin-bottom: 14px; padding: 12px; min-width: 278px; ' + bdr + bs + '8px ; z-index: 1;}');
-    addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
-    addStyle('.trH {height: 4px;}');addStyle('.trH2 {height: 20px; vertical-align: top;}');addStyle('.show {display: block;}');
-    addStyle('.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width: 60px;text-align: center;font-size: 15px;border-radius: 100px; height: 32px;padding-top: 5px;' + BOLD + ';margin-left: 10px;cursor:pointer;}');
-    addStyle('.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}');
-    addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
-    addStyle('.ReportsTooltipRow__Diff-k9pa1b-3 {display: ' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}');
-    addStyle('.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display: ' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}');
-    addStyle('.tooltip {position: relative; display: inline-block;}');
-    addStyle('.tooltip .tooltiptext {width: 270px; font-size: 14px; ' + BOLD + 'text-align: left; padding: 10px; visibility: hidden; background-color: black; color: #fff; border-radius: 6px; position: absolute; z-index: 1; bottom: 1.5em; margin-left: -260px;}');
-    addStyle('.tooltip .tooltiptext::after {position: absolute; top:100%; left: 50%; border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
-    addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
-    addStyle('input::placeholder {font-size: 12px;}');
+    MM_initTheme(a);
+    MM_initStyles();
 }
 
+function MM_initTheme(a) {
+    const pick = (light, dark) => [light, dark][a];
+
+    const panelBackground = 'background-color: ' + pick('#FFFFFF;', '#222221;');
+    const panelText = 'color: ' + pick('#777573;', '#989691;');
+    const standardText = 'color: ' + pick('#22201d;', '#FFFFFF;');
+    const sidepanelBackground = 'background: ' + pick('#ecfbff;', '#373736;');
+    const selectBackground = 'background-color: ' + pick('#def7f9;', '#082c36;');
+    const selectForeground = 'color: ' + pick('#107d98;', '#4ccce6;');
+    const accentColor = '#ff692d;';
+    const bdr = 'border: 1px solid ' + pick('#e4e1de;', '#62605D;');
+    const bdrb = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#62605D;');
+    const bdrb2 = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#363532;');
+    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;';
+
+    css.panelBackground = panelBackground;css.sidepanelBackground = sidepanelBackground;
+    css.panelText = panelText;css.standardText = standardText;
+    css.selectBackground = selectBackground;css.selectForeground = selectForeground;
+    css.bdr = bdr;css.bdrb = bdrb;css.bdrb2 = bdrb2;
+    css.bs = bs;
+    css.accentColor = accentColor;
+
+    css.header = getCookie('MT_ColorHigh', false) || pick('#e6e4e0', 'rgb(68,68,68)');
+    css.subtotal = getCookie('MT_ColorLow', false) || pick('#f9f6f3', 'rgb(48,48,48)');
+    css.header = 'background-color:' + css.header + ';';
+    css.subtotal = 'background-color:' + css.subtotal + ';';
+
+    css.green = 'color:' + pick('#2a7e3b', '#3dd68c') + ';';
+    css.greenRaw = pick('#2a7e3b', '#3dd68c');
+    css.red = 'color:' + pick('#d13415', '#f9918e') + ';';
+    css.redRaw = pick('#d8543a', '#f9918e');
+    css.gGreen = 'color: #3dd68c;';
+    css.gRed = 'color: #f9918e;';
+    css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
+}
+
+function MM_initStyles() {
+    const {panelBackground,panelText,standardText,sidepanelBackground,selectBackground,selectForeground,accentColor,bdr,bdrb,bdrb2,bs} = css;
+
+    if (getCookie('MT_PendingIsRed', true) == 1) addStyle('.bmeuLc {color:' + accentColor + '}');
+    if (getCookie('MT_Ownership', true) == 1) addStyle('.lofHBB {display:none;}');
+
+    const rules = [
+        '.cb { -webkit-appearance:none;-moz-appearance:none;appearance:none;width:22px;height:22px;border-radius:4px;' + bdr + 'background:transparent;display:inline-block;vertical-align:middle;cursor:pointer;position:relative;transition:background 120ms,border-color 120ms;}',
+        '.cb:checked {background:' + accentColor + 'border-color:' + accentColor + '}',
+        '.cb:checked::after {content:"";position:absolute;left:7px;top:2px;width:5px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(40deg);box-sizing:content-box;}',
+        '.MTField1 {width:65%;}',
+        '.MTField2 {width:35%;}',
+        '.MTBub1 {float:right;margin-bottom:10px !important;padding:2px !important;width:150px;text-align:center;}',
+        '.MTWait {width:400px;margin:100px auto 0;font-size:15.5px;' + css.font + BOLD + '}',
+        '.MTWait2 {color:' + css.accentColor + panelBackground + ' padding:20px;' + bs + ' 8px;text-align:center;}',
+        '.MTWait2 p {' + standardText + 'font-weight:100;}',
+        '.MTPanelLink, .MTBudget a {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);}',
+        '.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-right:10px;float:inline-start;}',
+        '.MTItemClass {padding-top:6px;padding-bottom:6px;}',
+        '.MTInputClass {margin-bottom:12px;padding:6px 12px;border-radius:4px;' + panelBackground + bdr + standardText + '}',
+        '.MTInputTitle {' + BOLD + 'font-size:14px;height:30px;}',
+        '.MTModelContainer {position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:1000;}',
+        '.MTModelWindow {position:absolute;top:20%;left:35%;}',
+        '.MTModelWindow2 {position:relative;width:480px;height:100%;padding:16px 16px 0 16px;' + panelBackground + bs + '}',
+        '.MTRow {display:flex;width:100%;padding-left:2px;padding-right:2px;padding-top:12px;}',
+        '.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + 'font-size:14px;' + BOLD + 'padding:7.5px 12px;' + panelBackground + standardText + 'margin-left:8px;' + bdr + bs + '4px;cursor:pointer;}',
+        '.MTButtonSmall {' + css.font + 'margin-left:4px;margin-right:4px;font-size:19px;cursor:pointer;}',
+        '.MTButtons {display:flex;padding-right:16px;}',
+        '.MTWindowButton {margin-bottom:20px;}',
+        '.MTWindowButton:last-child {margin-left:auto;color:#ffffff;background-color:' + accentColor + '}',
+        '.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}',
+        '.MTFlexContainer {display:grid;padding:16px 16px 0 16px;}',
+        '.MTFlexContainer2 {margin:0;gap:16px;display:flex;flex-wrap:wrap;}',
+        '.MTFlexContainerPanel {display:flex;flex-flow:column;place-content:stretch flex-start;' + panelBackground + bs + '8px;}',
+        '.MTFlexContainerHeader {display:flex;justify-content:space-between;padding:16px 24px;}',
+        '.MTFlexContainerCard {display:flex;flex:1 1 0%;justify-content:space-between;padding:16px 24px;align-items:center;' + panelBackground + bs + '8px;}',
+        '.MTFlexGrid {' + panelBackground + 'padding:5px 12px 20px 12px;border-spacing:0;}',
+        '.MTFlexGrid th,.MTFlexGrid td {padding-right:6px;padding-left:6px;}',
+        '.MTFlexTitle2 {display:flex;flex-flow:column;}',
+        '.MTFlexGridTitleRow {font-size:15.1px;' + BOLD + 'height:40px;position:sticky;top:0;' + panelBackground + '}',
+        '.MTFlexGridTitleInd {display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:100%;}',
+        '.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer;color:rgb(50,170,240);}',
+        '.MTFlexGridRow {font-size:14px;' + BOLD + 'height:30px;}',
+        '.MTFlexSpacer, .MTSpacerClass {width:100%;margin-top:3px;margin-bottom:3px;' + bdrb + '}',
+        '.MTSpacerClass {' + bdrb2 + '}',
+        '.MTFlexGridItem {font-size:14px;height:30px;}',
+        '.MTFlexGridItem:hover {' + selectBackground + '}',
+        '.MTdropdown a:hover {' + selectBackground + selectForeground + '}',
+        '.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align:right !important;}',
+        '.MTFlexGridSHCell {font-size:13px;' + BOLD + 'padding-top:6px;padding-bottom:0;}',
+        '.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText + '}',
+        '.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px;}',
+        '.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}',
+        '.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size:15px;height:30px;' + standardText + BOLD + '}',
+        '.MTFlexError{text-align:center;' + BOLD + 'padding:16px;margin:auto;margin-top:20px;margin-bottom:20px;border:0;border-radius:8px;line-height:36px;color:white;background-color:' + accentColor + '}',
+        '.MTFlexBig{font-size:18px;' + BOLD + 'padding-top:6px;padding-bottom:6px;}',
+        '.MTSpacerVertical {margin-left:10px;width:1px;flex-shrink:0;background:rgb(228,225,222);height:35px;margin-top:6px;}',
+        '.MTFlexCardBig{font-size:20px;' + BOLD + 'padding-top:6px;text-align:center;}',
+        '.MTFlexText{font-size:14px;' + panelText + BOLD + 'margin-left:12px;}',
+        '.MTFlexSmall{font-size:12px;' + panelText + BOLD + 'padding-top:2px;padding-bottom:2px;text-transform:uppercase;line-height:150%;letter-spacing:1.2px;}',
+        '.MTFlexImage{border-radius:100%;width:23px;height:23px;float:left;margin-right:5px;background-size:cover;background-repeat:no-repeat;box-shadow:rgba(0,0,0,0.1) 0 0 0 1px inset;}',
+        '.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width:25px;height:25px;font-size:17px;' + css.font + 'padding:0;cursor:pointer;border-radius:100%;border-style:none;}',
+        '.MTFlexCellArrow:hover {border:1px solid ' + sidepanelBackground + ';box-shadow:rgba(8,40,100,0.1) 0 1px 2px;}',
+        '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
+        '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
+        '.MTSideDrawerHeader {' + css.font + standardText + 'padding:8px;}',
+        '.MTSideDrawerHeaderMsg {color:#ffffff;background-color:' + accentColor + BOLD + 'padding-left:12px;padding-top:3px;height:30px;border-radius:6px;' + css.font + '}',
+        '.MTSideDrawerItem, .MTSideDrawerMonth {margin-top:5px;place-content:stretch space-between;display:flex;}',
+        '.MTSideDrawerItem2 {place-content:stretch space-between;display:flex;}',
+        '.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:5px;' + standardText + 'width:24%;text-align:right;font-size:15px;}',
+        '.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + 'width:24%;text-align:right;font-size:14px;padding-right:5px;}',
+        '.MTSideDrawerDetail3 {' + standardText + BOLD + 'width:13px;text-align:center;font-size:13.5px;}',
+        '.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor:pointer;color:rgb(50,170,240) !important;}',
+        '.MTSideDrawerSummary {' + bs + '8px;height:200px;margin-top:3px;margin-bottom:10px;' + panelBackground + 'overflow:auto;}',
+        '.MTSideDrawerSummaryTag {background-color:' + accentColor + BOLD + 'border-right:4px;border-top-left-radius:8px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-right-radius:8px;color:white;}',
+        '.MTSideDrawerSummaryTable {text-align:left;width:100%;}',
+        '.MTSideDrawerSummaryTableTH {position:sticky;top:0;' + panelBackground + BOLD + '}',
+        '.MTFlexdown, .MTdropdown {float:right;position:relative;display:inline-block;font-weight:200;}',
+        '.MTFlexdown-content {' + panelBackground + standardText + ';display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + '8px;right:0;z-index:1;}',
+        '.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + '8px;z-index:1;}',
+        '.MTFlexdown-content div,.MTFlexdown-content2 div {font-size:0;line-height:2px;background-color:#ff7369;}',
+        '.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size:16px;text-align:left;border-radius:4px;font-weight:200;padding:10px 10px;display:block;}',
+        '.trH {height:4px;}',
+        '.trH2 {height:20px;vertical-align:top;}',
+        '.show {display:block;}',
+        '.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width:60px;text-align:center;font-size:15px;border-radius:100px;height:32px;padding-top:5px;' + BOLD + ';margin-left:10px;cursor:pointer;}',
+        '.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}',
+        '.Toast__Root-sc-1mbc5m5-0 {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}',
+        '.ReportsTooltipRow__Diff-k9pa1b-3 {display:' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}',
+        '.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display:' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}',
+        '.tooltip {position:relative;display:inline-block;}',
+        '.tooltip .tooltiptext {width:270px;font-size:14px;' + BOLD + 'text-align:left;padding:10px;visibility:hidden;background-color:black;color:#fff;border-radius:6px;position:absolute;z-index:1;bottom:1.5em;margin-left:-260px;}',
+        '.tooltip .tooltiptext::after {position:absolute;top:100%;left:50%;border-width:5px;border-style:solid;border-color:black transparent transparent transparent;}',
+        '.tooltip:hover .tooltiptext {visibility:visible;opacity:1;}',
+        'input::placeholder {font-size:12px;}'
+    ];
+    rules.forEach(addStyle);
+}
 
 function MM_GridFont() {
     css.FontFamily = getCookie('MT_MonoMT', false) || 'System';
@@ -324,7 +352,7 @@ function MF_GridTargetKeys() {
     if(MTFlex.TargetOptions == undefined) return null;
     let to = MTFlex.TargetOptions[MTFlex.Button1];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
-    let ao = MTFlex.Button4Options[MTFlex.Button4];
+    let ao = MTFlex.Button4Options?.[MTFlex.Button4] ?? '?';
     let base = x + to.replace(':','') + '|' + ao.replace(':','') + ':';
     let useKey0 = 'MTSummary1-' + base, useKey1 = 'MTSummary2-' + base,useKey2 = 'MTSummarySell-' + base,useKey3 = 'MTSummaryBuy-' + base;
     return([useKey0,useKey1,useKey2,useKey3]);
@@ -366,7 +394,6 @@ function MT_GridDrawDetails() {
     if(rowI < 1) { MTFlex.ErrorMsg = 'No records in ' + MTFlex.Title1 + '.\nCheck date range & selections above.';}
 
     function MT_GridDrawClear() {rowsInc = 0; for (let j=0; j < MTFlexTitle.length; j++) {Grouptotals[j] = null;}}
-
 
     function MT_GridDrawTitles() {
 
@@ -1165,9 +1192,9 @@ function MF_DrawBarChart(inLocation,inP) {
     divTop.className = 'MTChartContainer';
     divTop.id = 'MTChartCanvas';
     divTop = divHead.insertAdjacentElement('afterend', divTop);
-    let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 660; divChart.height = 660;
-
+    let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
     cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
+    MF_SetupCanvas(divChart);
 
     // load new targetData
     targetData = [];
@@ -1197,17 +1224,16 @@ function MF_DrawBarChart(inLocation,inP) {
         }
     }
     const ctx = divChart.getContext('2d');
-    const w = divChart.width, h = divChart.height;
-    ctx.clearRect(0,0,w,h);
+    ctx.clearRect(0,0,chartWidth,chartHeight);
     const values = targetData.map(it => it.value);
     const entries = targetData.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
     const maxItems = targetData.length > 20 ? 20 : targetData.length;
     const max = Math.max(...values, 1);
     const topPadding = 20,bottomPadding = 20,leftLabelWidth = 120,rightValueWidth = 60;
-    const barAreaWidth = w - leftLabelWidth - rightValueWidth - 20;
-    const barHeight = (h - topPadding - bottomPadding) / maxItems * 0.6;
-    const rowHeight = (h - topPadding - bottomPadding) / maxItems;
+    const barAreaWidth = chartWidth - leftLabelWidth - rightValueWidth - 20;
+    const barHeight = (chartHeight - topPadding - bottomPadding) / maxItems * 0.6;
+    const rowHeight = (chartHeight - topPadding - bottomPadding) / maxItems;
     const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
     MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' - ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
@@ -1237,8 +1263,6 @@ function MF_DrawBarChart(inLocation,inP) {
     entries.forEach((entry, i) => {
         let it = entry.it;
         const v = entry.v;
-        ctx.font = '13.5px sans-serif';
-        ctx.textBaseline = 'middle';
         if(i > 19) {
             let pct = it.percent;
             sumP+=pct;sumA+=it.value;sumC++;
@@ -1250,21 +1274,15 @@ function MF_DrawBarChart(inLocation,inP) {
         }
         if(!skipThis) {
             const yCenter = topPadding + rowHeight * i + rowHeight / 2;
-
             // left label
+            ctx.font = entries.length > 14 ? '12px sans-serif' : '13.5px sans-serif';
+            ctx.textBaseline = 'middle';
             ctx.fillStyle = standardText;
             ctx.textAlign = 'right';
-            if(it.title.length < 19 || it.subtitle) {
-                ctx.fillText(it.title, leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
-                if(it.subtitle) {
-                    ctx.font = '12px sans-serif';
-                    ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
-                    ctx.font = '13.5px sans-serif';
-                }
-            } else {
-                ctx.fillText(getStringPart(it.title,' ','left'), leftLabelWidth - 5, yCenter-8);
-                let sp = getStringPart(it.title,' ','right');sp = sp.slice(0,14);
-                ctx.fillText(sp, leftLabelWidth - 5, yCenter+8);
+            ctx.fillText(it.title.slice(0,14), leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
+            if(it.subtitle) {
+                ctx.font = '12px sans-serif';
+                ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
             }
 
             const barLength = (v / max) * barAreaWidth;
@@ -1297,19 +1315,19 @@ function MF_DrawBarChart(inLocation,inP) {
     });
     // bottom border
     ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();
-    ctx.moveTo(leftLabelWidth, h - bottomPadding);
-    ctx.lineTo(leftLabelWidth + barAreaWidth, h - bottomPadding);ctx.stroke();
+    ctx.moveTo(leftLabelWidth, chartHeight - bottomPadding);
+    ctx.lineTo(leftLabelWidth + barAreaWidth, chartHeight - bottomPadding);ctx.stroke();
     ctx.strokeStyle = standardText;ctx.lineWidth = 1;ctx.beginPath();
-    ctx.moveTo(120, 33);ctx.lineTo(120, 640);ctx.stroke();
+    ctx.moveTo(120, 33);ctx.lineTo(120, chartHeight - bottomPadding);ctx.stroke();
 
     // Set dash pattern: [dashLength, gapLength]
     let lastDash = 0;
     for (let i = 0; i < dashes.length; i++) {
         if(i > 0 && dashes[i].x > lastDash - 55) continue;
         ctx.setLineDash([5, 5]);ctx.lineWidth = 1;ctx.strokeStyle = '#D3D3D3';
-        ctx.beginPath();ctx.moveTo(dashes[i].x, dashes[i].y);ctx.lineTo(dashes[i].x, 640);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(dashes[i].x, dashes[i].y);ctx.lineTo(dashes[i].x, chartHeight - bottomPadding);ctx.stroke();
         ctx.fillStyle = standardText;ctx.textAlign = 'right';
-        ctx.fillText(getShortDollarValue(dashes[i].v), dashes[i].x,h - bottomPadding + 12);
+        ctx.fillText(getShortDollarValue(dashes[i].v), dashes[i].x,chartHeight - bottomPadding + 12);
         lastDash = dashes[i].x;
     }
     attachTooltip(divChart, hitboxes, inP[2]);
@@ -1358,6 +1376,16 @@ function attachTooltip(canvas, hitboxes, inCol) {
 }
 
 // [ Chart Canvas ]
+function MF_SetupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext("2d");
+    canvas.style.width = chartWidth + "px";
+    canvas.style.height = chartHeight + "px";
+    canvas.width = chartWidth * dpr;
+    canvas.height = chartHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
@@ -1372,6 +1400,7 @@ function MF_DrawChart(inLocation) {
         divTop.id = 'MTChartCanvas';
         divTop = div.insertAdjacentElement('afterend', divTop);
         divChart = cec('canvas','',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 400;
+        MF_SetupCanvas(divChart);
         divTooltip = cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
     } else {
         divChart = document.getElementById('MTChart');
@@ -1536,46 +1565,47 @@ function MF_DrawChart(inLocation) {
 
     function MF_DrawLineChart() {
 
+        const chartHeightA = chartHeight - 56
         const ctx = divChart.getContext('2d');
         const minPrice = Math.min(...xAxis),maxPrice = Math.max(...xAxis);
         const midPrice = (minPrice + maxPrice) / 2,midHPrice = (midPrice + maxPrice) / 2,midLPrice = (minPrice + midPrice) / 2;
-        const paddingLeft = 50,chartHeight = divChart.height - 56;
+        const paddingLeft = 50;
         const standardText = ['#333333','#cccccc'][isDarkMode()];
 
-        ctx.clearRect(0, 0, divChart.width, divChart.height);
+        ctx.clearRect(0, 0, chartWidth, chartHeight);
         points = [];
 
         ctx.strokeStyle = standardText;ctx.lineWidth = 1.0;
         // X axis
-        ctx.beginPath();ctx.moveTo(paddingLeft, chartHeight + 20);ctx.lineTo(divChart.width, chartHeight + 20); ctx.stroke();
+        ctx.beginPath();ctx.moveTo(paddingLeft, chartHeightA + 20);ctx.lineTo(chartWidth, chartHeightA + 20); ctx.stroke();
         // Y labels
         ctx.fillStyle = standardText;ctx.font = '600 12.2px Helvetica'; ctx.textAlign = 'right';
         let ad = 4;
         ctx.fillText(getShortDollarValue(maxPrice), paddingLeft - ad, 22);
-        ctx.fillText(getShortDollarValue(minPrice), paddingLeft - ad, 24 + chartHeight);
-        ctx.fillText(getShortDollarValue(midHPrice), paddingLeft - ad, 24 + (chartHeight/4));
-        ctx.fillText(getShortDollarValue(midPrice), paddingLeft - ad, 24 + (chartHeight/2));
-        ctx.fillText(getShortDollarValue(midLPrice), paddingLeft - ad, 24 + (chartHeight/2) + (chartHeight/4));
+        ctx.fillText(getShortDollarValue(minPrice), paddingLeft - ad, 24 + chartHeightA);
+        ctx.fillText(getShortDollarValue(midHPrice), paddingLeft - ad, 24 + (chartHeightA/4));
+        ctx.fillText(getShortDollarValue(midPrice), paddingLeft - ad, 24 + (chartHeightA/2));
+        ctx.fillText(getShortDollarValue(midLPrice), paddingLeft - ad, 24 + (chartHeightA/2) + (chartHeightA/4));
 
         if(minPrice < 0 && maxPrice > 0 && midLPrice != 0) {
-            const zeroY = 20 + ((maxPrice - 0) / (maxPrice - minPrice)) * chartHeight;
+            const zeroY = 20 + ((maxPrice - 0) / (maxPrice - minPrice)) * chartHeightA;
             ctx.setLineDash([5, 3]);
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(paddingLeft, zeroY);
-            ctx.lineTo(divChart.width, zeroY);
+            ctx.lineTo(chartWidth, zeroY);
             ctx.stroke();
             ctx.setLineDash([]);
         }
 
-        const numberOfGridLines = 5, gap = (chartHeight) / (numberOfGridLines - 1),lineYs = [];
+        const numberOfGridLines = 5, gap = (chartHeightA) / (numberOfGridLines - 1),lineYs = [];
 
         for (let i = 0; i < numberOfGridLines; i++) {lineYs.push(20 + i * gap); }
 
         // Grid lines
         ctx.strokeStyle = standardText;
         ctx.lineWidth = 0.50;
-        lineYs.forEach(y => {ctx.beginPath();ctx.moveTo(paddingLeft, y); ctx.lineTo(divChart.width, y);ctx.stroke();});
+        lineYs.forEach(y => {ctx.beginPath();ctx.moveTo(paddingLeft, y); ctx.lineTo(chartWidth, y);ctx.stroke();});
 
          // Ploy lines
         ctx.lineWidth = 1.8;
@@ -1584,8 +1614,8 @@ function MF_DrawChart(inLocation) {
         let useStyle = '',useLeg='',i=0, j=0;
         xAxis.forEach((p) => {
             if(p != null) {
-                const x = paddingLeft + ((divChart.width - paddingLeft - 5 ) * i) / (yAxis.length - 1);
-                const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeight;
+                const x = paddingLeft + ((chartWidth - paddingLeft - 5 ) * i) / (yAxis.length - 1);
+                const y = 20 + ((maxPrice - p) / (maxPrice - minPrice)) * chartHeightA;
                 useLeg = 2;
                 if(xAxis.length > yAxis.length) {
                     useStyle = css.legend[j];useLeg = j;
@@ -1631,10 +1661,10 @@ function MF_DrawChart(inLocation) {
                     dpS--;
                 } else {
                     let dr = performanceDataType > 0 ? getMonthName(d, 4) : d.slice(5, 10);
-                    let x = paddingLeft + ((divChart.width - paddingLeft) * i) / (yAxis.length - 1);
+                    let x = paddingLeft + ((chartWidth - paddingLeft) * i) / (yAxis.length - 1);
                     if (i === yAxis.length - 1) {x -= (dr.length > 5) ? 19 : (dr.length > 3) ? 16 : 11;}
                     ctx.save();
-                    ctx.translate(x, divChart.height - 11);
+                    ctx.translate(x, chartHeight - 11);
                     ctx.fillText(dr, 0, 0);
                     ctx.restore();
                     dpS = 0; firstPass = true;
@@ -2882,6 +2912,7 @@ async function MenuReportsInvestmentsGo() {
                     let skipRec = false;
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding.costBasis,holding.type,holding.quantity,useHoldingValue);
+                    if(holding.isManual == true && holding.userCostBasis > 0) useCostBasis = holding.userCostBasis;
                     if ((holding.typeDisplay === 'Cash' || holding.type === 'cash') && (!useCostBasis || useCostBasis === 0)) {useCostBasis = useHoldingValue;}
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
@@ -2889,7 +2920,11 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlex.Button1 > 5) {
                         let catOver = getCookie('MTAccountsCategory:' + holding.account.id,false);
                         if(catOver) {useCat = catOver;} else {
-                            if(holding.ticker) {useCat = getCookie('MTStockCategory:' + holding.ticker,false);}
+                            if(holding.ticker) {
+                                useCat = getCookie('MTStockCategory:' + holding.ticker,false);
+                            } else {
+                                useCat = getCookie('MTStockCategory:' + holding.id,false);
+                            }
                         }
                     }
                     if(!useCat) useCat = holding.typeDisplay;
@@ -3098,6 +3133,7 @@ async function MenuReportsTrendsGo() {
     TrendQueue = [];
     await MF_GridInit('MTTrends', 'Trends');
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
+    let TrendIgnoreCurrent = 0;
     let lowerDate = new Date(MTFlexDate1), higherDate = new Date(MTFlexDate2);
     lowerDate.setDate(1);lowerDate.setMonth(0);
     let month = lowerDate.getMonth(), day = lowerDate.getDate(), year = lowerDate.getFullYear();
@@ -3121,9 +3157,9 @@ async function MenuReportsTrendsGo() {
         MTP.IsSortable = 2;MTP.Format = 2;
         MF_QueueAddTitle(13,'Total',MTP);
         MF_QueueAddTitle(14,'Avg',MTP);
-        let newCol = 1,hideCol = false;
+        let newCol = 1,hideCol = false,avg='';
         if(MTFlex.Button2 == 3) {
-            if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
+            if(getCookie('MT_TrendIgnoreCurrent',true) == 1 && getDates('n_CurMonth') > 0 ) { TrendIgnoreCurrent = getDates('n_CurMonth'); avg = ' - Avg ignores Current Month'; }
             for (let i = 0; i < 12; i++) {
                 if(i > month2) {hideCol = true;}
                 MF_QueueAddTitle(newCol,getMonthName(i,true),MTP,hideCol);newCol++;
@@ -3136,10 +3172,12 @@ async function MenuReportsTrendsGo() {
             higherDate.setFullYear(year,11,31);
             for (let i = 0; i < 12; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
         } else if (MTFlex.Button2 > 7) {
+            avg = ' - Avg ignores Current Year';
             lowerDate.setFullYear(year - 12);
             for (let i = year - 11; i <= year; i++) {MF_QueueAddTitle(newCol,i.toString(),MTP);newCol++;}
+            TrendIgnoreCurrent = 11;
         } else if (MTFlex.Button2 == 5) {
-            if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
+            if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { TrendIgnoreCurrent = 11; avg = ' - Avg ignores Current Month'; }
             for (let i = month2 + 1; i < 12; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
             for (let i = 0; i <= month2; i++) {MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);newCol++;}
             if(month2 < 11) {
@@ -3160,8 +3198,8 @@ async function MenuReportsTrendsGo() {
         } else {
             await TrendsBuildData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         }
-        MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
-        await TrendsDataExtended();
+        MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2] + avg;
+        await TrendsDataExtended(TrendIgnoreCurrent);
     } else {
         let useFormat = 1;
         if(getCookie('MT_NoDecimals',true) == 1) {useFormat = 2;}
@@ -3281,7 +3319,7 @@ async function MenuReportsTrendsGo() {
     glo.spawnProcess = 1;
 }
 
-async function TrendsDataExtended() {
+async function TrendsDataExtended(TrendIgnoreCurrent) {
 
     let useDesc = '',lowestMonth = 13,useURL = '';
     for (let i = 0; i < MTFlexRow.length; i++) {
@@ -3337,9 +3375,7 @@ async function TrendsDataExtended() {
     if(getCookie('MT_TrendHide3',true) == 0) MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(13,1,12,'Add');
 
-    lowestMonth = 12;
-    if(getCookie('MT_TrendIgnoreCurrent',true) == 1) {if(MTFlex.Button2 == 3 || MTFlex.Button2 == 5) {lowestMonth = 11;}}
-    if(MTFlex.Button2 == 8) {lowestMonth = 11;}
+    lowestMonth = TrendIgnoreCurrent > 0 ? TrendIgnoreCurrent : 12;
     MF_GridCalcRowRange(14,1,lowestMonth,'Avg');
 
     MF_GridCardAdd(1,13,13,'HV','Total Income','',css.green);
@@ -3646,7 +3682,7 @@ function HistoryDrawerDraw() {
             if(curYears < 3) {
                 if(sumQue[i].YR2 != 0) {curYears = 2;}
             }
-            div3 = cec('span','MTSideDrawerDetail',div2,getMonthName(i,true),'',titleStyle + titleLStyle);
+            div3 = cec('span','MTSideDrawerDetail',div2,getMonthName(i,false),'',titleStyle + titleLStyle);
             if(skiprow == false) {div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR1),'','','data','range|' + startYear + '|' + String(i+1).padStart(2, '0'));}
             div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR2),'','','data','range|' + (startYear + 1) + '|' + String(i+1).padStart(2, '0'));
             div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR3),'','','data','range|' + (startYear + 2) + '|' + String(i+1).padStart(2, '0'));
@@ -3946,9 +3982,10 @@ async function InvestmentsDrawer(inP) {
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
-        sObj.button = '!Investments' + SS + sObj.big + SS + sObj.small + SS + thisHld.account.displayName;
+        sObj.button = '!Investments' + SS + sObj.big + SS + SS + sObj.small + SS + thisHld.account.displayName;
     } else {
-        sObj.button = '!Investments' + SS + useTicker + ' - ' + sObj.big + SS + useTicker + SS + sObj.small + SS + thisHld.account.displayName;
+        let overAct = useTicker ? useTicker : thisHld.id;
+        sObj.button = '!Investments' + SS + useTicker + ' - ' + sObj.big + SS + overAct + SS + sObj.small + SS + thisHld.account.displayName;
         if(useTicker != '') {
             sObj.big = useTicker + ' • ' + thisHld.name;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
@@ -4456,18 +4493,6 @@ function MM_FixCalendarDropdown(calItems) {
     for (let i = 0; i < ii; i++) { calItems.removeChild(calItems.firstChild); }
 }
 
-// [ Splits ]
-function MM_SplitTransaction() {
-    let li = gde('transaction-split-original-amount-column');
-    if(li) {
-        let AmtA = getCleanValue(li.innerText.trim(),2);
-        li = gde('transaction-split-modal-tabs');
-        let div = cec('button','MTButton',li,'Split 50%','','margin-left: 0px;');
-        let AmtB = get2dec(AmtA / 2);
-        AmtA = get2dec(AmtA - AmtB);
-        div.addEventListener('click', () => { inputTwoFields('CurrencyInput__Input',AmtA,AmtB); });
-    }
-}
 // [ Fix Note Popup ]
 function MM_NoteTag() {
 
@@ -4898,7 +4923,6 @@ function MenuCheckSpawnProcess() {
             case 4:MenuAccountsSummary();break;
             case 5:MM_Init();if(MTFlex.Name) {MenuReportsCustom(true);MenuReportsCustomUpdate();MF_GridDraw(1);} break;
             case 6:if(getCookie('MT_MerAssist',true)) {onClickContainer();}break;
-            case 7:MM_SplitTransaction();break;
             case 9:if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag();}break;
         }
     }
@@ -4930,9 +4954,6 @@ window.onclick = function(event) {
             case 'Flex-sc-165659u-0':
                 if(event.target.innerText.trim() == 'Last') {onClickLastNumber();}
                 if(startsInList(event.target.innerText.trim(),['\uf183','\uf13e','Light','Dark', 'System preference'])) {glo.spawnProcess = 5;return;}
-                break;
-            case 'Text-qcxgyd-0':
-                if(event.target.innerText.trim() == 'Split') { glo.spawnProcess = 7;}
                 break;
             case 'Tab__Root-ilk1fo-0':
             case 'Flex-sc-165659u-0':
@@ -5206,13 +5227,13 @@ function onClickOpenWindow(cn) {
             d.push({field1: '📌 Note', style1: BOLD, type: 'Input', style2: 'width: 100%;', key: 'MT_InvestmentsStockNote_' + cn[2], refresh: true, update: 'MTStockNote'});
         } else {
             d.push({field1: 'Holding Category', field2: cn[3], style1: BOLD});
-            d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.', style1: 'white-space: normal;'});
+            d.push({field1: 'To change category, select Accounts > ' + cn[4] + ', scroll down to Holdings and select > to change the Type.\n\nUse Reports > Accounts to override at the account level, such as for Bonds & 529s.', style1: 'white-space: normal;'});
         }
     }
     if(cn[0] == '!Accounts') {
         d.push({field1: 'Account Group', style1: BOLD, type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], refresh: true});
         d.push({field1: 'Subtype override [' + cn[3] + ']', style1: BOLD, type: 'Input', key: 'MTAccountsSub:' + cn[2],refresh: true});
-        d.push({field1: 'Holding Category override for all holdings in account', style1: BOLD, type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Communications, Financials, Health, Industrials, International, ...', refresh: true});
+        d.push({field1: 'Holding Category override for all holdings in account', style1: BOLD, type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Stocks, Bonds, Muni Bonds, ETF, Mutual Fund, Fixed Income, ...', refresh: true});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: BOLD, type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
     }
     if(cn[0] == '!BarChart' || cn[0] == '!HoldDetail') {
@@ -5728,19 +5749,6 @@ function getFullClassName(a) {
         }
     }
     return '';
-}
-
-function inputTwoFields(InSelector,InValue1,InValue2) {
-
-    let x = document.querySelectorAll('[class*="' + InSelector + '"]');
-    if(x[0]) {
-        x[0].focus();x[0].value = '';
-        document.execCommand('insertText', false, InValue1);
-        if(x[1]) {
-            x[1].focus();x[1].value = '';
-            document.execCommand('insertText', false, InValue2);
-        }
-    }
 }
 
 function isUsMarketOpenLocal(now = new Date()) {
@@ -6287,7 +6295,7 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     let qy = 'query Web_GetPortfolio($portfolioInput: PortfolioInput) { portfolio(input: $portfolioInput) {\n ';
     if (inBm) qy += '\n performance {totalValue totalChangePercent totalChangeDollars  \n benchmarks {security {id ticker name oneDayChangePercent } \n historicalChart {date returnPercent } } }';
-    qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeBalanceInNetWorth institution { id name } type { name display } subtype { name display } } } } } } } }';
+    qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis userCostBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeBalanceInNetWorth institution { id name } type { name display } subtype { name display } } } } } } } }';
     let options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
