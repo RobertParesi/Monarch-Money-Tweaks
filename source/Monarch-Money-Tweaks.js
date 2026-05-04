@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.53
+// @version      4.54
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.53';
+const VERSION = '4.54';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -5398,7 +5398,7 @@ async function onClickExpandSidePanelDetail(inTarget) {
     const oldDiv = document.querySelector('span.MTSideDrawerSummaryTag');
     if(oldDiv) oldDiv.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');
     inTarget.classList.replace('MTSideDrawerDetailS', 'MTSideDrawerSummaryTag');
-    const data = inTarget.getAttribute('data').split('|');
+    const data = inTarget.getAttribute('data').split(SS);
     if(data != null) {
         const pn = inTarget.parentNode;
         let div = document.createElement('div');
