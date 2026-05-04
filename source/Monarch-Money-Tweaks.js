@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.55
+// @version      4.56
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.55';
+const VERSION = '4.56';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1565,7 +1565,7 @@ function MF_DrawChart(inLocation) {
 
     function MF_DrawLineChart() {
 
-        const chartHeightA = chartHeight - 56
+        const chartHeightA = chartHeight - 56;
         const ctx = divChart.getContext('2d');
         const minPrice = Math.min(...xAxis),maxPrice = Math.max(...xAxis);
         const midPrice = (minPrice + maxPrice) / 2,midHPrice = (midPrice + maxPrice) / 2,midLPrice = (minPrice + midPrice) / 2;
