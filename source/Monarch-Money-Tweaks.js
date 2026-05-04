@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.53.1
+// @version      4.53
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1275,11 +1275,11 @@ function MF_DrawBarChart(inLocation,inP) {
         if(!skipThis) {
             const yCenter = topPadding + rowHeight * i + rowHeight / 2;
             // left label
-            ctx.font = entries.length > 14 ? '12px sans-serif' : '13.5px sans-serif';
+            ctx.font = it.title.length > 14 ? '11.5px sans-serif' : '13.5px sans-serif';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = standardText;
             ctx.textAlign = 'right';
-            ctx.fillText(it.title.slice(0,14), leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
+            ctx.fillText(it.title.slice(0,16), leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
             if(it.subtitle) {
                 ctx.font = '12px sans-serif';
                 ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
