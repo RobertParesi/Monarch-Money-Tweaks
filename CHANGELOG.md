@@ -3,7 +3,7 @@
   * **Version 4.51 - 4.54 (May 3, 2026)**
       - ENHANCEMENT: Better looking graphs.
       - CHANGE: Reports / Investments - Fixed Income investment category override setting was incorrect.  It is now enhanced as well to allow for all holdings to have an override.
-      - CHANGE: Reports / Trends - Better handling of Ignores Current Month in Reports
+      - CHANGE: Reports / Trends - Better handling of Ignores Current Month. 
       - REGRESSION: Reports / Investments will pickup new userCostBasis for Manual holdings.
       - REGRESSION: Reports / Accounts side drawer drill-down stopped working.
 
