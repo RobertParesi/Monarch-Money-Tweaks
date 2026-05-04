@@ -217,10 +217,6 @@ Notes:
 <br>
 <img src="images/MT_V3_10.png" style="width:66%; height:auto;">
 
-- Split transaction 50/50
-<br>
-<img src="images/MT_V3_03.png" style="width:60%; height:auto;">
-
 - Household breakdown on Accounts
 <br>
 <img src="images/MT_V3_13.png" style="width:60%; height:auto;">
