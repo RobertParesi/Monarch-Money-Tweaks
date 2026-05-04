@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.54
+// @version      4.55
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.54';
+const VERSION = '4.55';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -3681,9 +3681,9 @@ function HistoryDrawerDraw() {
                 if(sumQue[i].YR2 != 0) {curYears = 2;}
             }
             div3 = cec('span','MTSideDrawerDetail',div2,getMonthName(i,false),'',titleStyle + titleLStyle);
-            if(skiprow == false) {div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR1),'','','data','range|' + startYear + '|' + String(i+1).padStart(2, '0'));}
-            div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR2),'','','data','range|' + (startYear + 1) + '|' + String(i+1).padStart(2, '0'));
-            div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR3),'','','data','range|' + (startYear + 2) + '|' + String(i+1).padStart(2, '0'));
+            if(skiprow == false) {div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR1),'','','data','range' + SS + startYear + SS + String(i+1).padStart(2, '0'));}
+            div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR2),'','','data','range' + SS + (startYear + 1) + SS + String(i+1).padStart(2, '0'));
+            div3 = cec('span','MTSideDrawerDetailS',div2,getDollarValue(sumQue[i].YR3),'','','data','range' + SS + (startYear + 2) + SS + String(i+1).padStart(2, '0'));
             div3 = cec('span','MTSideDrawerDetail3',div2,['','',' '][useArrow],'','color: ' + [c_r,c_g,''][useArrow]);
 
             if(i < curMonth) {
@@ -4198,18 +4198,12 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
         cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','!TransData'+ SS + j);
         cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name);
         cec('td','MTSideDrawerSummaryData',newRow,rec.category.name);
-        useColor = '';
-        if(rec.category.group.type == 'expense') {
-            useAmt = rec.amount * -1;
-            if(useAmt < 0) useColor = css.green;
-        } else {
-            useAmt = rec.amount;
-            if(useAmt < 0) useColor = css.red;
-        }
+        useAmt = (rec.category.group.type === 'expense') ? -rec.amount : rec.amount;
+        useColor = useAmt < 0 ? (rec.category.group.type === 'expense' ? css.green : css.red) : '';
         if(rec.category.group.type == 'income') {useColor = css.green;}
         if(rec.hideFromReports == true) useColor += 'text-decoration: line-through;';
         cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(useAmt),'',useColor);
-        cec('td','MTSideDrawerSummaryData',newRow,rec.id,'','display:none;');
+        cec('td','',newRow,rec.id,'','display:none;');
     }
     tdSave.innerText = 'Date (' + filterCnt + ')';
 }
