@@ -81,7 +81,6 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
 * Enable/Disable (hide) specific menu items as needed.
 * Remove the "Difference Amount" tooltip from graphs in reports for a cleaner view.
 * Hide the Create Rule popup when adding or changing transactions to streamline the process.
-* Easily split a transaction 50/50 with auto-filled amounts for quick adjustments.
 * Correct the Calendar Year dropdown to display only years with available data (instead of starting from 2000).
 * Hide the Accounts Net Worth Graph Panel for a simplified view.
 * Highlight pending transactions when the Allow Edits to Pending Transactions setting is set to "Off."
