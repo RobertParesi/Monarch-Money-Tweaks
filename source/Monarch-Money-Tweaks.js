@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.56
+// @version      4.57.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.56';
+const VERSION = '4.57';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -24,7 +24,7 @@ const BOLD = 'font-weight: 600;',SS='\\~';
 const chartWidth = 664,chartHeight = 550;
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
-let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, owners: false, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
+let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
 
@@ -84,7 +84,6 @@ function MM_initStyles() {
     const {panelBackground,panelText,standardText,sidepanelBackground,selectBackground,selectForeground,accentColor,bdr,bdrb,bdrb2,bs} = css;
 
     if (getCookie('MT_PendingIsRed', true) == 1) addStyle('.bmeuLc {color:' + accentColor + '}');
-    if (getCookie('MT_Ownership', true) == 1) addStyle('.lofHBB {display:none;}');
 
     const rules = [
         '.cb { -webkit-appearance:none;-moz-appearance:none;appearance:none;width:22px;height:22px;border-radius:4px;' + bdr + 'background:transparent;display:inline-block;vertical-align:middle;cursor:pointer;position:relative;transition:background 120ms,border-color 120ms;}',
@@ -2895,8 +2894,8 @@ async function MenuReportsInvestmentsGo() {
             let RRN = 0;
             const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
-                const secPercent = edge.node.securityPriceChangePercent;
                 const holdings = edge.node.holdings;
+                let secPercent = edge.node.securityPriceChangePercent;
                 let hld=0;
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
@@ -4279,15 +4278,11 @@ function MenuAccountSummaryHide() {
 }
 
 async function MenuAccountsSummary() {
-    MenuAccountSummaryHide();
-    MF_Tips('MT_AssignGroups');
+
     const divTop = document.querySelector('div.MTAccountSummary');
     if (divTop) return;
 
-    if (getCookie('MT_Ownership', true) == 1 && glo.owners == false) {
-        const cls = getFullClassName('OwnershipAvatar');
-        if (cls) { addStyle('.' + cls + ' {display:none;}'); glo.owners = true; }
-    }
+    MF_Tips('MT_AssignGroups');
 
     let aSummary = [];
     const elements = gde('account-summary-card-group', true);
@@ -4661,7 +4656,10 @@ function MenuLogin(OnFocus) {
 
 function MenuAccounts(OnFocus) {
     if(OnFocus == true) {
-        if (glo.pathName == '/accounts' ) { MenuAccountSummaryHide();glo.spawnProcess = 4;}
+       if (glo.pathName == '/accounts' ) {
+         MenuAccountSummaryHide();
+         glo.spawnProcess = 4;
+       }
     }
 }
 
@@ -4729,7 +4727,6 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('"Refresh All" accounts the first time logging in for the day','MT_RefreshAll','checkbox');
     MenuDisplay_Input('Hide Accounts Net Worth Graph panel','MT_HideAccountsGraph','checkbox');
     MenuDisplay_Input('Hide Accounts Summary panel','MT_HideAccountsSummary','checkbox');
-    MenuDisplay_Input('Hide Shared View / Joint Ownership','MT_Ownership','checkbox');
     MenuDisplay_Input('Transactions','','spacer');
     MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
     MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
@@ -5065,7 +5062,7 @@ window.onclick = function(event) {
             MenuReportsGo();return;
         }
         if (cn === 'hidden' || cn.startsWith('TabNavLink-sc') || cn.startsWith('NavLink-sc')) {
-            removeAllSections('.MTFlexContainer');MTFlex = [];MenuReportsPanels('');MenuReportsCustomUpdate();return;
+           removeAllSections('.MTFlexContainer');MTFlex = [];MenuReportsPanels('');MenuReportsCustomUpdate();return;
         }
     }
     onClickMTDropdownRelease();
