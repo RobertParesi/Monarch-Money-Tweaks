@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.57.1
+// @version      4.57.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -21,7 +21,7 @@ const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~';
-const chartWidth = 664,chartHeight = 550;
+const chartWidth = 664,chartHeight = 534;
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
@@ -40,11 +40,11 @@ function MM_Init() {
     const a = isDarkMode();
     if (a == null) { css.reload = true; return; }
     MM_RefreshAll();
-    MM_initTheme(a);
-    MM_initStyles();
+    MM_InitTheme(a);
+    MM_InitStyles();
 }
 
-function MM_initTheme(a) {
+function MM_InitTheme(a) {
     const pick = (light, dark) => [light, dark][a];
 
     const panelBackground = 'background-color: ' + pick('#FFFFFF;', '#222221;');
@@ -80,7 +80,7 @@ function MM_initTheme(a) {
     css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
 }
 
-function MM_initStyles() {
+function MM_InitStyles() {
     const {panelBackground,panelText,standardText,sidepanelBackground,selectBackground,selectForeground,accentColor,bdr,bdrb,bdrb2,bs} = css;
 
     if (getCookie('MT_PendingIsRed', true) == 1) addStyle('.bmeuLc {color:' + accentColor + '}');
@@ -140,7 +140,7 @@ function MM_initStyles() {
         '.MTFlexText{font-size:14px;' + panelText + BOLD + 'margin-left:12px;}',
         '.MTFlexSmall{font-size:12px;' + panelText + BOLD + 'padding-top:2px;padding-bottom:2px;text-transform:uppercase;line-height:150%;letter-spacing:1.2px;}',
         '.MTFlexImage{border-radius:100%;width:23px;height:23px;float:left;margin-right:5px;background-size:cover;background-repeat:no-repeat;box-shadow:rgba(0,0,0,0.1) 0 0 0 1px inset;}',
-        '.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2, .MTGeneralCell {' + panelBackground + standardText + 'width:25px;height:25px;font-size:17px;' + css.font + 'padding:0;cursor:pointer;border-radius:100%;border-style:none;}',
+        '.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendSideToggle, .MTGeneralCell {' + panelBackground + standardText + 'width:25px;height:25px;font-size:17px;' + css.font + 'padding:0;cursor:pointer;border-radius:100%;border-style:none;}',
         '.MTFlexCellArrow:hover {border:1px solid ' + sidepanelBackground + ';box-shadow:rgba(8,40,100,0.1) 0 1px 2px;}',
         '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
         '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
@@ -1175,22 +1175,21 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawBarChart(inLocation,inP) {
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
+
     let divHead;
     if(inLocation) {
-        divHead = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;','parms',inP.join('||'),'MTDrawBarChart');
+        divHead = inLocation;
     } else {
         divHead = document.getElementById('MTDrawBarChart');
         if(!divHead) return;
         let divR = document.getElementById('MTChartCanvas');
         if(divR) divR.remove();
-        inP = divHead.getAttribute('parms');
-        if(inP) inP=inP.split('||');
+        divR = document.getElementById('MTSideDrawerGroup');
+        if(!divR) return;
+        inP = divR.getAttribute('data');
+        if(inP) inP = inP.split(',');
     }
-
-    let divTop = document.createElement('div');
-    divTop.className = 'MTChartContainer';
-    divTop.id = 'MTChartCanvas';
-    divTop = divHead.insertAdjacentElement('afterend', divTop);
+    let divTop = cec('div','MTChartContainer',divHead,'','','','','','MTChartCanvas');
     let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
     cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
     MF_SetupCanvas(divChart);
@@ -1199,7 +1198,7 @@ function MF_DrawBarChart(inLocation,inP) {
     targetData = [];
     let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
     let targetKeys = MF_GridTargetKeys();
-    let includeBuySell = getCookie('MTInvestments_SummaryDrawer',true);
+    let includeBuySell = inP[5] == 1 ? getCookie('MTInvestments_SummaryDrawer',true) : 0;
     let inRebalance = MTFlex.Subname == 'MTRebalance' ? true : false;
     for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
@@ -1212,8 +1211,8 @@ function MF_DrawBarChart(inLocation,inP) {
             let uValue = row[un];
             let sell = targetKeys[2] + row[0],buy = targetKeys[3] + row[0];
             let sellA = getCookie(sell,true), buyA = getCookie(buy,true);
-            if(inP[5] = 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
-            targetData.push({ percent: '', title: usePart, value: uValue, buy: buyA, sell: sellA, incBuySell: inP[5], record: inRebalance ? row[0] : useRec, section: inRebalance ? null : useSec });sumTotal += uValue;
+            if(inP[5] == 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
+            targetData.push({ percent: '', title: usePart, value: uValue, buy: buyA, sell: sellA, incBuySell: includeBuySell, record: inRebalance ? row[0] : useRec, section: inRebalance ? null : useSec });sumTotal += uValue;
         } else if (secMatch) {
             pkTotal += row[un];
             if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
@@ -1733,8 +1732,13 @@ function MF_DrawChart(inLocation) {
                         }
                     }
                     tt+='</table>';
-                    divTooltip.innerHTML = tt;
-                    divTooltip.style.display = 'block';
+                    divTooltip.innerHTML = tt;divTooltip.style.display = 'block';
+                    const tipRect = divTooltip.getBoundingClientRect(), pageX = e.clientX, pageY = e.clientY, margin = 8;
+                    let left = pageX - tipRect.width / 2;
+                    left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+                    let top = pageY - tipRect.height - margin;
+                    if (top < 8) top = pageY + margin;
+                    divTooltip.style.left = left + 'px';divTooltip.style.top = top + 'px';
                     return;
                 }
             }
@@ -1778,7 +1782,7 @@ function MF_SidePanelOpen(sObj) {
         if(sObj.toggle != null) {
             let useButton = getCookie(MTFlex.Name + '_' + (sObj.container ? sObj.container : 'SidePanel'),true);
             useButton = sObj.toggle[useButton];
-            let a = cec('button','MTTrendCellArrow2',div,useButton,'','float:right;margin-right: 16px;','options',sObj.toggle);
+            let a = cec('button','MTTrendSideToggle',div,useButton,'','float:right;margin-right: 16px;','options',sObj.toggle);
             a.setAttribute('title',sObj.toggletip);
         }
         if(sObj.button != null) {
@@ -4837,7 +4841,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.value = OldValue;
                 e2.id = inCookie;
-                e2.addEventListener('input', () => { if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} css.reload=true;});
+                e2.addEventListener('input', () => {if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} css.reload=true;});
                 e3 = document.createElement("label");
                 e3.innerText = inValue;
                 e3.htmlFor = inCookie;
@@ -4982,7 +4986,7 @@ window.onclick = function(event) {
             case 'MTSideDrawerDetailS':
             case 'MTSideDrawerSummaryTag':
                 onClickExpandSidePanelDetail(event.target);break;
-            case 'MTTrendCellArrow2':
+            case 'MTTrendSideToggle':
                 onClickSideToggle(event.target);
                 return;
             case 'MTPanelLink':
@@ -5716,8 +5720,9 @@ function gde(e,a,f) {
 
 // Generic Functions
 function removeAllSections(inDiv) {
-    if(Array.isArray(inDiv) == false) {inDiv = [inDiv];}
-    for (const div of inDiv) {
+    let x = [];
+    if(Array.isArray(inDiv) == false) {x.push(inDiv);} else {x = inDiv;}
+    for (const div of x) {
         const els = document.querySelectorAll(div);
         for (let i = 0; i < els.length; i++) { els[i].remove(); }
     }
