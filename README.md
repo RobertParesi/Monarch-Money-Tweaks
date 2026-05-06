@@ -33,7 +33,6 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
     - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
     - Highlight over-spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
-    - Sort history data by any column.
     - Breakdown expenses by "Fixed Expenses" and "Flexible Expenses".
     - Export to Excel or Numbers.
     - Customize comparisons and averages whether to include the current month if desired.
@@ -49,27 +48,25 @@ Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
      - Select to include or exclude Hidden Tagged Transactions.
      - Group transactions where transaction note starts with an asterisk. (ie: "* Hawaii 2025" or "* Wedding")
      - Group transactions by Goals.
-     - Click on date header to change date range.
 
 * **Reports / Accounts:**
      - Summarize your Monarch Money Account balances
      - Compare to different time periods
      - Show a Personal New Worth Statement
      - Show a Brokerage Statement
+     - Show an Overall Cash Statement (all cash in all your accounts)
      - Display by any date range or show Monthly, Quarterly and Yearly balances.
      - Display Income, Expenses and Transfers on the Account level with transaction drill-down.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort history data by any column.
      - Export to Excel or Numbers.
      - Generate a simple Personal Net Worth report for Loan Applications.
-     - Click on date header to change date range.
 
 * **Reports / Investments:**
 
     - Summarize your investment holdings.
     - Show Positions and Performance.
     - Show gain/loss, cost basis, stock price, stock chart, and more.
-    - Sort holdings data by any column.
     - Set target allocations at the institution, account, holding type or custom category level.
     - Export to Excel or Numbers.
              
