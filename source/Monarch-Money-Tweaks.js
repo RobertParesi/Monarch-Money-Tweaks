@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.57
+// @version      4.58
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.57';
+const VERSION = '4.58';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -26,7 +26,7 @@ const chartWidth = 664,chartHeight = 534;
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
-let portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
+let USERTOKEN,portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
 
 // flex container
 const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
@@ -1277,10 +1277,10 @@ function MF_DrawBarChart(inLocation,inP) {
             ctx.textBaseline = 'middle';
             ctx.fillStyle = standardText;
             ctx.textAlign = 'right';
-            ctx.fillText(it.title.slice(0,16), leftLabelWidth - 5, yCenter - (it.subtitle ? 8 : 0));
+            ctx.fillText(it.title.slice(0,16), leftLabelWidth - 5, yCenter - (it.subtitle ? 7 : 0));
             if(it.subtitle) {
                 ctx.font = '12px sans-serif';
-                ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+10);
+                ctx.fillText(it.subtitle, leftLabelWidth - 5, yCenter+8);
             }
 
             const barLength = (v / max) * barAreaWidth;
@@ -1990,7 +1990,8 @@ async function MenuReportsNetIncomeGo() {
     let useID = '',useAmt = 0, ii = 0, useTitle='',useURL = '';
     let HiddenFilter = false, hasNotes = false;
 
-    MF_GridInit('MTNet_Income', 'Net Income');
+    await MF_GridInit('MTNet_Income', 'Net Income');
+    if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     MTFlex.DateEvent = 2;
     MTFlex.TriggerEvents = true;
     MF_SetupDates();
@@ -2215,6 +2216,7 @@ async function MenuReportsAccountsDup() {
 async function MenuReportsAccountsGo() {
 
     await MF_GridInit('MTAccounts', 'Accounts');
+    if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10','11'];
     MTFlex.ChartOptions = ['1Y', '2Y','3Y','4Y','5Y'];
     MF_GridOptions(2,['Standard Report','Personal Statement','Brokerage Statement','Overall Cash Statement','Credit Card Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years by quarter','All years','Duplicate Transactions']);
@@ -2797,6 +2799,7 @@ function MenuReportsInvestmentsRebalance(redraw) {
 async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
+    if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     MTFlex.CanvasTitle = 'font-size: 13px;';
     MTFlex.CanvasRow = 'font-size: 13.1px;  line-height: 26px; height: 26px;';
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
@@ -3133,6 +3136,7 @@ async function MenuReportsTrendsGo() {
 
     TrendQueue = [];
     await MF_GridInit('MTTrends', 'Trends');
+    if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
     let TrendIgnoreCurrent = 0;
     let lowerDate = new Date(MTFlexDate1), higherDate = new Date(MTFlexDate2);
@@ -4841,7 +4845,7 @@ function MenuSettingsDisplay(inDiv) {
                 e2 = cec('input','MTCheckboxClass cb',e1,'','',inStyle,'type',inType);
                 e2.value = OldValue;
                 e2.id = inCookie;
-                e2.addEventListener('input', () => {if(event.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,event.target.value);} css.reload=true;});
+                e2.addEventListener('input', (e) => {if(e.target.value == '#000000') {setCookie(inCookie,'');} else {setCookie(inCookie,e.target.value);} css.reload=true;});
                 e3 = document.createElement("label");
                 e3.innerText = inValue;
                 e3.htmlFor = inCookie;
@@ -6202,11 +6206,19 @@ function MM_MenuRun(onFocus) {
     MenuSettings(onFocus);
 }
 // Query functions
-function getGraphqlToken() {return JSON.parse(JSON.parse(localStorage.getItem('persist:root')).user).token;}
-
 function callGraphQL(data) {
+    if(!USERTOKEN) {
+        const rootRaw = localStorage.getItem('persist:root');
+        if (!rootRaw) {addConsole('callGraphQL', 'No root found.', '');return null;}
+        const root = JSON.parse(rootRaw);
+        if (!root.user) {addConsole('callGraphQL', 'No user found.', rootRaw);return null;}
+        const user = JSON.parse(root.user);
+        if (!user) {addConsole('callGraphQL', 'No user data found.', user);return null;}
+        if (!user.token) {addConsole('callGraphQL', 'No token found.', user);return null;}
+        USERTOKEN = user.token;
+    }
     return {mode: 'cors',method: 'POST',
-        headers: {accept: '*/*',authorization: `Token ${getGraphqlToken()}`,'content-type': 'application/json',},
+        headers: {accept: '*/*',authorization: `Token ${USERTOKEN}`,'content-type': 'application/json',},
         body: JSON.stringify(data),
     };
 }
@@ -6387,11 +6399,15 @@ async function buildAccountBalances() {
 async function buildCategoryGroups() {
     if(accountGroups.length == 0) {
         const categoryData = await dataGetCategories();
-        let isFixed = '';
-        for (let i = 0; i < categoryData.categories.length; i++) {
-            isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
-            if(isFixed == true) {glo.accountsHasFixed = true;}
-            accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order, "ISFIXED": isFixed});
+        if(!categoryData) {
+            MTFlex.ErrorMsg = 'Unable to access the Monarch graphql API.\nSee Console errors for details.';return;
+        } else {
+            let isFixed = '';
+            for (let i = 0; i < categoryData.categories.length; i++) {
+                isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
+                if(isFixed == true) {glo.accountsHasFixed = true;}
+                accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order, "ISFIXED": isFixed});
+            }
         }
     }
 }
