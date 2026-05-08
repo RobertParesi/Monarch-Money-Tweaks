@@ -2,6 +2,7 @@
 
   * **Version 4.58 (May 7, 2026)**
     - ENHANCEMENT: Better error handling of graphQL User Token.
+    - FIX: Color picker in settings would not work under Firefox.
       
   * **Version 4.51 - 4.57 (May 5, 2026)**
       - ENHANCEMENT: Better looking graphs.
