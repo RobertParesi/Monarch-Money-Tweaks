@@ -1,4 +1,4 @@
-### Proprietary License — All Rights Reserved
+### Proprietary License — Not Open Source
 
 Copyright (c) Robert Paresi. All rights reserved.
 
