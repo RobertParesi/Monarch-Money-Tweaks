@@ -10,7 +10,7 @@ This repository and its contents (source code, documentation, assets, and any de
 
 The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only.   
 
-### 🐞🧪 - TamperMonkey & MM-Tweaks
+### 🧪 - TamperMonkey & MM-Tweaks
 
 If you're using the TamperMonkey MM‑Tweaks beta releases and want to join the beta group chat, let me know. I post release notes there, request specific feedback, and coordinate regression tests — your timely input helps catch issues early and prevents regressions for public users. Contact me (**Monarch Money Forum on Reddit** - moderator: Different_Record_753).
 
