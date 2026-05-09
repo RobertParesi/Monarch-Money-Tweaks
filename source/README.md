@@ -32,8 +32,5 @@ Please be aware that I have encountered instances where users have created forks
 
 ### Copyright Notice
 
-The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. All rights are reserved.
-
-THIS SOURCE CODE IS PROVIDED FOR PERSONAL, PRIVATE USE & INSPECTION ONLY. COPYING, REPRODUCTION, MODIFICATION, REDISTRIBUTION, PUBLIC DISPLAY, OR ANY DERIVATIVE WORKS IS PROHIBITED WITHOUT PRIOR WRITTEN CONSENT FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE FULLEST EXTENT OF APPLICABLE LAW.
-
+The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only.   
 
