@@ -1,3 +1,13 @@
+### Proprietary License — All Rights Reserved
+
+Copyright (c) Robert Paresi. All rights reserved.
+
+This repository and its contents (source code, documentation, assets, and any derivatives) are proprietary. No license, express or implied, is granted to any party under any intellectual property rights. Except as expressly authorized in writing by the copyright owner, you may not:
+
+- distribute, publish, sublicense, or make available the code to any third party;
+- use the code in any production system, service, or product;
+- remove or alter any copyright, trademark, or other proprietary notices.
+
 ### 🐞🧪 - TamperMonkey & MM-Tweaks
 
 If you're using the TamperMonkey MM‑Tweaks beta releases and want to join the beta group chat, let me know. I post release notes there, request specific feedback, and coordinate regression tests — your timely input helps catch issues early and prevents regressions for public users. Contact me (**Monarch Money Forum on Reddit** - moderator: Different_Record_753).
