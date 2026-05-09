@@ -1,4 +1,4 @@
-### Proprietary License Only
+### 🔑 - Proprietary License Only
 
 Copyright (c) Robert Paresi. All rights reserved.
 
@@ -8,29 +8,26 @@ This repository and its contents (source code, documentation, assets, and any de
 - use the code in any production system, service, or product;
 - remove or alter any copyright, trademark, or other proprietary notices.
 
+The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only.   
+
 ### 🐞🧪 - TamperMonkey & MM-Tweaks
 
 If you're using the TamperMonkey MM‑Tweaks beta releases and want to join the beta group chat, let me know. I post release notes there, request specific feedback, and coordinate regression tests — your timely input helps catch issues early and prevents regressions for public users. Contact me (**Monarch Money Forum on Reddit** - moderator: Different_Record_753).
 
-### Notice (READ THIS!)
+### ⚠️ - Notice (READ THIS!)
 
 Forked repositories must be made **PRIVATE** and not made **PUBLIC**.  Any forked **public** repositories will be blocked.
 
-### Latest Source Update
+### 📢 - Latest Source Update
 
 This is the latest source update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. 
 
 Thank you for your support!
 
-### Forked Repositories
+### 🚀 - Forked Repositories
 
 While you're welcome to use ChatGPT or AI tools to help customize the source code to suit your needs, I cannot provide support for such modifications.
 
 If you Fork this repository, you must change Repository settings / Repository visibility to **private** to protect your data. 
 
 Please be aware that I have encountered instances where users have created forks of this repository using AI and they have included financial information—such as account names and account balances—in publicly accessible source code.
-
-### Copyright Notice
-
-The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only.   
-
