@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
   * **Version 5.00 (Beta)**
-    - REGRESSION: API Token Authorization falure.
+    - REGRESSION: API Token Authorization failure.
       
   * **Version 4.51 - 4.58 (May 5, 2026)**
       - ENHANCEMENT: Better looking graphs.
