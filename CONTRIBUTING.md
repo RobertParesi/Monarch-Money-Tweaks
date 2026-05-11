@@ -1,7 +1,7 @@
 ##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Contributing
 
 ### Source Contributions
-The Monarch Money Tweaks extension (source code/GitHub) is not configured as "open-source / community contributions".  Factors such as security, code bloat, maintainability, consistency, App Store reviews, long-term support, and my available time influenced this choice.  I am not looking for AI or community code to enhance this extension. Any forked GitHubs must be made PRIVATE. 
+The Monarch Money Tweaks extension (source code/GitHub) is not configured as "open-source / community contributions".  Factors such as security, code bloat, maintainability, consistency, App Store reviews, ownership of the App Store accounts for Chrome, Firefox and Apple,  and my available time influenced this choice.  I am not looking for AI or community code to enhance this extension. Any forked GitHubs must be made PRIVATE. 
 
 ### Feature Suggestions
 Monarch Money Tweaks focuses primarily on the four additional reports: **Trends, Net Income, Accounts, and Investments**. I do not wish to add any features to Budgets, Recurring, and Goals because they are heavily changing in Monarch and involve other calculations. There are also areas in Monarch deep in their React code, such as their Graphs, Filters, and Transactions screen, which are out of the scope of Tweaks. Finally, I'm not looking to add small-impact visual items but rather items that help with digging deeper into finances, especially at a data mining, Trends, Accounts, and Investment level.  That said, I welcome your feedback. Please share any thoughts or suggestions in the Discussions section of this GitHub repository.
