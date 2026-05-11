@@ -1,7 +1,8 @@
 # Change Log (Version History)
 
   * **Version 5.00 (Beta)**
-    - REGRESSION: API Token Authorization failure.
+    - REGRESSION: Monarch related, API Token Authorization failure.
+    - REGRESSION: Monarch related, Hide notifications stopped working.
     - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
       
   * **Version 4.51 - 4.58 (May 5, 2026)**
@@ -26,7 +27,7 @@
  
  * **Version 4.46 (April 15, 2026)**
       - NEW: Detail/Summary option on Reports / Investments / Performance
-      - REGRESSION: Budget Summary stopped working because of MM change.
+      - REGRESSION: Monarch related, Budget Summary stopped working.
     
  * **Version 4.45 (April 11, 2026)**
       - NEW: Allocation rebalancing in Investments. Rebalance allocations at many different levels including a custom category such as "sector".  Click on Rebalance icon in Reports / Investments.
