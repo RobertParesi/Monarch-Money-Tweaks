@@ -14,18 +14,12 @@ For details and the reasoning behind that statement — and to clarify this is n
 
 ### ⚠️ - Notice (READ THIS!)
 
-Forked repositories must be made **PRIVATE** and not made **PUBLIC**.  Any forked **public** repositories will be blocked.
-
-### 📢 - Latest Source Update
-
-This is the latest source update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. 
-
-Thank you for your support!
-
-### 🚀 - Forked Repositories
-
 While you're welcome to use ChatGPT or AI tools to help customize the source code to suit your needs, I cannot provide support for such modifications.
 
 If you Fork this repository, you must change Repository settings / Repository visibility to **private** to protect your data. 
 
 Please be aware that I have encountered instances where users have created forks of this repository using AI and they have included financial information—such as account names and account balances—in publicly accessible source code.
+
+### 📢 - Latest Source Update
+
+This is the latest source update, which may include beta or modified features from the released extensions. If you encounter any issues while using Monarch Money Tweaks, please report them promptly so they can be addressed. 
