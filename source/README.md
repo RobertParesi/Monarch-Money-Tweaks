@@ -18,7 +18,7 @@ While you're welcome to use ChatGPT or AI tools to help customize the source cod
 
 If you Fork this repository, you must change Repository settings / Repository visibility to **private** to protect your data. 
 
-Please be aware that I have encountered instances where users have created forks of this repository using AI and they have included financial information—such as account names and account balances—in publicly accessible source code.
+Please be aware that I have encountered instances where a user created a fork of this repository using AI and it included financial information —such as account names and account balances—in publicly accessible source code.  This was not a reflection of MM-Tweaks or how it works.
 
 ### 📢 - Latest Source Update
 
