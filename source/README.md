@@ -12,10 +12,6 @@ The ideas behind this extension (the features and enhancements), along with its 
 
 For details and the reasoning behind that statement — and to clarify this is not an open‑source project — please see my [full statement here](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CONTRIBUTING.md).
 
-### 🧪 - TamperMonkey & MM-Tweaks
-
-If you're using the TamperMonkey MM‑Tweaks beta releases and want to join the beta group chat, let me know. I post release notes there, request specific feedback, and coordinate regression tests — your timely input helps catch issues early and prevents regressions for public users. Contact me (**Monarch Money Forum on Reddit** - moderator: Different_Record_753).
-
 ### ⚠️ - Notice (READ THIS!)
 
 Forked repositories must be made **PRIVATE** and not made **PUBLIC**.  Any forked **public** repositories will be blocked.
