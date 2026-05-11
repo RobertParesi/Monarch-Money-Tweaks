@@ -8,7 +8,9 @@ This repository and its contents (source code, documentation, assets, and any de
 - use the code in any production system, service, or product;
 - remove or alter any copyright, trademark, or other proprietary notices.
 
-The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only.   
+The ideas behind this extension (the features and enhancements), along with its source code (the JavaScript), are © Robert Paresi. The code is available here for inspection and PRIVATE USE only. 
+
+For details and the reasoning behind that statement — and to clarify this is not an open‑source project — please see my [full statement here](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CONTRIBUTING.md).
 
 ### 🧪 - TamperMonkey & MM-Tweaks
 
