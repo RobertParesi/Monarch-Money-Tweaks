@@ -2,6 +2,7 @@
 
   * **Version 5.00 (Beta)**
     - REGRESSION: API Token Authorization failure.
+    - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
       
   * **Version 4.51 - 4.58 (May 5, 2026)**
       - ENHANCEMENT: Better looking graphs.
