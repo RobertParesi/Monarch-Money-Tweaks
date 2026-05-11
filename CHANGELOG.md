@@ -1,7 +1,7 @@
 # Change Log (Version History)
 
   * **Version 5.00 (Beta)**
-    - REGRESSION: Monarch related, API Token Authorization failure.
+    - UPDATE: Monarch related, API Token Authorization failure.
     - REGRESSION: Monarch related, Hide notifications stopped working.
     - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
       
