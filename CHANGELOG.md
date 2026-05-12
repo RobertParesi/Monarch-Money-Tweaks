@@ -2,7 +2,7 @@
 
   * **Version 5.00 (Beta)**
     - UPDATE: Monarch related, API Token Authorization failure.
-    - REGRESSION: Monarch related, Hide notifications stopped working.
+    - REGRESSION: Monarch related, Hide Create Rule notification stopped working.
     - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
       
   * **Version 4.51 - 4.58 (May 5, 2026)**
