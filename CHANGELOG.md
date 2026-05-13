@@ -1,6 +1,7 @@
 # Change Log (Version History)
 
   * **Version 5.00 (Beta)**
+    - NEW: Reports / Investments setting to hide Moving Averages from side drawer.
     - UPDATE: Monarch related, API Token Authorization failure.
     - REGRESSION: Monarch related, Hide Create Rule notification stopped working.
     - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
