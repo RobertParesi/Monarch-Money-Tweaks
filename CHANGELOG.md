@@ -2,6 +2,7 @@
 
   * **Version 5.00 (Beta)**
     - NEW: Reports / Investments setting to hide Moving Averages from side drawer.
+    - NEW: Reports / Investments added 2Y option to stock chart.
     - UPDATE: Monarch related, API Token Authorization failure.
     - REGRESSION: Monarch related, Hide Create Rule notification stopped working.
     - REGRESSION: Reports / Investments setting target allocation did not auto refresh bar chart.
