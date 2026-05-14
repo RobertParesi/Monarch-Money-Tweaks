@@ -1,6 +1,6 @@
 # Change Log (Version History)
 
-  * **Version 5.00 (Beta)**
+  * **Version 5.1 (May 14, 2026)**
     - UPDATE: Monarch related, API Token Authorization failure.
     - NEW: Reports / Investments setting to hide Moving Averages from side drawer.
     - NEW: Reports / Investments added 2Y option to stock chart.
