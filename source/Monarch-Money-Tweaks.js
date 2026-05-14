@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      4.58
+// @version      5.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,12 +16,11 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const VERSION = '4.58';
-const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10), MNAME = 'MM-Tweaks';
+const MNAME = 'MM-Tweaks', VERSION = '5.1';
 const GRAPHQL = 'https://api.monarch.com/graphql';
+const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
-const BOLD = 'font-weight: 600;',SS='\\~';
-const chartWidth = 664,chartHeight = 534;
+const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
 let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
@@ -166,7 +165,7 @@ function MM_InitStyles() {
         '.show {display:block;}',
         '.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width:60px;text-align:center;font-size:15px;border-radius:100px;height:32px;padding-top:5px;' + BOLD + ';margin-left:10px;cursor:pointer;}',
         '.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}',
-        '.Toast__Root-sc-1mbc5m5-0 {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}',
+        '.z-toast {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}',
         '.ReportsTooltipRow__Diff-k9pa1b-3 {display:' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}',
         '.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display:' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}',
         '.tooltip {position:relative;display:inline-block;}',
@@ -1175,23 +1174,20 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 function MF_DrawBarChart(inLocation,inP) {
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
-
-    let divHead;
+    let divHead,divCanvas,divChart;
     if(inLocation) {
         divHead = inLocation;
     } else {
-        divHead = document.getElementById('MTDrawBarChart');
+        divHead = document.getElementById('MTSideDrawerGroup');
         if(!divHead) return;
-        let divR = document.getElementById('MTChartCanvas');
-        if(divR) divR.remove();
-        divR = document.getElementById('MTSideDrawerGroup');
-        if(!divR) return;
-        inP = divR.getAttribute('data');
+        inP = divHead.getAttribute('data');
         if(inP) inP = inP.split(',');
+        let divCanvas = document.getElementById('MTChartCanvas');
+        if(divCanvas) divCanvas.remove();
     }
-    let divTop = cec('div','MTChartContainer',divHead,'','','','','','MTChartCanvas');
-    let divChart = cec('canvas','MTBarChart',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
-    cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
+    divCanvas = cec('div','MTChartContainer',divHead,'','','','','','MTChartCanvas');
+    divChart = cec('canvas','MTBarChart',divCanvas,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
+    cec('div','',divCanvas,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
     MF_SetupCanvas(divChart);
 
     // load new targetData
@@ -1266,7 +1262,7 @@ function MF_DrawBarChart(inLocation,inP) {
             sumP+=pct;sumA+=it.value;sumC++;
             if(i != targetData.length-1) skipThis = true;
             if(i == targetData.length-1) {
-                let div = cec('div','SideDrawerHeader',divTop);
+                let div = cec('div','SideDrawerHeader',divCanvas);
                 cec('div','MTSideDrawerGroup',div,' ' + sumC + ' items not shown ' + getDollarValue(sumA) + ' (' + get2dec(sumP,1) + '%)','',css.font + 'font-size:14.5px;');
             }
         }
@@ -1387,7 +1383,7 @@ function MF_SetupCanvas(canvas) {
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let divChart = null, divTooltip = null, chartGroup = '', chartTip = '', chartTipB = '',chartMixed = false;
+    let divChart, divTooltip, chartGroup = '', chartTip = '', chartTipB = '',chartMixed = false;
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
     if(inLocation != null) {
@@ -1490,13 +1486,14 @@ function MF_DrawChart(inLocation) {
     }
 
     function MF_DrawChartInvestments() {
-        const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year'][MTFlex.ChartIndex]);
+        const timeFrame = getDates(['d_MinusWeek','d_Minus1Month','d_Minus3Months','d_Minus6Months','d_StartofYear','d_Minus1Year','d_Minus2Years'][MTFlex.ChartIndex]);
+        const timeShort = MTFlex.ChartIndex > 5 ? true : false;
         const chart = performanceData.securityHistoricalPerformance[0].historicalChart;
         if(chart == null) return;
         const xLen = chart.length;
-        let minV=0,maxV=0,moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
+        let short = 6,minV=0,maxV=0,moveAvg = {Start: [xLen > 22 ? xLen - 22 : 0,xLen > 52 ? xLen - 52:0,xLen > 202 ? xLen - 202 : 0], Accum: [0,0,0], Good: [0,0,0,0], Bad: [0,0,0,0], Style: ['','']};
         let yearago = getDates('d_Minus1Year');
-        chartTip = 'Day';
+        chartTip = timeShort == true ? '' : 'Day';
         for (let i = 0; i < xLen; i++) {
             const { date: useDate, value: useAmt } = chart[i];
             const dateS = new Date(useDate);
@@ -1505,7 +1502,14 @@ function MF_DrawChart(inLocation) {
                 if(maxV === 0 || useAmt > maxV) maxV = useAmt;
             }
             for (let j = 0; j < 3; j++) { if (i > moveAvg.Start[j] && i < xLen - 1) {moveAvg.Accum[j] += useAmt;}}
-            if (dateS > timeFrame) {xAxis.push(useAmt);yAxis.push(useDate);}
+            if (dateS > timeFrame) {
+                if (timeShort) {
+                    short++;
+                    const isLast = (i === xLen - 1);
+                    if (!isLast && short % 7 !== 0) continue;
+                    short = 0;
+                }
+                xAxis.push(useAmt);yAxis.push(useDate);}
         }
         let p = MF_DrawChartgetPriceDiff();
         if(p) {MF_DrawChartupdateDetail('MTPriceChange','Price Change (' + MTFlex.ChartValue + ')',getDollarValue(p[0]) + ' (' + p[1] + '%)', p[2]);}
@@ -1724,10 +1728,12 @@ function MF_DrawChart(inLocation) {
                             tt+= getDates('s_FullDate',nd);
                         }
                         tt+= '</td><td style="width: 140px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
-                        if(i > 0 && chartTip) {
-                            let p = MF_DrawChartgetPriceDiff(i,i-1, true);
-                            tt+= '<tr style="vertical-align: top;"><td style="padding-top: 12px;">' + chartTip + ' Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB +' (' + p[1] + '%)</td></tr>';
-                            p = MF_DrawChartgetPriceDiff(i,0, true);
+                        if(i > 0) {
+                            if(chartTip) {
+                                let p = MF_DrawChartgetPriceDiff(i,i-1, true);
+                                tt+= '<tr style="vertical-align: top;"><td style="padding-top: 12px;">' + chartTip + ' Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB +' (' + p[1] + '%)</td></tr>';
+                            }
+                            let p = MF_DrawChartgetPriceDiff(i,0, true);
                             tt+= '<tr style="vertical-align: top;"><td>Period Change:</td><td style="text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB + ' (' + p[1] + '%)</td></tr>';
                         }
                     }
@@ -2805,7 +2811,7 @@ async function MenuReportsInvestmentsGo() {
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
     MTFlex.TriggerEvents = true;
     MTFlex.SortSeq = ['1','2','3'];
-    MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y'];
+    MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y','2Y'];
     MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account'];
     MTFlex.TargetOptionsRun = [0,1];
 
@@ -3949,8 +3955,7 @@ async function SummaryDrawer(inP) {
     if(!divReload) {
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
-        divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
-        divTop2.setAttribute('data',inP);
+        divTop2 = cec('div','',divTop2,'','','','data',inP,'MTSideDrawerGroup');
         DrawerDrawLine(divTop2,'','0','MTTotal');
         DrawerDrawLine(divTop2,'','0','MTMax');
         DrawerDrawLine(divTop2,'','0','MTMin');
@@ -4012,8 +4017,10 @@ async function InvestmentsDrawer(inP) {
         DrawerDrawLine(divTop2,'Current Price',getDollarValue(thisHld.closingPrice,3),'MTCurrentPrice');
         if(thisHld.ticker != null && inList(thisHld.type,EQTYPES) > 0 && thisHld.closingPrice != 1) {
             DrawerDrawLine(divTop2,'52-Week Closing Range','','MTYTDPriceChange');
-            DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
-            DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
+            if(getCookie('MT_InvestmentHideMA',true) != 1) {
+                DrawerDrawLine(divTop2,'20-Day Moving Average','','MTMoveAvg20');
+                DrawerDrawLine(divTop2,'50-Day / 200-Day Moving Average','','MTMoveAvg50');
+            }
             let sn = getCookie('MT_InvestmentsStockNote_'+thisHld.ticker,false);
             DrawerDrawLine(divTop2,'📌 Note',sn,'MTStockNote',sn ? '' : 'display:none;');
             DrawerDrawLine(divTop2,'Price Change','','MTPriceChange','margin-top:20px;');
@@ -4048,8 +4055,7 @@ async function InvestmentsDrawer(inP) {
     }
 
     if(divReload == null) {
-        divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
-        divTop2.setAttribute('data',inP);
+        divTop2 = cec('div','',divTop2,'','','','data',inP,'MTSideDrawerGroup');
     } else {
         divTop2 = divReload;
         while (divTop2.firstChild) {divTop2.removeChild(divTop2.firstChild);}
@@ -4113,8 +4119,7 @@ async function InvestmentsDrawerCash(inP) {
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
-    divTop2 = cec('div','',divTop2,'','','','','','MTSideDrawerGroup');
-    divTop2.setAttribute('data',inP);
+    divTop2 = cec('div','',divTop2,'','','','data',inP,'MTSideDrawerGroup');
     if(inP[0] == 'UID') {
          DrawerDrawLine(divTop2,MTFlexTitle[1].Title,inP[1]);
          DrawerDrawLine(divTop2,MTFlexTitle[8].Title, MT_GetFormattedValue(MTFlexTitle[8].Format,MF_GridUID(useAct, 8)));
@@ -4785,7 +4790,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Reports / Investments Report','','spacer');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
-    MenuDisplay_Input('Hide Benchmarks from Performance','MT_InvestmentHideBM','checkbox');
+    MenuDisplay_Input('Hide Benchmark cards in Performance report','MT_InvestmentHideBM','checkbox');
+    MenuDisplay_Input('Hide Moving Averages in side drawer','MT_InvestmentHideMA','checkbox');
     MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
@@ -4816,7 +4822,7 @@ function MenuSettingsDisplay(inDiv) {
             case 'button':
                 return cec('button','MTButton',inValue,inCookie,'','float:right;',optValue,optValue2);
             case 'spacer':
-                cec('div','MTSpacerClass',qs);
+                cec('div','MTSpacerClass',qs,'','','margin-top: 10px; margin-bottom: 12px;');
                 return cec('div','MTItemClass',qs,inValue,'','font-size: 17px;' + BOLD);
             case 'text':
                 return cec('div','MTItemClass',qs,inValue,'',inStyle);
@@ -5130,8 +5136,8 @@ function onClickMTButton() {
         }
         removeAllSections('div.MTModelContainer');
     }
-    if(bt == '!SummaryDrawerTotal') {MF_DrawBarChart();}
-    if(MTFlex.Subname == 'MTRebalance') {MenuReportsInvestmentsRebalance(true);}
+    if(bt === '!SummaryDrawerTotal') {MF_DrawBarChart();}
+    if(MTFlex.Subname === 'MTRebalance') {MenuReportsInvestmentsRebalance(true);}
 }
 
 function onClickMTButtonSmall() {
@@ -5763,14 +5769,11 @@ function isUsMarketOpenLocal(now = new Date()) {
 }
 
 function getMonthName(inValue,inType) {
-    if(inValue === '') return;
+    if(inValue === '') return '';
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    if(inType == 4) {
-        const [year, month] = inValue.split('-'); return months[Number(month)-1].substring(0,3) + ' ' + year.substring(2,4);}
-    if(inType == 3) {
-        const [year, month] = inValue.split('-'); return year + '-' + months[Number(month)-1].substring(0,3);}
-    if(inType == 2) {
-        const [year, month, day] = inValue.split('-'); return months[Number(month)-1].substring(0,3) + ' ' + day + ', ' + year;}
+    if(inType == 4) {const [year, month] = inValue.split('-'); return months[Number(month)-1].substring(0,3) + ' ' + year.substring(2,4);}
+    if(inType == 3) {const [year, month] = inValue.split('-'); return year + '-' + months[Number(month)-1].substring(0,3);}
+    if(inType == 2) {const [year, month, day] = inValue.split('-'); return months[Number(month)-1].substring(0,3) + ' ' + day + ', ' + year;}
     if(inType == true) { return months[inValue].substring(0,3);} else {return months[inValue];}
 }
 
@@ -6182,8 +6185,8 @@ function sortTableByColumn(inEvent) {
 // Main Execution Loop
 (function() {
     setInterval(() => {
-        if(glo.menu == true) MM_MenuFix();
-        if(css.reload == true) {MM_Init();}
+        if(glo.menu === true) MM_MenuFix();
+        if(css.reload === true) {MM_Init();}
         if(window.location.pathname != glo.pathName) {
             if(glo.pathName) {MM_MenuRun(false);}
             glo.pathName = window.location.pathname;
@@ -6192,7 +6195,6 @@ function sortTableByColumn(inEvent) {
         MenuCheckSpawnProcess();
     },300);
 }());
-
 // Run when leaving & entering a page
 function MM_MenuRun(onFocus) {
     MenuReports(onFocus);
@@ -6208,20 +6210,15 @@ function MM_MenuRun(onFocus) {
 // Query functions
 function callGraphQL(data) {
     if(!USERTOKEN) {
-        const rootRaw = localStorage.getItem('persist:root');
-        if (!rootRaw) {addConsole('callGraphQL', 'No root found.', '');return null;}
-        const root = JSON.parse(rootRaw);
-        if (!root.user) {addConsole('callGraphQL', 'No user found.', rootRaw);return null;}
-        const user = JSON.parse(root.user);
-        if (!user) {addConsole('callGraphQL', 'No user data found.', user);return null;}
-        if (!user.token) {addConsole('callGraphQL', 'No token found.', user);return null;}
-        USERTOKEN = user.token;
+        const m = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
+        USERTOKEN = m ? m[2] : null;
+        if(!USERTOKEN) {console.error(MNAME,VERSION,'X-Csrftoken Error');return null;}
     }
-    return {mode: 'cors',method: 'POST',
-        headers: {accept: '*/*',authorization: `Token ${USERTOKEN}`,'content-type': 'application/json',},
-        body: JSON.stringify(data),
-    };
+    return {mode: 'cors',method: 'POST',credentials: 'include',
+        headers: {accept: '*/*','X-Csrftoken': `${USERTOKEN}`,'content-type': 'application/json','monarch-client': `${MNAME}`,'monarch-client-version': `${VERSION}`,},
+        body: JSON.stringify(data)};
 }
+
 async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
     if(inCat == undefined || inCat == null) inCat = [];
@@ -6232,7 +6229,7 @@ async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts,
      });
     return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) addConsole('dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+    .then((data) => { if(glo.debug == 1) addConsole('dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -6245,7 +6242,7 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
     });
   return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) addConsole('dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+    .then((data) => {if(glo.debug == 1) addConsole('dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -6260,7 +6257,7 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     });
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) addConsole('dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(VERSION,error);});
+        .then((data) => {if(glo.debug == 1) addConsole('dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
 }
 
 async function dataFixCats(inCat) {
@@ -6281,7 +6278,7 @@ async function dataTransactionsNotes(startDate,endDate) {
     });
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
 }
 
 async function dataGoals() {
@@ -6289,14 +6286,14 @@ async function dataGoals() {
           query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(VERSION,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
 }
 async function dataBenchmarks(startDate,endDate) {
     const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
                                  "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataBenchmarks',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+        .then((data) => { if(glo.debug == 1) addConsole('dataBenchmarks',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
@@ -6307,7 +6304,7 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     let options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+        .then((data) => { if(glo.debug == 1) addConsole('dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataPerformance(startDate,endDate,securityIds) {
@@ -6316,7 +6313,7 @@ async function dataPerformance(startDate,endDate,securityIds) {
     query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"});
        return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+        .then((data) => { if(glo.debug == 1) addConsole('dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataDisplayBalanceAt(date) {
@@ -6324,7 +6321,7 @@ async function dataDisplayBalanceAt(date) {
           query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
   return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) addConsole('dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+    .then((data) => {if(glo.debug == 1) addConsole('dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataAccountBalances(startDate) {
@@ -6332,7 +6329,7 @@ async function dataAccountBalances(startDate) {
          query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
    return fetch(GRAPHQL, options)
     .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+        .then((data) => { if(glo.debug == 1) addConsole('dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataGetAccounts(inID) {
@@ -6340,7 +6337,7 @@ async function dataGetAccounts(inID) {
           query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
   return fetch(GRAPHQL, options)
     .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) addConsole('dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(VERSION,error); });
+    .then((data) => { if(glo.debug == 1) addConsole('dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataRefreshAccounts() {
@@ -6348,7 +6345,7 @@ async function dataRefreshAccounts() {
          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
     return fetch(GRAPHQL, options)
     .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return '';}).catch((error) => { console.error(VERSION,error); });
+    .then((data) => {return '';}).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 async function dataGetCategories() {
@@ -6356,7 +6353,7 @@ async function dataGetCategories() {
           query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
     return fetch(GRAPHQL, options)
         .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) addConsole('dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(VERSION,error); });
+        .then((data) => {if(glo.debug == 1) addConsole('dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(MNAME,VERSION,error); });
 }
 
 function addConsole(a,b,c) {console.log(MNAME,a,b,c);}
@@ -6397,19 +6394,14 @@ async function buildAccountBalances() {
 }
 
 async function buildCategoryGroups() {
-    if(accountGroups.length == 0) {
-        const categoryData = await dataGetCategories();
-        if(!categoryData) {
-            MTFlex.ErrorMsg = 'Unable to access the Monarch graphql API.\nSee Console errors for details.';return;
-        } else {
-            let isFixed = '';
-            for (let i = 0; i < categoryData.categories.length; i++) {
-                isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
-                if(isFixed == true) {glo.accountsHasFixed = true;}
-                accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order, "ISFIXED": isFixed});
-            }
-        }
-    }
+  if (accountGroups.length) return;
+  const categoryData = await dataGetCategories();
+  if (!categoryData) {MTFlex.ErrorMsg = 'Unable to access the Monarch graphql API.\nSee Console errors for details.';return;}
+  for (const c of categoryData.categories) {
+    const isFixed = getCookie('MTGroupFixed:' + c.group.id, true);
+    if (isFixed) glo.accountsHasFixed = true;
+    accountGroups.push({GROUP: c.group.id,GROUPNAME: c.group.name,ID: c.id, NAME: c.name, ICON: c.icon, TYPE: c.group.type, ORDER: c.order, ISFIXED: isFixed});
+  }
 }
 
 // Return Query functions
