@@ -2,9 +2,9 @@
 
 **📣 Over 5,000 active users!**
 
-❗️ Monarch is rolling out API security updates gradually; the rollout should complete by end of week. As accounts are migrated to the new security model, MM‑Tweaks will require version 5.1 to function. 
+❗️ Monarch is rolling out API security updates gradually; the rollout should complete by end of week. As accounts are migrated to the new security model, MM‑Tweaks will require version 5.x to function. 
 
-### ⚙️ Installing MM-Tweaks for Monarch Money - Version 4.57
+### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.1/5.2
 
 Visit the official Extensions area for your browser using the following links: 
 
