@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.2
+// @version      5.3.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.2';
+const MNAME = 'MM-Tweaks', VERSION = '5.3';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -94,7 +94,8 @@ function MM_InitStyles() {
         '.MTWait {width:400px;margin:100px auto 0;font-size:15.5px;' + css.font + BOLD + '}',
         '.MTWait2 {color:' + css.accentColor + panelBackground + ' padding:20px;' + bs + ' 8px;text-align:center;}',
         '.MTWait2 p {' + standardText + 'font-weight:100;}',
-        '.MTPanelLink, .MTBudget a {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);}',
+        '.MTPanelLink {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);display: block; text-align: center;}',
+        '.MTBudget a {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);}',
         '.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-right:10px;float:inline-start;}',
         '.MTItemClass {padding-top:6px;padding-bottom:6px;}',
         '.MTInputClass {margin-bottom:12px;padding:6px 12px;border-radius:4px;' + panelBackground + bdr + standardText + '}',
@@ -144,14 +145,15 @@ function MM_InitStyles() {
         '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
         '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
         '.MTSideDrawerHeader {' + css.font + standardText + 'padding:8px;}',
-        '.MTSideDrawerHeaderMsg {color:#ffffff;background-color:' + accentColor + BOLD + 'padding-left:12px;padding-top:3px;height:30px;border-radius:6px;' + css.font + '}',
+        '.MTSideDrawerHeader2 {' + css.font + standardText + 'padding:8px;' + panelBackground + 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;margin-top: 6px;}',
+        '.MTSideDrawerHeaderMsg {color:#ffffff; background-color:' + accentColor + BOLD + 'padding-left:12px;padding-top:3px;height:30px;border-radius:6px;' + css.font + '}',
         '.MTSideDrawerItem, .MTSideDrawerMonth {margin-top:5px;place-content:stretch space-between;display:flex;}',
         '.MTSideDrawerItem2 {place-content:stretch space-between;display:flex;}',
         '.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:5px;' + standardText + 'width:24%;text-align:right;font-size:15px;}',
         '.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + 'width:24%;text-align:right;font-size:14px;padding-right:5px;}',
         '.MTSideDrawerDetail3 {' + standardText + BOLD + 'width:13px;text-align:center;font-size:13.5px;}',
         '.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor:pointer;color:rgb(50,170,240) !important;}',
-        '.MTSideDrawerSummary {' + bs + '8px;height:200px;margin-top:3px;margin-bottom:10px;' + panelBackground + 'overflow:auto;}',
+        '.MTSideDrawerSummary {' + bs + '8px;height:200px;margin-top:3px;margin-bottom:10px;' + panelBackground + 'overflow:auto;' + bdr + '}',
         '.MTSideDrawerSummaryTag {background-color:' + accentColor + BOLD + 'border-right:4px;border-top-left-radius:8px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-right-radius:8px;color:white;}',
         '.MTSideDrawerSummaryTable {text-align:left;width:100%;}',
         '.MTSideDrawerSummaryTableTH {position:sticky;top:0;' + panelBackground + BOLD + '}',
@@ -1329,7 +1331,7 @@ function MF_DrawBarChart(inLocation,inP) {
 
 function attachTooltip(canvas, hitboxes, inCol) {
 
-    const tooltip = document.getElementById('MTChartTip');
+    const divTooltip = document.getElementById('MTChartTip');
     canvas.onmousemove = function (e) {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -1339,34 +1341,31 @@ function attachTooltip(canvas, hitboxes, inCol) {
             if (x >= hb.x && x <= hb.x + hb.w && y >= hb.y && y <= hb.y + hb.h) { found = hb; break;}
         }
         if (found) {
-            let tt = '<table><tr><td colspan="2" style="text-align: center; color: yellow;">' + found.item.title + '</td></tr>';
-            tt += '<tr><td>'+ (found.item.incBuySell == 1 ? 'Proposed' : 'Current') + ' Amount</td><td style="width: 110px; text-align: right;">' + getDollarValue(found.item.value) + '</td></tr>';
-            tt += '<tr><td>' + (found.item.incBuySell == 1 ? 'Proposed' : 'Current') + '</td><td style="text-align: right;">' + found.item.percent + '%</td></tr>';
+            glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
+            let tipData = [];
+            tipData.push([found.item.title,'text-align: center; color: yellow;']);
+            tipData.push([(found.item.incBuySell == 1 ? 'Proposed' : 'Current') + ' Amount','',getDollarValue(found.item.value),'width: 110px; text-align: right;']);
+            tipData.push([(found.item.incBuySell == 1 ? 'Proposed' : 'Current'),'',found.item.percent + '%','text-align: right;']);
             if(found.item.target) {
                 let aml = '',am = found.item.value - found.item.targetV;
                 let am2l = '',am2 = get2dec(found.item.percent - found.item.target,1);
                 if(am > 0) aml = '+';
                 if(am2 > 0) am2l = '+';
-                tt += '<tr><td>Target Amount</td><td style="text-align: right;">' + getDollarValue(found.item.targetV) + '</td></tr>';
-                tt += '<tr><td>Target</td><td style="text-align: right;">' + found.item.target + '%</td></tr>';
-                tt += '<tr><td>' + (am > 0 ? 'Over ' : 'Short ') + ' Amount</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + aml + getDollarValue(am,2) + '</td></tr>';
-                tt += '<tr><td>Target Difference</td><td style="text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '') + '">' + am2l + am2 + '%</td></tr>';
+                tipData.push(['Target Amount','',getDollarValue(found.item.targetV),'text-align: right;']);
+                tipData.push(['Target','',found.item.target + '%','text-align: right;']);
+                tipData.push([(am > 0 ? 'Over ' : 'Short ') + ' Amount','',aml + getDollarValue(am,2),'text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '')]);
+                tipData.push(['Target Difference','',am2l + am2 + '%','text-align: right;' + (am2 < -5 || am2 > 5 ? css.red : '')]);
                 if(found.item.incBuySell == 1) {
-                    tt += '<tr><td colspan="2" style="color: yellow;text-align: center;">Includes Sells & Buys</td></tr>';
-                    tt += '<tr><td>Sell Amount</td><td style="text-align: right;">' + getDollarValue(found.item.sell) + '</td></tr>';
-                    tt += '<tr><td>Buy Amount</td><td style="text-align: right;">' + getDollarValue(found.item.buy) + '</td></tr>';
+                    tipData.push(['Includes Sells & Buys','color: yellow;text-align: center;']);
+                    tipData.push(['Sell Amount','',getDollarValue(found.item.sell),'text-align: right;']);
+                    tipData.push(['Buy Amount','',getDollarValue(found.item.buy),'text-align: right;']);
                 }
             }
-            tt += '</table>';
-            tooltip.style.display = 'block';
-            tooltip.innerHTML = tt;
-            tooltip.style.left = (Math.min(x,450) + rect.left) + 'px';
-            tooltip.style.top = (y - 80 + rect.top) + 'px';
-            glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
+            MF_DrawToolTip(e,divTooltip,tipData);
             document.body.style.cursor = "pointer";
-        } else {tooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
+        } else {divTooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
     };
-    canvas.onmouseleave = function () {tooltip.style.display = 'none';};
+    canvas.onmouseleave = function () {divTooltip.style.display = 'none';};
 }
 
 // [ Chart Canvas ]
@@ -1383,7 +1382,7 @@ function MF_SetupCanvas(canvas) {
 function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
-    let divChart, divTooltip, chartGroup = '', chartTip = '', chartTipB = '',chartMixed = false;
+    let divChart, divTooltip, chartGroup = '', chartTip = '',chartMixed = false;
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
     if(inLocation != null) {
@@ -1438,7 +1437,7 @@ function MF_DrawChart(inLocation) {
         let useV = 0, useBal = 0, filterAct = [];
         if(grpType == 'Group') {filterAct = MF_GridPKUIDs(grpSubtype);} else {filterAct.push(grpID);}
         let timeFrame = getDates(['d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.ChartIndex]);
-        chartTip = 'Month';chartTipB = '<br>';
+        chartTip = 'Month';
         for (const pd of performanceData.accounts) {
             if (!filterAct.includes(pd.id)) continue;
             if (!chartGroup) {chartGroup = pd.type.group;continue;}
@@ -1677,15 +1676,15 @@ function MF_DrawChart(inLocation) {
     }
 
     function drawChartFormatPercentDiff(x, y, s) {
-        if (isNaN(x) || isNaN(y)) return '';
+        if (isNaN(x) || isNaN(y)) return ['',''];
         if (x === y) return '0.0%';
         const c = y === 0 ? 100 : ((x - y) / Math.abs(y)) * 100;
         const v = (c > 0 ? '+' : '') + c.toFixed(1) + '%';
-        if (!s || c === 0) return v;
+        if (!s || c === 0) return [v,''];
         const upIsRed = s === 1;
         const positive = c > 0;
         const style = (upIsRed === positive) ? css.gRed : css.gGreen;
-        return `<div style="${style}">${v}</div>`;
+        return [v,style];
     }
 
     function drawChartTips() {
@@ -1699,9 +1698,7 @@ function MF_DrawChart(inLocation) {
                 const dx = x - pt.x;
                 const dy = y - pt.y;
                 if (dx * dx + dy * dy <= 64) {
-                    divTooltip.style.left = (Math.min(x,376) + rect.left) + 'px';
-                    divTooltip.style.top = (y - 120 + rect.top) + 'px';
-                    let tt='<table>';
+                    let tipData = [];
                     if(xAxis.length > yAxis.length) {
                         const Mth = pt.date.slice(2,4);
                         let ptDate = MTFlex.ChartIndex == 1 ? points[0]?.date.slice(5) + ' - ' : '';
@@ -1710,47 +1707,61 @@ function MF_DrawChart(inLocation) {
                             pt = points[k];
                             xMth = pt.date.slice(2,4);
                             if(Mth == xMth) {
-                                tt+= '<tr>';
-                                tt+= '<td style="width: 18px; color: ' + pt.style + '">●</td>';
                                 if(k ==0) ptDate = '';
-                                tt+= '<td style="width: 105px;">' + ptDate + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend] + '</td>';
-                                tt+= '<td style="width: 100px; text-align: right; font-weight: 100;">' + getDollarValue(pt.price) + '</td>';
-                                tt+= '<td style="width: 65px; text-align: right; font-weight: 100;">[' + leg + ']</td>';
-                                tt+= '</tr>';
+                                const tt1 = ptDate + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend];
+                                tipData.push(['●','width: 18px; color: ' + pt.style,tt1,'width: 105px;',getDollarValue(pt.price),'width: 100px; text-align: right; font-weight: 100;',leg,''])
                                 legs[leg] = pt.price;leg++;
                             }
                         }
-                        for (let k = 0; k < leg; k++) {tt = tt.replace('[' + k + ']',drawChartFormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2));}
-                    } else {
-                        tt+='<tr><td style="width: 140px;">';
-                        if(pt.date.startsWith('*')) {tt+= pt.date.slice(5);} else {
-                            let nd = new Date(pt.date + 'T00:00:00');
-                            tt+= getDates('s_FullDate',nd);
+                        for (let k = 0; k < tipData.length; k++) {
+                            const td = drawChartFormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2);
+                            tipData[k][6] = td[0];tipData[k][7] = 'width: 65px; text-align: right; font-weight: 100;' + td[1];
                         }
-                        tt+= '</td><td style="width: 140px; text-align: right;">' + getDollarValue(pt.price) + '</td></tr>';
+                    } else {
+                        let tt0 = '';
+                        if(pt.date.startsWith('*')) {tt0 = pt.date.slice(5);} else {
+                            let nd = new Date(pt.date + 'T00:00:00');
+                            tt0 = getDates('s_FullDate',nd);
+                        }
+                        tipData.push([tt0,'width: 140px;', getDollarValue(pt.price),'width: 140px; text-align: right;']);
                         if(i > 0) {
                             if(chartTip) {
                                 let p = MF_DrawChartgetPriceDiff(i,i-1, true);
-                                tt+= '<tr style="vertical-align: top;"><td style="padding-top: 12px;">' + chartTip + ' Change:</td><td style="padding-top: 12px; text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB +' (' + p[1] + '%)</td></tr>';
+                                tipData.push([ chartTip + ' Change:','vertical-align: top;padding-top: 12px;',getDollarValue(p[0]) + '\n(' + p[1] + '%)','padding-top: 12px; text-align: right;' + p[2]]);
                             }
                             let p = MF_DrawChartgetPriceDiff(i,0, true);
-                            tt+= '<tr style="vertical-align: top;"><td>Period Change:</td><td style="text-align: right;' + p[2] + '">' + getDollarValue(p[0]) + chartTipB + ' (' + p[1] + '%)</td></tr>';
+                            tipData.push(['Period Change:','vertical-align: top;',getDollarValue(p[0]) + '\n(' + p[1] + '%)','text-align: right;' + p[2]]);
                         }
                     }
-                    tt+='</table>';
-                    divTooltip.innerHTML = tt;divTooltip.style.display = 'block';
-                    const tipRect = divTooltip.getBoundingClientRect(), pageX = e.clientX, pageY = e.clientY, margin = 8;
-                    let left = pageX - tipRect.width / 2;
-                    left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
-                    let top = pageY - tipRect.height - margin;
-                    if (top < 8) top = pageY + margin;
-                    divTooltip.style.left = left + 'px';divTooltip.style.top = top + 'px';
+                    MF_DrawToolTip(e,divTooltip,tipData);
                     return;
                 }
             }
             divTooltip.style.display = 'none';
         });
     }
+}
+
+function MF_DrawToolTip(e, divTooltip, inData) {
+    const old = document.getElementById('MTTipTable');
+    if (old) old.remove();
+    const divTable = cec('table', '', divTooltip, '', '', '', '', '', 'MTTipTable');
+
+    for (const row of inData) {
+        const tr = cec('tr', '', divTable);
+        const td = cec('td', '', tr, row[0], '', row[1]);
+        if (row[2] !== undefined) {cec('td', '', tr, row[2], '', row[3]);} else {td.setAttribute('colspan','2');}
+        if (row[4] !== undefined) cec('td', '', tr, row[4], '', row[5]);
+        if (row[6] !== undefined) cec('td', '', tr, row[6], '', row[7]);
+    }
+
+    divTooltip.style.display = 'block';
+    const tip = divTooltip.getBoundingClientRect();
+    const pageX = e.clientX, pageY = e.clientY, margin = 8;
+    let left = Math.max(8, Math.min(pageX - tip.width / 2, window.innerWidth - tip.width - 8));
+    let top = pageY - tip.height - margin;
+    if (top < 8) top = pageY + margin;
+    divTooltip.style.left = left + 'px';divTooltip.style.top = top + 'px';
 }
 
 function MF_DrawChartupdateDetail(inE,val1,val2,stl,ttl) {
@@ -3651,7 +3662,7 @@ function HistoryDrawerDraw() {
 
         div = cec('div','MTSideDrawerHeader',divTop);
         MF_DrawChart(div);
-        div = cec('div','MTSideDrawerHeader',divTop,'','',css.FontFamily);
+        div = cec('div','MTSideDrawerHeader2',divTop);
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": HistoryDrawerUpdate(i+1,startYear),"YR2": HistoryDrawerUpdate(i+1,startYear + 1),"YR3": HistoryDrawerUpdate(i+1,startYear + 2)});
         }
@@ -3713,7 +3724,7 @@ function HistoryDrawerDraw() {
         HistoryDrawerTotals('Highest','line-height: 20px;');
         HistoryDrawerTotals('Lowest','line-height: 20px;');
         div = cec('div','MTSideDrawerHeader',divTop);
-        div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSideDrawer');
+        div2 = cec('div','MTPanelLink',div,'Download CSV','','','','','MTSideDrawer');
     }
     function HistoryDrawerTotals(inTitle,inStyle) {
         let maxCol = 4;
@@ -3871,7 +3882,7 @@ async function AccountsDrawer(inP) {
     });
     transQueue.sort((a, b) => a.date.localeCompare(b.date));
 
-    let divTable = cec('div','MTSideDrawerHeader',divTop2,'','',css.FontFamily);
+    let divTable = cec('div','MTSideDrawerHeader2',divTop2,'','',css.FontFamily);
     let div2 = cec('div','MTSideDrawerItem',divTable,'','',BOLD + 'text-align: right;');
     cec('span','MTSideDrawerDetail',div2,'Month','','text-align: left;');
     cec('span','MTSideDrawerDetail',div2,accountFields[1]);
@@ -3905,7 +3916,8 @@ async function AccountsDrawer(inP) {
     cec('div','MTSideDrawerDetail',div2,getDollarValue(tots));
     cec('div','MTSideDrawerDetail3',div2);
     cec('div','MTSideDrawerDetail',div2,getDollarValue(trns));
-    cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','','','MTSideDrawer');
+    div2 = cec('div','MTSideDrawerHeader',divTop2);
+    cec('div','MTPanelLink',div2,'Download CSV','','','','','MTSideDrawer');
 
     divTop2 = cec('span','MTSideDrawerHeader',divTop);
 
@@ -3966,7 +3978,7 @@ async function SummaryDrawer(inP) {
         let r = MT_BarChartEmbed(divTop,divTop2);
         if(r) cec('div','',divTop2,' ' + r,'',css.font + 'margin-top: 6px; display: inline; font-size: 14.5px; float:left;' );
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
-        cec('div','MTPanelLink',divTop2,'Download CSV','','padding: 0px; display:block; text-align:center;','triggers',to,'MTSummaryDrawer');
+        cec('div','MTPanelLink',divTop2,'Download CSV','','','triggers',to,'MTSummaryDrawer');
     }
 }
 
@@ -4040,7 +4052,6 @@ async function InvestmentsDrawer(inP) {
             if(bondInfo[3] == 'Yes') DrawerDrawLine(divTop2,'Extraordinary Redemption',bondInfo[3]);
             if(bondInfo[4] == 'Yes') DrawerDrawLine(divTop2,'Subject to AMT',bondInfo[4]);
             if(bondInfo[5] == 'Yes') DrawerDrawLine(divTop2,'Original Issue Discount',bondInfo[5]);
-            DrawerDrawSpacer(divTop2);
         }
     }
 
@@ -4055,7 +4066,7 @@ async function InvestmentsDrawer(inP) {
     }
 
     if(divReload == null) {
-        divTop2 = cec('div','',divTop2,'','','','data',inP,'MTSideDrawerGroup');
+        divTop2 = cec('div','MTSideDrawerHeader2',divTop2,'','','','data',inP,'MTSideDrawerGroup');
     } else {
         divTop2 = divReload;
         while (divTop2.firstChild) {divTop2.removeChild(divTop2.firstChild);}
@@ -4066,7 +4077,7 @@ async function InvestmentsDrawer(inP) {
         curValue = thisHld.type != 'fixed_income' && useCurrent === 0 ? thisHld.quantity * thisHld.closingPrice : thisHld.value;curValue = get2dec(curValue,2);
         allValue = curValue;
         allCost = getCostBasis(thisHld,curValue);
-        DrawerDrawLine(divTop2,'Account',thisHld.account.displayName,'','margin-top:20px;');
+        DrawerDrawLine(divTop2,'Account',thisHld.account.displayName);
         if(thisHld.account.institution != null) {DrawerDrawLine(divTop2,'Institution',thisHld.account.institution.name);}
     }
     DrawerDrawLine(divTop2,'Price',getDollarValue(thisHld.closingPrice));
