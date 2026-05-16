@@ -1,5 +1,9 @@
 # Change Log (Version History)
 
+  * **Version 5.3 (May 16, 2026)**
+    - ENHANCEMENT: Added total Assets & Liabilities to Accounts Dashboard.
+    - UPDATE: Firefox inner html sanitization corrections.
+      
   * **Version 5.1/5.2 (May 14, 2026)**
     - UPDATE: Monarch related, API Token Authorization failure.
     - NEW: Reports / Investments setting to hide Moving Averages from side drawer.
