@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.3.1
+// @version      5.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4616,28 +4616,33 @@ async function MenuDashboardAccounts() {
     let snapshotData4 = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
     ds = gde('dashboard-droppable-column-0');
     if(ds) {
-        let newDiv;
+        let newDiv,aA=0,aL=0;
         for (let i = 0; i < snapshotData.accounts.length; i++) {
-            const aa = snapshotData.accounts[i].id;
-            if(getCookie('MTAccountDashboard:' + aa,true) != 1) continue;
+            const aa = snapshotData.accounts[i];
+            if(getCookie('MTAccountDashboard:' + aa.id,true) != 1) continue;
             if(!newDiv) MenuDashboardAccountsHeader();
             let amt = 0,runAmt = 0;
             for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
-                if(snapshotData4.allTransactions.results[j].account.id == aa) {
+                if(snapshotData4.allTransactions.results[j].account.id == aa.id) {
                     amt=snapshotData4.allTransactions.results[j].amount;
-                    if(snapshotData4.allTransactions.results[j].account.type.group == 'liability') {amt=-amt;}
+                    if(snapshotData4.allTransactions.results[j].account.type.group == 'liability') {amt=-amt; }
                     runAmt+= amt;
                 }
             }
-            let bal = snapshotData.accounts[i].displayBalance;
+            let bal = aa.displayBalance;
+            if(aa.isAsset) {aA+=bal;} else {aL+=bal;}
             let pBal = bal + runAmt;
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
-            cec('td','MTSideDrawerSummaryData',newRow,snapshotData.accounts[i].displayName);
+            cec('td','MTSideDrawerSummaryData',newRow,aa.displayName);
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(runAmt));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal));
-            cec('td','MTSideDrawerSummaryData2',newRow,snapshotData.accounts[i].displayName,'','display:none;');
+            cec('td','MTSideDrawerSummaryData2',newRow,aa.displayName,'','display:none;');
         }
+        ds = document.getElementById('MTDashboardA');
+        if(ds) ds.innerText = 'Assets: ' + getDollarValue(aA);
+        ds = document.getElementById('MTDashboardL');
+        if(ds) ds.innerText = 'Liabilities: ' + getDollarValue(aL);
         if(newDiv) sortTableByColumn(newDiv);
 
         function MenuDashboardAccountsHeader() {
@@ -4650,6 +4655,8 @@ async function MenuDashboardAccounts() {
 
             let rowDiv = cec('div','',divTop);
             cec('span','MTFlexBig',rowDiv,'Accounts');
+            cec('span','MTFlexBig',rowDiv,'','','font-size: 14px;margin-left:10px;float:right;','','','MTDashboardL');
+            cec('span','MTFlexBig',rowDiv,'','','font-size: 14px;margin-left:10px;float:right;','','','MTDashboardA');
             rowDiv = cec('div','',divTop);
             cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 5px 0px 5px 0px;');
 
