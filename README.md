@@ -4,7 +4,7 @@
 
 ❗️ Monarch updated the API security which requires MM‑Tweaks V5 or higher.
 
-### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.1/5.2
+### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.3
 
 Visit the official Extensions area for your browser using the following links: 
 
