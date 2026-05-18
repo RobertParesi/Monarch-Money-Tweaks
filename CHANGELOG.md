@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 5.4 (Beta)**
+    - ENHANCEMENT: Reports / Investments added override type and notes to Fixed Income holdings as well.
+
   * **Version 5.3 (May 16, 2026)**
     - ENHANCEMENT: Added total Assets & Liabilities to Accounts Dashboard.
     - UPDATE: Firefox inner html sanitization corrections.
