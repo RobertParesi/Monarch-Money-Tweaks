@@ -1,7 +1,5 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks for Monarch Money - Web Extension 
 
-**📣 Over 7,000 installs!**
-
 ❗️ Monarch updated the API security which requires MM‑Tweaks V5 or higher.
 
 ### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.3
