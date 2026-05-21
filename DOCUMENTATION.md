@@ -184,7 +184,7 @@ Select **Reports → Investments**, click on **>** (far right) of any equity hol
 
 ![Settings](/images/MTInvestmentSettings.png)
 
-- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, Bond Type, etc.) either per‑ticker or at the account level.
+- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, your objective, Index Strategy, Bond Type, etc.) either per‑ticker or at the account level.  In my examples below, I use a **sector**.
 
 - If you assign a Category override for all holdings, any uncategorized or new tickers will show up in the “Stock” category—making it easy to spot misses and newly added stocks.
 
