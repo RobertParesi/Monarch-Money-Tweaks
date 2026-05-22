@@ -2,6 +2,7 @@
 
   * **Version 5.4 (Beta)**
     - ENHANCEMENT: Reports / Investments added override type and notes to Fixed Income holdings as well.
+    - FIX: Reports / Investments better extraction of Fixed Income Due and Call dates.
 
   * **Version 5.3 (May 16, 2026)**
     - ENHANCEMENT: Added total Assets & Liabilities to Accounts Dashboard.
