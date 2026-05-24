@@ -276,8 +276,8 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return 'Displays all your current holdings for each account. Use Allocation report to combine same holdings.';
                 case 1: return 'Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.';
-                case 2: return 'Displays performance over selected time frame of all your equity holdings ignoring Fixed Income & Cash.';
-                case 3: return 'Displays fixed income holdings including maturity date and yearly income.';
+                case 2: return 'Displays your equity holdings over selected time frame.';
+                case 3: return 'Displays your fixed income holdings including maturity date and yearly income.';
             }
             break;
         case 'MTTrends':
@@ -2831,7 +2831,7 @@ async function MenuReportsInvestmentsGo() {
     const ops = ['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type','by Category','by Account/Category'];
     if (MTFlex.Button2 === 3) ops.push('by Maturity');
     MF_GridOptions(1, ops);
-    MF_GridOptions(2,['Positions','Allocation','Performance','Fixed Income']);
+    MF_GridOptions(2,['Positions','Allocation','Equities','Fixed Income']);
     MF_GridOptions(4,customGroupInfo());
 
     if(MTFlex.Button2 < 2) {MTFlexDate2 = getDates('d_Today');MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}
