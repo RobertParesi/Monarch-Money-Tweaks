@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.1
+// @version      5.4.2
 // @description  MM-Tweaks for Monarch Money
-// @author       Robert Paresi
+// @author       Robert Paresiv
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
@@ -276,7 +276,8 @@ function MF_GridTip() {
             switch (MTFlex.Button2) {
                 case 0: return 'Displays all your current holdings for each account. Use Allocation report to combine same holdings.';
                 case 1: return 'Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.';
-                case 2: return 'Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame.';
+                case 2: return 'Displays performance over selected time frame of all your equity holdings ignoring Fixed Income & Cash.';
+                case 3: return 'Displays fixed income holdings including maturity date and yearly income.';
             }
             break;
         case 'MTTrends':
@@ -721,8 +722,8 @@ function MT_GridDrawContainer() {
 
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
-    createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1],'MTButton');
-    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2],'MTButton');
+    createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],'MTButton');
+    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],'MTButton');
     createSmall('','Restore Favorite View','FlexRestore');
     createSmall('','Save as Favorite View','FlexSave');
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
@@ -2818,17 +2819,19 @@ async function MenuReportsInvestmentsGo() {
     await MF_GridInit('MTInvestments', 'Investments');
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     MTFlex.CanvasTitle = 'font-size: 13px;';
-    MTFlex.CanvasRow = 'font-size: 13.1px;  line-height: 26px; height: 26px;';
+    MTFlex.CanvasRow = 'font-size: 13.1px; line-height: 26px; height: 26px;';
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
     MTFlex.TriggerEvents = true;
-    MTFlex.SortSeq = ['1','2','3'];
+    MTFlex.SortSeq = ['1','2','3','4'];
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y','2Y'];
     MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account'];
     MTFlex.TargetOptionsRun = [0,1];
 
     MF_SetupDates();
-    MF_GridOptions(1,['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type', 'by Category', 'by Account/Category']);
-    MF_GridOptions(2,['Positions','Allocation','Performance']);
+    const ops = ['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type','by Category','by Account/Category'];
+    if (MTFlex.Button2 === 3) ops.push('by Maturity');
+    MF_GridOptions(1, ops);
+    MF_GridOptions(2,['Positions','Allocation','Performance','Fixed Income']);
     MF_GridOptions(4,customGroupInfo());
 
     if(MTFlex.Button2 < 2) {MTFlexDate2 = getDates('d_Today');MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}
@@ -2843,7 +2846,7 @@ async function MenuReportsInvestmentsGo() {
     accountQueue = [];
 
     MTFlex.Title1 = 'Investments Report';
-    MTFlex.Title2 = MTFlex.Button2 < 2 ? 'As of ' + getDates('s_FullDate') : getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
+    MTFlex.Title2 = MTFlex.Button2 != 2 ? 'As of ' + getDates('s_FullDate') : getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
     MTFlex.SpanHeaderColumns = 3;
 
@@ -2856,15 +2859,14 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '';MF_QueueAddTitle(1,'Description',MTP,true);
     }
     MF_QueueAddTitle(2,'Institution',MTP,getCookie('MT_InvestmentsHideInst',true) ? true : false,null,[1]);
+    MF_QueueAddTitle(3,'Account',MTP,false,[2,5,7],[1]);
+    MF_QueueAddTitle(4,'Subtype',MTP,false,[3],[1]);
     await MenuReportsInvestmentsStd();
     glo.spawnProcess = 1;
 
     async function MenuReportsInvestmentsStd() {
 
-        MF_QueueAddTitle(3,'Account',MTP,false,[2,5,7],[1]);
-        MF_QueueAddTitle(4,'Subtype',MTP,false,[3],[1]);
         MF_QueueAddTitle(5,MTFlex.Button1 > 5 ? 'Category' : 'Type',MTP,false,[4,5,6,7]);
-
         MTP = [];MTP.IsSortable = 2;MTP.IgnoreTotals = 'all';
         MTP.Width = '80px';MTP.Format = 1;MF_QueueAddTitle(6,'Price',MTP);
         MTP.Width = '80px';MTP.Format = 3;MF_QueueAddTitle(7,'Qty',MTP);
@@ -2874,7 +2876,12 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '106px';MF_QueueAddTitle(10,'Gain/Loss',MTP);
         MTP.Width = '108px';MTP.Format = 4;
         MF_QueueAddTitle(11,'G/L %',{ ...MTP, ShowPercent: { Type: 'Dif', Col1: [9], Col2: [8], AsRaw: true }});
-        if(MTFlex.Button2 < 2) {
+        if(MTFlex.Button2 == 3) {
+            MTP.IsSortable = 1;
+            MTP.Width = '94px';MTP.Format = 0;MF_QueueAddTitle(12,'Maturity',MTP);
+            MTP.IsSortable = 2;
+            MTP.Width = '94px';MTP.Format = 1;MF_QueueAddTitle(13,'Income',MTP);
+        } else if(MTFlex.Button2 < 2) {
             let lit = MTFlex.Button1 == 4 || MTFlex.Button1 == 6 ? 'Type %' : (MTFlex.Button1 == 0 ? 'Port %' : 'Acct %');
             MTP.Width = '94px';MF_QueueAddTitle(12,lit,MTP);
             MTP.Width = '94px';MF_QueueAddTitle(13,'Port %',MTP,false,[0]);
@@ -2902,7 +2909,7 @@ async function MenuReportsInvestmentsGo() {
         if(MTFlex.Button1 == 0) {
             MF_GridRollup(1,2,1,'Positions','All|2|8|Total');
         } else {
-            MF_GridGroupByPK(8,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All',[13]);
+            MF_GridGroupByPK(8,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All',MTFlex.Button2 === 3 ? null : [13]);
             if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
             MF_GridRollup(0,0,0,'Total ' + (MTFlex.Button4 > 0 ? MTFlex.Button4Options[MTFlex.Button4] : ''),'Total|odd|8|Total');
         }
@@ -2920,7 +2927,7 @@ async function MenuReportsInvestmentsGo() {
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 const holdings = edge.node.holdings;
                 let secPercent = edge.node.securityPriceChangePercent;
-                let hld=0;
+                let hld=0,bP = ['',''];
 
                 let currentStockPrice = edge.node.security?.currentPrice ?? 0;
                 let currentStockTicker = edge.node.security?.ticker ?? '';
@@ -2932,6 +2939,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
+                    if(MTFlex.Button2 == 3) { if (holding.type != 'fixed_income') continue; }
                     let skipRec = false;
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding,useHoldingValue);
@@ -2983,8 +2991,8 @@ async function MenuReportsInvestmentsGo() {
                             useHoldingValue = useNewValue;
                         }
                     }
-
-                    let usePK = InvestmentgetPK(useInst,useAccount, useSubType, useCat);
+                    if(holding.type == 'fixed_income') { bP = getBondPieces(holding.name); }
+                    let usePK = InvestmentgetPK(useInst,useAccount, useSubType, useCat, bP[2]);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
                     useTicker = holding.ticker;
                     if(useTicker === null) useTicker = currentStockTicker;
@@ -3009,10 +3017,7 @@ async function MenuReportsInvestmentsGo() {
                         shortTitle = useTicker + ' \u2022 ' + longTitle;
                     } else {
                         shortTitle = longTitle;
-                        if(holding.type == 'fixed_income') {
-                            const bP = getBondPieces(shortTitle);
-                            shortTitle = bP[0] + ' ' + bP[1];
-                        }
+                        if(holding.type == 'fixed_income') {shortTitle = bP[0] + ' ' + bP[1];}
                     }
                     if (shortTitle.length > 50) {shortTitle = shortTitle.slice(0, 50) + ' ...';}
                     if(skipRec == false) {
@@ -3042,7 +3047,17 @@ async function MenuReportsInvestmentsGo() {
                         MF_AddCol(8,useHoldingValue);
                         MF_AddCol(9,useCostBasis);
                         if(useCostBasis != null && useHoldingValue != 0) {MF_AddCol(10,get2dec(useGainLoss));}
-                        if(MTFlex.Button2 == 2) {
+                        if(MTFlex.Button2 == 3) {
+                            if(bP != null) {
+                                let rt = getCleanValue(bP[1]);
+                                rt = rt * .01;
+                                let rtx = get2dec(rt * holding.quantity,2);
+                                let dt = bP[2];
+                                dt = dt.slice(6,10) + '-' + dt.slice(0,2) + '-' + dt.slice(3,5);
+                                MF_AddCol(12,dt);
+                                MF_AddCol(13,rtx);
+                            }
+                        } else if(MTFlex.Button2 == 2) {
                             MF_AddCol(12,edge.node.securityPriceChangeDollars);
                             MF_AddCol(13,secPercent);
                             if(secPercent < Cards[2]) {Cards[2] = secPercent;Cards[3]=shortTitle;}
@@ -3069,7 +3084,7 @@ async function MenuReportsInvestmentsGo() {
                 if(acc.crypto > 0 && cashValue < 1) continue;
                 if(acc.crypto == 0 && cashValue <= 0) continue;
                 sumCash+=cashValue;
-                let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash');
+                let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash','');
                 if(MTFlex.Button2 == 1) {
                     const pkTrigger = usePK + '|$$';
                     if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger,8,cashValue,false,true)) {
@@ -3096,6 +3111,8 @@ async function MenuReportsInvestmentsGo() {
                 MF_AddCol(9,cashValue);
                 MF_AddCol(10,null);
                 MF_AddCol(11,null);
+                MF_AddCol(12,'');
+                MF_AddCol(13,null);
             }
         }
 
@@ -3130,7 +3147,7 @@ async function MenuReportsInvestmentsGo() {
             return outCard;
         }
 
-        function InvestmentgetPK(inIns, inAcc, inSub, inType) {
+        function InvestmentgetPK(inIns, inAcc, inSub, inType, inDate) {
             switch (MTFlex.Button1) {
                 case 0:return 'Positions';
                 case 1:return (inIns ?? '').trim();
@@ -3141,6 +3158,9 @@ async function MenuReportsInvestmentsGo() {
                 case 3:return (inSub ?? '').trim();
                 case 4:
                 case 6:return (inType ?? '').trim();
+                case 8:
+                    if(inDate) return inDate.slice(6,10);
+                    return '';
                 default:
                     return '';
             }
@@ -6012,28 +6032,29 @@ function getCleanValue(inValue,inDec) {
 
 function getBondPieces(inVal) {
 
-    let usePct,useDate,newStr = inVal, useXtro = '',useAMT = '', useOID = '';
-    if(newStr.endsWith('OID')) {useOID = 'Yes'; newStr = newStr.trim().slice(0, -3).trim();} else {if(newStr.includes('OID ')) {useOID = 'Yes'; newStr = newStr.replace('OID ','');}}
-    if(newStr.includes('**CALLED**')) {useDate = '** CALLED **'; newStr = newStr.replace('**CALLED**','');}
-    if(newStr.includes('XTRO')) {useXtro = 'Yes'; newStr = newStr.replace('XTRO','');}
-    newStr = newStr.replace(' DUE ', '').trim();
-    const dateMatch = newStr.match(/\d{2}\/\d{2}\/\d{2}/);
+    let s = inVal,usePct = '',useDate = '', useXtro = '',useAMT = '', useOID = '';
+    if(s.endsWith('OID')) {useOID = 'Yes'; s = s.trim().slice(0, -3);} else {if(s.includes('OID ')) {useOID = 'Yes'; s = s.replace('OID ','');}}
+    if(s.includes('**CALLED**')) {useDate = '** CALLED **'; s = s.replace('**CALLED**','');}
+    if(s.includes('XTRO')) {useXtro = 'Yes'; s = s.replace('XTRO','');}
+    let dateMatch = s.match(/\d{2}\/\d{2}\/\d{4}/);
+    if (!dateMatch) dateMatch = s.match(/\d{2}\/\d{2}\/\d{2}(?!\d)/);
     if (dateMatch) {
         useDate = dateMatch[0];
-        newStr = newStr.replace(useDate, '').trim();
+        s = s.replace(useDate, '');
+        if(useDate.length == 8) {useDate = useDate.slice(0,6) + '20' + useDate.slice(6,8);}
+        useDate = useDate.replaceAll('/','-');
     }
-    const match = newStr.match(/\d+(\.\d+)?%/);
+    const match = s.match(/\d+(\.\d+)?%/);
     if (match) {
         usePct = match[0];
         const idxS = match.index;
         const idxE = idxS + match[0].length;
-        const isM = newStr.substring(idxE).match(/^\d{2}/);
-        if (isM) {newStr = newStr.substring(0, idxS) + newStr.substring(idxE + 2);}
+        const isM = s.substring(idxE).match(/^\d{2}/);
+        if (isM) {s = s.substring(0, idxS) + s.substring(idxE + 2);}
     }
-    if(newStr.endsWith('AMT')) {
-        useAMT = 'Yes'; newStr = newStr.trim().slice(0, -3).trim();
-    }
-    return [newStr,usePct,useDate, useXtro,useAMT,useOID];
+    s = s.replace(/\s*(DUE:|EXP:|DUE|EXP)\s*/g,' ').trim();
+    if(s.endsWith('AMT')) {useAMT = 'Yes'; s = s.trim().slice(0, -3);}
+    return [s,usePct,useDate, useXtro,useAMT,useOID];
 }
 
 function getCostBasis(inH,inVal) {
