@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.2
+// @version      5.4.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -3074,6 +3074,8 @@ async function MenuReportsInvestmentsGo() {
             }
         }
         async function InvestmentCash() {
+
+            if(MTFlex.Button2 > 1) return;
 
             for (const acc of accountQueue) {
                 sumPortfolio += acc.portfolioBalance;
