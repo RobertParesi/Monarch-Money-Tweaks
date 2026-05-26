@@ -3,6 +3,7 @@
   * **Version 5.4 (Beta)**
     - ENHANCEMENT: Reports / Investments added override type and notes to Fixed Income holdings as well.
     - ENHANCEMENT: Reports / Investments added Fixed Income sub report showing maturity date and yearly income.
+    - ENHANCEMENT: Added ability to Ignore Checking, Savings and Credit Cards from Left to Spend.
     - FIX: Reports / Investments better extraction of Fixed Income Due and Call dates.
 
   * **Version 5.3 (May 16, 2026)**
