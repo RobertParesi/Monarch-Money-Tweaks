@@ -5,7 +5,7 @@
     - ENHANCEMENT: Reports / Investments added Fixed Income sub report showing maturity date and yearly income.
     - ENHANCEMENT: Added ability to Ignore Checking, Savings and Credit Cards from Left to Spend.
     - ENHANCEMENT: Reports / Trends will now shade both positive and negative highlights (25% / 50% / 100%)
-    - ENHANCEMENT: Reports / Trends you can now off either positive or negative shading highlights in Settings.
+    - ENHANCEMENT: Reports / Trends you can now turn off/on either positive or negative shading highlights in Settings.
     - ENHANCEMENT: Shows when in Favorite View.
     - FIX: Reports / Investments better extraction of Fixed Income Due and Call dates.
 
