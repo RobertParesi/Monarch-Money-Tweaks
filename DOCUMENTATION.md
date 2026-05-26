@@ -74,6 +74,7 @@ Key options:
 - **Subtype override** — replace the account subtype shown in reports (ie: "Short Term Liability", "Long Term Liability", "Equities", "Bonds").
 - **Holding Category override (account‑level)** — default holding category for all holdings in the account.
 - **Add to Dashboard Accounts list** — include account summary on the Dashboard.
+- **Ignore in Left to Spend** — exclude this account in the Budget / Left to Spend from being included.
 
 ---
 
