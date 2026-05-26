@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.5
+// @version      5.4.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -22,7 +22,7 @@ const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
-let css = {headStyle: null, reload: true, green: '', red: '', greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
+let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let USERTOKEN,portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
@@ -546,8 +546,12 @@ function MT_GridDrawDetails() {
                             return;
                     }
                     let pct = MT_GridPercent(w1,w2,thisTitle.ShowPercentShade, sp.Type == 'Dif' ? 1 : 2,useRow.IgnoreShade);
-                    if(sp.AsRaw == true) {V1 = pct[2]; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 += ' ' + pct[0];}
-                    S2 = pct[1];
+                    if(sp.StyleOnly == true) {
+                           S2 = pct[1];
+                    } else {
+                        if(sp.AsRaw == true) {V1 = pct[2]; V2 = MT_GetFormattedValue(thisTitle.Format,V1);} else {V2 += ' ' + pct[0];}
+                        S2 = pct[1];
+                    }
                 }
                 if(useRow.IsHeader == true || isSubTotal == true) {
                     if(thisTitle.IgnoreTotals == 'all') { V1 = ''; V2 = ''; }
@@ -808,15 +812,24 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
     return p;
 }
 
-function MT_Shade(inV,a,l) {
+function MT_Shade(inV, a, l) {
+    const t = (l === true) ? [9.9, 4.9, 1.9] : [100, 50, 25];
+    const v = Math.abs(inV);
     let r = '';
-    const t = l === true ? [9.9,4.9,1.9] : [100,50,25];
-    const c = a === true ? Math.abs(inV) : inV;
-    if (c > t[0]) r = 'background-color: #f7752d; color: black;';
-    else if (c > t[1]) r = 'background-color: #f89155; color: black;';
-    else if (c > t[2]) r = 'background-color: #fde0cf; color: black;';
-    if (r) r += 'border-radius: 6px;';
-    return r;
+
+    if (inV > 0) {
+        if(css.ignorePos == 1) return '';
+        if (v > t[0]) r = 'background-color: #30a46c; color: black;';
+        else if (v > t[1]) r = 'background-color: #7be6a7; color: black;';
+        else if (v > t[2]) r = 'background-color: #e6fbf0; color: black;';
+    } else {
+        if(css.ignoreNeg == 1) return '';
+        if (v > t[0]) r = 'background-color: #f7752d; color: black;';
+        else if (v > t[1]) r = 'background-color: #f89155; color: black;';
+        else if (v > t[2]) r = 'background-color: #fde0cf; color: black;';
+    }
+
+    return r ? (r + 'border-radius: 6px;') : '';
 }
 
 function MT_GridExport() {
@@ -3184,6 +3197,8 @@ async function MenuReportsTrendsGo() {
     await MF_GridInit('MTTrends', 'Trends');
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
+    css.ignoreNeg = getCookie('MT_TrendHideShadeNeg',false);
+    css.ignorePos = getCookie('MT_TrendHideShadePos',false);
     let TrendIgnoreCurrent = 0;
     let lowerDate = new Date(MTFlexDate1), higherDate = new Date(MTFlexDate2);
     lowerDate.setDate(1);lowerDate.setMonth(0);
@@ -3415,6 +3430,7 @@ async function TrendsDataExtended(TrendIgnoreCurrent) {
         MTFlexRow[i][0] = useDesc;
     }
     MTFlexRow = MTFlexRow.filter(item => item.UID !== '');
+    if(MTFlex.Button2 == 9) {MTFlexTitle[12].ShowPercentShade = true;MTFlexTitle[12].ShowPercent = {"StyleOnly": true, "Type": "Dif","Col1": [12],"Col2": [11]};}
     if(MTFlex.Button2 > 7) {
         for(let i = 1; i <= 12; i++){ if(i < lowestMonth) {MTFlexTitle[i].IsHidden = true;}}
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
@@ -4808,6 +4824,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
     MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
     MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
+    MenuDisplay_Input('Hide negative shading highlights (25% / 50% / 100%)','MT_TrendHideShadeNeg','checkbox');
+    MenuDisplay_Input('Hide positive shading highlights (25% / 50% / 100%)','MT_TrendHideShadePos','checkbox');
     MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
     MenuDisplay_Input('Hide Savings total','MT_TrendHide3','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
