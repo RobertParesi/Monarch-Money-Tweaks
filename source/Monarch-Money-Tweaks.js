@@ -821,7 +821,7 @@ function MT_Shade(inV, a, l) {
         if(css.ignorePos == 1) return '';
         if (v > t[0]) r = 'background-color: rgb(81 169 50); color: black;';
         else if (v > t[1]) r = 'background-color: rgb(188 229 172); color: black;';
-        else if (v > t[2]) r = 'background-color: rgb(235 250 229); color: black;';
+        else if (v > t[2]) r = 'background-color: rgb(227 255 212); color: black;';
     } else {
         if(css.ignoreNeg == 1) return '';
         if (v > t[0]) r = 'background-color: #f7752d; color: black;';
