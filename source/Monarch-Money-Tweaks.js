@@ -819,9 +819,9 @@ function MT_Shade(inV, a, l) {
 
     if (inV > 0) {
         if(css.ignorePos == 1) return '';
-        if (v > t[0]) r = 'background-color: #30a46c; color: black;';
-        else if (v > t[1]) r = 'background-color: #7be6a7; color: black;';
-        else if (v > t[2]) r = 'background-color: #e6fbf0; color: black;';
+        if (v > t[0]) r = 'background-color: rgb(81 169 50); color: black;';
+        else if (v > t[1]) r = 'background-color: rgb(188 229 172); color: black;';
+        else if (v > t[2]) r = 'background-color: rgb(235 250 229); color: black;';
     } else {
         if(css.ignoreNeg == 1) return '';
         if (v > t[0]) r = 'background-color: #f7752d; color: black;';
@@ -2839,6 +2839,7 @@ async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
+    css.ignorePos = 1;css.IgnoreNeg = 0;
     MTFlex.CanvasTitle = 'font-size: 13px;';
     MTFlex.CanvasRow = 'font-size: 13.1px; line-height: 26px; height: 26px;';
     if(MTFlex.Button2 == 2) {MTFlex.DateEvent = 2;}
