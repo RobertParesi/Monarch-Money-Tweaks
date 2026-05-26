@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.6
+// @version      5.4.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -3158,6 +3158,10 @@ async function MenuReportsInvestmentsGo() {
                     MF_QueueAddCard({Col: 2, Title: Cards[2] + '%', Subtitle: 'Top Loser: ' + InvestmentCardDesc(Cards[3]), Style: css.red});
                     MF_QueueAddCard({Col: 3, Title: UpDown[1] + ' / ' + UpDown[0], Subtitle: 'Net Gainer / Losers', Style: UpDown[1] > UpDown[0] ? css.green : css.red});
                     break;
+                case 3:
+                    MF_GridCardAdd(0,8,8,'HV','Total Fixed Income','',css.green);
+                    MF_GridCardAdd(0,10,10,'HV','Unrealized Gain','Unrealized Loss',css.green,css.red);
+                    MF_GridCardAdd(0,13,13,'HV','Yearly Income','',css.green);
             }
             if(getCookie('MT_InvestmentHideBM',true) == 0) {
                 let benchData = await dataBenchmarks(lowerDate,higherDate);
@@ -4822,12 +4826,12 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Reports / Trends Report','','spacer');
     MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
     MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
+    MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
     MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
     MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
     MenuDisplay_Input('Hide future month columns (Remaining "this month" & "next month")','MT_TrendHideNextMonth','checkbox');
     MenuDisplay_Input('Hide negative shading highlights (25% / 50% / 100%)','MT_TrendHideShadeNeg','checkbox');
     MenuDisplay_Input('Hide positive shading highlights (25% / 50% / 100%)','MT_TrendHideShadePos','checkbox');
-    MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
     MenuDisplay_Input('Hide Savings total','MT_TrendHide3','checkbox');
     MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTTrends_MaxCards','number',null,0,20);
