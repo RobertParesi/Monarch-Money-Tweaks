@@ -724,14 +724,16 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],'MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],'MTButton');
-    let v = getCookie(MTFlex.Name + 'View',false);
+    let d = '', v = getCookie(MTFlex.Name + 'View',false);
     if(v) {
         v = v.split('|');
-        let d = getCookie(MF_GetSeqKey('Sort'),false) != v[4] || MTFlex.Button1 != v[0] || MTFlex.Button2 != v[1] || MTFlex.Button3 != v[2] || MTFlex.Button4 != v[3] ? '' : 'display: none;';
-        createSmall('','Restore Favorite View','FlexRestore',d);
-        createSmall('','Save as Favorite View','FlexSave',d);
-        if(d) { cec('span','MTButtonSmall',div2,'💛 FAVORITE VIEW','','font-size: 10px;letter-spacing: 1.2px;' + BOLD,'','','FlexFavorite');}
+        if(v.length > 2) {
+            if(getCookie(MF_GetSeqKey('Sort'),false) == v[4] && MTFlex.Button1 == v[0] && MTFlex.Button2 == v[1] && MTFlex.Button3 == v[2] && MTFlex.Button4 == v[3]) d = 'display: none;';
+        }
     }
+    createSmall('','Restore Favorite View','FlexRestore',d);
+    createSmall('','Save as Favorite View','FlexSave',d);
+    if(d) { cec('span','MTButtonSmall',div2,'💛 FAVORITE VIEW','','font-size: 10px;letter-spacing: 1.2px;' + BOLD,'','','FlexFavorite');}
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
 
     function createDropdown(inName,inOpt,inBut) {
@@ -5215,7 +5217,9 @@ function onClickMTButtonSmall() {
         case 'FlexSave':
             if(confirm('Save current view as ' + MTFlex.Title1 + ' favorite?')) {
                 setCookie(MTFlex.Name + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'), true));
-                setCookie(MTFlex.Name + 'ViewSave',1);
+                cecStyle('FlexFavorite',null,'inline');
+                cecStyle('FlexSave',null,'none');
+                cecStyle('FlexRestore',null,'none');
             }
             break;
         case 'FlexRestore':
