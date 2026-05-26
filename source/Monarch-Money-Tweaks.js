@@ -817,7 +817,7 @@ function MT_Shade(inV, a, l) {
     const v = Math.abs(inV);
     let r = '';
 
-    if (inV > 0) {
+    if (inV < 0) {
         if(css.ignorePos == 1) return '';
         if (v > t[0]) r = 'background-color: rgb(81 169 50); color: black;';
         else if (v > t[1]) r = 'background-color: rgb(188 229 172); color: black;';
@@ -3408,7 +3408,7 @@ async function TrendsDataExtended(TrendIgnoreCurrent) {
                 }
                  useURL = '#|spending|';
             } else {
-                MTFlexRow[i].BasedOn = 1;MTFlexRow[i].Section = 2;
+                MTFlexRow[i].BasedOn = 1;MTFlexRow[i].Section = 2; MTFlexRow[i].IgnoreShade = true;
                 useURL = '#|income|';
             }
             if(MTFlex.Button1 > 0) {
@@ -3431,7 +3431,7 @@ async function TrendsDataExtended(TrendIgnoreCurrent) {
         MTFlexRow[i][0] = useDesc;
     }
     MTFlexRow = MTFlexRow.filter(item => item.UID !== '');
-    if(MTFlex.Button2 == 9) {MTFlexTitle[12].ShowPercentShade = true;MTFlexTitle[12].ShowPercent = {"StyleOnly": true, "Type": "Dif","Col1": [12],"Col2": [11]};}
+    if(MTFlex.Button2 == 9) {MTFlexTitle[12].ShowPercentShade = true;MTFlexTitle[12].ShowPercent = {"StyleOnly": true, "Type": "Dif","Col1": [11],"Col2": [12]};}
     if(MTFlex.Button2 > 7) {
         for(let i = 1; i <= 12; i++){ if(i < lowestMonth) {MTFlexTitle[i].IsHidden = true;}}
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
