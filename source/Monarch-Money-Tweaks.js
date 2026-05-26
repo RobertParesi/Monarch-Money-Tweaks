@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.3
+// @version      5.4.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -2831,7 +2831,7 @@ async function MenuReportsInvestmentsGo() {
     const ops = ['by Positions','by Institution','by Account','by Account Subtype','by Holding Type','by Account/Holding Type','by Category','by Account/Category'];
     if (MTFlex.Button2 === 3) ops.push('by Maturity');
     MF_GridOptions(1, ops);
-    MF_GridOptions(2,['Positions','Allocation','Equities','Fixed Income']);
+    MF_GridOptions(2,['Positions','Allocation','Performance','Fixed Income']);
     MF_GridOptions(4,customGroupInfo());
 
     if(MTFlex.Button2 < 2) {MTFlexDate2 = getDates('d_Today');MTFlexDate1 = getDates('d_MinusWeek',MTFlexDate2);}
@@ -4431,6 +4431,7 @@ async function MenuPlanRefresh() {
     if(snapshotData) {
         for (let i = 0; i < snapshotData.accounts.length; i++) {
             const ss = snapshotData.accounts[i];
+            if(getCookie('MTAccountLeftToSpend:' + ss.id,true) == 1) continue;
             if(ss.hideTransactionsFromReports == false) {
                 if(ss.isAsset == true && ss.subtype.name == 'checking') {
                     bCK+=Number(ss.displayBalance);
@@ -5279,6 +5280,7 @@ function onClickOpenWindow(cn) {
         d.push({field1: 'Subtype override [' + cn[3] + ']', style1: BOLD, type: 'Input', key: 'MTAccountsSub:' + cn[2],refresh: true});
         d.push({field1: 'Holding Category override for all holdings in account', style1: BOLD, type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Stocks, Bonds, Muni Bonds, ETF, Mutual Fund, Fixed Income, ...', refresh: true});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: BOLD, type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
+        if(inList(cn[2],'Checking','Savings','Credit Card') > 0) d.push({field1: 'Ignore in Left to Spend', style1: BOLD, type: 'Checkbox', key: 'MTAccountLeftToSpend:' + cn[2]});
     }
     if(cn[0] == '!BarChart' || cn[0] == '!HoldDetail') {
         document.body.style.cursor = "";
