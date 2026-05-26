@@ -163,7 +163,7 @@ There are three types of Investment reports:
 1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
 2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
 3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
-4. **Fixed Income** - Displays all your fixed income (CDs and Bonds) holdings and trying to extract a maturity date and yearly income from the description.
+4. **Fixed Income** - Displays all your fixed income (CD & Bond) holdings and trying to extract a maturity date and yearly income from the description.
 
 <br>
 <img src="images/MT_Invest01.png" style="width:66%; height:auto;">
