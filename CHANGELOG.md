@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 5.5 (Beta)**
+    - ENHANCEMENT: Reports will correct variable width of the emoji characters.
+  
   * **Version 5.4 (May 27, 2026)**
     - ENHANCEMENT: Reports / Investments report — add override type and notes support for Fixed‑Income holdings.
     - ENHANCEMENT: Reports / Investments report — new Fixed‑Income sub‑report showing maturity dates and annual income.
