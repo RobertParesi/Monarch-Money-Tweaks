@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4
+// @version      5.5.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.4';
+const MNAME = 'MM-Tweaks', VERSION = '5.5';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -418,7 +418,7 @@ function MT_GridDrawDetails() {
 
     function MT_GridDrawRow(isSubTotal) {
         let useRow = Object.assign({}, MTFlexRow[rowI]);
-        let HeaderStyle = '', skipColumns = 0;
+        let HeaderStyle = '', useRowIcon = '', skipColumns = 0;
         if(MT_GridDrawRowTitle() == false) return;
         MT_GridDrawRowDetail();
         MT_GridDrawTriggerEvents();
@@ -454,13 +454,14 @@ function MT_GridDrawDetails() {
                     }
                     el = cec('tr','MTFlexGridItem',Header,'','',MTFlex.CanvasRow,'MTsection',useRow.Section);
                     S1 = 'MTFlexGridDCell';
-                    if(useRow.Icon) {useDesc = useRow.Icon + ' ' + useDesc;}
+                    if(useRow.Icon) {useRowIcon = useRow.Icon;}
                 }
                 if(MTFlexTitle[0].IsHidden != true) {
                     if(useRow.SKHRef) {
                         elx = cec('td',S1,el,'','',HeaderStyle);
                         if(useRow.Title) elx.title = useRow.Title;
-                        if(useRow.SKlogoUrl) {cec('td','MTFlexImage',elx,'','','background-image: url("' + useRow.SKlogoUrl + '");');}
+                        if(useRow.SKlogoUrl) cec('span','MTFlexImage',elx,'','','display: inline-block;width: 1.6em;background-image: url("' + useRow.SKlogoUrl + '");');
+                        if(useRowIcon) cec('span','',elx,useRowIcon,'','text-align: center;display: inline-block;width: 1.6em;');
                         cec('a',S1,elx,useDesc,useRow.SKHRef);
                     } else {
                         elx = cec('td', useRow.IsHeader ? 'MThRefClass2' : S1, el, useDesc,'',HeaderStyle);
