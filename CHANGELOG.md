@@ -1,13 +1,13 @@
 # Change Log (Version History)
 
-  * **Version 5.4 (Beta)**
-    - ENHANCEMENT: Reports / Investments added override type and notes to Fixed Income holdings as well.
-    - ENHANCEMENT: Reports / Investments added Fixed Income sub report showing maturity date and yearly income.
-    - ENHANCEMENT: Added ability to Ignore Checking, Savings and Credit Cards from Left to Spend.
-    - ENHANCEMENT: Reports / Trends will now shade both positive and negative highlights (25% / 50% / 100%)
-    - ENHANCEMENT: Reports / Trends you can now turn off/on either positive or negative shading highlights in Settings.
-    - ENHANCEMENT: Shows when in Favorite View.
-    - FIX: Reports / Investments better extraction of Fixed Income Due and Call dates.
+  * **Version 5.4 (May 27, 2026)**
+   - ENHANCEMENT: Reports / Investments report — add override type and notes support for Fixed‑Income holdings.
+   - ENHANCEMENT: Reports / Investments report — new Fixed‑Income sub‑report showing maturity dates and annual income.
+   - ENHANCEMENT: Budget/Dashboard — option to exclude Checking, Savings, and Credit Cards from “Left to Spend.”
+   - ENHANCEMENT: Reports / Trends report — shading added for both positive and negative deviations (25% / 50% / 100%).
+   - ENHANCEMENT: Reports / Trends settings — enable/disable positive and negative shading independently.
+   - ENHANCEMENT: MM-Tweaks reports will now indicate when you are in a saved Favorite view.
+   - FIX: Reports / Investments report — improved extraction of Fixed‑Income due dates and call dates.
 
   * **Version 5.3 (May 16, 2026)**
     - ENHANCEMENT: Added total Assets & Liabilities to Accounts Dashboard.
