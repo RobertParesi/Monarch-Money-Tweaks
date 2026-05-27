@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.4.7
+// @version      5.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -3072,7 +3072,7 @@ async function MenuReportsInvestmentsGo() {
                         if(MTFlex.Button2 == 3) {
                             if(bP != null) {
                                 let rt = getCleanValue(bP[1]);
-                                rt = rt * .01;
+                                rt = rt * 0.01;
                                 let rtx = get2dec(rt * holding.quantity,2);
                                 let dt = bP[2];
                                 dt = dt.slice(6,10) + '-' + dt.slice(0,2) + '-' + dt.slice(3,5);
