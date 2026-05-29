@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.5.1
+// @version      5.5.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -994,7 +994,7 @@ function MF_GridUID(inUID,inCol,inValue,addMissing, increment) {
         if(Row.UID == inUID) {
             if(inValue == null && addMissing == null) return Row[inCol];
             if(increment == true) {Row[inCol] += inValue;} else {Row[inCol] = inValue;}
-            cecId(inUID + '-' + inCol,inValue);
+            cecText(inUID + '-' + inCol,inValue);
             return true;
         }
     }
@@ -1207,8 +1207,7 @@ function MF_DrawBarChart(inLocation,inP) {
         if(!divHead) return;
         inP = divHead.getAttribute('data');
         if(inP) inP = inP.split(',');
-        let divCanvas = document.getElementById('MTChartCanvas');
-        if(divCanvas) divCanvas.remove();
+        cecRemove('MTChartCanvas');
     }
     divCanvas = cec('div','MTChartContainer',divHead,'','','','','','MTChartCanvas');
     divChart = cec('canvas','MTBarChart',divCanvas,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
@@ -1766,8 +1765,7 @@ function MF_DrawChart(inLocation) {
 }
 
 function MF_DrawToolTip(e, divTooltip, inData) {
-    const old = document.getElementById('MTTipTable');
-    if (old) old.remove();
+    cecRemove('MTTipTable');
     const divTable = cec('table', '', divTooltip, '', '', '', '', '', 'MTTipTable');
 
     for (const row of inData) {
@@ -2101,7 +2099,7 @@ async function MenuReportsNetIncomeGo() {
             }
         }
         MTFlex.Loading.innerText = MTFlex.Loading.innerText.trim() + '.';
-    } while (recCnt >= 5999);
+    } while (recCnt >= 9999);
 
 
     if(getCookie('MT_NetIncomeRankOrder',true) == 1) { TagCols.sort((a, b) => a.ORDER - b.ORDER);} else {TagCols.sort((a, b) => b.SORTV - a.SORTV); }
@@ -2541,7 +2539,7 @@ async function MenuReportsAccountsGo() {
                 transData = await dataTransactions(lowerDate,higherDate,0,false,MTFlexAccountFilter.filter,false,null,null,cats);
             }
             txLen = transData.allTransactions.results.length;
-            if(txLen > 5999) {MTFlex.ErrorMsg = 'The date range is too extensive to display ' + fields[1] + ' & ' + fields[2] + ' by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
+            if(txLen > 9999) {MTFlex.ErrorMsg = 'The date range is too extensive to display ' + fields[1] + ' & ' + fields[2] + ' by Account.\nShorten the date range, select just an Account Group or select "All years" sub-report.';return;}
         }
         if(MTFlex.Button2 != 4) {snapshotData3 = await dataDisplayBalanceAt(lowerDate);}
         pendingData = await dataTransactions(formatQueryDate(getDates('d_StartofLastMonth')),higherDate,0,true,null,false);
@@ -2782,10 +2780,10 @@ function MenuReportsInvestmentsRebalance(redraw) {
             MTFlexTitle[1].Title = 'Note';
             MTFlex.Subname = 'MTRebalance';
             if(MTFlex.Button2 != 2) {
-                cecId('MTReportTitle1','Rebalance Report');
-                cecId('FlexRebalance','Investments View','Investments View');
+                cecText('MTReportTitle1','Rebalance Report');
+                cecText('FlexRebalance','Investments View','Investments View');
             } else {
-                cecId('FlexRebalance','Detail View','Detail View');
+                cecText('FlexRebalance','Detail View','Detail View');
             }
             MTFlex.SpanHeaderColumns = 0;
         } else {
@@ -2795,10 +2793,10 @@ function MenuReportsInvestmentsRebalance(redraw) {
             MTFlex.SpanHeaderColumns = 3;
             MTFlex.Subname = '';
             if(MTFlex.Button2 != 2) {
-                cecId('MTReportTitle1','Investments Report');
-                cecId('FlexRebalance','Rebalance View','Rebalance View');
+                cecText('MTReportTitle1','Investments Report');
+                cecText('FlexRebalance','Rebalance View','Rebalance View');
             } else {
-                cecId('FlexRebalance','Summary View','Summary View');
+                cecText('FlexRebalance','Summary View','Summary View');
             }
             MF_GridDraw(1);
             return;
@@ -4626,7 +4624,7 @@ function MenuHistory(OnFocus) {
 
 function MenuCategories(OnFocus) {
     if(glo.pathName.startsWith('/categories')) {
-       if(OnFocus == false) {const x = document.getElementById('HistoryButton');if(x) x.remove();}
+       if(OnFocus == false) {cecRemove('HistoryButton');}
     }
 }
 
@@ -4693,10 +4691,8 @@ async function MenuDashboardAccounts() {
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal));
             cec('td','MTSideDrawerSummaryData2',newRow,aa.displayName,'','display:none;');
         }
-        ds = document.getElementById('MTDashboardA');
-        if(ds) ds.innerText = 'Assets: ' + getDollarValue(aA);
-        ds = document.getElementById('MTDashboardL');
-        if(ds) ds.innerText = 'Liabilities: ' + getDollarValue(aL);
+        cecText('MTDashboardA','Assets: ' + getDollarValue(aA));
+        cecText('MTDashboardL','Liabilities: ' + getDollarValue(aL));
         if(newDiv) sortTableByColumn(newDiv);
 
         function MenuDashboardAccountsHeader() {
@@ -5794,12 +5790,17 @@ function cecStyle(e,s,d) {
     }
 }
 
-function cecId(e,t,title) {
+function cecText(e,t,title) {
     const x = document.getElementById(e);
     if(x) {
         if(t != null) x.innerText = t;
         if(title != null) x.title = title;
     }
+}
+
+function cecRemove(e) {
+    const x = document.getElementById(e);
+    if(x) {x.remove();}
 }
 
 function gde(e,a,f) {
@@ -5836,9 +5837,7 @@ function getFullClassName(a) {
     let el = document.querySelector('[class*=' + a + ']');
     if(el) {
         for (let i = 0; i < el.classList.length; i++) {
-            if(el.classList[i]) {
-                if(el.classList[i].startsWith(a)) return el.classList[i];
-            }
+            if(el.classList[i]) {if(el.classList[i].startsWith(a)) return el.classList[i];}
         }
     }
     return '';
@@ -5999,6 +5998,7 @@ function daysBetween(date1,date2, asLit) {
             case 28: return '4w';
             case 30:
             case 31: return '1m';
+            case 365: return '1y';
             default:break;
         }
         if (diffInDays > 61 && diffInDays < 63) { return '2m'; }
@@ -6014,6 +6014,7 @@ function daysBetween(date1,date2, asLit) {
             case 28: return '4 weeks';
             case 30:
             case 31: return '1 month';
+            case 365: return '1 year';
             default: break;
         }
         if (diffInDays > 61 && diffInDays < 63) { return '2 months';}
@@ -6336,7 +6337,7 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
-    const limit = 6000;
+    const limit = 10000;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     if(inGoals == undefined || inGoals == null) inGoals = [];
     if(inCat == undefined || inCat == null) inCat = [];
