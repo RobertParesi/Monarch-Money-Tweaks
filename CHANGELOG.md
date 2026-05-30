@@ -2,7 +2,7 @@
 
   * **Version 5.5 (Beta)**
     - ENHANCEMENT: Correct variable width of the emoji characters.
-    - ENHANCEMENT: Added account icon and account link.
+    - ENHANCEMENT: Added account icon and account link to Dashboard Accounts.
   
   * **Version 5.4 (May 27, 2026)**
     - ENHANCEMENT: Reports / Investments report — add override type and notes support for Fixed‑Income holdings.
