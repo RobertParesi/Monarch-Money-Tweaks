@@ -222,7 +222,7 @@ function MF_PleaseWait(inDiv,inDesc) {
     let div = cec('div','MTWaitContainer',inDiv,'','','','','','MTWait');
     div = cec('div','MTWait',div);
     div = cec('div','MTWait2',div,'Please Wait');
-    return cec('p','',div, inDesc );
+    MTFlex.PleaseWait = cec('p','', div, inDesc );
 }
 
 function MF_SetupDates() {
@@ -262,7 +262,7 @@ async function MF_GridInit(inName, inDesc) {
     if(glo.forceRefresh != true) {portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;}
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
-    if(divTop) {MTFlex.Loading = MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');}
+    if(divTop) MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');
     MTFlex.Name = inName;MTFlex.Desc = inDesc;MTFlex.Subname = '';glo.spawnProcess = 0;
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
@@ -2093,7 +2093,7 @@ async function MenuReportsNetIncomeGo() {
                 else {NetIncomeUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color,0);}
             }
         }
-        MTFlex.Loading.innerText = MTFlex.Loading.innerText.trim() + '.';
+        MTFlex.PleaseWait.textContent += '.';
     } while (recCnt >= 5000);
 
 
@@ -2545,6 +2545,7 @@ async function MenuReportsAccountsGo() {
                     pageResults = page.allTransactions.results;
                     AccountsAccumPage(pageResults);
                     offset += pageResults.length;
+                    MTFlex.PleaseWait.textContent += '.';
                 } while (pageResults.length === 5000);
                 txLen = offset;
             }
@@ -3945,10 +3946,10 @@ async function AccountsDrawer(inP) {
         }
     }
     if(transData == null || performanceData == null) {
-        const divWait = MF_PleaseWait(divTop2,' Loading chart data ...');
+        MF_PleaseWait(divTop2,' Loading chart data ...');
         document.body.style.cursor = "wait";
         if(performanceData == null) performanceDataType = await buildAccountBalances();
-        divWait.innerText = ' Loading ' + sObj.big + ' Summary data ...';
+        MTFlex.PleaseWait.textContent = ' Loading ' + sObj.big + ' Summary data ...';
         if(transData == null) transData = await dataTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false,null,null);
         document.body.style.cursor = "";
         removeAllSections('div.MTWaitContainer');
