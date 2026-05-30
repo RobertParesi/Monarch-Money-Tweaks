@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.6.1
+// @version      5.6.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -726,7 +726,9 @@ function MT_GridDrawContainer() {
     div2 = cec('div','',cht,'','','display:flex; gap:6px;');
 
     createSmall('','Collapse / Expand','FlexExpand');
-    cec('span','MTFlexText',div2, MF_GridTip());div2 = cec('div','',cht);
+    cec('span','MTFlexText',div2, MF_GridTip());
+    if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
+    div2 = cec('div','',cht);
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],' MTButton');
     let d = '', v = getCookie(MTFlex.Name + 'View',false);
@@ -2533,22 +2535,26 @@ async function MenuReportsAccountsGo() {
         let txLen = -1;
         let lowerDate = formatQueryDate(MTFlexDate1), higherDate = formatQueryDate(MTFlexDate2);
 
-        // Clear totals map before accumulation
-        totalsMap.clear();
-
         if (MTFlex.Button2 != 1) {
             if (MTFlex.Button2 == 3) { MTFlexDate1 == getDates('d_StartofYear'); }
             if (glo.forceRefresh != true) {
+                totalsMap.clear();
+                transData = { allTransactions: { totalCount: 0, results: [] } };
                 let offset = 0, pageResults;
                 do {
                     const page = await dataTransactions(lowerDate, higherDate, offset, false, MTFlexAccountFilter.filter, false, null, null, cats);
-                    pageResults = page.allTransactions.results;
+                    pageResults = page?.allTransactions?.results || [];
                     AccountsAccumPage(pageResults);
+                    Array.prototype.push.apply(transData.allTransactions.results, pageResults);
+                    if (!transData.allTransactions.totalCount) {
+                        transData.allTransactions.totalCount = page?.allTransactions?.totalCount || 0;
+                    }
                     offset += pageResults.length;
                     MTFlex.PleaseWait.textContent += '.';
                 } while (pageResults.length === 5000);
-                txLen = offset;
+                transData.allTransactions.totalCount = transData.allTransactions.totalCount || transData.allTransactions.results.length;
             }
+            if(transData.allTransactions.totalCount > 10001) MTFlex.WarningMsg = 'For large date ranges, use an Account Group for faster response.';
         }
 
         if (MTFlex.Button2 != 4) snapshotData3 = await dataDisplayBalanceAt(lowerDate);
