@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 5.6 (Beta)**
+    - ENHANCEMENT: Reports / Accounts enhanced to be faster and remove range restriction.
+  
   * **Version 5.5 (May 29, 2026)**
     - ENHANCEMENT: Correct variable width of the emoji characters.
     - ENHANCEMENT: Added account icon and account link to Dashboard Accounts.
