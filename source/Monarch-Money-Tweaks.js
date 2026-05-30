@@ -2,7 +2,7 @@
 // @name         MM-Tweaks for Monarch Money
 // @version      5.6.2
 // @description  MM-Tweaks for Monarch Money
-// @author       Robert Paresiv
+// @author       Robert Paresi
 // @match        https://app.monarch.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=app.monarch.com
 // ==/UserScript==
@@ -311,7 +311,7 @@ function MF_GridTip() {
                 case 1: return "Shows a consolidated Personal Net Worth Statement for loans and other assets.";
                 case 2: return "Shows all investment assets with beginning and ending balances, including Transfers (Ins/Outs).  To exclude transfers from the Net Change amount, see Settings.";
                 case 3: return "Shows overall cash, savings and investments categorized by ide-cash and invested-cash type holdings.";
-                case 4: return "Shows credit card spending, refunds and payments. Tip: Use Year-to-date range and verify same with your institition.";
+                case 4: return "Shows credit card spending, refunds and payments. Tip: Use Year-to-date range and verify same with your institution.";
                 case 5: return "Shows account balances for the last six months. Click on date range to select the last month.";
                 case 6: return "Shows account balances for the last twelve months. Click on date range to select the last month.";
                 case 7: return "Shows account balances over time for this year. Click on date range for the last month.";
