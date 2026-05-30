@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.5.2
+// @version      5.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresiv
 // @match        https://app.monarch.com/*
@@ -814,23 +814,20 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 }
 
 function MT_Shade(inV, a, l) {
-    const t = (l === true) ? [9.9, 4.9, 1.9] : [100, 50, 25];
-    const v = Math.abs(inV);
+    const t = (l === true) ? [9.9, 4.9, 1.9] : [100, 50, 25],v = Math.abs(inV);
     let r = '';
-
     if (inV < 0) {
         if(css.ignorePos == 1) return '';
-        if (v > t[0]) r = 'background-color: rgb(81 169 50); color: black;';
-        else if (v > t[1]) r = 'background-color: rgb(188 229 172); color: black;';
-        else if (v > t[2]) r = 'background-color: rgb(227 255 212); color: black;';
+        if (v > t[0]) r = 'rgb(81 169 50);';
+        else if (v > t[1]) r = 'rgb(188 229 172);';
+        else if (v > t[2]) r = 'rgb(227 255 212);';
     } else {
         if(css.ignoreNeg == 1) return '';
-        if (v > t[0]) r = 'background-color: #f7752d; color: black;';
-        else if (v > t[1]) r = 'background-color: #f89155; color: black;';
-        else if (v > t[2]) r = 'background-color: #fde0cf; color: black;';
+        if (v > t[0]) r = '#f7752d;';
+        else if (v > t[1]) r = '#f89155;';
+        else if (v > t[2]) r = '#fde0cf;';
     }
-
-    return r ? (r + 'border-radius: 6px;') : '';
+    return r ? ('background-color: ' + r + 'color: black; border-radius: 6px;') : '';
 }
 
 function MT_GridExport() {
@@ -889,9 +886,7 @@ function MT_GridExport() {
 function MT_BarChartEmbed(a,b) {
     switch (MTFlex.Name) {
         case 'MTInvestments':
-            if(MTFlex.Button1 == 2) {
-                return 'To see account performance over time, use Reports > Accounts. ';
-            }
+            if(MTFlex.Button1 == 2) {return 'To see account performance over time, use Reports > Accounts. ';}
     }
     return '';
 }
@@ -2087,7 +2082,7 @@ async function MenuReportsNetIncomeGo() {
                 NetIncomeUpdateQueue(useID,useAmt,useTag,useTag,'',0);
             } else if (MTFlex.Button2 == 6) {
                 if(rec.ownedByUser == null) {
-                   NetIncomeUpdateQueue(useID,useAmt,'Shared',' Shared','',0);
+                    NetIncomeUpdateQueue(useID,useAmt,'Shared',' Shared','',0);
                 } else {
                     NetIncomeUpdateQueue(useID,useAmt,rec.ownedByUser.displayName,rec.ownedByUser.displayName,'',0);
                 }
@@ -4685,7 +4680,11 @@ async function MenuDashboardAccounts() {
             if(aa.isAsset) {aA+=bal;} else {aL+=bal;}
             let pBal = bal + runAmt;
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
-            cec('td','MTSideDrawerSummaryData',newRow,aa.displayName);
+
+            let div = cec('td','MTFlexGridDCell',newRow);
+            cec('span','MTFlexImage',div,'','','display: inline-block;width: 21px;height: 21px; background-image: url("' + aa.logoUrl + '");');
+            cec('a','MTFlexGridDCell',div,aa.displayName,'/accounts/details/' + aa.id);
+
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(runAmt));
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(pBal));
