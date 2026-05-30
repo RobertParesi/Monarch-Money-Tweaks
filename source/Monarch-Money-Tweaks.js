@@ -4682,7 +4682,7 @@ async function MenuDashboardAccounts() {
             let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
 
             let div = cec('td','MTFlexGridDCell',newRow);
-            cec('span','MTFlexImage',div,'','','display: inline-block;width: 21px;height: 21px; background-image: url("' + aa.logoUrl + '");');
+            if(aa.logoUrl) cec('span','MTFlexImage',div,'','','display: inline-block;width: 21px;height: 21px; background-image: url("' + aa.logoUrl + '");');
             cec('a','MTFlexGridDCell',div,aa.displayName,'/accounts/details/' + aa.id);
 
             cec('td','MTSideDrawerSummaryData2',newRow,getDollarValue(bal));
