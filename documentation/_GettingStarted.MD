@@ -25,7 +25,7 @@ MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web
 
 Click on **Settings** in lower-left of Monarch Money web app and then **Display**.
  
-<img src="images/MT_V3_01.png" style="width:66%; height:auto;">
+<img src="../images/MT_V3_01.png" style="width:66%; height:auto;">
 
 ---
 
@@ -39,7 +39,7 @@ To configure: **Settings → Categories** → mark groups Fixed or Flexible. The
 If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
 
 
-<img src="images/MTFixed.png" style="width:66%; height:auto;">
+<img src="../images/MTFixed.png" style="width:66%; height:auto;">
 
 ---
 
@@ -48,7 +48,7 @@ If you need to, simply split those categories into two groups—for example, “
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
 <br>
 
-<img src="images/MT_V3_99.png" style="width:66%; height:auto;">
+<img src="../images/MT_V3_99.png" style="width:66%; height:auto;">
 
 Highlights:
 - **Sub Report**: view the report from different perspectives.  
@@ -64,7 +64,7 @@ Highlights:
 Select **Reports → Accounts**, click **>** (far right) on an account to open the side panel, then `...` to access MM‑Tweaks account options.
 
 <br>
-<img src="images/MTAccountSettings.png" style="width:66%; height:auto;">
+<img src="../images/MTAccountSettings.png" style="width:66%; height:auto;">
 
 Key options:
 - **Account Group** — group reports by any label you prefer (Personal, Business, Managed, Credit Cards, Trust, etc.). Useful examples:
