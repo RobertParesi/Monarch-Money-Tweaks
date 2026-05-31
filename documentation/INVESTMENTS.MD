@@ -44,14 +44,13 @@ Set targets by institution, account, holding type, or category by clicking the >
 <br>
 <img src="../images/MT_Invest06.png" style="width:50%; height:auto;">
 
-📌 When configuring allocation targets, set them at the appropriate levels so they behave consistently across portfolio and filtered/grouped views:
+📌 When configuring allocation targets, they are set at the following 2 levels.  Positions & Allocation use the same target information.
  
-1. Positions & Allocation use the same target information.
-2. By Institution / Account / Account subtype / Holding type / Category (choose the breakdown you need).  
-3. By all Accounts or by Account Group. 
+1. By Institution / Account / Account subtype / Holding type / Category (choose the breakdown you need).  
+2. By all Accounts or by Account Group. 
 
 Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
-- Set targets in both Positions & Allocation.  Positions & Allocation includes Equities, Fixed Income and Uninvested Cash where Performance only includes Equities.
+- Targets can only be set in Positions & Allocation.  The reason is Performance and Fixed Income does not contain all the holdings in a portfolio.
 
 
