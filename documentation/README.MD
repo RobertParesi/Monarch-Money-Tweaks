@@ -25,7 +25,7 @@ MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web
 
 Click on **Settings** in lower-left of Monarch Money web app and then **Display**.
  
-<img src="../images/MT_V3_01.png" style="width:66%; height:auto;">
+<img src="../images/MMTV5a.png" style="width:66%; height:auto;">
 
 ---
 
