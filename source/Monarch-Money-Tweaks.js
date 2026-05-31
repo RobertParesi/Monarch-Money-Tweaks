@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.6.3
+// @version      5.6.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -6320,15 +6320,19 @@ function sortTableByColumn(inEvent) {
 
 // Main Execution Loop
 (function() {
+    let tr = false;
     setInterval(() => {
+        if(!USERTOKEN) MM_GraphQLToken();
         if(glo.menu === true) MM_MenuFix();
         if(css.reload === true) {MM_Init();}
-        if(window.location.pathname != glo.pathName) {
-            if(glo.pathName) {MM_MenuRun(false);}
-            glo.pathName = window.location.pathname;
-            MM_MenuRun(true);
-        }
-        MenuCheckSpawnProcess();
+        if(USERTOKEN) {
+            if(window.location.pathname != glo.pathName) {
+                if(glo.pathName) {MM_MenuRun(false);}
+                glo.pathName = window.location.pathname;
+                MM_MenuRun(true);
+            }
+            MenuCheckSpawnProcess();
+        } else {if(!tr) {tr = true;console.error(MNAME, VERSION, 'X-Csrftoken Error')};}
     },300);
 }());
 // Run when leaving & entering a page
@@ -6344,12 +6348,11 @@ function MM_MenuRun(onFocus) {
     MenuSettings(onFocus);
 }
 // Query functions
+function MM_GraphQLToken() {
+    const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
+    USERTOKEN = m ? m[1] : null;
+}
 function callGraphQL(data) {
-    if(!USERTOKEN) {
-        const m = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
-        USERTOKEN = m ? m[2] : null;
-        if(!USERTOKEN) {console.error(MNAME,VERSION,'X-Csrftoken Error');return null;}
-    }
     return {mode: 'cors',method: 'POST',credentials: 'include',
         headers: {accept: '*/*','X-Csrftoken': `${USERTOKEN}`,'content-type': 'application/json','monarch-client': `${MNAME}`,'monarch-client-version': `${VERSION}`,},
         body: JSON.stringify(data)};
