@@ -40,5 +40,5 @@ Use them to compare expected remaining spend against the same period from the pr
 
 Click the **>** on the far right for history drill‑downs, month‑by‑month details, and the Month/Step charts.
 
-<img src="../images/TrendsV5b.png" style="width:60%; height:auto;">
+<img src="../images/TrendsV5c.png" style="width:60%; height:auto;">
 
