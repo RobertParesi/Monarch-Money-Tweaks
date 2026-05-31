@@ -51,6 +51,6 @@ Set targets by institution, account, holding type, or category by clicking the >
 
 Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
-- Targets can only be set in Positions & Allocation.  The reason is Performance and Fixed Income does not contain all the holdings in a portfolio.
+- Targets can only be set in Positions & Allocation. Performance and Fixed‑Income views don’t show every holding (nor uninvested cash), so they’re not reliable bases for portfolio‑level targets.
 
 
