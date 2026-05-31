@@ -1,4 +1,5 @@
-### Reports / Accounts (Standard, Brokerage, Personal Statement)
+## 📚 Reports / Accounts
+(Standard, Brokerage, Personal Statement)
 <br>
 <img src="images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
