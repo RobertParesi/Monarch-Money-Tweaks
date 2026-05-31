@@ -1,4 +1,6 @@
-### Reports / Net Income (by Tags, by Account, by Notes, by Owner)
+## 📚 Reports / Net Income 
+### by Tags, by Account, by Notes, by Owner
+
 <br>
 <img src="images/MT_V3_09.png" style="width:66%; height:auto;">
 <br>
