@@ -56,8 +56,10 @@ You can see any of the Trends reports by account group, category or both.
 
 <img src="../images/TrendsV5e.png" style="width:60%; height:auto;">
 
-Click on the clog for access settings specific to Trends.
+---
 
-The bottom half of the screen shows a summary.  In this summary, you can expand to see more detail.  
+### Trends Settings
+
+Click on the clog for access settings specific to Trends.
 
 <img src="../images/TrendsV5f.png" style="width:60%; height:auto;">
