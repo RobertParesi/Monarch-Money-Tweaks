@@ -43,22 +43,6 @@ If you need to, simply split those categories into two groups—for example, "Au
 
 ---
 
-### Overview Reports — Trends, Net Income, Accounts, Investments
-
-Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
-<br>
-
-<img src="../images/MMTV5c.png" style="width:66%; height:auto;">
-
-Highlights:
-- **Sub Report**: view the report from different perspectives.  
-- **Report Group**: change how the report groups data (category, group, account, etc.).  
-- **Account Group Filter** appears after you assign account groups.
-- Click any column header to sort ascending/descending.
-- Click any date header to change date or in Trends change to end of previous month.
-
----
-
 ### Use Reports / Accounts for special MM-Tweaks Account Settings
 
 Select **Reports → Accounts**, click **>** (far right) on an account to open the side panel, then `...` to access MM‑Tweaks account options.
@@ -76,4 +60,19 @@ Key options:
 - **Add to Dashboard Accounts list** — include account summary on the Dashboard.
 - **Ignore in Left to Spend** — exclude this account in the Budget / Left to Spend from being included.
 
+### Overview Reports — Trends, Net Income, Accounts, Investments
+
+Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
+<br>
+
+<img src="../images/MMTV5c.png" style="width:66%; height:auto;">
+
+Highlights:
+- **Sub Report**: view the report from different perspectives.  
+- **Report Group**: change how the report groups data (category, group, account, etc.).  
+- **Account Group Filter** appears after you assign account groups.
+- Click any column header to sort ascending/descending.
+- Click any date header to change date or in Trends change to end of previous month.
+
+---
 
