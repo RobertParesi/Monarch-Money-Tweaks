@@ -42,11 +42,9 @@ Click the **>** on the far right for history drill‑downs, month‑by‑month d
 
 <img src="../images/TrendsV5c.png" style="width:60%; height:auto;">
 
-The top part of the screen is a graph.  In this graph you can chart a month comparing for the last three years.  Click on **Month** to compare Month to Month or **Step** to compare each month inclusive of previous months. 
+The top part of the screen is a graph.  In this graph you can chart a month comparing for the last three years.  Click on **Month** to compare Month to Month or **Step** to compare each month inclusive of previous months.  The bottom half of the screen shows a summary.  In this summary, you can expand to see more detail.  
 
 <img src="../images/TrendsV5d.png" style="width:60%; height:auto;">
-
-The bottom half of the screen shows a summary.  In this summary, you can expand to see more detail.  
 
 You can see any of the Trends reports by account group, category or both. 
 
