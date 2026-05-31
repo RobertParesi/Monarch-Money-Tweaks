@@ -4,6 +4,8 @@
 
 MM‑Tweaks derives Trends from transactions and transaction history only — it does not use any Budget, Goals, or Recurring data. For me personally, I prefer this simpler workflow: use transactions as the single source of truth so I don’t have to maintain other data in Monarch. Think of Trends as a practical alternative to traditional budgeting: it builds budget guidance from actual transaction trends (last month, same month last year, same quarter, etc.).
 
+---
+
 ### Trends Compare reports
 
 <img src="../images/TrendsV5a.png" style="width:66%; height:auto;">
@@ -32,9 +34,13 @@ The first of these shows last year’s expenses from tomorrow through the end of
 The second shows the total for the entire next month from last year.
 Use them to compare expected remaining spend against the same period from the prior year.
 
+---
+
 ### Trends History reports
 
 <img src="../images/TrendsV5b.png" style="width:66%; height:auto;">
+
+---
 
 ### Trends Details
 
