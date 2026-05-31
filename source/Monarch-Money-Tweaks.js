@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.6.4
+// @version      5.6.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3596,9 +3596,11 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
 
     const firstDate = formatQueryDate(lowerDate);
     const lastDate = formatQueryDate(higherDate);
-    const thisMonth = getDates('n_CurMonth') + 1;
+    let tmr = getDates('d_Tomorrow');
+    const thisMonth = getDates('n_CurMonth',tmr) + 1;
 
-    let useType = '',snapshotData = null,retGroups = [], retCats = [];
+
+    let useType = '',snapshotData,retGroups = [], retCats = [];
     let s_ndx = MTFlex.Button2 > 7 ? getDates('n_CurYear', MTFlexDate2) - 12 : getDates('n_CurMonth',lowerDate) + 1;
     if(inGrouping == 4) {
         snapshotData = await dataMonthlySnapshotGroup(firstDate,lastDate,inPeriod,inAccounts,inCats);
@@ -3610,7 +3612,7 @@ async function TrendsBuildData (inCol,inGrouping,inPeriod,lowerDate,higherDate,i
             snapshotData = await dataMonthlySnapshot(firstDate,lastDate,inPeriod,inAccounts,retCats);
         }
     }
-    let useID = '',useDate = null,ndx=0,useAmount=0;
+    let useDate,useID = '',ndx=0,useAmount=0;
     for (const ss of snapshotData.aggregates) {
         switch(inGrouping) {
             case 0: useID = ss.groupBy.categoryGroup.id;break;
@@ -5928,8 +5930,9 @@ function getDates(InValue,InDate) {
         case 'n_CurMonth':return(month);
         case 'n_CurDay':return(day);
         case 'n_DOW':return d.getDay();
-        case 'd_Today':return d;
         case 'd_Yesterday':d.setDate(d.getDate() - 1);return d;
+        case 'd_Today':return d;
+        case 'd_Tomorrow':d.setDate(d.getDate() + 1);return d;
         case 'd_MinusWeek':d.setDate(d.getDate() - 7);return d;
         case 'd_Minus2Weeks':d.setDate(d.getDate() - 14);return d;
         case 'd_Minus1Month':d.setMonth(d.getMonth() - 1);return d;
