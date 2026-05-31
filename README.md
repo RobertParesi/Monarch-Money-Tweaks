@@ -20,7 +20,7 @@ To run on **Apple iPad**, goto your Apple Store.  First, install/use the **Orion
 
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
-📖  [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/DOCUMENTATION.md)
+📖  [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/documentation)
 
 Please be so kind to leave a review on Apple, Chrome or Firefox store. 🙏
 
