@@ -36,9 +36,9 @@ Use them to compare expected remaining spend against the same period from the pr
 
 <img src="../images/TrendsV5b.png" style="width:66%; height:auto;">
 
-### Reports / Trends details and charts
+### Trends Details
 
-While in anClick the **>** on the far right for history drill‑downs, month‑by‑month details, and the Month/Step charts.
+Click the **>** on the far right for history drill‑downs, month‑by‑month details, and the Month/Step charts.
 
 <img src="../images/MT_V3_History.png" style="width:60%; height:auto;">
 
