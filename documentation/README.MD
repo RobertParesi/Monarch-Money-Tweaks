@@ -60,6 +60,8 @@ Key options:
 - **Add to Dashboard Accounts list** — include account summary on the Dashboard.
 - **Ignore in Left to Spend** — exclude this account in the Budget / Left to Spend from being included.
 
+---
+
 ### Overview Reports — Trends, Net Income, Accounts, Investments
 
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
@@ -73,6 +75,3 @@ Highlights:
 - **Account Group Filter** appears after you assign account groups.
 - Click any column header to sort ascending/descending.
 - Click any date header to change date or in Trends change to end of previous month.
-
----
-
