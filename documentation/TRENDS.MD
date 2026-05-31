@@ -42,3 +42,5 @@ Click the **>** on the far right for history drill‑downs, month‑by‑month d
 
 <img src="../images/TrendsV5c.png" style="width:60%; height:auto;">
 
+<img src="../images/TrendsV5d.png" style="width:60%; height:auto;">
+
