@@ -39,7 +39,7 @@ To configure: **Settings → Categories** → mark groups Fixed or Flexible. The
 If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
 
 
-<img src="../images/MMTV5b.png" style="width:66%; height:auto;">
+<img src="../images/MMTV5c.png" style="width:66%; height:auto;">
 
 ---
 
