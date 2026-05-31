@@ -14,7 +14,7 @@ There are three types of Investment reports:
 
 Click on the **>** in the far right of any investment holding for a Detailed view:
 
-<img src="images/MT_Invest03.png" style="width:50%; height:auto;">
+<img src="../images/MT_Invest03.png" style="width:50%; height:auto;">
 
 Click on the **>** in the far right of any Total or Group for a Summary or Allocation view:
 
