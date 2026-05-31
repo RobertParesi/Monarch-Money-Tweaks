@@ -1,4 +1,4 @@
-## 📚 Getting Started & Documentation
+## 📚 Getting Started
 
 ### Monarch Money Tweaks — Installation, License & Security
 
