@@ -36,7 +36,7 @@ MM‑Tweaks classifies spending at the *group* level (MM‑Tweaks uses Group-lev
 To configure: **Settings → Categories** → mark groups Fixed or Flexible. These flags are used by Trends and Net Income reports.  One reason is Monarch uses three category levels; the third level is intended for budgeting, not for pacing/actuals. 
 
 
-If you need to, simply split those categories into two groups—for example, “Home — Fixed” and “Home — Flexible.”
+If you need to, simply split those categories into two groups—for example, "Auto - Fixed", "Auto - Flexible", “Home — Fixed” and “Home — Flexible.”
 
 
 <img src="../images/MMTV5b.png" style="width:66%; height:auto;">
