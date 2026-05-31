@@ -2,7 +2,7 @@
 
   * **Version 5.6 (Beta)**
     - ENHANCEMENT: Reports / Accounts enhanced to be faster and removed range restriction, also showing now a full Account Summary.
-    - FIX: Ensures token is loaded when signing in to Monarch before running queries.
+    - FIX: Ensures token is loaded before running queries and auto retry.
   
   * **Version 5.5 (May 29, 2026)**
     - ENHANCEMENT: Correct variable width of the emoji characters.
