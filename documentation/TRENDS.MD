@@ -6,7 +6,7 @@ MM‑Tweaks derives Trends from transactions and transaction history only — it
 
 In the Trends Compare reports, the first three columns are designed by selecting a "Compare ..." Sub Report:
 
-<img src="../images/MT_V3_04.png" style="width:66%; height:auto;">
+<img src="../images/TrendsV5a.png" style="width:66%; height:auto;">
 
 * **Compare last month** — Column 1 shows last month’s total, Column 2 shows this month’s total, and Column 3 shows the difference. Recommended only for brand‑new Monarch users without historical data.  
 
