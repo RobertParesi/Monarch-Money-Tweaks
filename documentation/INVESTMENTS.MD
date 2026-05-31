@@ -52,6 +52,6 @@ Set targets by institution, account, holding type, or category by clicking the >
 
 Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
-- Verify targets in both Positions & Allocation.  Positions & Allocation includes Equities, Fixed Income and Uninvested Cash where Performance only includes Equities.
+- Set targets in both Positions & Allocation.  Positions & Allocation includes Equities, Fixed Income and Uninvested Cash where Performance only includes Equities.
 
 
