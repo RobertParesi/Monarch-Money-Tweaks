@@ -44,6 +44,9 @@ Clicking on the date header in **any** of the Trend Reports will toggle between 
 
 <img src="../images/TrendsV5g.png" style="width:66%; height:auto;">
 
+You can see any of the Trends reports by account group, category or both. 
+
+<img src="../images/TrendsV5e.png" style="width:60%; height:auto;">
 
 ---
 
@@ -56,10 +59,6 @@ Click the **>** on the far right for history drill‑downs, month‑by‑month d
 The top part of the screen is a graph.  In this graph you can chart a month comparing for the last three years.  Click on **Month** to compare Month to Month or **Step** to compare each month inclusive of previous months.  The bottom half of the screen shows a summary.  In this summary, you can expand to see more detail.  
 
 <img src="../images/TrendsV5d.png" style="width:60%; height:auto;">
-
-You can see any of the Trends reports by account group, category or both. 
-
-<img src="../images/TrendsV5e.png" style="width:60%; height:auto;">
 
 ---
 
