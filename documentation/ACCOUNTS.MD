@@ -28,3 +28,9 @@ If cash looks incorrect:
 To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
 
 ---
+
+### Accounts Settings
+
+Click on the ⚙️ for settings specific to Accounts.
+
+<img src="../images/AccountsV5f.png" style="width:60%; height:auto;">
