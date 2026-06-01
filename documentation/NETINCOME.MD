@@ -6,3 +6,11 @@
 <br>
 <img src="../images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="../images/MT_TagsNotes2.png" style="width:60%; height:auto;">
+
+---
+
+### Net Income Settings
+
+Click on the ⚙️ for settings specific to Net Income.
+
+<img src="../images/NetIncomeV5f.png" style="width:60%; height:auto;">
