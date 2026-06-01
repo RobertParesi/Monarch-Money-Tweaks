@@ -53,4 +53,12 @@ Notes:
 - Targets do **not** need to sum to 100% (e.g., set 70% Fixed Income and leave the remainder unspecified).  
 - Targets can only be set in Positions & Allocation. Performance and Fixed‑Income views don’t show every holding (nor uninvested cash), so they’re not reliable bases for portfolio‑level targets.
 
+---
+
+### Investments Settings
+
+Click on the ⚙️ for settings specific to Investments.
+
+<img src="../images/InvestmentsV5f.png" style="width:60%; height:auto;">
+
 
