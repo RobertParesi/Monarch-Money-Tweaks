@@ -1,5 +1,8 @@
 # Change Log (Version History)
 
+  * **Version 5.7 (Beta)**
+    - FIX: Better handling of CSRF token error handling, especially when resigning on.
+  
   * **Version 5.6 (June 1, 2026)**
     - ENHANCEMENT: Reports / Accounts enhanced to be faster and removed range restriction, also showing now a full Account Summary.
     - FIX: Reports / Trends could show $0 for next month on last day of month.
