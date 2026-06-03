@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.6
+// @version      5.7.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.6';
+const MNAME = 'MM-Tweaks', VERSION = '5.7';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -461,7 +461,7 @@ function MT_GridDrawDetails() {
                         elx = cec('td',S1,el,'','',HeaderStyle);
                         if(useRow.Title) elx.title = useRow.Title;
                         if(useRow.SKlogoUrl) cec('span','MTFlexImage',elx,'','','display: inline-block;width: 1.6em;background-image: url("' + useRow.SKlogoUrl + '");');
-                        if(useRowIcon) cec('span','',elx,useRowIcon,'','text-align: center;display: inline-block;width: 1.6em;');
+                        if(useRowIcon) cec('span','',elx,useRowIcon,'','text-align: center;display: inline-block;width: 26px;');
                         cec('a',S1,elx,useDesc,useRow.SKHRef);
                     } else {
                         elx = cec('td', useRow.IsHeader ? 'MThRefClass2' : S1, el, useDesc,'',HeaderStyle);
@@ -2051,7 +2051,9 @@ async function MenuReportsNetIncomeGo() {
         case 3:
             HiddenFilter = null; hasNotes = true;break;
         case 4:
-            snapshotData = await dataGetAccounts();break;
+            snapshotData = await dataGetAccounts();
+            if(!snapshotData) return;
+            break;
         case 5:
             snapshotData4 = await dataGoals();
             for (let i = 0; i < snapshotData4.goalsV2.length; i++) {hasGoals.push(snapshotData4.goalsV2[i].id);}
@@ -2350,6 +2352,7 @@ async function MenuReportsAccountsGo() {
         MF_QueueAddTitle(16,getDates('s_ShortDate',MTFlexDate2),MTP);
         MF_QueueAddTitle(17,'Avg',MTP);
         accountsData = await dataGetAccounts();
+        if(!accountsData) return;
         if(isToday == false) {snapshotData5 = await dataDisplayBalanceAt(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < accountsData.accounts.length; i++) {
             let ad = accountsData.accounts[i];
@@ -2417,6 +2420,7 @@ async function MenuReportsAccountsGo() {
         MTFlex.DateEvent = 0;
 
         accountsData = await dataGetAccounts();
+        if(!accountsData) return;
         [summaryData, manualHoldData,cashHoldData] = await buildPortfolioHoldings(true);
         MTP.Format = -1;MF_QueueAddTitle(4,'Updated',MTP,getCookie('MT_AccountsHideUpdated', true) == 1 ? true : false);
         MTP.IsSortable = 2;MTP.Format = decimalPic;
@@ -2531,6 +2535,7 @@ async function MenuReportsAccountsGo() {
         }
 
         accountsData = await dataGetAccounts();
+        if(!accountsData) return;
 
         let txLen = -1;
         let lowerDate = formatQueryDate(MTFlexDate1), higherDate = formatQueryDate(MTFlexDate2);
@@ -4407,7 +4412,8 @@ async function MenuAccountsSummary() {
     if (elements.length <= 1) { glo.spawnProcess = 4; return; }
 
     const snapshotData = await dataGetAccounts();
-    if (snapshotData && snapshotData.accounts) {
+    if(!snapshotData) return;
+    if (snapshotData.accounts) {
         for (const ss of snapshotData.accounts) {
             if (ss.hideFromList === false && ss.includeInNetWorth === true) {
                 const AccountGroupFilter = getCookie('MTAccounts:' + ss.id, false);
@@ -4783,11 +4789,15 @@ function MenuLogin(OnFocus) {
 }
 
 function MenuAccounts(OnFocus) {
-    if(OnFocus == true) {
-       if (glo.pathName == '/accounts' ) {
-         MenuAccountSummaryHide();
-         glo.spawnProcess = 4;
-       }
+    if (glo.pathName.startsWith('/accounts')) {
+        if(OnFocus == true) {
+            MenuAccountSummaryHide();
+            glo.spawnProcess = 4;
+            addStyle('.z-toast {display: block;}');
+        }
+        if(OnFocus == false) {
+            addStyle('.z-toast {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
+        }
     }
 }
 
@@ -4858,7 +4868,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Transactions','','spacer');
     MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
     MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
-    MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
+    MenuDisplay_Input('Hide Toaster Pop-ups to Create Rule','MT_HideToaster','checkbox');
     MenuDisplay_Input('Assist & populate when searching merchants rather than starting as blank','MT_MerAssist','checkbox');
     MenuDisplay_Input('Monarch Money Reports','','spacer');
     MenuDisplay_Input('Hide the Difference amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
@@ -6338,6 +6348,7 @@ function sortTableByColumn(inEvent) {
         } else {if(!tr) {tr = true;console.error(MNAME, VERSION, 'X-Csrftoken Error')};}
     },300);
 }());
+
 // Run when leaving & entering a page
 function MM_MenuRun(onFocus) {
     MenuReports(onFocus);
@@ -6355,10 +6366,26 @@ function MM_GraphQLToken() {
     const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
     USERTOKEN = m ? m[1] : null;
 }
-function callGraphQL(data) {
-    return {mode: 'cors',method: 'POST',credentials: 'include',
+async function callGraphQL(data,filters,pName) {
+    while (true) {
+        const r = await GraphQLwrap(data,filters,pName)
+        if(r === '*') {await new Promise(resolve => setTimeout(resolve, 1000));
+                       MM_GraphQLToken();continue;}
+        return r;
+    }
+}
+
+async function GraphQLwrap(data,filters,pName) {
+    const options = {mode: 'cors',method: 'POST',credentials: 'include',
         headers: {accept: '*/*','X-Csrftoken': `${USERTOKEN}`,'content-type': 'application/json','monarch-client': `${MNAME}`,'monarch-client-version': `${VERSION}`,},
         body: JSON.stringify(data)};
+    return fetch(GRAPHQL, options)
+    .then((response) => response.json())
+    .then((data) => {
+        if(data.detail) {console.warn(MNAME,VERSION,data.detail);return '*';} else {
+            if(glo.debug == 1) addConsole(pName,filters,data.data);return data.data;
+        }
+    }).catch((error) => { console.error(MNAME,VERSION,error); return null;});
 }
 
 async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -6366,12 +6393,9 @@ async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts,
     if(inCat == undefined || inCat == null) inCat = [];
     inCat = await dataFixCats(inCat);
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
-    const options = callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
+    return await callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
           query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
-     });
-    return fetch(GRAPHQL, options)
-    .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) addConsole('dataMonthlySnapshot',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+     },filters,'dataMonthlySnapshot');
 }
 
 async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -6379,12 +6403,9 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
     if(inCat == undefined || inCat == null) inCat = [];
     inCat = await dataFixCats(inCat);
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
-    const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
+    return await callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
-    });
-  return fetch(GRAPHQL, options)
-    .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) addConsole('dataMonthlySnapshotGroup',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    },filters,'dataMonthlySnapshotGroup');
 }
 
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -6394,48 +6415,25 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     if(inCat == undefined || inCat == null) inCat = [];
     inCat = await dataFixCats(inCat);
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
-    const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
+    return await callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount \n pending \n date \n hideFromReports \n dataProviderDescription \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order \n type {\n group}} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
-    });
-    return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) addConsole('dataTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
-}
-
-async function dataFixCats(inCat) {
-    if(inCat.length === 1) {
-        const mixed = inCat[0];
-        if(inList(mixed,'Fixed','Flexible','income','Spending') > 0) {
-            inCat = await rtnCategoryGroupList(mixed, 'section',true);
-        }
-    }
-    return inCat;
+    },filters,'dataTransactions');
 }
 
 async function dataTransactionsNotes(startDate,endDate) {
     const limit = 5000, offset = 0;
     const filters = {startDate: startDate, endDate: endDate, hasNotes: true};
-    const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
+    return await callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id \n notes }}}\n"
-    });
-    return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
+    },filters,'dataTransactionsNotes');
 }
 
 async function dataGoals() {
-    const options = callGraphQL({operationName: 'Web_GoalsV2', variables: { },
-          query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"});
-    return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(MNAME,VERSION,error);});
+    return await callGraphQL({operationName: 'Web_GoalsV2', variables: { },query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"},null,'dataGoals');
 }
 async function dataBenchmarks(startDate,endDate) {
-    const options = callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
-                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"});
-    return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataBenchmarks',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
+                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"},null,'dataBenchmarks');
 }
 async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
@@ -6443,59 +6441,38 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     let qy = 'query Web_GetPortfolio($portfolioInput: PortfolioInput) { portfolio(input: $portfolioInput) {\n ';
     if (inBm) qy += '\n performance {totalValue totalChangePercent totalChangeDollars  \n benchmarks {security {id ticker name oneDayChangePercent } \n historicalChart {date returnPercent } } }';
     qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis userCostBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeBalanceInNetWorth institution { id name } type { name display } subtype { name display } } } } } } } }';
-    let options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy});
-       return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy},filters,'dataPortfolio');
 }
 
 async function dataPerformance(startDate,endDate,securityIds) {
     const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
-    const options = callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
-    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"});
-       return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataPerformance',filters,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
+    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"},filters,'dataPerformance');
 }
 
 async function dataDisplayBalanceAt(date) {
-    const options = callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
-          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
-  return fetch(GRAPHQL, options)
-    .then((response) => response.json())
-    .then((data) => {if(glo.debug == 1) addConsole('dataDisplayBalanceAt',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
+          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"},null,'dataDisplayBalanceAt');
 }
 
 async function dataAccountBalances(startDate) {
-    const options = callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
-         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"});
-   return fetch(GRAPHQL, options)
-    .then((response) => response.json())
-        .then((data) => { if(glo.debug == 1) addConsole('dataAccountBalances',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
+         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"},null,'dataAccountBalances');
 }
 
 async function dataGetAccounts(inID) {
-    const options = callGraphQL({ operationName: 'GetAccounts',variables: { },
-          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
-  return fetch(GRAPHQL, options)
-    .then((response) => response.json())
-    .then((data) => { if(glo.debug == 1) addConsole('dataGetAccounts',null,data.data);return data.data; }).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({ operationName: 'GetAccounts',variables: { },
+          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"},null,'dataGetAccounts');
 }
 
 async function dataRefreshAccounts() {
- const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
-         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
-    return fetch(GRAPHQL, options)
-    .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => {return '';}).catch((error) => { console.error(MNAME,VERSION,error); });
+ return await callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
+         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"},null,'dataRefreshAccounts');
 }
 
 async function dataGetCategories() {
-    const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
-          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
-    return fetch(GRAPHQL, options)
-        .then((response) => response.json())
-        .then((data) => {if(glo.debug == 1) addConsole('dataGetCategories',null,data.data);return data.data;}).catch((error) => { console.error(MNAME,VERSION,error); });
+    return await callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
+          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"},null,'dataGetCategories');
 }
 
 function addConsole(a,b,c) {console.log(MNAME,a,b,c);}
@@ -6544,6 +6521,16 @@ async function buildCategoryGroups() {
     if (isFixed) glo.accountsHasFixed = true;
     accountGroups.push({GROUP: c.group.id,GROUPNAME: c.group.name,ID: c.id, NAME: c.name, ICON: c.icon, TYPE: c.group.type, ORDER: c.order, ISFIXED: isFixed});
   }
+}
+
+async function dataFixCats(inCat) {
+    if(inCat.length === 1) {
+        const mixed = inCat[0];
+        if(inList(mixed,'Fixed','Flexible','income','Spending') > 0) {
+            inCat = await rtnCategoryGroupList(mixed, 'section',true);
+        }
+    }
+    return inCat;
 }
 
 // Return Query functions
