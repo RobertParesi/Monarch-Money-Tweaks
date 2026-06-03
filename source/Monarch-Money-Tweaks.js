@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.7.1
+// @version      5.7.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5040,7 +5040,11 @@ function MenuCheckSpawnProcess() {
     if(glo.compressTx === 2) {
         if(MenuCheckSpawnProcessCl('transaction','padding-top: 1px !important; padding-bottom: 1px !important;font-size: 13.5px !important;}',0)) {
            if(MenuCheckSpawnProcessCl('full-screen-select-trigger','font-size: 13.5px;}',0)) {
-               if(MenuCheckSpawnProcessCl('transaction-link-button-children','font-size: 13.5px;}')) {glo.compressTx = true;}
+               if(MenuCheckSpawnProcessCl('transaction-link-button-children','font-size: 13.5px;}')) {
+                   const cn = getFullClassName('OwnershipAvatar__TruncatedText');
+                   if(cn) addStyle('.' + cn + '{font-size: 13.5px !important;}');
+                   glo.compressTx = true;
+               }
            }
         }
     }
@@ -6363,8 +6367,7 @@ function MM_MenuRun(onFocus) {
 }
 // Query functions
 async function MM_GraphQLToken() {
-    const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
-    USERTOKEN = m ? m[1] : null;
+    const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);USERTOKEN = m ? m[1] : null;
 }
 async function callGraphQL(data, filters, pName) {
     for (let a = 0; a < 5; a++) {
@@ -6434,7 +6437,7 @@ async function dataGoals() {
 }
 async function dataBenchmarks(startDate,endDate) {
     return await callGraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
-                                 "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"},null,'dataBenchmarks');
+                              "query":"query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {securityHistoricalPerformance(input: $input) { security {id ticker name}\n historicalChart {date returnPercent }}}"},null,'dataBenchmarks');
 }
 async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
@@ -6448,7 +6451,7 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
 async function dataPerformance(startDate,endDate,securityIds) {
     const filters = {startDate: startDate, endDate: endDate, securityIds: securityIds};
     return await callGraphQL({"operationName":"Web_GetInvestmentsHoldingDrawerHistoricalPerformance","variables":{"input": filters},
-    query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"},filters,'dataPerformance');
+           query: "query Web_GetInvestmentsHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {\n securityHistoricalPerformance(input: $input) {security {id} \n historicalChart {date returnPercent value } } }"},filters,'dataPerformance');
 }
 
 async function dataDisplayBalanceAt(date) {
@@ -6467,8 +6470,8 @@ async function dataGetAccounts(inID) {
 }
 
 async function dataRefreshAccounts() {
- return await callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
-         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"},null,'dataRefreshAccounts');
+    return await callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
+          query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"},null,'dataRefreshAccounts');
 }
 
 async function dataGetCategories() {
