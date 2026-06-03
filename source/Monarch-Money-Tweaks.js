@@ -6362,17 +6362,18 @@ function MM_MenuRun(onFocus) {
     MenuSettings(onFocus);
 }
 // Query functions
-function MM_GraphQLToken() {
+async function MM_GraphQLToken() {
     const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
     USERTOKEN = m ? m[1] : null;
 }
-async function callGraphQL(data,filters,pName) {
-    while (true) {
-        const r = await GraphQLwrap(data,filters,pName)
-        if(r === '*') {await new Promise(resolve => setTimeout(resolve, 1000));
-                       MM_GraphQLToken();continue;}
-        return r;
+async function callGraphQL(data, filters, pName) {
+    for (let a = 0; a < 5; a++) {
+        const r = await GraphQLwrap(data, filters, pName);
+        if (r !== '*') return r;
+        await new Promise(res => setTimeout(res, 1000));
+        await MM_GraphQLToken();
     }
+    return null;
 }
 
 async function GraphQLwrap(data,filters,pName) {
