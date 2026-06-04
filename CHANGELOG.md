@@ -3,7 +3,8 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
-  * **Version 5.7 (Beta)**
+  * **Version 5.7 (June 4, 2026)**
+    - REGRESSION: Monach related, Reports menu break.
     - FIX: Better handling of CSRF token error handling, especially when resigning on.
   
   * **Version 5.6 (June 1, 2026)**
