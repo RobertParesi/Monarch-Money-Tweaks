@@ -18,5 +18,5 @@ The ideas behind this extension (the features and enhancements), along with its 
 For details and the reasoning behind that statement — and to clarify this is not an open‑source project — please see my [full statement here](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CONTRIBUTING.md).
 
 ### Disclaimer
-This extension builds upon the current Monarch Money web application. As such, I do not have control over any changes to their underlying codebase. Consequently, there is no guarantee that the features within this extension will continue to function as intended in the future. I reserve the right to modify or remove any features at my discretion, should maintaining them become burdensome or impractical. I appreciate your understanding.
+This extension builds upon the current Monarch Money web application. As such, I do not have control over any changes to their underlying codebase. Consequently, there is no guarantee that the features within this extension will continue to function as intended in the future. I reserve the right to discontinue the script, modify or remove any features at my discretion, should maintaining them become burdensome or impractical. I appreciate your understanding.
 
