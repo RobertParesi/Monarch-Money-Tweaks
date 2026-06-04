@@ -1,3 +1,6 @@
+### Disclaimer
+This extension builds upon the current Monarch Money web application. As such, I do not have control over any changes to their underlying codebase. Consequently, there is no guarantee that the features within this extension will continue to function as intended in the future. I reserve the right to discontinue the script, modify or remove any features at my discretion, should maintaining them become burdensome or impractical. I appreciate your understanding.
+
 # Change Log (Version History)
 
   * **Version 5.7 (Beta)**
