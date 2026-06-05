@@ -42,8 +42,6 @@ Use them to compare expected remaining spend against the same period from the pr
 
 Clicking on the date header in **any** of the Trend Reports will toggle between using today's date or the last day of the previous month.  This allows you to see as of end of last month at any time.
 
-<img src="../images/TrendsV5g.png" style="width:66%; height:auto;">
-
 You can see any of the Trends reports by account group, category or both. 
 
 <img src="../images/TrendsV5e.png" style="width:60%; height:auto;">
