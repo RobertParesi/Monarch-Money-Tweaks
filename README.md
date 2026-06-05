@@ -1,6 +1,6 @@
 ## <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks for Monarch Money - Web Extension 
 
-### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.6
+### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.7
 
 Visit the official Extensions area for your browser using the following links: 
 
