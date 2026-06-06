@@ -1,5 +1,5 @@
 
-##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Usage License and Restrictions
+##  <img src="/documentation/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Usage License and Restrictions
 
 **Monarch Money Tweaks** is an extension designed to enhance and customize your experience with Monarch Money web application. It offers various features and ideas aimed at improving functionality and personalization of your financial management tasks.
 
