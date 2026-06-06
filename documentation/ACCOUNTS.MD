@@ -17,7 +17,11 @@ MM‑Tweaks cand display your account balances in many different ways.
 <img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
 
 ---
+**Personal Statement** shows a simple Balance Sheet of your Assets and Liabilities.  This report would be a good report to give to a Loan Officer.
 
+<img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
+
+---
 ### Reports / Accounts (Overall Cash Statement)
 
 This report will show all cash in Checking, Savings and Investments as well as Uninvested Cash in brokerage accounts.
