@@ -48,7 +48,7 @@ If you need to, simply split those categories into two groups—for example, "Au
 Select **Reports → Accounts**, click **>** (far right) on an account to open the side panel, then `...` to access MM‑Tweaks account options.
 
 <br>
-<img src="../images/MMTV5d.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MMTV5d.png" style="width:66%; height:auto;">
 
 Key options:
 - **Account Group** — group reports by any label you prefer (Personal, Business, Managed, Credit Cards, Trust, etc.). Useful examples:
