@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.7
+// @version      5.8.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.7';
+const MNAME = 'MM-Tweaks', VERSION = '5.8';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2970,7 +2970,10 @@ async function MenuReportsInvestmentsGo() {
         MTP.Width = '94px';MTP.Format = 0;MF_QueueAddTitle(21,'Buy',MTP,true);
         MTP.Width = '106px';MTP.Format = 1;MF_QueueAddTitle(22,'Proposed $',MTP,true);
         MTP.Width = '94px';MTP.Format = 4;MF_QueueAddTitle(23,'Prop %',MTP,true);
-        if (glo.forceRefresh !== true) portfolioData = await dataPortfolio(lowerDate, higherDate);
+        if (glo.forceRefresh !== true) {
+            portfolioData = await dataPortfolio(lowerDate, higherDate);
+            accountsData = await dataGetAccounts(higherDate);
+        }
         await InvestmentHoldings();
         await InvestmentCash();
         if(MTFlex.Button1 == 0) {
@@ -2991,6 +2994,14 @@ async function MenuReportsInvestmentsGo() {
         async function InvestmentHoldings() {
             let RRN = 0;
             const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
+            for (const acc of accountsData.accounts) {
+                if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(acc.id)) continue; }
+                if(acc.type.name === 'brokerage') {
+                    accountQueue.push({"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc.institution.name,
+                                       "accountName": acc.displayName,"accountSubtype": '',"isManual": false,
+                                       "accountHoldings": 0,"crypto": 0,"cashHoldings": 0,"zeroHoldings": 0});
+                }
+            }
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
                 const holdings = edge.node.holdings;
                 let secPercent = edge.node.securityPriceChangePercent;
@@ -3037,17 +3048,11 @@ async function MenuReportsInvestmentsGo() {
                         account.holdingBalance += useHoldingValue;
                         account.holdingBalance = get2dec(account.holdingBalance);
                         account.accountHoldings+=1;
+                        account.accountSubtype = useSubType;
                         if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;}
                         if(holding.isManual == true) {account.isManual = true;}
                         if(holding.type == 'Cash') {account.cashHoldings+= useHoldingValue;}
                         if(useHoldingValue == 0) {account.zeroHoldings+=1;}
-                    } else {
-                        accountQueue.push({"id": holding.account.id, "holdingBalance": useHoldingValue,
-                                           "portfolioBalance": get2dec(holding.account.displayBalance),"institutionName": useInst,
-                                           "accountName": useAccount,"accountSubtype": useSubType,"accountHoldings": 1, "isManual": holding.isManual,
-                                           "crypto": holding.type == 'cryptocurrency' ? useHoldingValue : 0,
-                                           "cashHoldings": holding.type == 'cash' ? useHoldingValue : 0,
-                                           "zeroHoldings": useHoldingValue == 0 ? 1 : 0});
                     }
 
                     // New price
@@ -3169,7 +3174,7 @@ async function MenuReportsInvestmentsGo() {
                 MTP.SKTriggerEvent = MTFlex.Button2 === 1 ? 'UID|' + MTP.UID : 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
                 MF_AddCol(0,splitTicker == 1 ? 'CASH' : 'CASH • CASH/MONEY MARKET');
-                MF_AddCol(1,' Cash/MONEY MARKET');
+                MF_AddCol(1,acc.accountHoldings > 0 ? 'Cash/MONEY MARKET' : 'Cash/NO HOLDINGS');
                 MF_AddCol(2,acc.institutionName);
                 MF_AddCol(3,acc.accountName);
                 MF_AddCol(4,acc.accountSubtype);
@@ -4920,7 +4925,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Benchmark cards in Performance report','MT_InvestmentHideBM','checkbox');
     MenuDisplay_Input('Hide Moving Averages in side drawer','MT_InvestmentHideMA','checkbox');
     MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
-    MenuDisplay_Input('Skip creating CASH/MONEY MARKET entries','MT_InvestmentCardNoCash','checkbox');
+    MenuDisplay_Input('Skip creating Cash/MONEY MARKET & NO HOLDINGS entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTInvestments_MaxCards','number',null,0,20);
     MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
@@ -6386,7 +6391,7 @@ async function GraphQLwrap(data,filters,pName) {
     return fetch(GRAPHQL, options)
     .then((response) => response.json())
     .then((data) => {
-        if(data.detail) {console.warn(MNAME,VERSION,data.detail);return '*';} else {
+        if(data.detail) {console.error(MNAME,VERSION,data.detail);return '*';} else {
             if(glo.debug == 1) addConsole(pName,filters,data.data);return data.data;
         }
     }).catch((error) => { console.error(MNAME,VERSION,error); return null;});
@@ -6397,7 +6402,7 @@ async function dataMonthlySnapshot(startDate, endDate, groupingType, inAccounts,
     inCat = await buildFixedFlex(inCat);
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
     return await GraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
-          query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
+          query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates (\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {id}\n " + groupingType + "}\n summary {sum}}}"
      },filters,'dataMonthlySnapshot');
 }
 async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -6406,7 +6411,7 @@ async function dataMonthlySnapshotGroup(startDate, endDate, groupingType, inAcco
     inCat = await buildFixedFlex(inCat);
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
     return await GraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
-          query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
+          query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false ) {\n groupBy {\n categoryGroup {id}\n " + groupingType + " }\n summary {sum} } }"
     },filters,'dataMonthlySnapshotGroup');
 }
 async function dataTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -6417,18 +6422,18 @@ async function dataTransactions(startDate,endDate, offset, isPending, inAccounts
     inCat = await buildFixedFlex(inCat);
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     return await GraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount \n pending \n date \n hideFromReports \n dataProviderDescription \n merchant {\n name} \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n name \n order \n type {\n group}} \n ownedByUser {\n displayName} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {id amount pending date hideFromReports notes dataProviderDescription \n merchant {name} \n tags {id name color order} \n account {id name order \n type {group}} \n ownedByUser {displayName} \n goal {id name} \n category {id name \n group {id name type }}}}}"
     },filters,'dataTransactions');
 }
 async function dataTransactionsNotes(startDate,endDate) {
     const limit = 5000, offset = 0;
     const filters = {startDate: startDate, endDate: endDate, hasNotes: true};
     return await GraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id \n notes }}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {id notes }}}"
     },filters,'dataTransactionsNotes');
 }
 async function dataGoals() {
-    return await GraphQL({operationName: 'Web_GoalsV2', variables: { },query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"},null,'dataGoals');
+    return await GraphQL({operationName: 'Web_GoalsV2', variables: { },query: "query Web_GoalsV2 {\n goalsV2 {id}}"},null,'dataGoals');
 }
 async function dataBenchmarks(startDate,endDate) {
     return await GraphQL({"operationName":"Web_GetSecuritiesHistoricalPerformance","variables":{"input":{"securityIds":["78651443257066675","119563102644090322", "77359007828247560","78665972690706707"],"startDate": startDate,"endDate": endDate}},
@@ -6449,15 +6454,15 @@ async function dataPerformance(startDate,endDate,securityIds) {
 }
 async function dataDisplayBalanceAt(date) {
     return await GraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
-          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"},null,'dataDisplayBalanceAt');
+          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {id displayBalance(date: $date)\n type { name } } }"},null,'dataDisplayBalanceAt');
 }
 async function dataAccountBalances(startDate) {
     return await GraphQL({ operationName: 'Web_GetAccountsPageRecentBalance', variables: { startDate: startDate },
-         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {\n accounts {\n id \n name \n type {\n group} \n recentBalances(startDate: $startDate)}}"},null,'dataAccountBalances');
+         query: "query Web_GetAccountsPageRecentBalance($startDate: Date!) {accounts {id name \n type {group} \n recentBalances(startDate: $startDate)}}"},null,'dataAccountBalances');
 }
 async function dataGetAccounts(inID) {
     return await GraphQL({ operationName: 'GetAccounts',variables: { },
-          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n limit \n dataProviderCreditLimit\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"},null,'dataGetAccounts');
+          query: "query GetAccounts {accounts {id displayName deactivatedAt isHidden isAsset isManual mask displayLastUpdatedAt currentBalance displayBalance limit dataProviderCreditLimit hideFromList hideTransactionsFromReports includeInNetWorth order icon logoUrl deactivatedAt \n institution { id name }\n type {name display group}\n subtype {name display}}}"},null,'dataGetAccounts');
 }
 async function dataRefreshAccounts() {
     return await GraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
@@ -6465,7 +6470,7 @@ async function dataRefreshAccounts() {
 }
 async function dataGetCategories() {
     return await GraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
-          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"},null,'dataGetCategories');
+          query: "query GetCategorySelectOptions {categories {id name order icon group {id name type}}}"},null,'dataGetCategories');
 }
 function addConsole(a,b,c) {console.log(MNAME,a,b,c);}
 
@@ -6594,5 +6599,6 @@ function customGroupInfo(inName) {
 }
 function customSubGroupInfo(inId,inName) {
     const getSub = getCookie('MTAccountsSub:' + inId,false);
-    if(getSub) return getSub;return inName;
+    if(getSub) return getSub;
+    return inName;
 }
