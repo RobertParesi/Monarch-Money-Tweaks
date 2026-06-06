@@ -9,7 +9,7 @@ Summary by **Tags** shows both tagged and untagged transactions.  If a transacti
 
 ---
 
-Summary for **Notes** finds any transaction which has a note that starts with *<space> such as "* Vacation".   This allows you to use free-form tags without having to designate and use one of the Monarch tags.   If you have additionals to add just place it on the next line.
+Summary for **Notes** finds any transaction which has a note that starts with *<space> such as "* Vacation".   This allows you to use free-form tags without having to designate and use one of the Monarch tags.   If you have additional notes to add just place it on the next line.
 
 <img src="../images/MT_TagNotes.png" style="width:60%; height:auto;">
 <img src="../images/MT_TagsNotes2.png" style="width:60%; height:auto;">
