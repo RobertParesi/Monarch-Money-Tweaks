@@ -4,20 +4,26 @@ MM‑Tweaks can display your account balances in many different ways.
 
 <img src="../images/MTAccountsV5a.png" style="width:66%; height:auto;">
 
-**Standard Report** show all your accounts by Assets and Liabilities.  Use the Sub Report pull down to group the report many different ways.
+### Reports / Accounts (Standard Report)
+
+This report will show all your accounts by Assets and Liabilities.  Use the Sub Report pull down to group the report many different ways.
 
 <img src="../images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
 <img src="../images/MT_V3_08.png" style="width:66%; height:auto;">
 
 ---
+### Reports / Accounts (Personal Statement)
 
-**Personal Statement** shows a simple Balance Sheet of your Assets and Liabilities.  This report would be good to give to a loan-officer.
+This report will show a simple Balance Sheet of your Assets and Liabilities.  This report would be good to give to a loan-officer.
 
 <img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
 
 ---
-**Brokerage Statement** displays just your investment accounts.  
+
+### Reports / Accounts (Brokerage Statement)
+
+This report displays just your investment accounts.  
 
 The Buy/Sell, Adjustments and Transfers columns come from transactions in the Transfer categories.  The Transfers column is any category from the Transfer group not labeled as Buy, Sell or Adjustment.  
 
