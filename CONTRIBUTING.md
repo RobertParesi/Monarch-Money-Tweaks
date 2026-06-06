@@ -1,4 +1,4 @@
-##  <img src="/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Contributing
+##  <img src="/documentation/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height:30px;"/> Monarch Money Tweaks - Contributing
 
 ### Source Contributions
 The Monarch Money Tweaks extension (source code/GitHub) is not configured as "open-source / community contributions".  Factors such as security, code bloat, maintainability, consistency, App Store reviews, ownership of the App Store accounts for Chrome, Firefox and Apple,  and my available time influenced this choice.  I am not looking for AI or community code to enhance this extension. Any forked GitHubs must be made PRIVATE. 
