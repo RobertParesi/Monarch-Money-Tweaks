@@ -4,7 +4,7 @@
 
 MM‑Tweaks builds Trends solely from transactions and transaction history — it doesn’t rely on Budget, Goals, or Recurring entries. I prefer this simpler approach: treat transactions as the single source of truth so you don’t have to maintain budget data in Monarch. Think of Trends as a practical alternative to traditional budgeting — it produces guidance from actual transaction patterns (last month, same month last year, same quarter, etc.), so you don’t need to create budgets or manage roll‑overs manually.
 
-For retirees or others who plan this year’s spending from last year’s activity, Trends pacing makes budgeting far easier.
+For retirees and others who plan this year’s spending from last year’s activity, Trends pacing makes budgeting far easier.
 
 ---
 
