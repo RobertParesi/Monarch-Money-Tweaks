@@ -80,4 +80,4 @@ Highlights:
 
 ### Trends, Net Income, Accounts, Investments
 
-Click on four links (Trends, NetIncome, Accounts, Investments) for documentation on each of the four reports.
+Click on the four links (TRENDS, NETINCOME, ACCOUNTS, INVESTMENTS) for documentation on each of these reports.
