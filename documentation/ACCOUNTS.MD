@@ -2,22 +2,22 @@
 
 MM‑Tweaks can display your account balances in many different ways.
 
-<img src="../images/MTAccountsV5a.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MTAccountsV5a.png" style="width:66%; height:auto;">
 
 ### Reports / Accounts (Standard Report)
 
 This report will show all your accounts by Assets and Liabilities.  Use the Sub Report pull down to group the report many different ways.
 
-<img src="../images/MT_V3_07.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
-<img src="../images/MT_V3_08.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MT_V3_08.png" style="width:66%; height:auto;">
 
 ---
 ### Reports / Accounts (Personal Statement)
 
 This report will show a simple Balance Sheet of your Assets and Liabilities.  This report would be good to give to a loan-officer.
 
-<img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MT_V3_12.png" style="width:66%; height:auto;">
 
 ---
 
@@ -31,7 +31,7 @@ If you want the Net Change column to exclude the Transfers (new money in and old
 
 The **Positions** column is the total value of the holdings in the account.  The **Cash Balance** column is the current account balance minus the balance of the holdings (uninvested cash).  These two columns can be turned on and off in ⚙️ Settings.
 
-<img src="../images/MTAccountsV5e.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MTAccountsV5e.png" style="width:66%; height:auto;">
 
 ---
 
@@ -39,7 +39,7 @@ The **Positions** column is the total value of the holdings in the account.  The
 
 This report will show all cash in Checking, Savings and Investments as well as Uninvested Cash in brokerage accounts.
 
-<img src="../images/MTAccountsV5f.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MTAccountsV5f.png" style="width:66%; height:auto;">
 
 MM-Tweaks calculates the "uninvested cash" in brokerage accounts in the following manner:
 
@@ -60,7 +60,7 @@ To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts
 
 You can select the > on the Group or Account level for more details.
 
-<img src="../images/MTAccountsV5g.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MTAccountsV5g.png" style="width:66%; height:auto;">
 ---
 
 
