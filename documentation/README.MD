@@ -62,7 +62,7 @@ Key options:
 
 ---
 
-### Overview Reports — Trends, Net Income, Accounts, Investments
+### Overview Reports 
 
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
 <br>
@@ -75,3 +75,9 @@ Highlights:
 - **Account Group Filter** appears after you assign account groups.
 - Click any column header to sort ascending/descending.
 - Click any date header to change date or in Trends change to end of previous month.
+
+---
+
+### Trends, Net Income, Accounts, Investments
+
+Click on four links (Trends, NetIncome, Accounts, Investments) for documentation on each of the four reports.
