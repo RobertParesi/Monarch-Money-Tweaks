@@ -1,6 +1,6 @@
 ## 📚 Reports / Accounts
 
-MM‑Tweaks cand display your account balances in many different ways.
+MM‑Tweaks can display your account balances in many different ways.
 
 <img src="../images/MTAccountsV5a.png" style="width:66%; height:auto;">
 
