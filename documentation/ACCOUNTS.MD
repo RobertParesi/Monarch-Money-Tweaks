@@ -23,7 +23,7 @@ The Buy/Sell, Adjustments and Transfers columns come from transactions in the Tr
 
 If you want the Net Change column to exclude the Transfers (new money in and old money taken out), click on the ⚙️ for Settings and select **Add Transfers to Net Change in Brokerage Statement for Adjusted Performance**.
 
-The **Cash Balance** column is the current account balance minus the balance of the holdings (uninvested cash).
+The **Positions** column is the total value of the holdings in the account.  The **Cash Balance** column is the current account balance minus the balance of the holdings (uninvested cash).  These two columns can be turned on and off in ⚙️ Settings.
 
 <img src="../images/MTAccountsV5e.png" style="width:66%; height:auto;">
 
