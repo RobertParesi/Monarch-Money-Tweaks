@@ -3,7 +3,7 @@
 
 In addition to Trends summaries, MM‑Tweaks also breaks down your income and expenses by Tags, Account, Notes, and Owner for flexible reporting.
 
-Summary by **Tags** shows both tagged and untagged transactins.  If a transaction has multiple tags, it will show up in the **Multiple** column.
+Summary by **Tags** shows both tagged and untagged transactions.  If a transaction has multiple tags, it will show up in the **Multiple** column.
 
 <img src="../images/NetIncomeV5a.png" style="width:66%; height:auto;">
 
