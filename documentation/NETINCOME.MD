@@ -22,6 +22,11 @@ Summary for **Accounts** allows you to see Income and Expenses by Account.  This
 
 ---
 
+Summary for **Owner** allows you to see Income and Expenses either Shared or assigned to an owner.  This would be good to see shared and partner spending. 
+
+<img src="../images/NetIncomeV5d.png" style="width:60%; height:auto;">
+
+---
 ### Net Income Settings
 
 Click on the ⚙️ for settings specific to Net Income.
