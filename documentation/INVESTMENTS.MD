@@ -8,17 +8,17 @@ There are three types of Investment reports:
 4. **Fixed Income** - Displays all your fixed income (CD & Bond) holdings and trying to extract a maturity date and yearly income from the description.
 
 <br>
-<img src="../images/MT_Invest01.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MT_Invest01.png" style="width:66%; height:auto;">
 <br>
-<img src="../images/MT_Invest02.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
 
 Click on the **>** in the far right of any investment holding for a Detailed view:
 
-<img src="../images/MT_Invest03.png" style="width:50%; height:auto;">
+<img src="../documentation/images/MT_Invest03.png" style="width:50%; height:auto;">
 
 Click on the **>** in the far right of any Total or Group for a Summary or Allocation view:
 
-<img src="../images/MT_Invest04.png" style="width:50%; height:auto;">
+<img src="../documentation/images/MT_Invest04.png" style="width:50%; height:auto;">
 
 ---
 
@@ -26,7 +26,7 @@ Click on the **>** in the far right of any Total or Group for a Summary or Alloc
 
 Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
 
-![Settings](../images/MTInvestmentSettings.png)
+![Settings](../documentation/images/MTInvestmentSettings.png)
 
 - **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, your objective, Index Strategy, Bond Type, etc.) either per‑ticker or at the account level.  In my examples below, I use a **sector**.
 
@@ -39,10 +39,10 @@ Select **Reports → Investments**, click on **>** (far right) of any equity hol
 Set targets by institution, account, holding type, or category by clicking the > on the Total row (top header) of the grid and then [...] in top-right.
 
 <br>
-<img src="../images/MT_InvestAlloc.png" style="width:50%; height:auto;">
+<img src="../documentation/images/MT_InvestAlloc.png" style="width:50%; height:auto;">
 
 <br>
-<img src="../images/MT_Invest06.png" style="width:50%; height:auto;">
+<img src="../documentation/images/MT_Invest06.png" style="width:50%; height:auto;">
 
 📌 When configuring allocation targets, they are set at the following 2 levels.  Positions & Allocation use the same target information.
  
@@ -59,6 +59,6 @@ Notes:
 
 Click on the ⚙️ for settings specific to Investments.
 
-<img src="../images/InvestmentsV5f.png" style="width:60%; height:auto;">
+<img src="../documentation/images/InvestmentsV5f.png" style="width:60%; height:auto;">
 
 
