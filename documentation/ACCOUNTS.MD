@@ -38,6 +38,8 @@ The **Positions** column is the total value of the holdings in the account.  The
 
 This report will show all cash in Checking, Savings and Investments as well as Uninvested Cash in brokerage accounts.
 
+<img src="../images/MTAccountsV5f.png" style="width:66%; height:auto;">
+
 MM-Tweaks calculates the "uninvested cash" in brokerage accounts in the following manner:
 
 * Monarch returns an **Account Balance** at each snapshot.  
