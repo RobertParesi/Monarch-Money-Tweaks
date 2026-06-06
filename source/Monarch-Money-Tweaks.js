@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.8.1
+// @version      5.8.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2910,6 +2910,8 @@ async function MenuReportsInvestmentsGo() {
     let sumPortfolio = 0, cashValue = 0, sumCash = 0, Cards = [0,'',0,''],UpDown = [0,0];
     let skipCash = getCookie('MT_InvestmentCardNoCash',true);
     let tickers = getCookie('MTInvestmentTickers',false).split(',');
+    let skipHidden = getCookie('MT_InvestmentsHidden',true);
+    let skipHidden2 = getCookie('MT_InvestmentsHidden2',true);
     accountQueue = [];
 
     MTFlex.Title1 = 'Investments Report';
@@ -2995,6 +2997,8 @@ async function MenuReportsInvestmentsGo() {
             let RRN = 0;
             const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
             for (const acc of accountsData.accounts) {
+                if(acc.hideFromList == true && skipHidden == 1) continue;
+                if(acc.includeInNetWorth == false && skipHidden2 == 1) continue;
                 if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(acc.id)) continue; }
                 if(acc.type.name === 'brokerage') {
                     accountQueue.push({"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc.institution.name,
@@ -3012,13 +3016,13 @@ async function MenuReportsInvestmentsGo() {
                 if(edge.node.lastSyncedAt == null) {edge.node.lastSyncedAt = 'MMT';}
 
                 for (const holding of holdings) {
-                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '';
                     hld++;
+                    if(holding.account.hideFromList == true && skipHidden == 1) continue;
+                    if(holding.account.includeInNetWorth == false && skipHidden2 == 1) continue;
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
-                    if(MTFlex.Button4 < 1) {if(holding.account.includeBalanceInNetWorth == false) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     if(MTFlex.Button2 == 3) { if (holding.type != 'fixed_income') continue; }
-                    let skipRec = false;
+                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false;
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding,useHoldingValue);
                     useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
@@ -4900,8 +4904,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTNet_Income_MaxCards','number',null,0,20);
     MenuDisplay_Input('Reports / Accounts Report','','spacer');
-    MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
-    MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
+    MenuDisplay_Input('Hide accounts marked as "Visibility - Hide account"','MT_AccountsHidden','checkbox');
+    MenuDisplay_Input('Hide accounts marked as "Visibility - Exclude account balance"','MT_AccountsHidden2','checkbox');
     MenuDisplay_Input('Show all accounts, regardless of activity and no balance','MT_AccountsHidden3','checkbox');
     MenuDisplay_Input('Hide Last Updated column','MT_AccountsHideUpdated','checkbox');
     MenuDisplay_Input('Hide Net Change column','MT_AccountsHidePer1','checkbox');
@@ -4920,6 +4924,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTAccounts_MaxCards','number',null,0,20);
     MenuDisplay_Input('Reports / Investments Report','','spacer');
+    MenuDisplay_Input('Hide accounts marked as "Visibility - Hide account"','MT_InvestmentsHidden','checkbox');
+    MenuDisplay_Input('Hide accounts marked as "Visibility - Exclude account balance"','MT_InvestmentsHidden2','checkbox');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Hide Benchmark cards in Performance report','MT_InvestmentHideBM','checkbox');
@@ -6444,7 +6450,7 @@ async function dataPortfolio(startDate,endDate,inAccounts,inBm) {
     const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     let qy = 'query Web_GetPortfolio($portfolioInput: PortfolioInput) { portfolio(input: $portfolioInput) {\n ';
     if (inBm) qy += '\n performance {totalValue totalChangePercent totalChangeDollars  \n benchmarks {security {id ticker name oneDayChangePercent } \n historicalChart {date returnPercent } } }';
-    qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis userCostBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeBalanceInNetWorth institution { id name } type { name display } subtype { name display } } } } } } } }';
+    qy += 'aggregateHoldings {\n edges { node { id quantity basis totalValue securityPriceChangeDollars securityPriceChangePercent lastSyncedAt security { ticker name currentPrice currentPriceUpdatedAt } holdings { id type typeDisplay name ticker isManual costBasis userCostBasis closingPrice closingPriceUpdatedAt quantity value account { id displayName displayBalance icon logoUrl includeInNetWorth hideFromList institution { id name } type { name display } subtype { name display } } } } } } } }';
     return await GraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},query: qy},filters,'dataPortfolio');
 }
 async function dataPerformance(startDate,endDate,securityIds) {
