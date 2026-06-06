@@ -17,9 +17,11 @@ MM‑Tweaks cand display your account balances in many different ways.
 <img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
 
 ---
-**Brokerage Statement** displays just your investment accounts.
+**Brokerage Statement** displays just your investment accounts.  The Buy/Sell, Adjustments and Transfer come from the Transfer categories.  The Transfer category is any category from the Transfer group not labeled as Buy, Sell or Adjustment.  
 
-<img src="../images/MTAccountsV5d.png" style="width:66%; height:auto;">
+If you want the Net Change column to exclude the Transfers (new money in and money taken out), click on the ⚙️ for Settings and select **Add Transfers to Net Change in Brokerage Statement for Adjusted Performance**.
+
+<img src="../images/MTAccountsV5e.png" style="width:66%; height:auto;">
 
 ---
 ### Reports / Accounts (Overall Cash Statement)
