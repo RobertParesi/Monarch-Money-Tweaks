@@ -10,7 +10,7 @@ For retirees and others who plan this year’s spending from last year’s activ
 
 ### Trends Compare reports
 
-<img src="../images/TrendsV5a.png" style="width:66%; height:auto;">
+<img src="../documentation/images/TrendsV5a.png" style="width:66%; height:auto;">
 
 The first three columns are designed by selecting a "Compare ..." Sub Report:
 
@@ -40,13 +40,13 @@ Use them to compare expected remaining spend against the same period from the pr
 
 ### Trends History reports
 
-<img src="../images/TrendsV5b.png" style="width:66%; height:auto;">
+<img src="../documentation/images/TrendsV5b.png" style="width:66%; height:auto;">
 
 Clicking on the date header in **any** of the Trend Reports will toggle between using today's date or the last day of the previous month.  This allows you to see as of end of last month at any time.
 
 You can see any of the Trends reports by account group, category or both. 
 
-<img src="../images/TrendsV5e.png" style="width:60%; height:auto;">
+<img src="../documentation/images/TrendsV5e.png" style="width:60%; height:auto;">
 
 ---
 
@@ -56,7 +56,7 @@ Click the **>** on the far right for history drill‑downs, month‑by‑month d
 
 The top part of the screen is a graph.  In this graph you can chart a month comparing for the last three years.  Click on **Month** to compare Month to Month or **Step** to compare each month inclusive of previous months.  The bottom half of the screen shows a summary.  In this summary, you can expand to see more detail.  
 
-<img src="../images/TrendsV5d.png" style="width:60%; height:auto;">
+<img src="../documentation/images/TrendsV5d.png" style="width:60%; height:auto;">
 
 ---
 
@@ -64,4 +64,4 @@ The top part of the screen is a graph.  In this graph you can chart a month comp
 
 Click on the ⚙️ for settings specific to Trends.
 
-<img src="../images/TrendsV5f.png" style="width:60%; height:auto;">
+<img src="../documentation/images/TrendsV5f.png" style="width:60%; height:auto;">
