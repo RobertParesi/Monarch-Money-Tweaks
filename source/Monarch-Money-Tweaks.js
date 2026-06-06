@@ -4927,10 +4927,10 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide accounts marked as "Visibility - Hide account"','MT_InvestmentsHidden','checkbox');
     MenuDisplay_Input('Hide accounts marked as "Visibility - Exclude account balance"','MT_InvestmentsHidden2','checkbox');
     MenuDisplay_Input('Hide Institution column (If all holdings are from same institution)','MT_InvestmentsHideInst','checkbox');
+    MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Hide Benchmark cards in Performance report','MT_InvestmentHideBM','checkbox');
     MenuDisplay_Input('Hide Moving Averages in side drawer','MT_InvestmentHideMA','checkbox');
-    MenuDisplay_Input('Split Stock description and Ticker into two columns','MT_InvestmentsSplitTicker','checkbox');
     MenuDisplay_Input('Skip creating Cash/MONEY MARKET & NO HOLDINGS entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTInvestments_MaxCards','number',null,0,20);
