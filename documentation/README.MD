@@ -25,7 +25,7 @@ MM‑Tweaks adds UI, preferences, and report improvements inside the Monarch web
 
 Click on **Settings** in lower-left of Monarch Money web app and then **Display**.
  
-<img src="../images/MMTV5a.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MMTV5a.png" style="width:66%; height:auto;">
 
 ---
 
@@ -39,7 +39,7 @@ To configure: **Settings → Categories** → mark groups Fixed or Flexible. The
 If you need to, simply split those categories into two groups—for example, "Auto - Fixed", "Auto - Flexible", “Home — Fixed” and “Home — Flexible.”
 
 
-<img src="../images/MMTV5b.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MMTV5b.png" style="width:66%; height:auto;">
 
 ---
 
@@ -67,7 +67,7 @@ Key options:
 Monarch Money Tweaks focuses on four enhanced reports: Trends, Net Income, Accounts, and Investments.  All four reports use the same flexible grid layout and share many features.
 <br>
 
-<img src="../images/MMTV5c.png" style="width:66%; height:auto;">
+<img src="../documentation/images/MMTV5c.png" style="width:66%; height:auto;">
 
 Highlights:
 - **Sub Report**: view the report from different perspectives.  
