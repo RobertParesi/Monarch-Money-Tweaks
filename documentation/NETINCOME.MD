@@ -1,7 +1,7 @@
 ## 📚 Reports / Net Income 
 ### by Tags, by Notes, by Account, by Owner
 
-MM‑Tweaks will summarize your Income and Expenses in other ways such as by Tags, Account, Notes and Owner.   
+In addition to Trends summaries, MM‑Tweaks also breaks down your income and expenses by Tags, Account, Notes, and Owner for flexible reporting.
 
 Summary by **Tags** shows both tagged and untagged transactins.  If a transaction has multiple tags, it will show up in the **Multiple** column.
 
