@@ -68,4 +68,4 @@ You can select the > on the Group or Account level for more details.
 
 Click on the ⚙️ for settings specific to Accounts.
 
-<img src="../images/AccountsV5f.png" style="width:60%; height:auto;">
+<img src="../documentation/images/AccountsV5f.png" style="width:60%; height:auto;">
