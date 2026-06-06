@@ -34,6 +34,13 @@ The **Positions** column is the total value of the holdings in the account.  The
 <img src="../images/MTAccountsV5e.png" style="width:66%; height:auto;">
 
 ---
+### Reports / Accounts (Expanding Detail using >)
+
+You can select the > on the Group or Account level for more details.
+
+<img src="../images/MTAccountsV5g.png" style="width:66%; height:auto;">
+
+
 ### Reports / Accounts (Overall Cash Statement)
 
 This report will show all cash in Checking, Savings and Investments as well as Uninvested Cash in brokerage accounts.
