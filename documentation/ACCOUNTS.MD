@@ -34,12 +34,6 @@ The **Positions** column is the total value of the holdings in the account.  The
 <img src="../images/MTAccountsV5e.png" style="width:66%; height:auto;">
 
 ---
-### Reports / Accounts (Expanding Detail using >)
-
-You can select the > on the Group or Account level for more details.
-
-<img src="../images/MTAccountsV5g.png" style="width:66%; height:auto;">
-
 
 ### Reports / Accounts (Overall Cash Statement)
 
@@ -62,6 +56,13 @@ If cash looks incorrect:
 To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
 
 ---
+### Reports / Accounts (Expanding Detail using >)
+
+You can select the > on the Group or Account level for more details.
+
+<img src="../images/MTAccountsV5g.png" style="width:66%; height:auto;">
+---
+
 
 ### Accounts Settings
 
