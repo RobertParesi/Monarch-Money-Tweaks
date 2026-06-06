@@ -4,12 +4,16 @@ MM‑Tweaks cand display your account balances in many different ways.
 
 <img src="../images/MTAccountsV5a.png" style="width:66%; height:auto;">
 
-(Standard, Brokerage, Personal Statement)
-<br>
+**Standard Report** show all your accounts by Assets and Liabilities.  Use the Sub Report pull down to group the report many different ways.
+
 <img src="../images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
 <img src="../images/MT_V3_08.png" style="width:66%; height:auto;">
-<br>
+
+---
+
+**Personal Statement** shows a simple Balance Sheet of your Assets and Liabilities.  This report would be a good report to give to a Loan Officer.
+
 <img src="../images/MT_V3_12.png" style="width:66%; height:auto;">
 
 ---
