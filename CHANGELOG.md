@@ -3,6 +3,9 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.8 (Beta)**
+    - ENHANCEMENT: Reports / Investments will now show all Investment accounts even with no holdings.  To turn off this behavior, you can turn on "Skip creating Cash/MONEY MARKET & NO HOLDINGS entries".
+ 
   * **Version 5.7 (June 5, 2026)**
     - REGRESSION: Monarch related, Reports menu break.
     - FIX: Better handling of CSRF token error handling, especially when resigning on.
