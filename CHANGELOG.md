@@ -5,6 +5,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
  * **Version 5.8 (Beta)**
     - ENHANCEMENT: Reports / Investments will now show all Investment accounts even with no holdings.  To turn off this behavior, you can turn on "Skip creating Cash/MONEY MARKET & NO HOLDINGS entries".
+    - ENHANCEMENT: Reports / Investments show has settings to ignore Hidden accounts and Exclude account balance.
  
   * **Version 5.7 (June 5, 2026)**
     - REGRESSION: Monarch related, Reports menu break.
