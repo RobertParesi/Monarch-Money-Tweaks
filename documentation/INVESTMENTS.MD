@@ -9,6 +9,8 @@ There are four types of Investment reports:
 
 ### Positions and Allocations
 
+Use this screen to see a full portfolio and investment view.   Also use these views to set Allocation targets.  The full Gain / Loss will appear in the right columns.
+
 <img src="../documentation/images/InvestmentsV5a.png" style="width:66%; height:auto;">
 
 ---
