@@ -9,13 +9,15 @@ There are four types of Investment reports:
 
 ### Positions and Allocations
 
-Use this screen to see a full portfolio and investment view.   Also use these views to set Allocation targets.  The full Gain / Loss will appear in the right columns.
+Use these sub-reports to see a full portfolio and investment view.   Also use these views to set Allocation targets.  The full Gain / Loss will appear on the right.
 
 <img src="../documentation/images/InvestmentsV5a.png" style="width:66%; height:auto;">
 
 ---
 
 ### Performance
+
+Use this sub-report to see how your equities have performed over any period of time.   It is important to know this is NOT based on when you purchased the stock and your cost basis.  The performance ovrer time will appear on the right.
 
 <img src="../documentation/images/InvestmentsV5b.png" style="width:66%; height:auto;">
 
