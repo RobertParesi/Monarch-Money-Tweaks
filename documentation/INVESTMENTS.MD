@@ -30,7 +30,11 @@ Use this sub-report to see how your Fixed Income holdings and their maturity dat
 <img src="../documentation/images/InvestmentsV5d.png" style="width:66%; height:auto;">
 
 ---
+### How portfolio balances and holdings are computed
 
+MM-Tweaks exports the portfolio data query from Monarch and lists all the holdings that are returned.  If the holding does not appear, it could be for a number of reasons.  Sometimes the holding isn't return from the institution, the holding is not a public holding or 529.   
+
+If there are holdings, then a CASH/MONEY MARKET entry will be created based on the Account Balance minus the cumlative holdings balance.  If there are no holdings at all, then a - / BALANCE ONLY entr will be created.
 
 <img src="../documentation/images/InvestmentsV5c.png" style="width:66%; height:auto;">
 
