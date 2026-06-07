@@ -43,12 +43,9 @@ Important: MM‑Tweaks reports are driven entirely by the holding data returned 
 
 Click on the **>** in the far right of any investment holding for a Detailed view:
 
-<img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
-
-Click on the **>** in the far right of any Total or Group for a Summary or Allocation view:
-
 <img src="../documentation/images/MT_Invest03.png" style="width:50%; height:auto;">
 
+Click on the **>** in the far right of any Total or Group for a Summary or Allocation view:
 
 <img src="../documentation/images/MT_Invest04.png" style="width:50%; height:auto;">
 
