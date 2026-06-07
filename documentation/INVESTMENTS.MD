@@ -25,7 +25,7 @@ Use this sub-report to see how your equities have performed over any period of t
 
 ### Fixed Income
 
-Use this sub-report to see how your Fixed Income holdings and their maturity dates.  The maturity dates are extracted from the text and are a best guess.
+Use this sub‑report to view Fixed‑Income holdings, including gain/loss and extracted maturity dates. Maturity dates are parsed from the holding text and represent best‑effort estimates. If any maturities are missing or incorrect, please let me know and I’ll investigate.
 
 <img src="../documentation/images/InvestmentsV5d.png" style="width:66%; height:auto;">
 
