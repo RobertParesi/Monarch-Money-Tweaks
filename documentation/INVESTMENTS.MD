@@ -56,7 +56,7 @@ Select **Reports → Investments**, click on **>** (far right) of any equity hol
 
 <img src="../documentation/images/InvestmentsV5h.png" style="width:50%; height:auto;">
 
-- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, your objective, Index Strategy, Bond Type, etc.) either per‑ticker or at the account level.  In my examples below, I use a **sector**.
+- **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, your objective, Index Strategy, Bond Type, etc.) either per‑ticker or at the account level.  In my example above, I use a **sector** such as Communications.
 
 - If you assign a Category override for all holdings, any uncategorized or new tickers will show up in the “Stock” category—making it easy to spot misses and newly added stocks.
 
