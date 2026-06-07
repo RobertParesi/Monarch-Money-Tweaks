@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.8.4
+// @version      5.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2475,7 +2475,6 @@ async function MenuReportsAccountsGo() {
         let cards = 0, acard = [0,0,0,0,0], cats = [], aSelected = false, hideCol = false, useBalance = 0, begBalance = 0;
         let isToday = getDates('isToday', MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
-        let fields = ['Beg Balance','Income','Expenses','Transfers'];
         const incTrans = getCookie('MT_AccountsNetTransfers', true);
         const totalsMap = new Map();
 
@@ -2537,7 +2536,6 @@ async function MenuReportsAccountsGo() {
         accountsData = await dataGetAccounts();
         if(!accountsData) return;
 
-        let txLen = -1;
         let lowerDate = formatQueryDate(MTFlexDate1), higherDate = formatQueryDate(MTFlexDate2);
 
         if (MTFlex.Button2 != 1) {
@@ -6364,7 +6362,7 @@ function sortTableByColumn(inEvent) {
                 MM_MenuRun(true);
             }
             MenuCheckSpawnProcess();
-        } else {if(!tr) {tr = true;console.error(MNAME, VERSION, 'X-Csrftoken Error')};}
+        } else {if(!tr) {tr = true;console.error(MNAME, VERSION, 'X-Csrftoken Error');}}
     },300);
 }());
 
