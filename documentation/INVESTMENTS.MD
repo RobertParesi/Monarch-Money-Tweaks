@@ -9,7 +9,19 @@ There are four types of Investment reports:
 
 ### Positions and Allocations
 
-<img src="../documentation/images/MT_Invest01.png" style="width:66%; height:auto;">
+<img src="../documentation/images/InvestmentsV5a" style="width:66%; height:auto;">
+
+---
+
+### Performance
+
+<img src="../documentation/images/InvestmentsV5b" style="width:66%; height:auto;">
+
+---
+
+<img src="../documentation/images/InvestmentsV5c" style="width:66%; height:auto;">
+
+
 <br>
 <img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
 
@@ -21,13 +33,6 @@ Click on the **>** in the far right of any Total or Group for a Summary or Alloc
 
 <img src="../documentation/images/MT_Invest04.png" style="width:50%; height:auto;">
 
----
-
-### Performance
-
-
-
----
 ### Investment Holding Settings
 
 Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
