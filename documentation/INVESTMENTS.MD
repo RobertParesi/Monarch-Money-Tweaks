@@ -38,17 +38,17 @@ When holdings are present, MM‑Tweaks creates a CASH / MONEY‑MARKET line equa
 
 Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. If it a public holding and should appear, contact Monarch support.
 
-<img src="../documentation/images/InvestmentsV5c.png" style="width:66%; height:auto;">
-
-
-<br>
-<img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
+---
+### Stock Charts and Allocation Bar Charts
 
 Click on the **>** in the far right of any investment holding for a Detailed view:
 
-<img src="../documentation/images/MT_Invest03.png" style="width:50%; height:auto;">
+<img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
 
 Click on the **>** in the far right of any Total or Group for a Summary or Allocation view:
+
+<img src="../documentation/images/MT_Invest03.png" style="width:50%; height:auto;">
+
 
 <img src="../documentation/images/MT_Invest04.png" style="width:50%; height:auto;">
 
