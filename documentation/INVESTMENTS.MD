@@ -34,9 +34,7 @@ Use this sub-report to see how your Fixed Income holdings and their maturity dat
 
 MM‑Tweaks consumes the portfolio query returned by Monarch and displays the holdings exactly as provided. If a holding is missing from the report, common reasons include: the institution did not return that holding, the holding is not a public/security holding, or it’s an account type (e.g., 529) treated differently by the data feed.
 
-When holdings are present, MM‑Tweaks creates a CASH / MONEY‑MARKET line equal to:
-Account Balance − sum(holdings value).
-If an account has no holdings at all, MM‑Tweaks shows a single “(BALANCE ONLY)” entry for that account.
+When holdings are present, MM‑Tweaks creates a CASH / MONEY‑MARKET line equal to: Account Balance − sum(holdings value). If an account has no holdings at all, MM‑Tweaks shows a single “(BALANCE ONLY)” entry for that account.  The creation of these entries can be disabled in ⚙️ Settings.
 
 Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. If it a public holding and should appear, contact Monarch support.
 
