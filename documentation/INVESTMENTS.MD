@@ -7,7 +7,8 @@ There are four types of Investment reports:
 3. **Performance** - Displays all your equity holdings ignoring Fixed Income & Cash. Shows price performance over your selected time frame. Click on the date header to change the range (ie: Past Week, This Month, This Year, etc.)
 4. **Fixed Income** - Displays all your fixed income (CD & Bond) holdings and trying to extract a maturity date and yearly income from the description.
 
-<br>
+### Positions and Allocations
+
 <img src="../documentation/images/MT_Invest01.png" style="width:66%; height:auto;">
 <br>
 <img src="../documentation/images/MT_Invest02.png" style="width:66%; height:auto;">
