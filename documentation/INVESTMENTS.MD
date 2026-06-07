@@ -49,6 +49,7 @@ Click on the **>** in the far right of any Total or Group for a Summary or Alloc
 
 <img src="../documentation/images/MT_Invest04.png" style="width:50%; height:auto;">
 
+---
 ### Investment Holding Settings
 
 Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
