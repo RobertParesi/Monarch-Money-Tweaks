@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.8.2
+// @version      5.8.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3002,7 +3002,7 @@ async function MenuReportsInvestmentsGo() {
                 if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(acc.id)) continue; }
                 if(acc.type.name === 'brokerage') {
                     accountQueue.push({"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc.institution.name,
-                                       "accountName": acc.displayName,"accountSubtype": '',"isManual": false,
+                                       "accountName": acc.displayName,"accountSubtype": acc.subtype.display,"isManual": false,
                                        "accountHoldings": 0,"crypto": 0,"cashHoldings": 0,"zeroHoldings": 0});
                 }
             }
@@ -3052,9 +3052,8 @@ async function MenuReportsInvestmentsGo() {
                         account.holdingBalance += useHoldingValue;
                         account.holdingBalance = get2dec(account.holdingBalance);
                         account.accountHoldings+=1;
-                        account.accountSubtype = useSubType;
-                        if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;}
                         if(holding.isManual == true) {account.isManual = true;}
+                        if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;}
                         if(holding.type == 'Cash') {account.cashHoldings+= useHoldingValue;}
                         if(useHoldingValue == 0) {account.zeroHoldings+=1;}
                     }
@@ -3162,13 +3161,18 @@ async function MenuReportsInvestmentsGo() {
                 if(acc.crypto > 0 && cashValue < 1) continue;
                 if(acc.crypto == 0 && cashValue <= 0) continue;
                 sumCash+=cashValue;
-                let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash','');
+                const hasHoldings = acc.accountHoldings > 0;
+                let descT = hasHoldings ? 'CASH' : '—';
+                let descE = hasHoldings ? 'CASH / MONEY MARKET' : '(BALANCE ONLY)';
+                let descS = hasHoldings ? 'Cash' : '—';
+                let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,descS,'');
                 if(MTFlex.Button2 == 1) {
                     const pkTrigger = usePK + '|$$';
                     if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger,8,cashValue,false,true)) {
                         MF_GridUID(pkTrigger,9,cashValue,false,true);continue;
                     }
                 }
+
                 MTP = [];
                 MTP.UID = usePK + '|$$';
                 MTP.PK = usePK;
@@ -3177,12 +3181,12 @@ async function MenuReportsInvestmentsGo() {
                 MTP.SKHRef = '/accounts/details/' + acc.id;
                 MTP.SKTriggerEvent = MTFlex.Button2 === 1 ? 'UID|' + MTP.UID : 'ACCOUNT|' + acc.id;
                 MF_QueueAddRow(MTP);
-                MF_AddCol(0,splitTicker == 1 ? 'CASH' : 'CASH • CASH/MONEY MARKET');
-                MF_AddCol(1,acc.accountHoldings > 0 ? 'Cash/MONEY MARKET' : 'Cash/NO HOLDINGS');
+                MF_AddCol(0,splitTicker == 1 ? descT : descT + ' \u2022 ' + descE);
+                MF_AddCol(1,descE);
                 MF_AddCol(2,acc.institutionName);
                 MF_AddCol(3,acc.accountName);
                 MF_AddCol(4,acc.accountSubtype);
-                MF_AddCol(5,'Cash');
+                MF_AddCol(5,descS);
                 MF_AddCol(6,null);
                 MF_AddCol(7,null);
                 MF_AddCol(8,cashValue);
