@@ -17,11 +17,20 @@ Use these sub-reports to see a full portfolio and investment view.   Also use th
 
 ### Performance
 
-Use this sub-report to see how your equities have performed over any period of time.   It is important to know this is NOT based on when you purchased the stock and your cost basis.  The performance ovrer time will appear on the right.
+Use this sub-report to see how your equities have performed over any period of time.   It is important to know this is NOT based on when you purchased the stock and your cost basis.  The performance over time will appear on the right.
 
 <img src="../documentation/images/InvestmentsV5b.png" style="width:66%; height:auto;">
 
 ---
+
+### Fixed Income
+
+Use this sub-report to see how your Fixed Income holdings and their maturity dates.  The maturity dates are extracted from the text and are a best guess.
+
+<img src="../documentation/images/InvestmentsV5d.png" style="width:66%; height:auto;">
+
+---
+
 
 <img src="../documentation/images/InvestmentsV5c.png" style="width:66%; height:auto;">
 
