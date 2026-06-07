@@ -9,17 +9,17 @@ There are four types of Investment reports:
 
 ### Positions and Allocations
 
-<img src="../documentation/images/InvestmentsV5a" style="width:66%; height:auto;">
+<img src="../documentation/images/InvestmentsV5a.png" style="width:66%; height:auto;">
 
 ---
 
 ### Performance
 
-<img src="../documentation/images/InvestmentsV5b" style="width:66%; height:auto;">
+<img src="../documentation/images/InvestmentsV5b.png" style="width:66%; height:auto;">
 
 ---
 
-<img src="../documentation/images/InvestmentsV5c" style="width:66%; height:auto;">
+<img src="../documentation/images/InvestmentsV5c.png" style="width:66%; height:auto;">
 
 
 <br>
