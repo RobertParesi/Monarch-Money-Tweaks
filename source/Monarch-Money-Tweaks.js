@@ -4255,7 +4255,7 @@ async function InvestmentsDrawerCash(inP) {
         DrawerDrawSpacer(divTop2);
         DrawerDrawLine(divTop2,'Account Balance',getDollarValue(useAct.portfolioBalance));
         DrawerDrawLine(divTop2,'Holdings Balance',getDollarValue(useAct.holdingBalance));
-        DrawerDrawLine(divTop2,'Uninvested (Cash/Money Market)',getDollarValue(useAct.portfolioBalance - useAct.holdingBalance));
+        DrawerDrawLine(divTop2,'Uninvested ' + (useAct.accountHoldings == 0 ? '(Balance Only)' : '(Cash/Money Market)'),getDollarValue(useAct.portfolioBalance - useAct.holdingBalance));
         DrawerDrawSpacer(divTop2);
         DrawerDrawLine(divTop2,'Invested Cash Holdings',getDollarValue(useAct.cashHoldings));
         DrawerDrawLine(divTop2,'Total Holdings',useAct.accountHoldings.toLocaleString('en-US'));
