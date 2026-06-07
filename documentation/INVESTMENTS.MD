@@ -54,7 +54,7 @@ Click on the **>** in the far right of any Total or Group for a Summary or Alloc
 
 Select **Reports → Investments**, click on **>** (far right) of any equity holding and click `...` in the holding side panel for MM‑Tweaks options.
 
-![Settings](../documentation/images/MTInvestmentSettings.png)
+<img src="../documentation/images/InvestmentsV5h.png" style="width:50%; height:auto;">
 
 - **Holding Category override (ticker or account)** — assign a category (Sector, Asset Class, your objective, Index Strategy, Bond Type, etc.) either per‑ticker or at the account level.  In my examples below, I use a **sector**.
 
