@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.8.3
+// @version      5.8.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4935,7 +4935,7 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide Stock description on cards and just show Ticker','MT_InvestmentCardShort','checkbox');
     MenuDisplay_Input('Hide Benchmark cards in Performance report','MT_InvestmentHideBM','checkbox');
     MenuDisplay_Input('Hide Moving Averages in side drawer','MT_InvestmentHideMA','checkbox');
-    MenuDisplay_Input('Skip creating Cash/MONEY MARKET & NO HOLDINGS entries','MT_InvestmentCardNoCash','checkbox');
+    MenuDisplay_Input('Skip creating Cash/MONEY MARKET & BALANCE ONLY entries','MT_InvestmentCardNoCash','checkbox');
     MenuDisplay_Input('Skip recalculating institution & holding values with Current Price','MT_InvestmentSkipCurrent','checkbox');
     MenuDisplay_Input('Maximum cards to show','MTInvestments_MaxCards','number',null,0,20);
     MenuDisplay_Input('Stock Lookup URL - Use {ticker}','MT_InvestmentURLStock','string','width: 380px;');
