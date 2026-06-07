@@ -38,7 +38,7 @@ When holdings are present, MM‑Tweaks creates a CASH / MONEY‑MARKET line equa
 Account Balance − sum(holdings value).
 If an account has no holdings at all, MM‑Tweaks shows a single “(BALANCE ONLY)” entry for that account.
 
-Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. It is best to contact Monarch support directly if the holding is not appearing.
+Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. If it a public holding and should appear, contact Monarch support.
 
 <img src="../documentation/images/InvestmentsV5c.png" style="width:66%; height:auto;">
 
