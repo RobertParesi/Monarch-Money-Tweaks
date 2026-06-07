@@ -1,6 +1,6 @@
 ## 📚 Reports / Investments
 
-There are three types of Investment reports:
+There are four types of Investment reports:
 
 1. **Positions** - Displays all your current holdings for each account. Use Allocation report to combine same holdings.
 2. **Allocation** - Displays all your current holdings with same holdings combined. Use Portfolio report to split like holdings.
