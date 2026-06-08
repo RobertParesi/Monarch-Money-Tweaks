@@ -36,7 +36,7 @@ MM‑Tweaks consumes the portfolio query returned by Monarch and displays the ho
 
 When holdings are present, MM‑Tweaks creates a CASH / MONEY‑MARKET line equal to: Account Balance − sum(holdings value). If an account has no holdings at all, MM‑Tweaks shows a single “(BALANCE ONLY)” entry for that account.  The creation of these entries can be disabled in ⚙️ Settings.
 
-Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. If it a public holding and should appear, contact Monarch support.
+Important: MM‑Tweaks reports are driven entirely by the holding data returned from Monarch’s API. The extension cannot invent, modify, or add holdings that the source does not provide. If it a public holding and should appear, contact Monarch support. You could always add a Manual holding to the account to shift the (BALANCE ONLY) entry to a particular holding.  
 
 ---
 ### Stock Charts and Allocation Bar Charts
