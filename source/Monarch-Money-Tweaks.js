@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.8
+// @version      5.9
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.8';
+const MNAME = 'MM-Tweaks', VERSION = '5.9';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2999,8 +2999,9 @@ async function MenuReportsInvestmentsGo() {
                 if(acc.includeInNetWorth == false && skipHidden2 == 1) continue;
                 if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(acc.id)) continue; }
                 if(acc.type.name === 'brokerage') {
+                    let useSubType = customSubGroupInfo(acc.id,acc.subtype.display);
                     accountQueue.push({"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc.institution.name,
-                                       "accountName": acc.displayName,"accountSubtype": acc.subtype.display,"isManual": false,
+                                       "accountName": acc.displayName,"accountSubtype": useSubType,"isManual": false,
                                        "accountHoldings": 0,"crypto": 0,"cashHoldings": 0,"zeroHoldings": 0});
                 }
             }
@@ -3069,7 +3070,7 @@ async function MenuReportsInvestmentsGo() {
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
                     useTicker = holding.ticker;
                     if(useTicker === null) useTicker = currentStockTicker;
-                    if(holding.type == 'fixed_income') useTicker = '';
+                    if(holding.name.includes('%')) useTicker = '';
                     if (useTicker != null) {
                         useTicker = useTicker.trim();
                         if (MTFlex.Button2 === 1) {
