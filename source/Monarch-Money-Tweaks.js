@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.9
+// @version      5.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.9';
+const MNAME = 'MM-Tweaks', VERSION = '5.10';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -2993,6 +2993,7 @@ async function MenuReportsInvestmentsGo() {
 
         async function InvestmentHoldings() {
             let RRN = 0;
+            const accountMap = new Map();
             const skipCalc = getCookie('MT_InvestmentSkipCurrent',true);
             for (const acc of accountsData.accounts) {
                 if(acc.hideFromList == true && skipHidden == 1) continue;
@@ -3000,9 +3001,11 @@ async function MenuReportsInvestmentsGo() {
                 if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(acc.id)) continue; }
                 if(acc.type.name === 'brokerage') {
                     let useSubType = customSubGroupInfo(acc.id,acc.subtype.display);
-                    accountQueue.push({"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc.institution.name,
+                    const item = {"id": acc.id, "holdingBalance": 0,"portfolioBalance": get2dec(acc.displayBalance),"institutionName": acc?.institution?.name ?? '',
                                        "accountName": acc.displayName,"accountSubtype": useSubType,"isManual": false,
-                                       "accountHoldings": 0,"crypto": 0,"cashHoldings": 0,"zeroHoldings": 0});
+                                       "accountHoldings": 0,"crypto": 0,"cashHoldings": 0,"zeroHoldings": 0};
+                    accountQueue.push(item);
+                    accountMap.set(acc.id, item);
                 }
             }
             for (const edge of portfolioData.portfolio.aggregateHoldings.edges) {
@@ -3024,7 +3027,6 @@ async function MenuReportsInvestmentsGo() {
                     let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false;
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding,useHoldingValue);
-                    useSubType = customSubGroupInfo(holding.account.id,holding.account.subtype.display);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
                     if(holding.account.displayName != null) {useAccount = holding.account.displayName.trim();}
                     if(MTFlex.Button1 > 5) {
@@ -3046,15 +3048,16 @@ async function MenuReportsInvestmentsGo() {
                     }
 
                     // Original price
-                    const account = accountQueue.find(acc => acc.id === holding.account.id);
+                    const account = accountMap.get(holding.account.id);
                     if (account) {
                         account.holdingBalance += useHoldingValue;
                         account.holdingBalance = get2dec(account.holdingBalance);
                         account.accountHoldings+=1;
                         if(holding.isManual == true) {account.isManual = true;}
-                        if(holding.type == 'cryptocurrency') {account.crypto += useHoldingValue;}
-                        if(holding.type == 'Cash') {account.cashHoldings+= useHoldingValue;}
+                        if(holding.type === 'cryptocurrency') {account.crypto += useHoldingValue;}
+                        if(holding.type === 'Cash') {account.cashHoldings+= useHoldingValue;}
                         if(useHoldingValue == 0) {account.zeroHoldings+=1;}
+                        useSubType = account.accountSubtype;
                     }
 
                     // New price
