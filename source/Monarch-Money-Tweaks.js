@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.10
+// @version      5.11.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.10';
+const MNAME = 'MM-Tweaks', VERSION = '5.11';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1993,15 +1993,13 @@ function MenuReportsCustomUpdate() {
 }
 
 function MenuReportsPanels(inType) {
-    let divs = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
-    for (const div of divs) {
-        const txt = div?.innerText || '';
-        if (txt.startsWith('Clear') || txt.includes('Filters')) {div.style = inType;break;}
-    }
-    divs = document.querySelector('[class*="Grid__GridStyled-"]');
-    if(divs) {divs.style=inType;}
-    divs = gde('business-tax-prep-root',false);
-    if(divs) {divs.style=inType;}
+
+    let div = document.querySelector('[class*="Page__ScrollHeaderContainer"]')?.childNodes?.[0]?.childNodes?.[1];
+    if (div) div.style = inType;
+    div = document.querySelector('[class*="Grid__GridStyled-"]');
+    if(div) {div.style=inType;}
+    div = gde('business-tax-prep-root',false);
+    if(div) {div.style=inType;}
 }
 
 function MenuReportsGo() {
@@ -2009,7 +2007,7 @@ function MenuReportsGo() {
     if(document.getElementById('MTWait')) return;
     document.body.style.cursor = "wait";
     removeAllSections('.MTFlexContainer');
-    MenuReportsPanels('display:none;');
+    MenuReportsPanels('display:none !important;');
     MenuReportsCustomUpdate();
     switch(MTFlex.Name) {
         case 'MTTrends': MenuReportsTrendsGo();break;
