@@ -3,7 +3,10 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
-  * **Version 5.10 (June 10, 2026)**
+ * **Version 5.11 (Beta)**
+    - REGRESSION: Monarch related, Hide Date/Filter container stopped working.
+ 
+ * **Version 5.10 (June 10, 2026)**
     - REGRESSION: Reports / Investments could fail with bad institution name. (null)
     
  * **Version 5.8/5.9 (June 7, 2026)**
