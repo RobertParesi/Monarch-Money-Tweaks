@@ -2,6 +2,8 @@
 
 ### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.11
 
+📣 Over 4,000 users!
+
 Visit the official Extensions area for your browser using the following links: 
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/)  
