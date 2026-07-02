@@ -54,6 +54,7 @@ If cash looks incorrect:
 3. If everything looks correct but the amount still differs, contact Monarch support or reach out via GitHub discussion here, Reddit community forum or by email.
 
 To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
+
 ---
 
 ### Reports / Accounts (Duplicate Transactions)
