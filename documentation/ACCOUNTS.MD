@@ -54,6 +54,13 @@ If cash looks incorrect:
 3. If everything looks correct but the amount still differs, contact Monarch support or reach out via GitHub discussion here, Reddit community forum or by email.
 
 To show any holding as _Cash Holdings_ (SGOV, TIPS, SWTXX, etc.) select Accounts → select account → Holdings → click `>` next to the holding → set Type to **Cash**.
+---
+
+### Reports / Accounts (Duplicate Transactions)
+
+This report will find duplicate transactions based on Original Merchant or Merchant.  You can add a note to any transaction to remove it from the listing (See Settings)
+
+<img src="../documentation/images/MTAccountsV5dup.png" style="width:66%; height:auto;">
 
 ---
 ### Reports / Accounts (Expanding Detail using >)
