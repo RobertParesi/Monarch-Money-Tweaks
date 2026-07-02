@@ -11,11 +11,10 @@ This report will show all your accounts by Assets and Liabilities.  Use the Sub 
 <img src="../documentation/images/MT_V3_07.png" style="width:66%; height:auto;">
 <br>
 <img src="../documentation/images/MT_V3_08.png" style="width:66%; height:auto;">
-<br>
-You can break down your accounts by custom Account Groups.
-<br>
-<img src="../documentation/images/MT_V3_08b.png" style="width:66%; height:auto;">
 
+You can break down your accounts by custom Account Groups.
+
+<img src="../documentation/images/MT_V3_08b.png" style="width:66%; height:auto;">
 
 ---
 ### Reports / Accounts (Personal Statement)
