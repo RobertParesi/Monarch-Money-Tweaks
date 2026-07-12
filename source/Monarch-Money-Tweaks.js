@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.1
+// @version      5.12.2
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2798,10 +2798,10 @@ function MF_AddBenchCards(benchData) {
         let hc = sp.historicalChart[x];
         let tp = hc.returnPercent;
         let tp2 = tp;
-        let yp = sp.historicalChart[x-1].returnPercent;
+        let yp = sp.historicalChart[x-1]?.returnPercent ?? 0;
         if(isOpen == false && tp == yp) {
-            tp2 = sp.historicalChart[x-1].returnPercent;
-            yp = sp.historicalChart[x-2].returnPercent;
+            tp2 = yp;
+            yp = sp.historicalChart[x-2]?.returnPercent ?? 0;
         }
         let y = tp2 - yp;y = Math.round(y * 100) / 100;
         MTP.Title = [per,tp + '%',isOpen ? 'Today' : 'Closed',y + '%'];
@@ -6547,7 +6547,8 @@ function rtnIsAccountUsed(inId,inOver) {
 function rtnPendingBalance(inData) {
     let amt = 0,cnt = 0;
     inData.allTransactions.results.forEach(transaction => {
-        if (transaction.amount !== 1) {if(transaction.category.group.type == 'expense') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}});
+        if(transaction.category.group.type !== 'transfer') {
+            if (transaction.amount !== 1) {if(transaction.account.type.group == 'liability') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}}});
     return [amt, cnt];
 }
 async function rtnNoteTagList() {
