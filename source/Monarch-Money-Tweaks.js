@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.2
+// @version      5.12.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -6548,7 +6548,7 @@ function rtnPendingBalance(inData) {
     let amt = 0,cnt = 0;
     inData.allTransactions.results.forEach(transaction => {
         if(transaction.category.group.type !== 'transfer') {
-            if (transaction.amount !== 1) {if(transaction.account.type.group == 'liability') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}}});
+            if (transaction.amount !== 1) {if(transaction.category.group.type === 'income') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}}});
     return [amt, cnt];
 }
 async function rtnNoteTagList() {
