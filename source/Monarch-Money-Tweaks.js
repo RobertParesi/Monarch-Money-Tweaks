@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.3
+// @version      5.12.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4563,7 +4563,7 @@ async function MenuPlanRefresh() {
         TotAvail+=bSV;writePlan('Total Savings',getDollarValue(bSV,true),'','');
     }
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
-    writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','');
+    writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','',pendingAmt < 0 ? css.green : '');
     writePlan('Total Available',getDollarValue(TotAvail,true),'',BOLD,TotAvail < 0 ? css.red : css.green);
     if(noBudget == false) {
         if(getCookie('MT_PlanShowAll',true) == 1) {
@@ -6548,7 +6548,7 @@ function rtnPendingBalance(inData) {
     let amt = 0,cnt = 0;
     inData.allTransactions.results.forEach(transaction => {
         if(transaction.category.group.type !== 'transfer') {
-            if (transaction.amount !== 1) {if(transaction.category.group.type === 'income') {amt = amt + (transaction.amount * -1);} else {amt += transaction.amount;}cnt++;}}});
+            if (transaction.amount !== 1) {amt = amt + (transaction.amount * -1);} cnt++;}});
     return [amt, cnt];
 }
 async function rtnNoteTagList() {
