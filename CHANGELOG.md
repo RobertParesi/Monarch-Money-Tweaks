@@ -4,6 +4,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 # Change Log (Version History)
 
  * **Version 5.12 (Beta)**
+    - CHANGE: Reports / Accounts will show negative cash balance (overdrawn) in red.
     - FIX: Pending deposits in Left to Spend would appear as Positive instead of Negative.
  
  * **Version 5.11 (June 14, 2026)**
