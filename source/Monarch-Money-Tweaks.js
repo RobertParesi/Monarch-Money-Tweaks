@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.6
+// @version      5.12.7
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1223,13 +1223,18 @@ function MF_DrawBarChart(inLocation,inP) {
         if(row.hide) continue;
         const secMatch = row.Section == inP[1];
         if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'All' && secMatch) {
-            let usePart = getStringPart(row[0], ' • ', 'left');
             if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
-            if(inP[4]) {if(inP[4] != row.PK) continue;}
             let uValue = row[un];
-            let sell = targetKeys[2] + row[0],buy = targetKeys[3] + row[0];
-            let sellA = getCookie(sell,true), buyA = getCookie(buy,true);
-            if(inP[5] == 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
+            let usePart = getStringPart(row[0], ' • ', 'left');
+            let sell=0,sellA=0,buy=0,buyA=0;
+            if(MTFlex.Name === 'MTInvestments') {
+                if(inP[4]) {if(inP[4] != row.PK) continue;}
+                sell = targetKeys[2] + row[0];buy = targetKeys[3] + row[0];
+                sellA = getCookie(sell,true);buyA = getCookie(buy,true);
+                if(inP[5] !== undefined) {
+                    if(inP[5] == 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
+                }
+            }
             targetData.push({ percent: '', title: usePart, value: uValue, buy: buyA, sell: sellA, incBuySell: includeBuySell, record: inRebalance ? row[0] : useRec, section: inRebalance ? null : useSec });sumTotal += uValue;
         } else if (secMatch) {
             pkTotal += row[un];
@@ -4241,16 +4246,16 @@ async function InvestmentsDrawerCash(inP) {
         sObj.urltext = useAct.accountName;
         sObj.url = '/accounts/details/' + useAct.id;
     } else {
-        useAct = inP[1] + SS + inP[2];
+        useAct = inP[1] + '|' + inP[2];
     }
     let divTop = MF_SidePanelOpen(sObj);
     let divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
     divTop2 = cec('div','',divTop2,'','','','data',inP,'MTSideDrawerGroup');
     if(inP[0] == 'UID') {
          DrawerDrawLine(divTop2,MTFlexTitle[1].Title,inP[1]);
-         DrawerDrawLine(divTop2,MTFlexTitle[8].Title, MT_GetFormattedValue(MTFlexTitle[8].Format,MF_GridUID(useAct, 8)));
-         DrawerDrawLine(divTop2,MTFlexTitle[12].Title,MT_GetFormattedValue(MTFlexTitle[12].Format,MF_GridUID(useAct, 12)));
+         DrawerDrawLine(divTop2,MTFlexTitle[9].Title, MT_GetFormattedValue(MTFlexTitle[9].Format,MF_GridUID(useAct, 9)));
          DrawerDrawLine(divTop2,MTFlexTitle[13].Title,MT_GetFormattedValue(MTFlexTitle[13].Format,MF_GridUID(useAct, 13)));
+         DrawerDrawLine(divTop2,MTFlexTitle[14].Title,MT_GetFormattedValue(MTFlexTitle[14].Format,MF_GridUID(useAct, 14)));
     } else {
         DrawerDrawLine(divTop2,'Institution',useAct.institutionName);
         DrawerDrawLine(divTop2,'Account type','Investments');
