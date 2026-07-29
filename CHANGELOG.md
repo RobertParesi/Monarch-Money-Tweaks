@@ -3,11 +3,12 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.12 (Beta)**
+ * **Version 5.12 (July 29, 2025)**
     - CHANGE: Reports / Accounts will show negative cash balance (overdrawn) in red.
     - FIX: Pending deposits in Left to Spend would appear as Positive instead of Negative.
     - REGRESSION: Reports / Investments [ Rebalance View ] Target amount was incorrect.
     - REGRESSION: Reports/ Investments [ Allocation ] cash/cost basis could be wrong if there were multiple cash holding accounts.
+    - REGRESSION: Some Summary Charts did not appear and appears as 0.
  
  * **Version 5.11 (June 14, 2026)**
     - REGRESSION: Monarch related, Hide Date/Filter container stopped working.
