@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.5
+// @version      5.12.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1010,7 +1010,7 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName,inTrigger,inAvgCols) {
          if((inRoll == 0 && Row.IsHeader == true) || Row.Section == inRoll) {
              useName = Row.PK;SubCount++;
              for (let col = 1; col < MTFlexTitle.length; col++) {
-                 if(MTFlexTitle[col].Format > 0) {Subtotals[col] += Row[col];}
+                 if(MTFlexTitle[col].Format > 0) {Subtotals[col] = get2dec(Subtotals[col] + Row[col]);}
              }
          }
     }
@@ -2867,8 +2867,8 @@ function MenuReportsInvestmentsRebalance(redraw) {
                 MTFlexRow[i][20] = cm1 + getCookie(sell + '...Note',false);
                 MTFlexRow[i][21] = getCookie(buy,true);
                 MTFlexRow[i][22] = cm2 + getCookie(buy + '...Note',false);
-                MTFlexRow[i][23] = MTFlexRow[i][8] - MTFlexRow[i][19] + MTFlexRow[i][21];
-                let pct = portValue === 0 ? 0 : (MTFlexRow[i][24] / portValue) * 100;
+                MTFlexRow[i][23] = MTFlexRow[i][9] - MTFlexRow[i][19] + MTFlexRow[i][21];
+                let pct = portValue === 0 ? 0 : (MTFlexRow[i][23] / portValue) * 100;
                 MTFlexRow[i][24] = Math.round(pct * 10) / 10;
                 MTFlexRow[i].SKTriggerEvent = '!RebalanceData|' + MTFlexRow[i][0];
             }
@@ -3160,7 +3160,7 @@ async function MenuReportsInvestmentsGo() {
                 if(MTFlex.Button2 == 2) continue;
                 if(acc.isManual == true) continue;
                 if(skipCash) continue;
-                cashValue = acc.portfolioBalance - acc.holdingBalance;
+                cashValue = get2dec(acc.portfolioBalance - acc.holdingBalance);
                 if(acc.crypto > 0 && cashValue < 1) continue;
                 if(acc.crypto == 0 && cashValue <= 0) continue;
                 sumCash+=cashValue;
@@ -3171,8 +3171,8 @@ async function MenuReportsInvestmentsGo() {
                 let usePK = InvestmentgetPK(acc.institutionName,acc.accountName,acc.accountSubtype,descS,'');
                 if(MTFlex.Button2 == 1) {
                     const pkTrigger = usePK + '|$$';
-                    if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger,8,cashValue,false,true)) {
-                        MF_GridUID(pkTrigger,9,cashValue,false,true);continue;
+                    if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger,9,cashValue,false,true)) {
+                        MF_GridUID(pkTrigger,10,cashValue,false,true);continue;
                     }
                 }
 
@@ -3196,7 +3196,7 @@ async function MenuReportsInvestmentsGo() {
                 MF_AddCol(10,cashValue);
                 MF_AddCol(11,null);
                 MF_AddCol(12,null);
-                MF_AddCol(13,'');
+                MF_AddCol(13,null);
                 MF_AddCol(14,null);
             }
         }
@@ -6144,7 +6144,7 @@ function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
     return result;
 }
 
-function get2dec(i,d = 2) {let n = Number(i?.toFixed(d) ?? 0);return n;}
+function get2dec(i = 0,d = 2) {let n = Number(i?.toFixed(d) ?? 0);return n;}
 
 function getCleanValue(inValue,inDec) {
 
@@ -6209,6 +6209,7 @@ function getCostBasis(inH,inVal) {
 
 function getDollarValue(InValue,ignoreCents) {
     if(InValue == null) {return '';}
+    console
     if(InValue === -0 || isNaN(InValue)) {InValue = 0;}
     if(ignoreCents === true) { InValue = Math.round(InValue);}
     let v = InValue.toLocaleString("en-US", {style: "currency", currency: CURRENCY});
