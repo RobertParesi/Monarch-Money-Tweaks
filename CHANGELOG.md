@@ -8,7 +8,7 @@ This extension builds upon the current Monarch Money web application. As such, I
     - FIX: Pending deposits in Left to Spend would appear as Positive instead of Negative.
     - REGRESSION: Reports / Investments [ Rebalance View ] Target amount was incorrect.
     - REGRESSION: Reports/ Investments [ Allocation ] cash/cost basis could be wrong if there were multiple cash holding accounts.
-    - REGRESSION: Some Summary Charts did not appear and appears as 0.
+    - REGRESSION: Some Summary Charts did not appear and appeared as 0.
  
  * **Version 5.11 (June 14, 2026)**
     - REGRESSION: Monarch related, Hide Date/Filter container stopped working.
