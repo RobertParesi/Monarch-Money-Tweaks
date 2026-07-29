@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.12.4
+// @version      5.12.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -235,8 +235,8 @@ function MF_SetupDates() {
     MTFlexDate2 = ckd.startsWith('d_') ? getDates(ckd) : unformatQueryDate(ckd);
 }
 
-function MF_QueueAddTitle(inCol,inTitle,p,hideAll,hideBut1,hideBut2) {
-    let useHide = hideAll || (hideBut1 && hideBut1.includes(MTFlex.Button1)) || (hideBut2 && hideBut2.includes(MTFlex.Button2));
+function MF_QueueAddTitle(inCol,inTitle,p,inhideAll,inhideBut1,inhideBut2) {
+    let useHide = inhideAll || (inhideBut1 && inhideBut1.includes(MTFlex.Button1)) || (inhideBut2 && inhideBut2.includes(MTFlex.Button2));
     if(useHide == null) useHide = false;
     p.ShowPercent = p.ShowPercent ?? null;
     MTFlexTitle.push({"Col": inCol,"Title": inTitle,"IsSortable": p.IsSortable,"Width": p.Width,"Format": p.Format,"FormatExtended": [], "ShowPercent": p.ShowPercent, "ShowPercentShade": p.ShowPercentShade, "ShowSort": p.ShowSort, "IsHidden": useHide, "IgnoreTotals": p.IgnoreTotals, "Indicator": p.Indicator});
@@ -723,12 +723,12 @@ function MT_GridDrawContainer() {
     div2.type = 'checkbox';if(MTFlex.Button3 == 1) {div2.checked = 'true';}
 
     cht = cec('div','MTFlexContainerHeader',MTFlexTable,'','','padding-top: 0px; padding-bottom: 0px;');
-    div2 = cec('div','',cht,'','','display:flex; gap:6px;');
+    div2 = cec('div','',cht,'','','display:flex; gap:6px;align-items: center;');
 
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());
     if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
-    div2 = cec('div','',cht,'','','display:flex; gap:6px;');
+    div2 = cec('div','',cht,'','','display:flex; gap:6px;align-items: center;');
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],' MTButton');
     let d = '', v = getCookie(MTFlex.Name + 'View',false);
@@ -905,8 +905,9 @@ function MT_GridDrawEmbed(inSection,inCol,inValue,inDesc,inRow) {
             if(MTFlex.Button2 == 0) {
                 if(inSection == 2 && (inCol == 9 || inCol == 10 || inCol == 12)) {return inValue < 0 ? css.red : '';}
             }
-            if(MTFlex.Button2 == 2) {
-                if (inSection == 2 && inCol == 10) {return inValue < 0 ? css.red : '';}
+            if(MTFlex.Button2 === 2) {
+                if(inSection === 2 && inCol === 10) {return inValue < 0 ? css.red : '';}
+                if(inCol === 12 && inValue < 0) return css.red;
             }
             return '';
         case 'MTInvestments':
@@ -2846,7 +2847,7 @@ function MenuReportsInvestmentsRebalance(redraw) {
     }
     if(MTFlex.Button2 != 2) {
         let targetKeys = MF_GridTargetKeys();
-        let portValue = MTFlexRow[0][8];
+        let portValue = MTFlexRow[0][9];
         for (let i = 0; i < MTFlexRow.length; i++) {
             if(MTFlexRow[i].Section == 1) {
                 let rn = targetKeys[0] + MTFlexRow[i][0];
