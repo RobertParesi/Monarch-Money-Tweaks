@@ -39,6 +39,13 @@ The **Positions** column is the total value of the holdings in the account.  The
 
 ---
 
+### Reports / Accounts (Credit Card Statement)
+
+This report will show all your credit cards balances, as well as the amount of Refunds, Charges and Payments. 
+
+<img src="../documentation/images/MTAccountsV5z.png" style="width:66%; height:auto;">
+---
+
 ### Reports / Accounts (Overall Cash Statement)
 
 This report will show all cash in Checking, Savings and Investments as well as Uninvested Cash in brokerage accounts.
