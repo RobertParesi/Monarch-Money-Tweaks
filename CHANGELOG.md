@@ -3,6 +3,9 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.14 (Beta)**
+    - REGRESSION: Reports / Investments [ Allocation ] could show incorrect information in Grid since adding Notes to the Grid.
+ 
  * **Version 5.13 (July 30, 2025)**
     - CHANGE: Reports / Accounts will show negative cash balance (overdrawn) in red.
     - FIX: Pending deposits in Left to Spend would appear as Positive instead of Negative.
