@@ -731,16 +731,16 @@ function MT_GridDrawContainer() {
     div2 = cec('div','',cht,'','','display:flex; gap:6px;align-items: center;');
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],' MTButton');
-    let d = '', v = getCookie(MTFlex.Name + 'View',false);
-    if(v) {
-        v = v.split('|');
-        if(v.length > 2) {
-            if(getCookie(MF_GetSeqKey('Sort'),false) == v[4] && MTFlex.Button1 == v[0] && MTFlex.Button2 == v[1] && MTFlex.Button3 == v[2] && MTFlex.Button4 == v[3]) d = 'display: none;';
-        }
-    }
-    createSmall('','Restore Favorite View','FlexRestore',d);
-    createSmall('','Save as Favorite View','FlexSave',d);
-    if(d) { cec('span','MTButtonSmall',div2,'💛 FAVORITE VIEW','','font-size: 10px;width: 110px;letter-spacing: 1.2px;' + BOLD,'','','FlexFavorite');}
+    const favoriteViews = MF_FavoriteViewsGet();
+    const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
+    let favoriteDiv = cec('div','MTdropdown',div2);
+    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,'💛 Favorite Views ','','font-size: 13px;' + (favoriteMatch.length ? 'font-weight: 800;' : ''),'','','FlexFavorite');
+    favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
+    let favoriteContent = cec('div','MTFlexdown-content',favoriteDiv,'','','min-width: 250px;','','','MTDropdownFlexFavorite');
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '💛 ' : '') + favorite.name,'','','MTOption',i);});
+    cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
+    cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
+    cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
     createSmall('',MTFlex.Title1 + ' Settings','FlexConfig','margin-left: 12px;');
 
     function createDropdown(inName,inOpt,inBut) {
@@ -756,6 +756,138 @@ function MT_GridDrawContainer() {
         if(in1) {if (in1.includes(MTFlex.Button1)) return;}
         if(in2) {if (in2.includes(MTFlex.Button2)) return;}
         cec('span','MTButtonSmall' + inClass,div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
+    }
+}
+
+function MF_FavoriteViewsGet() {
+    const value = getCookie(MTFlex.Name + 'Views',false);
+    if(!value) return [];
+    try {
+        const views = JSON.parse(value);
+        if(Array.isArray(views)) return views.filter(view => view && typeof view.name === 'string' && typeof view.view === 'string');
+    } catch(error) {console.error(MNAME,VERSION,'Favorite Views',error);}
+    return [];
+}
+
+function MF_FavoriteViewsSet(views) {
+    setCookie(MTFlex.Name + 'Views',JSON.stringify(views));
+}
+
+function MF_FavoriteViewValue() {
+    return MTFlex.Button1 + '|' + MTFlex.Button2 + '|' + MTFlex.Button3 + '|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'),true);
+}
+
+function MF_FavoriteViewMatch(views) {
+    const currentView = MF_FavoriteViewValue();
+    return views.filter(view => view.view == currentView).map(view => view.name);
+}
+
+function MF_FavoriteViewRefresh() {
+    const favoriteButton = document.getElementById('FlexFavorite');
+    const favoriteContent = document.getElementById('MTDropdownFlexFavorite');
+    if(!favoriteButton || !favoriteContent) return;
+    const favoriteViews = MF_FavoriteViewsGet();
+    const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
+    favoriteButton.style.fontWeight = favoriteMatch.length ? '800' : '';
+    favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
+    while(favoriteContent.firstChild) favoriteContent.firstChild.remove();
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '💛 ' : '') + favorite.name,'','','MTOption',i);});
+    cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
+    cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
+    cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
+}
+
+function MF_FavoriteViewRestore(index) {
+    const favorite = MF_FavoriteViewsGet()[index];
+    if(!favorite) return;
+    const view = favorite.view.split('|');
+    if(view.length < 4) return;
+    setCookie(MTFlex.Name + 'Button1',view[0]);
+    setCookie(MTFlex.Name + 'Button2',view[1]);
+    setCookie(MTFlex.Name + 'Button3',view[2]);
+    setCookie(MTFlex.Name + 'Button4',view[3]);
+    if(view[4] != undefined) setCookie(MF_GetSeqKey('Sort'),view[4]);
+    onClickMTDropdownRelease();
+    MenuReportsGo();
+}
+
+function MF_FavoriteViewName(inName,inAction) {
+    MTFlex.FavoriteName = inName || '';
+    MTFlex.FavoriteAction = inAction || 'save';
+    localStorage.removeItem('MTFavoriteViewName');
+    const d = [{field1: 'View Name', style1: BOLD, style2: 'width: 100%;', type: 'Input', key: 'MTFavoriteViewName', nodrop: true, placeholder: 'Your Favorite View Name'}];
+    const b = [{name: MTFlex.FavoriteAction == 'rename' ? 'Rename' : 'Save', id: 'FlexFavoriteSave'}];
+    MF_ModelWindowOpen({name: 'FlexFavoriteCancel', title: MTFlex.FavoriteAction == 'rename' ? 'Rename Favorite View' : 'Save Favorite View'},d,b);
+    const input = document.getElementById('MTFavoriteViewName');
+    if(input) {input.value = MTFlex.FavoriteName;input.focus();input.select();}
+}
+
+function MF_FavoriteViewSave() {
+    const input = document.getElementById('MTFavoriteViewName');
+    const name = input ? input.value.trim() : '';
+    if(!name) {alert('Please enter a view name.');if(input) input.focus();return;}
+
+    const views = MF_FavoriteViewsGet();
+    const oldName = MTFlex.FavoriteName || '';
+    const oldIndex = views.findIndex(view => view.name == oldName);
+    const matchIndex = views.findIndex(view => view.name.toLowerCase() == name.toLowerCase());
+
+    if(MTFlex.FavoriteAction == 'rename') {
+        if(oldIndex < 0) return;
+        if(matchIndex > -1 && matchIndex != oldIndex) {
+            alert('A favorite view named "' + views[matchIndex].name + '" already exists.');return;
+        } else {views[oldIndex].name = name;}
+    } else if(matchIndex > -1) {
+        alert('A favorite view named "' + views[matchIndex].name + '" already exists.');return;
+    } else {views.push({name: name, view: MF_FavoriteViewValue()});}
+
+    MF_FavoriteViewsSet(views);
+    localStorage.removeItem('MTFavoriteViewName');
+    removeAllSections('div.MTModelContainer');
+    MF_FavoriteViewRefresh();
+}
+
+function MF_FavoriteViewManage() {
+    onClickMTDropdownRelease();
+    const views = MF_FavoriteViewsGet();
+    const d = views.length == 0 ? 'No favorite views have been saved.' : views.map(view => ({
+        field1: view.name,
+        style1: 'overflow: hidden; text-overflow: ellipsis;',
+        field2: [
+            {name: 'Rename', style: 'margin-left: 10px;color:rgb(50,170,240);cursor:pointer;'},
+            {name: 'Delete', style: 'margin-left: 14px;color:rgb(50,170,240);cursor:pointer;'}
+        ]
+    }));
+    MF_ModelWindowOpen({name: 'FlexFavoriteManageClose', title: MTFlex.Title1 + ' Favorite Views', width: 620},d,null,'55%','45%');
+    const rows = document.querySelectorAll('.MTModelWindow .MTRow');
+    rows.forEach((row, index) => {
+        const actions = row.querySelectorAll('.MTField2 div');
+        ['rename','delete'].forEach((action, actionIndex) => {
+            if(actions[actionIndex]) {
+                actions[actionIndex].className = 'MTFavoriteAction';
+                actions[actionIndex].setAttribute('action',action);
+                actions[actionIndex].setAttribute('viewindex',index);
+            }
+        });
+    });
+}
+
+function MF_FavoriteViewAction(inTarget) {
+    const action = inTarget.getAttribute('action');
+    const index = Number(inTarget.getAttribute('viewindex'));
+    const views = MF_FavoriteViewsGet();
+    if(!views[index]) return;
+    if(action == 'rename') {
+        const oldName = views[index].name;
+        removeAllSections('div.MTModelContainer');
+        MF_FavoriteViewName(oldName,'rename');
+        return;
+    }
+    if(action == 'delete' && confirm('Delete the favorite view "' + views[index].name + '"?')) {
+        views.splice(index,1);
+        MF_FavoriteViewsSet(views);
+        removeAllSections('div.MTModelContainer');
+        MF_FavoriteViewRefresh();
     }
 }
 
@@ -5188,16 +5320,22 @@ window.onclick = function(event) {
             case 'MTButton4':
                 setCookie(MTFlex.Name + cn.slice(2),event.target.getAttribute('mtoption'));
                 MenuReportsGo();return;
+            case 'MTFavoriteView':
+                MF_FavoriteViewRestore(Number(event.target.getAttribute('mtoption')));return;
+            case 'MTFavoriteSaveCurrent':
+                onClickMTDropdownRelease();MF_FavoriteViewName('','save');return;
+            case 'MTFavoriteManage':
+                MF_FavoriteViewManage();return;
+            case 'MTFavoriteAction':
+                MF_FavoriteViewAction(event.target);return;
             case 'MTFlexGridTitleCell':
             case 'MTFlexGridTitleCell2':
-                cecStyle('FlexFavorite',null,'none');
-                cecStyle('FlexSave',null,'inline');
-                cecStyle('FlexRestore',null,'inline');
-                onClickGridSort();return;
+                onClickGridSort();MF_FavoriteViewRefresh();return;
             case 'MTFlexCheckbox':
                 MTFlex.Button3 = (event.target.checked == true) ? 1 : 0;
                 setCookie(MTFlex.Name + 'Button3',MTFlex.Button3);
                 hideAllSections('div.MTFlexSpacer',MTFlex.Button3);
+                MF_FavoriteViewRefresh();
                 return;
             case 'MTFixedCheckbox':
                 cn = event.target.getAttribute('grp');
@@ -5244,6 +5382,11 @@ window.onclick = function(event) {
 function onClickMTButton() {
 
     const bt = event.target.id;
+    if(bt == 'FlexFavoriteSave') {MF_FavoriteViewSave();return;}
+    if(bt == 'FlexFavoriteCancel' || bt == 'FlexFavoriteManageClose') {
+        localStorage.removeItem('MTFavoriteViewName');
+        removeAllSections('div.MTModelContainer');return;
+    }
     if(bt == 'RestoreSettings') {uploadfileSettings('.csv');return;}
     if(bt == 'FlexButtonExport') {MT_GridExport(); return;}
     if(bt == 'NoteTagButton') {onClickNoteTagButton();return;}
@@ -5320,25 +5463,6 @@ function onClickMTButtonSmall() {
             MTFlex.Collapse = 1 - MTFlex.Collapse;
             MT_GridDrawExpand();
             return;
-        case 'FlexSave':
-            if(confirm('Save current view as ' + MTFlex.Title1 + ' favorite?')) {
-                setCookie(MTFlex.Name + 'View',MTFlex.Button1+'|'+ MTFlex.Button2+'|' + MTFlex.Button3+'|' + MTFlex.Button4 + '|' + getCookie(MF_GetSeqKey('Sort'), true));
-                cecStyle('FlexFavorite',null,'inline');
-                cecStyle('FlexSave',null,'none');
-                cecStyle('FlexRestore',null,'none');
-            }
-            break;
-        case 'FlexRestore':
-            v = getCookie(MTFlex.Name + 'View',false);
-            if(v) {
-                v = v.split('|');
-                setCookie(MTFlex.Name + 'Button1',v[0]);
-                setCookie(MTFlex.Name + 'Button2',v[1]);
-                setCookie(MTFlex.Name + 'Button3',v[2]);
-                setCookie(MTFlex.Name + 'Button4',v[3]);
-                if(v[4] != undefined) {setCookie(MF_GetSeqKey('Sort'),v[4]);}
-            }
-            MenuReportsGo();break;
         case 'FlexConfig':
             onClickMTFlexConfig();return;
         case 'FlexSideExport':
