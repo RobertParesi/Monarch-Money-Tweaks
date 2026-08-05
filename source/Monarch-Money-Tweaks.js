@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.14.2
+// @version      5.14.3
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -728,13 +728,13 @@ function MT_GridDrawContainer() {
     createSmall('','Collapse / Expand','FlexExpand');
     cec('span','MTFlexText',div2, MF_GridTip());
     if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
-    div2 = cec('div','',cht,'','','display:flex; gap:6px;align-items: center;');
-    createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[0,1,3],' MTButton');
-    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px; margin-right: 12px;',['MTInvestments'], [0],[2,3],' MTButton');
+    div2 = cec('div','',cht,'','','display:flex;align-items: center;');
+    createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[0,1,3],' MTButton');
+    createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[2,3],' MTButton');
     const favoriteViews = MF_FavoriteViewsGet();
     const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
     let favoriteDiv = cec('div','MTdropdown',div2);
-    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,'💛 Favorite Views ','','font-size: 13px;' + (favoriteMatch.length ? 'font-weight: 800;' : ''),'','','FlexFavorite');
+    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,'♥ Favorite Views ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     let favoriteContent = cec('div','MTFlexdown-content',favoriteDiv,'','','min-width: 250px;','','','MTDropdownFlexFavorite');
     favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '💛 ' : '') + favorite.name,'','','MTOption',i);});
@@ -764,7 +764,7 @@ function MF_FavoriteViewsGet() {
     if(!value) return [];
     try {
         const views = JSON.parse(value);
-        if(Array.isArray(views)) return views.filter(view => view && typeof view.name === 'string' && typeof view.view === 'string');
+        if(Array.isArray(views)) return views.filter(view => view && typeof view.name === 'string' && typeof view.view === 'string').sort((a,b) => a.name.localeCompare(b.name));
     } catch(error) {console.error(MNAME,VERSION,'Favorite Views',error);}
     return [];
 }
