@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.13
+// @version      5.14.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.13';
+const MNAME = 'MM-Tweaks', VERSION = '5.14';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -3082,11 +3082,12 @@ async function MenuReportsInvestmentsGo() {
                     if(holding.name.includes('%')) useTicker = '';
                     if (useTicker != null) {
                         useTicker = useTicker.trim();
+                        // Allocation
                         if (MTFlex.Button2 === 1) {
                             const pkTrigger = usePK + '|' + useTicker;
-                            if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger, 7, holding.quantity, false, true)) {
-                                MF_GridUID(pkTrigger, 8, useHoldingValue, false, true);
-                                MF_GridUID(pkTrigger, 9, useCostBasis, false, true);
+                            if ([0,1,3,4,6].includes(MTFlex.Button1) && MF_GridUID(pkTrigger, 8, holding.quantity, false, true)) {
+                                MF_GridUID(pkTrigger, 9, useHoldingValue, false, true);
+                                MF_GridUID(pkTrigger, 10, useCostBasis, false, true);
                                 skipRec = true;
                             }
                         }
