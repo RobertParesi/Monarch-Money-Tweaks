@@ -5,7 +5,8 @@ This extension builds upon the current Monarch Money web application. As such, I
 
  * **Version 5.14 (Aug 5, 2025)**
     - NEW: Favorite View is now changed to Favorite Views (enhanced multiple views)
-    - REGRESSION: Reports / Investments [ Allocation ] could show incorrect information in Grid since adding Notes to the Grid.
+    - REGRESSION: Reports / Investments [ Allocation ] could show incorrect information since adding Notes column.
+    - REGRESSION: Reports / Investments YTD% subtotal field was adding instead of averaging since adding Notes column.
  
  * **Version 5.13 (July 30, 2025)**
     - CHANGE: Reports / Accounts will show negative cash balance (overdrawn) in red.
