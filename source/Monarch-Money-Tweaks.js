@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.14.5
+// @version      5.14.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -158,8 +158,8 @@ function MM_InitStyles() {
         '.MTSideDrawerSummaryTable {text-align:left;width:100%;}',
         '.MTSideDrawerSummaryTableTH {position:sticky;top:0;' + panelBackground + BOLD + '}',
         '.MTFlexdown, .MTdropdown {float:right;position:relative;display:inline-block;font-weight:200;}',
-        '.MTFlexdown-content {' + panelBackground + standardText + ';display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + '8px;right:0;z-index:1;}',
-        '.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + '8px;z-index:1;}',
+        '.MTFlexdown-content {' + panelBackground + standardText + ';line-height:18px;display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + '8px;right:0;z-index:1;}',
+        '.MTFlexdown-content2 {' + panelBackground + standardText + ';line-height:18px;display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + '8px;z-index:1;}',
         '.MTFlexdown-content div,.MTFlexdown-content2 div {font-size:0;line-height:2px;background-color:#ff7369;}',
         '.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size:16px;text-align:left;border-radius:4px;font-weight:200;padding:10px 10px;display:block;}',
         '.trH {height:4px;}',
@@ -3115,8 +3115,8 @@ async function MenuReportsInvestmentsGo() {
         if(MTFlex.Button1 == 0) {
             MF_GridRollup(1,2,1,'Positions','All|2|9|Total');
         } else {
-            MF_GridGroupByPK(9,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All',MTFlex.Button2 === 3 ? null : [13]);
-            if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(5); MTFlex.Subtotals = true; }
+            MF_GridGroupByPK(9,inList(MTFlex.Button1,[5,7]) > 0 ? 'Total' : 'All',MTFlex.Button2 === 3 ? null : [14]);
+            if(inList(MTFlex.Button1,[5,7]) > 0) { MF_GridRegroupPK(6); MTFlex.Subtotals = true; }
             MF_GridRollup(0,0,0,'Total ' + (MTFlex.Button4 > 0 ? MTFlex.Button4Options[MTFlex.Button4] : ''),'Total|odd|9|Total');
         }
         MF_GridCalcRowPercent(12,10,9);
