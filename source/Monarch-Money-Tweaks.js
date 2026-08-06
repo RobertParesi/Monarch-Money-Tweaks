@@ -126,7 +126,7 @@ function MM_InitStyles() {
         '.MTSpacerClass {' + bdrb2 + '}',
         '.MTFlexGridItem {font-size:14px;height:30px;}',
         '.MTFlexGridItem:hover {' + selectBackground + '}',
-        '.MTdropdown a:hover {' + selectBackground + selectForeground + '}',
+        '.MTdropdown a:hover {cursor:pointer;' + selectBackground + selectForeground + '}',
         '.MTFlexGridHCell2, .MTSideDrawerSummaryData2, .MTFlexGridDCell2, .MTFlexGridSCell2, .MTFlexGridTitleCell2 {text-align:right !important;}',
         '.MTFlexGridSHCell {font-size:13px;' + BOLD + 'padding-top:6px;padding-bottom:0;}',
         '.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2, .MTGeneralLink {' + standardText + '}',
@@ -737,7 +737,7 @@ function MT_GridDrawContainer() {
     let favoriteButton = cec('button','MTFlexButton',favoriteDiv,'♥ Favorite Views ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     let favoriteContent = cec('div','MTFlexdown-content',favoriteDiv,'','','min-width: 250px;','','','MTDropdownFlexFavorite');
-    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '💛 ' : '') + favorite.name,'','','MTOption',i);});
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '♥ ' : '') + favorite.name,'','','MTOption',i);});
     cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
     cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
     cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
@@ -791,7 +791,7 @@ function MF_FavoriteViewRefresh() {
     favoriteButton.style.fontWeight = favoriteMatch.length ? '800' : '';
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     while(favoriteContent.firstChild) favoriteContent.firstChild.remove();
-    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '💛 ' : '') + favorite.name,'','','MTOption',i);});
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '♥ ' : '') + favorite.name,'','','MTOption',i);});
     cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
     cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
     cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
