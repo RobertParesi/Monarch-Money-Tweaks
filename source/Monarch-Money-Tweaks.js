@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.14.3
+// @version      5.14.4
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -734,7 +734,7 @@ function MT_GridDrawContainer() {
     const favoriteViews = MF_FavoriteViewsGet();
     const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
     let favoriteDiv = cec('div','MTdropdown',div2);
-    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,'♥ Favorite Views ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
+    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,(favoriteMatch.length ? '♥ ' + favoriteMatch[0] : 'Favorite Views') + ' ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     let favoriteContent = cec('div','MTFlexdown-content',favoriteDiv,'','','min-width: 250px;','','','MTDropdownFlexFavorite');
     favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '♥ ' : '') + favorite.name,'','','MTOption',i);});
@@ -788,6 +788,7 @@ function MF_FavoriteViewRefresh() {
     if(!favoriteButton || !favoriteContent) return;
     const favoriteViews = MF_FavoriteViewsGet();
     const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
+    favoriteButton.innerText = (favoriteMatch.length ? '♥ ' + favoriteMatch[0] : 'Favorite Views') + ' ';
     favoriteButton.style.fontWeight = favoriteMatch.length ? '800' : '';
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     while(favoriteContent.firstChild) favoriteContent.firstChild.remove();
