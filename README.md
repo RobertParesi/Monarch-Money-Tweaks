@@ -2,7 +2,7 @@
 
 ### ⚙️ Installing MM-Tweaks for Monarch Money - Version 5.14
 
-📣 Over 4,000 users!
+📣 Over 5,000 installs!
 
 Visit the official Extensions area for your browser using the following links: 
 
