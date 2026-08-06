@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.14.4
+// @version      5.14.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -803,10 +803,7 @@ function MF_FavoriteViewRestore(index) {
     if(!favorite) return;
     const view = favorite.view.split('|');
     if(view.length < 4) return;
-    setCookie(MTFlex.Name + 'Button1',view[0]);
-    setCookie(MTFlex.Name + 'Button2',view[1]);
-    setCookie(MTFlex.Name + 'Button3',view[2]);
-    setCookie(MTFlex.Name + 'Button4',view[3]);
+    ['Button1','Button2','Button3','Button4'].forEach((button,i) => {MTFlex[button] = Number(view[i]);setCookie(MTFlex.Name + button,view[i]);});
     if(view[4] != undefined) setCookie(MF_GetSeqKey('Sort'),view[4]);
     onClickMTDropdownRelease();
     MenuReportsGo();
