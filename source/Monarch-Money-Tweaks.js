@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.18
+// @version      5.15.20
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -584,7 +584,8 @@ function MT_GridDrawDetails() {
                 elx = cec('td',isSubTotal ? 'MTFlexGridSCell2' : '',el,'','','text-align: right; width: 34px;'+ HeaderStyle);
                 if ((isSubTotal && useRow.PKTriggerEvent != null) || (!isSubTotal && useRow.SKTriggerEvent != null)) {
                     elx = cec('button', 'MTFlexCellGo MTFlexCellArrow', elx);
-                    const triggerEvent = isSubTotal ? useRow.PKTriggerEvent : useRow.SKTriggerEvent;
+                    let triggerEvent = isSubTotal ? useRow.PKTriggerEvent : useRow.SKTriggerEvent;
+                    if(MTFlex.Name=='MTNet_Income') triggerEvent='!NetIncomeChart|' + useRow.Num;
                     cec('span', 'MTFlexCellGo', elx, '', '', '', 'triggers', triggerEvent + '|');
                 }
             }
@@ -1379,11 +1380,14 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
 
     // load new targetData
     targetData = [];
-    let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='';
+    let hitboxes = [], un = Number(inP[2]), sumTotal = 0, minValue = 0,maxValue=0, pkTotal = 0,useRec='',useSec='',netRow=inP[0]=='!NetIncomeChart';
     let targetKeys = MF_GridTargetKeys();
     let includeBuySell = inP[5] == 1 ? getCookie('MTInvestments_SummaryDrawer',true) : 0;
     let inRebalance = MTFlex.Subname == 'MTRebalance' ? true : false;
-    for (let i = 0; i < MTFlexRow.length; i++) {
+    if(netRow) {
+        const row=MTFlexRow.find(row=>row.Num==inP[1]);
+        if(row) for(let i=1;i<MTFlexTitle.length-1;i++) {const value=Number(row[i])||0;targetData.push({percent:'',title:MTFlexTitle[i].Title,value:value,noDetail:true});sumTotal+=value;}
+    } else for (let i = 0; i < MTFlexRow.length; i++) {
         const row = MTFlexRow[i];
         if(row.hide) continue;
         const secMatch = row.Section == inP[1];
@@ -1409,8 +1413,10 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
             sumTotal += row[un];
         }
     }
+    targetData=targetData.filter(item=>item.value!=0);
     const ctx = divChart.getContext('2d');
     ctx.clearRect(0,0,chartWidth,chartHeight);
+    if(!targetData.length) return;
     const values = targetData.map(it => it.value);
     const entries = targetData.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
@@ -5972,6 +5978,7 @@ function onClickMTFlexArrow(inP) {
     if(inP == null) return;
     let p = inP.split('|');
     while (p.length < 3) {p.push('');}
+    if(p[0]=='!NetIncomeChart') {SummaryDrawer([p[0],p[1],1,MTFlexRow.find(row=>row.Num==p[1])?.[0] || '']);return;}
     if(p[0] == 'Total' || p[0] == 'All') {
         if(p[1] == 'this') {
             let e = event.target.parentNode.parentNode.parentNode;
