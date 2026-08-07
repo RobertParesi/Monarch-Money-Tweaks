@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.20
+// @version      5.15.21
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -161,7 +161,7 @@ function MM_InitStyles() {
         '.MTFlexdown-content {' + panelBackground + standardText + ';line-height:18px;display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + '8px;right:0;z-index:1;}',
         '.MTFlexdown-content2 {' + panelBackground + standardText + ';line-height:18px;display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + '8px;z-index:1;}',
         '.MTFlexdown-content div,.MTFlexdown-content2 div {font-size:0;line-height:2px;background-color:#ff7369;}',
-        '.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size:16px;text-align:left;border-radius:4px;font-weight:200;padding:10px 10px;display:block;}',
+        '.MTFlexdown-content a,.MTFlexdown-content2 a {' + css.font + panelBackground + standardText + ';font-size:16px;text-align:left;border-radius:4px;font-weight:200;padding:10px 10px;display:block;}',
         '.trH {height:4px;}',
         '.trH2 {height:20px;vertical-align:top;}',
         '.show {display:block;}',
