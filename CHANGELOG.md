@@ -3,6 +3,9 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.15 (Beta)**
+    - NEW: Bar chart can now toggle to be a Pie Chart.
+
  * **Version 5.14 (Aug 5, 2025)**
     - NEW: Favorite View is now changed to Favorite Views (enhanced multiple views)
     - REGRESSION: Reports / Investments [ Allocation ] could show incorrect information since adding Notes column.
