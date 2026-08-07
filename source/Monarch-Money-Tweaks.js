@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.17
+// @version      5.15.18
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -2311,11 +2311,11 @@ async function MenuReportsNetIncomeGo() {
         }
         totalCol++;
         MTP.IsSortable = 2;
-        if(TagCol.COLOR) {MTP.Indicator = TagCol.COLOR;}
+        MTP.Indicator = TagCol.COLOR || '';
         MF_QueueAddTitle(totalCol,useTitle,MTP);
     }
     totalCol++;
-    MTP.IsSortable = 2; MF_QueueAddTitle(totalCol,'Total',MTP);
+    MTP.IsSortable = 2;MTP.Indicator = '';MF_QueueAddTitle(totalCol,'Total',MTP);
 
     for (const Tag of TagQueue) {
         ii = NetIncomeIndexQueue(Tag.TagName);
