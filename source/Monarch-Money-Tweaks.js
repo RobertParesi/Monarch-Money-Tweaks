@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.14.8
+// @version      5.15.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.14';
+const MNAME = 'MM-Tweaks', VERSION = '5.15';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1324,7 +1324,7 @@ function MF_GridCardAdd (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
     return 0;
 }
 
-function MF_DrawBarChart(inLocation,inP) {
+function MF_DrawBarChart(inLocation,inP,inPie = false) {
 
     const standardText = ['#333333','#cccccc'][isDarkMode()];
     let divHead,divCanvas,divChart;
@@ -1410,6 +1410,12 @@ function MF_DrawBarChart(inLocation,inP) {
     MF_DrawChartupdateDetail('MTMin','Smallest Value - ' + entries[entries.length-1].it.title.slice(0,35),getDollarValue(minValue));
     MF_DrawChartupdateDetail('MTItems','Total Items',targetData.length);
 
+    if(minValue >= 0 && sumTotal > 0) {
+        const toggle = cec('div','',divCanvas,'','','text-align:right;');
+        cec('button','MTButton',toggle,inPie ? 'Bar View' : 'Pie View','','','','','MTChartToggle');divCanvas.prepend(toggle);
+        if(inPie) {MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors);attachTooltip(divChart,hitboxes,inP[2]);return;}
+    }
+
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
     entries.forEach((entry, i) => {
         let it = entry.it;
@@ -1484,6 +1490,20 @@ function MF_DrawBarChart(inLocation,inP) {
     attachTooltip(divChart, hitboxes, inP[2]);
 }
 
+function MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors) {
+    let pie = entries.slice(0,19),cx=235,cy=chartHeight/2,r=190,start=0;
+    if(entries.length > 19) {
+        const value = entries.slice(19).reduce((sum,entry) => sum + entry.v,0);
+        pie.push({v:value,it:{title:'Other',value:value,percent:get2dec(value/sumTotal*100,1),noDetail:true}});
+    }
+    pie.forEach((entry,i) => {
+        const end = start + entry.v/sumTotal*Math.PI*2,it=entry.it;
+        ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start-Math.PI/2,end-Math.PI/2);ctx.closePath();ctx.fill();
+        hitboxes.push({cx:cx,cy:cy,r:r,start:start,end:end,item:it});
+        const y=32+i*24;ctx.fillRect(455,y-7,12,12);ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.font='13px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.title.slice(0,18),474,y);ctx.textAlign='right';ctx.fillText(it.percent+'%',650,y);start=end;
+    });
+}
+
 function attachTooltip(canvas, hitboxes, inCol) {
 
     const divTooltip = document.getElementById('MTChartTip');
@@ -1493,10 +1513,11 @@ function attachTooltip(canvas, hitboxes, inCol) {
         const y = e.clientY - rect.top;
         let found = null;
         for (const hb of hitboxes) {
-            if (x >= hb.x && x <= hb.x + hb.w && y >= hb.y && y <= hb.y + hb.h) { found = hb; break;}
+            let angle=Math.atan2(y-hb.cy,x-hb.cx)+Math.PI/2;if(angle<0) angle+=Math.PI*2;
+            if(hb.r ? Math.hypot(x-hb.cx,y-hb.cy)<=hb.r && angle>=hb.start && angle<=hb.end : x>=hb.x && x<=hb.x+hb.w && y>=hb.y && y<=hb.y+hb.h) {found=hb;break;}
         }
         if (found) {
-            glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = inCol;
+            glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = found.item.noDetail ? 0 : inCol;
             let tipData = [];
             tipData.push([found.item.title,'text-align: center; color: yellow;']);
             tipData.push([(found.item.incBuySell == 1 ? 'Proposed' : 'Current') + ' Amount','',getDollarValue(found.item.value),'width: 110px; text-align: right;']);
@@ -5380,6 +5401,7 @@ window.onclick = function(event) {
 function onClickMTButton() {
 
     const bt = event.target.id;
+    if(bt == 'MTChartToggle') {MF_DrawBarChart(null,null,event.target.innerText == 'Pie View');return;}
     if(bt == 'FlexFavoriteSave') {MF_FavoriteViewSave();return;}
     if(bt == 'FlexFavoriteCancel' || bt == 'FlexFavoriteManageClose') {
         localStorage.removeItem('MTFavoriteViewName');
