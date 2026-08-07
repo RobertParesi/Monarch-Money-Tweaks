@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.1
+// @version      5.15.5
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1491,17 +1491,17 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
 }
 
 function MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors) {
-    let pie = entries.slice(0,19),cx=235,cy=chartHeight/2,r=190,start=0;
+    let pie = entries.slice(0,19),cx=235,cy=195,r=175,inner=92,start=0;
     if(entries.length > 19) {
         const value = entries.slice(19).reduce((sum,entry) => sum + entry.v,0);
         pie.push({v:value,it:{title:'Other',value:value,percent:get2dec(value/sumTotal*100,1),noDetail:true}});
     }
     pie.forEach((entry,i) => {
-        const end = start + entry.v/sumTotal*Math.PI*2,it=entry.it;
-        ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start-Math.PI/2,end-Math.PI/2);ctx.closePath();ctx.fill();
-        hitboxes.push({cx:cx,cy:cy,r:r,start:start,end:end,item:it});
-        const y=32+i*24;ctx.fillRect(455,y-7,12,12);ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.font='13px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.title.slice(0,18),474,y);ctx.textAlign='right';ctx.fillText(it.percent+'%',650,y);start=end;
+        const end=start+entry.v/sumTotal*Math.PI*2,y=32+i*24;entry.start=start;entry.end=end;entry.it.pieIndex=i;
+        hitboxes.push({cx:cx,cy:cy,r:r,inner:inner,start:start,end:end,lx:450,ly:y-11,lw:205,lh:22,item:entry.it});start=end;
     });
+    const draw = active => {ctx.clearRect(0,0,chartWidth,chartHeight);pie.forEach((entry,i) => {const y=32+i*24,rr=r+(i==active?9:0);ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.arc(cx,cy,rr,entry.start-Math.PI/2,entry.end-Math.PI/2);ctx.arc(cx,cy,inner,entry.end-Math.PI/2,entry.start-Math.PI/2,true);ctx.closePath();ctx.fill();ctx.fillRect(455,y-7,12,12);ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.font=(i==active?'600 ':'')+'13px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(entry.it.title.slice(0,18),474,y);ctx.textAlign='right';ctx.fillText(entry.it.percent+'%',650,y);});ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.textAlign='center';ctx.font='600 17px sans-serif';ctx.fillText(getDollarValue(sumTotal,true),cx,cy-8);ctx.font='13px sans-serif';ctx.fillText('Total',cx,cy+14);};
+    draw(-1);ctx.canvas.pieHighlight=draw;ctx.canvas.pieActive=-1;
 }
 
 function attachTooltip(canvas, hitboxes, inCol) {
@@ -1514,8 +1514,11 @@ function attachTooltip(canvas, hitboxes, inCol) {
         let found = null;
         for (const hb of hitboxes) {
             let angle=Math.atan2(y-hb.cy,x-hb.cx)+Math.PI/2;if(angle<0) angle+=Math.PI*2;
-            if(hb.r ? Math.hypot(x-hb.cx,y-hb.cy)<=hb.r && angle>=hb.start && angle<=hb.end : x>=hb.x && x<=hb.x+hb.w && y>=hb.y && y<=hb.y+hb.h) {found=hb;break;}
+            const distance=Math.hypot(x-hb.cx,y-hb.cy),pie=hb.r && distance>=hb.inner && distance<=hb.r && angle>=hb.start && angle<=hb.end;
+            const legend=hb.lx!=null && x>=hb.lx && x<=hb.lx+hb.lw && y>=hb.ly && y<=hb.ly+hb.lh;
+            if(pie || legend || (!hb.r && x>=hb.x && x<=hb.x+hb.w && y>=hb.y && y<=hb.y+hb.h)) {found=hb;break;}
         }
+        const active=found?.item?.pieIndex ?? -1;if(canvas.pieHighlight && canvas.pieActive!=active) {canvas.pieActive=active;canvas.pieHighlight(active);}
         if (found) {
             glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = found.item.noDetail ? 0 : inCol;
             let tipData = [];
@@ -1541,7 +1544,7 @@ function attachTooltip(canvas, hitboxes, inCol) {
             document.body.style.cursor = "pointer";
         } else {divTooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
     };
-    canvas.onmouseleave = function () {divTooltip.style.display = 'none';};
+    canvas.onmouseleave = function () {divTooltip.style.display='none';if(canvas.pieHighlight) {canvas.pieActive=-1;canvas.pieHighlight(-1);}};
 }
 
 // [ Chart Canvas ]
