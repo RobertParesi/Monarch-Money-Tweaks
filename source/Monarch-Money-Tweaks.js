@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.5
+// @version      5.15.17
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -729,15 +729,16 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexText',div2, MF_GridTip());
     if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
     div2 = cec('div','',cht,'','','display:flex;align-items: center;');
+    if(MTFlex.Name == 'MTNet_Income' && MTFlex.Button2 < 3) createSmall('Tag Filter','Tag Filter','FlexTagFilter','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',null,null,null,' MTButton');
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[2,3],' MTButton');
     const favoriteViews = MF_FavoriteViewsGet();
     const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
     let favoriteDiv = cec('div','MTdropdown',div2);
-    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,(favoriteMatch.length ? '♥ ' + favoriteMatch[0] : 'Favorite Views') + ' ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
+    let favoriteButton = cec('button','MTFlexButton',favoriteDiv,(favoriteMatch.length ? ' ' + favoriteMatch[0] : 'Favorite Views') + ' ','',favoriteMatch.length ? 'font-weight: 800;' : '','','','FlexFavorite');
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     let favoriteContent = cec('div','MTFlexdown-content',favoriteDiv,'','','min-width: 250px;','','','MTDropdownFlexFavorite');
-    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '♥ ' : '') + favorite.name,'','','MTOption',i);});
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? ' ' : '') + favorite.name,'','','MTOption',i);});
     cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
     cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
     cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
@@ -788,11 +789,11 @@ function MF_FavoriteViewRefresh() {
     if(!favoriteButton || !favoriteContent) return;
     const favoriteViews = MF_FavoriteViewsGet();
     const favoriteMatch = MF_FavoriteViewMatch(favoriteViews);
-    favoriteButton.innerText = (favoriteMatch.length ? '♥ ' + favoriteMatch[0] : 'Favorite Views') + ' ';
+    favoriteButton.innerText = (favoriteMatch.length ? ' ' + favoriteMatch[0] : 'Favorite Views') + ' ';
     favoriteButton.style.fontWeight = favoriteMatch.length ? '800' : '';
     favoriteButton.setAttribute('title',favoriteMatch.length ? 'Current view: ' + favoriteMatch.join(', ') : 'Favorite Views');
     while(favoriteContent.firstChild) favoriteContent.firstChild.remove();
-    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? '♥ ' : '') + favorite.name,'','','MTOption',i);});
+    favoriteViews.forEach((favorite, i) => {cec('a','MTFavoriteView',favoriteContent,(favorite.view == MF_FavoriteViewValue() ? ' ' : '') + favorite.name,'','','MTOption',i);});
     cec('div','',favoriteContent,'','','height: 2px; margin: 4px 0; background-color:' + css.accentColor);
     cec('a','MTFavoriteSaveCurrent',favoriteContent,'Save Current View ...');
     cec('a','MTFavoriteManage',favoriteContent,'Manage Views ...');
@@ -812,7 +813,7 @@ function MF_FavoriteViewRestore(index) {
 function MF_FavoriteViewName(inName,inAction) {
     MTFlex.FavoriteName = inName || '';
     MTFlex.FavoriteAction = inAction || 'save';
-    localStorage.removeItem('MTFavoriteViewName');
+    setCookie('MTFavoriteViewName','');
     const d = [{field1: 'View Name', style1: BOLD, style2: 'width: 100%;', type: 'Input', key: 'MTFavoriteViewName', nodrop: true, placeholder: 'Your Favorite View Name'}];
     const b = [{name: MTFlex.FavoriteAction == 'rename' ? 'Rename' : 'Save', id: 'FlexFavoriteSave'}];
     MF_ModelWindowOpen({name: 'FlexFavoriteCancel', title: MTFlex.FavoriteAction == 'rename' ? 'Rename Favorite View' : 'Save Favorite View'},d,b);
@@ -840,7 +841,7 @@ function MF_FavoriteViewSave() {
     } else {views.push({name: name, view: MF_FavoriteViewValue()});}
 
     MF_FavoriteViewsSet(views);
-    localStorage.removeItem('MTFavoriteViewName');
+    setCookie('MTFavoriteViewName','');
     removeAllSections('div.MTModelContainer');
     MF_FavoriteViewRefresh();
 }
@@ -887,6 +888,40 @@ function MF_FavoriteViewAction(inTarget) {
         removeAllSections('div.MTModelContainer');
         MF_FavoriteViewRefresh();
     }
+}
+
+async function MF_TagFilterOpen() {
+    document.body.style.cursor='wait';const tagData=await dataGetTags();document.body.style.cursor='';
+    if(!tagData?.householdTransactionTags) return;
+    let saved={mode:0,tags:[]};try {saved=JSON.parse(getCookie('MTAccountsTagFilter',false)) || saved;} catch(error) {addConsole('Tag Filter',error);}
+    MF_ModelWindowOpen({name:'TagFilterClose',title:'Tag Filter',width:620},'',[],'35%','65%');
+    const oldRow=document.querySelector('.MTModelWindow .MTRow'),content=oldRow.parentNode;content.style.overflowY='auto';oldRow.remove();
+    const row=cec('div','MTRow',content,'','','align-items:flex-start;'),left=cec('div','MTField1',row),right=cec('div','MTField2',row);
+    cec('div','MTInputTitle',left,'Filter Type');const tagHead=cec('div','MTRow',right,'','','padding-top:0;');cec('div','MTInputTitle',tagHead,'Transaction Tags','','flex:1;');cec('span','MTButtonSmall',tagHead,'','','','title','Uncheck All','TagFilterNone');cec('span','MTButtonSmall',tagHead,'','','','title','Check All','TagFilterAll');cec('span','MTButtonSmall',tagHead,'','','','title','Sort Tags','TagFilterSort');
+    ['No Filter','Only these tags','Exclude these tags'].forEach((name,i) => {const label=cec('label','MTRow',left,'','','align-items:center;','htmlFor','MTTagFilterMode'+i),input=cec('input','MTTagFilterMode MTCheckboxClass',label,'','','','','','MTTagFilterMode'+i);input.type='radio';input.name='MTTagFilterMode';input.value=i;input.checked=saved.mode==i;input.addEventListener('change',()=>MF_TagFilterMode(input));cec('span','',label,name);});
+    tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
+    MF_TagFilterMode(document.querySelector('input[name="MTTagFilterMode"]:checked'));
+}
+
+function MF_TagFilterMode(inTarget) {
+    const off=inTarget?.value==0;document.querySelector('.MTModelWindow .MTField2').style.opacity=off?.45:1;
+    document.querySelectorAll('.MTModelWindow [tag]').forEach(tag => {tag.disabled=off;});
+}
+
+function MF_TagFilterSort(inTarget) {
+    const right=inTarget.parentNode.parentNode,alpha=right.getAttribute('sort')!='1';right.setAttribute('sort',alpha?1:0);
+    [...right.querySelectorAll('[tagrow]')].sort((a,b)=>alpha?a.getAttribute('tagname').localeCompare(b.getAttribute('tagname')):a.getAttribute('tagrow')-b.getAttribute('tagrow')).forEach(tag=>right.appendChild(tag));
+}
+
+function MF_TagFilterCheck(inCheck) {
+    document.querySelectorAll('.MTModelWindow [tag]').forEach(tag=>tag.checked=inCheck);
+}
+
+function MF_TagFilterSave() {
+    const mode=Number(document.querySelector('input[name="MTTagFilterMode"]:checked')?.value || 0),tags=[];
+    if(mode) document.querySelectorAll('.MTModelWindow [tag]:checked').forEach(tag => tags.push(tag.getAttribute('tag')));
+    let old={mode:0,tags:[]};try {old=JSON.parse(getCookie('MTAccountsTagFilter',false)) || old;} catch(error) {}
+    const changed=old.mode!=mode||old.tags.length!=tags.length||tags.some(tag=>!old.tags.includes(tag));setCookie('MTAccountsTagFilter',JSON.stringify({mode:mode,tags:tags}));removeAllSections('div.MTModelContainer');if(changed&&MTFlex.Name=='MTNet_Income'&&MTFlex.Button2<2) MenuReportsGo();
 }
 
 function MT_GridDrawCards() {
@@ -2181,7 +2216,7 @@ async function MenuReportsNetIncomeGo() {
     let snapshotData4,snapshotData,rec;
     let TagQueue = [],TagCols = [], hasGoals = [];
     let useID = '',useAmt = 0, ii = 0, useTitle='',useURL = '';
-    let HiddenFilter = false, hasNotes = false;
+    let HiddenFilter = false, hasNotes = false,TagFilter={mode:0,tags:[]};
 
     await MF_GridInit('MTNet_Income', 'Net Income');
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
@@ -2192,6 +2227,7 @@ async function MenuReportsNetIncomeGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (Starts with asterisk)','by Accounts','by Goals', 'by Owner']);
     MF_GridOptions(4,customGroupInfo());
+    if(MTFlex.Button2<2) try {TagFilter=JSON.parse(getCookie('MTAccountsTagFilter',false)) || TagFilter;} catch(error) {addConsole('Tag Filter',error);}
     MTFlex.ChartOptions = ['Month','Step'];
     MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
@@ -2228,6 +2264,7 @@ async function MenuReportsNetIncomeGo() {
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j++) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt++;recIdx++;
+            if(TagFilter.mode && rec.tags.some(tag=>TagFilter.tags.includes(tag.id))==(TagFilter.mode==2)) continue;
             if(MTFlex.Button2 == 3) {if(rec.notes.startsWith('*') == false) continue;}
             if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
             useAmt = rec.amount;
@@ -5350,6 +5387,8 @@ window.onclick = function(event) {
                 MF_FavoriteViewManage();return;
             case 'MTFavoriteAction':
                 MF_FavoriteViewAction(event.target);return;
+            case 'MTTagFilterMode':
+                MF_TagFilterMode(event.target);return;
             case 'MTFlexGridTitleCell':
             case 'MTFlexGridTitleCell2':
                 onClickGridSort();MF_FavoriteViewRefresh();return;
@@ -5405,9 +5444,10 @@ function onClickMTButton() {
 
     const bt = event.target.id;
     if(bt == 'MTChartToggle') {MF_DrawBarChart(null,null,event.target.innerText == 'Pie View');return;}
+    if(bt == 'TagFilterClose') {MF_TagFilterSave();return;}
     if(bt == 'FlexFavoriteSave') {MF_FavoriteViewSave();return;}
     if(bt == 'FlexFavoriteCancel' || bt == 'FlexFavoriteManageClose') {
-        localStorage.removeItem('MTFavoriteViewName');
+        setCookie('MTFavoriteViewName','');
         removeAllSections('div.MTModelContainer');return;
     }
     if(bt == 'RestoreSettings') {uploadfileSettings('.csv');return;}
@@ -5477,6 +5517,13 @@ function onClickMTButtonSmall() {
         case 'FlexRebalance':
             MenuReportsInvestmentsRebalance();
             break;
+        case 'FlexTagFilter':
+            MF_TagFilterOpen();return;
+        case 'TagFilterSort':
+            MF_TagFilterSort(event.target);return;
+        case 'TagFilterNone':
+        case 'TagFilterAll':
+            MF_TagFilterCheck(event.target.id=='TagFilterAll');return;
         case 'FlexExpand':
             divs = document.querySelectorAll('tr.MTFlexGridRow');
             divs.forEach(el => {
@@ -6623,6 +6670,9 @@ async function dataAccountBalances(startDate) {
 async function dataGetAccounts(inID) {
     return await GraphQL({ operationName: 'GetAccounts',variables: { },
           query: "query GetAccounts {accounts {id displayName deactivatedAt isHidden isAsset isManual mask displayLastUpdatedAt currentBalance displayBalance limit dataProviderCreditLimit hideFromList hideTransactionsFromReports includeInNetWorth order icon logoUrl deactivatedAt \n institution { id name }\n type {name display group}\n subtype {name display}}}"},null,'dataGetAccounts');
+}
+async function dataGetTags() {
+    return await GraphQL({operationName:'Common_GetHouseholdTransactionTags',variables:{},query:'query Common_GetHouseholdTransactionTags {householdTransactionTags {id name color order}}'},null,'dataGetTags');
 }
 async function dataRefreshAccounts() {
     return await GraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
