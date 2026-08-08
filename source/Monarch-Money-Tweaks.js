@@ -730,7 +730,7 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexText',div2, MF_GridTip());
     if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
     div2 = cec('div','',cht,'','','display:flex;align-items: center;');
-    if(MTFlex.Name == 'MTNet_Income' && MTFlex.Button2 < 3) createSmall('Tag Filter','Tag Filter','FlexTagFilter','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',null,null,null,' MTButton');
+    if(MTFlex.Name == 'MTNet_Income' && MTFlex.Button2 < 3) {let filter={};try {filter=JSON.parse(getCookie('MTAccountsTagFilter',false))||filter;} catch(error) {}const button=createSmall('Tag Filter','Tag Filter','FlexTagFilter','position:relative;padding-top:4px;padding-bottom:4px;font-size:13px;',null,null,null,' MTButton');if(filter.mode>0) cec('span','',button,'','','pointer-events:none;position:absolute;top:-6px;right:-6px;width:12px;height:12px;border-radius:50%;background-color:'+css.accentColor);}
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[2,3],' MTButton');
     const favoriteViews = MF_FavoriteViewsGet();
@@ -757,7 +757,7 @@ function MT_GridDrawContainer() {
         if(inOnly != null) {if(inList(MTFlex.Name,inOnly) == 0) return;}
         if(in1) {if (in1.includes(MTFlex.Button1)) return;}
         if(in2) {if (in2.includes(MTFlex.Button2)) return;}
-        cec('span','MTButtonSmall' + inClass,div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
+        return cec('span','MTButtonSmall' + inClass,div2,inS,'',inStyle ? inStyle : '','title',inTitle,inId);
     }
 }
 
@@ -901,7 +901,7 @@ async function MF_TagFilterOpen() {
     cec('div','MTInputTitle',left,'Filter Type');const tagHead=cec('div','MTRow',right,'','','padding-top:0;');cec('div','MTInputTitle',tagHead,'Transaction Tags','','flex:1;');cec('span','MTButtonSmall',tagHead,'','','','title','Uncheck All','TagFilterNone');cec('span','MTButtonSmall',tagHead,'','','','title','Check All','TagFilterAll');cec('span','MTButtonSmall',tagHead,'','','','title','Sort Tags','TagFilterSort');
     ['No Filter','Only these tags','Exclude these tags'].forEach((name,i) => {const label=cec('label','MTRow',left,'','','align-items:center;','htmlFor','MTTagFilterMode'+i),input=cec('input','MTTagFilterMode MTCheckboxClass',label,'','','','','','MTTagFilterMode'+i);input.type='radio';input.name='MTTagFilterMode';input.value=i;input.checked=saved.mode==i;input.addEventListener('change',()=>MF_TagFilterMode(input));cec('span','',label,name);});
     tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
-    if(getCookie('MT_NetIncomeTagSort',1)==1) MF_TagFilterSort(document.getElementById('TagFilterSort'));
+    MF_TagFilterSort(document.getElementById('TagFilterSort'),getCookie('MT_NetIncomeTagSort',1));
     MF_TagFilterMode(document.querySelector('input[name="MTTagFilterMode"]:checked'));
 }
 
@@ -910,9 +910,9 @@ function MF_TagFilterMode(inTarget) {
     document.querySelectorAll('.MTModelWindow [tag]').forEach(tag => {tag.disabled=off;});
 }
 
-function MF_TagFilterSort(inTarget) {
-    const right=inTarget.parentNode.parentNode,alpha=right.getAttribute('sort')!='1';right.setAttribute('sort',alpha?1:0);
-    setCookie('MT_NetIncomeTagSort',alpha?1:0);
+function MF_TagFilterSort(inTarget,inAlpha) {
+    const right=inTarget.parentNode.parentNode,alpha=inAlpha==null?1-getCookie('MT_NetIncomeTagSort',1):inAlpha;right.setAttribute('sort',alpha);
+    setCookie('MT_NetIncomeTagSort',alpha);
     [...right.querySelectorAll('[tagrow]')].sort((a,b)=>alpha?a.getAttribute('tagname').localeCompare(b.getAttribute('tagname')):a.getAttribute('tagrow')-b.getAttribute('tagrow')).forEach(tag=>right.appendChild(tag));
 }
 
