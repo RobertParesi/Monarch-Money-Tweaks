@@ -22,6 +22,15 @@ Summary for **Accounts** allows you to see Income and Expenses by Account.  This
 
 ---
 
+The Tags Report enables you to include or exclude designated tags.
+
+<img src="../documentation/images/NetIncomeV5tag.png" style="width:60%; height:auto;">
+
+Present the data as a pie (or donut) chart or as a bar chart
+
+<img src="../documentation/images/NetIncomeV5bar.png" style="width:60%; height:auto;">
+
+
 Summary for **Owner** allows you to see Income and Expenses either Shared or assigned to an owner.  This would be good to see shared and partner spending. 
 
 <img src="../documentation/images/NetIncomeV5d.png" style="width:60%; height:auto;">
