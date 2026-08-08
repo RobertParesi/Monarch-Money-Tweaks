@@ -3,17 +3,18 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.15 (Beta)**
+ * **Version 5.15 (Aug 8, 2026)**
     - NEW: Bar chart can now toggle to be a Pie Chart.
     - NEW: You can now filter the tag reports, both with Include and Exclude logic.
     - NEW: Reports / Net Income now uses Pie and Donut charts when pressing > for better information.
+    - NEW: Reports / Net Income bar graphs will show details to the filtered transactions.
 
- * **Version 5.14 (Aug 5, 2025)**
+ * **Version 5.14 (Aug 5, 2026)**
     - NEW: Favorite View is now changed to Favorite Views (enhanced multiple views)
     - REGRESSION: Reports / Investments [ Allocation ] could show incorrect information since adding Notes column.
     - REGRESSION: Reports / Investments YTD% subtotal field was adding instead of averaging since adding Notes column.
  
- * **Version 5.13 (July 30, 2025)**
+ * **Version 5.13 (July 30, 2026)**
     - CHANGE: Reports / Accounts will show negative cash balance (overdrawn) in red.
     - FIX: Pending deposits in Left to Spend would appear as Positive instead of Negative.
     - REGRESSION: Reports / Investments [ Rebalance View ] Target amount was incorrect.
