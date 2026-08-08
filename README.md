@@ -43,8 +43,9 @@ Features include:
     - Click on date header to go back to End of Last Month
  
 * **Reports / Net Income:**
-     - Summarize your Monarch Money Income/Spending history by Tags, Notes, Accounts, Shared Views and Goals.
+     - Summarize your Monarch Money Income/Spending history by Tags, Notes, Accounts, Owners and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
+     - Include or Exclude tags in the tags report.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort summarized data by any column
      - Breakdown tagged expenses by "Fixed Expenses" and "Flexible Expenses".
