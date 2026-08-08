@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15.21
+// @version      5.15
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -901,6 +901,7 @@ async function MF_TagFilterOpen() {
     cec('div','MTInputTitle',left,'Filter Type');const tagHead=cec('div','MTRow',right,'','','padding-top:0;');cec('div','MTInputTitle',tagHead,'Transaction Tags','','flex:1;');cec('span','MTButtonSmall',tagHead,'','','','title','Uncheck All','TagFilterNone');cec('span','MTButtonSmall',tagHead,'','','','title','Check All','TagFilterAll');cec('span','MTButtonSmall',tagHead,'','','','title','Sort Tags','TagFilterSort');
     ['No Filter','Only these tags','Exclude these tags'].forEach((name,i) => {const label=cec('label','MTRow',left,'','','align-items:center;','htmlFor','MTTagFilterMode'+i),input=cec('input','MTTagFilterMode MTCheckboxClass',label,'','','','','','MTTagFilterMode'+i);input.type='radio';input.name='MTTagFilterMode';input.value=i;input.checked=saved.mode==i;input.addEventListener('change',()=>MF_TagFilterMode(input));cec('span','',label,name);});
     tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
+    if(getCookie('MT_NetIncomeTagSort',1)==1) MF_TagFilterSort(document.getElementById('TagFilterSort'));
     MF_TagFilterMode(document.querySelector('input[name="MTTagFilterMode"]:checked'));
 }
 
@@ -911,6 +912,7 @@ function MF_TagFilterMode(inTarget) {
 
 function MF_TagFilterSort(inTarget) {
     const right=inTarget.parentNode.parentNode,alpha=right.getAttribute('sort')!='1';right.setAttribute('sort',alpha?1:0);
+    setCookie('MT_NetIncomeTagSort',alpha?1:0);
     [...right.querySelectorAll('[tagrow]')].sort((a,b)=>alpha?a.getAttribute('tagname').localeCompare(b.getAttribute('tagname')):a.getAttribute('tagrow')-b.getAttribute('tagrow')).forEach(tag=>right.appendChild(tag));
 }
 
@@ -922,7 +924,7 @@ function MF_TagFilterSave() {
     const mode=Number(document.querySelector('input[name="MTTagFilterMode"]:checked')?.value || 0),tags=[];
     if(mode) document.querySelectorAll('.MTModelWindow [tag]:checked').forEach(tag => tags.push(tag.getAttribute('tag')));
     let old={mode:0,tags:[]};try {old=JSON.parse(getCookie('MTAccountsTagFilter',false)) || old;} catch(error) {}
-    const changed=old.mode!=mode||old.tags.length!=tags.length||tags.some(tag=>!old.tags.includes(tag));setCookie('MTAccountsTagFilter',JSON.stringify({mode:mode,tags:tags}));removeAllSections('div.MTModelContainer');if(changed&&MTFlex.Name=='MTNet_Income'&&MTFlex.Button2<2) MenuReportsGo();
+    const changed=old.mode!=mode||old.tags.length!=tags.length||tags.some(tag=>!old.tags.includes(tag));setCookie('MTAccountsTagFilter',JSON.stringify({mode:mode,tags:tags}));removeAllSections('div.MTModelContainer');if(changed&&MTFlex.Name=='MTNet_Income'&&MTFlex.Button2<3) MenuReportsGo();
 }
 
 function MT_GridDrawCards() {
@@ -1508,7 +1510,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
                 if(dif < -5 || dif > 5) ctx.fillStyle = css.redRaw;
                 ctx.fillText(String('(' + dif.toFixed(1) + '%)'), barX + barLength + 8, yCenter+8);
             }
-            hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
+            it.barIndex=i;hitboxes.push({x: barX,y: barY, w: barLength,h: barHeight,item: it});
         }
     });
     // bottom border
@@ -1528,6 +1530,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
         ctx.fillText(getShortDollarValue(dashes[i].v), dashes[i].x,chartHeight - bottomPadding + 12);
         lastDash = dashes[i].x;
     }
+    divChart.barHighlight=active=>{ctx.clearRect(0,0,leftLabelWidth-1,chartHeight-bottomPadding);entries.slice(0,20).forEach((entry,i)=>{const it=entry.it,y=topPadding+rowHeight*i+rowHeight/2;ctx.font=(i==active?'600 ':'')+(it.title.length>14?'11.5px':'13.5px')+' sans-serif';ctx.textBaseline='middle';ctx.fillStyle=standardText;ctx.textAlign='right';ctx.fillText(it.title.slice(0,16),leftLabelWidth-5,y-(it.subtitle?7:0));if(it.subtitle){ctx.font='12px sans-serif';ctx.fillText(it.subtitle,leftLabelWidth-5,y+8);}});};
     attachTooltip(divChart, hitboxes, inP[2]);
 }
 
@@ -1559,7 +1562,7 @@ function attachTooltip(canvas, hitboxes, inCol) {
             const legend=hb.lx!=null && x>=hb.lx && x<=hb.lx+hb.lw && y>=hb.ly && y<=hb.ly+hb.lh;
             if(pie || legend || (!hb.r && x>=hb.x && x<=hb.x+hb.w && y>=hb.y && y<=hb.y+hb.h)) {found=hb;break;}
         }
-        const active=found?.item?.pieIndex ?? -1;if(canvas.pieHighlight && canvas.pieActive!=active) {canvas.pieActive=active;canvas.pieHighlight(active);}
+        const active=found?.item?.pieIndex ?? found?.item?.barIndex ?? -1;if(canvas.pieHighlight && canvas.pieActive!=active) {canvas.pieActive=active;canvas.pieHighlight(active);}if(canvas.barHighlight && canvas.barActive!=active) {canvas.barActive=active;canvas.barHighlight(active);}
         if (found) {
             glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = found.item.noDetail ? 0 : inCol;
             let tipData = [];
@@ -1585,7 +1588,7 @@ function attachTooltip(canvas, hitboxes, inCol) {
             document.body.style.cursor = "pointer";
         } else {divTooltip.style.display = 'none';glo.barchartCol=0;document.body.style.cursor = "";}
     };
-    canvas.onmouseleave = function () {divTooltip.style.display='none';if(canvas.pieHighlight) {canvas.pieActive=-1;canvas.pieHighlight(-1);}};
+    canvas.onmouseleave = function () {divTooltip.style.display='none';if(canvas.pieHighlight) {canvas.pieActive=-1;canvas.pieHighlight(-1);}if(canvas.barHighlight) {canvas.barActive=-1;canvas.barHighlight(-1);}};
 }
 
 // [ Chart Canvas ]
@@ -2233,7 +2236,7 @@ async function MenuReportsNetIncomeGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (Starts with asterisk)','by Accounts','by Goals', 'by Owner']);
     MF_GridOptions(4,customGroupInfo());
-    if(MTFlex.Button2<2) try {TagFilter=JSON.parse(getCookie('MTAccountsTagFilter',false)) || TagFilter;} catch(error) {addConsole('Tag Filter',error);}
+    if(MTFlex.Button2<3) try {TagFilter=JSON.parse(getCookie('MTAccountsTagFilter',false)) || TagFilter;} catch(error) {addConsole('Tag Filter',error);}
     MTFlex.ChartOptions = ['Month','Step'];
     MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
