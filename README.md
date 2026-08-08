@@ -45,12 +45,12 @@ Features include:
 * **Reports / Net Income:**
      - Summarize your Monarch Money Income/Spending history by Tags, Notes, Accounts, Owners and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
-     - Include or Exclude tags in the tags report.
+     - Include or exclude Tags in the tags reports.
+     - Include or exclude Hidden Transactions in tags reports.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort summarized data by any column
      - Breakdown tagged expenses by "Fixed Expenses" and "Flexible Expenses".
      - Export it to Excel or Numbers.
-     - Select to include or exclude Hidden Tagged Transactions.
      - Group transactions where transaction note starts with an asterisk. (ie: "* Hawaii 2025" or "* Wedding")
      - Group transactions by Goals.
 
