@@ -4558,7 +4558,7 @@ async function TransactionsDrawer(inTarget,inDiv,inData) {
 }
 
 async function NetIncomeTransactions(inRow,inCol) {
-    const row=MTFlexRow.find(row=>row.Num==inRow);if(!row) return;MF_ModelWindowOpen({name:'NetIncomeTransactionsClose',title:row[0]+' / '+MTFlexTitle[inCol].Title,width:710},'',[],'65%','35%');
+    document.body.style.cursor='';const tip=document.getElementById('MTChartTip');if(tip) tip.style.display='none';const row=MTFlexRow.find(row=>row.Num==inRow);if(!row) return;MF_ModelWindowOpen({name:'NetIncomeTransactionsClose',title:row[0]+' / '+MTFlexTitle[inCol].Title,width:710},'',[],'65%','35%');
     const win=document.querySelector('.MTModelWindow'),oldRow=win.querySelector('.MTRow'),content=oldRow.parentNode;win.style.left='50%';win.style.transform='translateX(-50%)';content.style.overflowY='auto';oldRow.remove();
     const table=cec('table','MTSideDrawerSummaryTable',content,'','','font-size:13px;','TableName','AccountDetailSummary');await TransactionsDrawer(null,table,['netincome',inRow,inCol]);sortTableByColumn(table);
 }
