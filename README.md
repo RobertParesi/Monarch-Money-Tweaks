@@ -71,6 +71,7 @@ Features include:
 
     - Summarize your investment holdings.
     - Show Positions and Performance.
+    - Show Bond positions, annual income and muturity ladders.
     - Show gain/loss, cost basis, stock price, stock chart, and more.
     - Set target allocations at the institution, account, holding type or custom category level.
     - Export to Excel or Numbers.
