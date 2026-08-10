@@ -18,6 +18,8 @@ To run on **Apple iPad**, goto your Apple Store.  First, install/use the **Orion
 
 ### 📚 Changes and Documentation:
 
+🥳 I hope everyone is enjoying the new Save Favorite View feature.
+
 🔖 [Click here to see Latest Changes](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/CHANGELOG.md)
 
 📖  [Getting Started & Documentation](https://github.com/RobertParesi/Monarch-Money-Tweaks/blob/main/documentation)
