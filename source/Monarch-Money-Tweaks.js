@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.15
+// @version      5.16.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.15';
+const MNAME = 'MM-Tweaks', VERSION = '5.16';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -1637,7 +1637,7 @@ function MF_DrawChart(inLocation) {
         default:
             MF_DrawChartTrends();
     }
-    MF_DrawLineChart();
+    if(MTFlex.Name=='MTTrends'&&MTFlex.ChartValue=='Bar') MF_DrawVerticalBarChart();else MF_DrawLineChart();
 
     function MF_DrawChartTrends() {
 
@@ -1649,7 +1649,7 @@ function MF_DrawChart(inLocation) {
                     yAxis.push('* ' + String(i).padStart(2, '0') + '-' + getMonthName(i,true));
                     if(i > getDates('n_CurMonth')) {xAxis.push(null);continue;}
                 }
-                if(MTFlex.ChartIndex == 0) {cTot=0;}
+                if(MTFlex.ChartIndex == 0||MTFlex.ChartValue=='Bar') {cTot=0;}
                 cTot+= HistoryDrawerUpdate(i+1,Yr-h);
                 xAxis.push(cTot);
             }
@@ -1789,6 +1789,7 @@ function MF_DrawChart(inLocation) {
 
     function MF_DrawLineChart() {
 
+        divChart.onmousemove=null;divChart.onmouseleave=null;
         const chartHeightA = chartHeight - 56;
         const ctx = divChart.getContext('2d');
         const minPrice = Math.min(...xAxis),maxPrice = Math.max(...xAxis);
@@ -1898,6 +1899,13 @@ function MF_DrawChart(inLocation) {
         drawChartTips();
     }
 
+    function MF_DrawVerticalBarChart() {
+        if(glo.tooltipHandle){divChart.removeEventListener('mousemove',glo.tooltipHandle);glo.tooltipHandle=null;}const ctx=divChart.getContext('2d'),left=50,top=20,bottom=42,w=chartWidth-left-8,h=chartHeight-top-bottom,values=xAxis.filter(v=>v!=null),min=Math.min(0,...values),max=Math.max(0,...values),range=max-min||1,zero=top+max/range*h,text=['#333333','#cccccc'][isDarkMode()],curYear=getDates('n_CurYear'),bars=[];ctx.clearRect(0,0,chartWidth,chartHeight);ctx.font='600 12px Helvetica';ctx.fillStyle=text;ctx.textAlign='right';
+        for(let i=0;i<5;i++){const value=max-range*i/4,y=top+h*i/4;ctx.fillText(getShortDollarValue(value),left-4,y+4);ctx.strokeStyle=text;ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(chartWidth,y);ctx.stroke();}
+        for(let m=0;m<12;m++){const vals=[];[2,1,0].forEach(s=>{const value=xAxis[s*12+m];if(value!=null) vals.push({value:value,series:s});});const gw=w/12,bw=Math.min(14,(gw-8)/3),start=left+m*gw+(gw-bw*vals.length)/2;vals.forEach((item,i)=>{const y=top+(max-item.value)/range*h,x=start+i*bw,bh=Math.abs(zero-y),by=Math.min(y,zero),r=Math.min(3,bh/2);ctx.fillStyle=css.legend[item.series];ctx.beginPath();ctx.roundRect(x,by,bw-2,bh||1,item.value>=0?[r,r,0,0]:[0,0,r,r]);ctx.fill();bars.push({x:x,y:by,w:bw-2,h:bh||1,month:m,year:curYear-item.series,value:item.value,color:css.legend[item.series]});});ctx.fillStyle=text;ctx.font='12px Helvetica';ctx.textAlign='center';ctx.fillText(getMonthName(m,true),left+m*gw+gw/2,chartHeight-14);}
+        divChart.onmousemove=e=>{const rect=divChart.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,bar=bars.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(bar){const mb=bars.filter(b=>b.month==bar.month).sort((a,b)=>b.year-a.year),tip=mb.map((b,i)=>{let d=i<mb.length-1?drawChartFormatPercentDiff(b.value,mb[i+1].value,grpSubtype=='expense'?1:2):['',''];if(!Array.isArray(d))d=[d,''];return ['●','width:18px;color:'+b.color+';',getMonthName(b.month,true)+' '+b.year,'width:105px;',getDollarValue(b.value),'width:100px;text-align:right;font-weight:100;',d[0],'width:65px;text-align:right;font-weight:100;'+d[1]];});MF_DrawToolTip(e,divTooltip,tip);document.body.style.cursor='pointer';}else{divTooltip.style.display='none';document.body.style.cursor='';}};divChart.onmouseleave=()=>{divTooltip.style.display='none';document.body.style.cursor='';};
+    }
+
     function drawChartFormatPercentDiff(x, y, s) {
         if (isNaN(x) || isNaN(y)) return ['',''];
         if (x === y) return '0.0%';
@@ -1912,7 +1920,7 @@ function MF_DrawChart(inLocation) {
 
     function drawChartTips() {
         if(glo.tooltipHandle) { divChart.removeEventListener('mousemove', glo.tooltipHandle); }
-        glo.tooltipHandle = divChart.addEventListener('mousemove', (e) => {
+        glo.tooltipHandle = (e) => {
             const rect = divChart.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -1961,7 +1969,7 @@ function MF_DrawChart(inLocation) {
                 }
             }
             divTooltip.style.display = 'none';
-        });
+        };divChart.addEventListener('mousemove',glo.tooltipHandle);
     }
 }
 
@@ -3486,7 +3494,7 @@ async function MenuReportsTrendsGo() {
     MF_GridOptions(1,['by Group','by Category','by Both']);
     MF_GridOptions(2,['Compare last month','Compare same month','Compare same quarter','This year by month','Last year by month','Last 12 months by month', 'Two years ago by month', 'Three years ago by month', 'All years by year','All years by YTD']);
     MF_GridOptions(4,customGroupInfo());
-    MTFlex.ChartOptions = ['Month','Step'];
+    MTFlex.ChartOptions = ['Month','Step','Bar'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MTFlex.Title1 = 'Trends Report';
 
@@ -5401,7 +5409,7 @@ window.onclick = function(event) {
                 onClickMTFlexArrow(cn); return;
             case 'MTHistoryButton':
                 MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-                MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step'];
+                MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step','Bar'];
                 cn = glo.pathName.slice(1);cn = cn.replace('/','|');
                 onClickMTFlexArrow(cn); return;
             case 'MTButton1':
@@ -5495,7 +5503,7 @@ function onClickMTButton() {
     }
     if(bt == 'HistoryButton') {
         MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-        MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step'];
+        MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step','Bar'];
         let cn = glo.pathName.slice(1);cn = cn.replace('/','|');
         onClickMTFlexArrow(cn); return;
     }
