@@ -3,6 +3,10 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.16 (Beta)**
+ 
+    - NEW: Reports / Trends added new Bar chart in addition to Month and Step.
+ 
  * **Version 5.15 (Aug 8, 2026)**
  
     - NEW: Bar charts can now toggle to pie charts.
