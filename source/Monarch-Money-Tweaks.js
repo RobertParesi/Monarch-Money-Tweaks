@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.16.9
+// @version      5.16
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -18,7 +18,7 @@
 
 const MNAME = 'MM-Tweaks', VERSION = '5.16';
 const GRAPHQL = 'https://api.monarch.com/graphql';
-const CURRENCY = 'USD', CRLF = String.fromCharCode(13,10);
+const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
@@ -1607,6 +1607,7 @@ function MF_DrawChart(inLocation) {
     let xAxis = [], yAxis = [], points = [];
     let divChart, divTooltip, chartGroup = '', chartTip = '',chartMixed = false;
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
+    if(MTFlex.ChartValue=='Bar') MTFlex.ChartValue='Month';
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
     if(inLocation != null) {
         let div = cec('span','',inLocation,'','','display:flex;float:right;margin-top: 12px;');
@@ -1903,6 +1904,7 @@ function MF_DrawChart(inLocation) {
         if(glo.tooltipHandle){divChart.removeEventListener('mousemove',glo.tooltipHandle);glo.tooltipHandle=null;}const ctx=divChart.getContext('2d'),left=50,top=20,bottom=42,w=chartWidth-left-8,h=chartHeight-top-bottom,curYear=getDates('n_CurYear'),bars=[],groups=[];if(MTFlex.ChartValue=='Year'){[2,1,0].forEach(s=>groups.push({label:String(curYear-s),vals:[{value:xAxis.slice(s*12,s*12+12).filter(v=>v!=null).reduce((a,b)=>a+b,0),series:s}]}));}else{const cnt=MTFlex.ChartValue=='Quarter'?4:12;for(let g=0;g<cnt;g++){const vals=[];[2,1,0].forEach(s=>{const a=MTFlex.ChartValue=='Quarter'?xAxis.slice(s*12+g*3,s*12+g*3+3):[xAxis[s*12+g]],v=a.filter(x=>x!=null);if(v.length)vals.push({value:v.reduce((a,b)=>a+b,0),series:s});});groups.push({label:MTFlex.ChartValue=='Quarter'?'Q'+(g+1):getMonthName(g,true),vals:vals});}}const values=groups.flatMap(g=>g.vals.map(v=>v.value)),min=Math.min(0,...values),max=Math.max(0,...values),range=max-min||1,zero=top+max/range*h,text=['#333333','#cccccc'][isDarkMode()];ctx.clearRect(0,0,chartWidth,chartHeight);ctx.font='600 12px Helvetica';ctx.fillStyle=text;ctx.textAlign='right';
         for(let i=0;i<5;i++){const value=max-range*i/4,y=top+h*i/4;ctx.fillText(getShortDollarValue(value),left-4,y+4);ctx.strokeStyle=text;ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(chartWidth,y);ctx.stroke();}
         groups.forEach((group,g)=>{const gw=w/groups.length,bw=Math.min(14,(gw-8)/3),start=left+g*gw+(gw-bw*group.vals.length)/2;group.vals.forEach((item,i)=>{const y=top+(max-item.value)/range*h,x=start+i*bw,bh=Math.abs(zero-y),by=Math.min(y,zero),r=Math.min(3,bh/2);ctx.fillStyle=css.legend[item.series];ctx.beginPath();ctx.roundRect(x,by,bw-2,bh||1,item.value>=0?[r,r,0,0]:[0,0,r,r]);ctx.fill();bars.push({x:x,y:by,w:bw-2,h:bh||1,group:g,label:group.label,year:curYear-item.series,value:item.value,color:css.legend[item.series]});});ctx.fillStyle=text;ctx.font='12px Helvetica';ctx.textAlign='center';ctx.fillText(group.label,left+g*gw+gw/2,chartHeight-14);});
+        if(MTFlex.ChartAverageOptions?.includes(MTFlex.ChartValue)){const avgs=MTFlex.ChartValue=='Year'?[values.reduce((a,b)=>a+b,0)/values.length]:groups.map(g=>g.vals.reduce((a,b)=>a+b.value,0)/g.vals.length);ctx.strokeStyle=ctx.fillStyle=text;ctx.lineWidth=1.5;ctx.setLineDash([3,2]);ctx.font='600 11.5px Helvetica';avgs.forEach((avg,g)=>{if(isNaN(avg))return;const y=top+(max-avg)/range*h,gw=w/groups.length,cx=MTFlex.ChartValue=='Year'?left+w/2:left+g*gw+gw/2,sw=MTFlex.ChartValue=='Year'?w-8:Math.min(gw-8,42);ctx.beginPath();ctx.moveTo(cx-sw/2,y);ctx.lineTo(cx+sw/2,y);ctx.stroke();ctx.textAlign=MTFlex.ChartValue=='Year'?'right':'center';ctx.fillText(getShortDollarValue(avg),MTFlex.ChartValue=='Year'?left+w-4:cx,avg>=0?Math.max(top+11,y-4):Math.min(chartHeight-bottom-2,y+13));});ctx.setLineDash([]);}
         divChart.onmousemove=e=>{const rect=divChart.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,bar=bars.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(bar){const mb=bars.filter(b=>b.group==bar.group).sort((a,b)=>b.year-a.year),tip=mb.map((b,i)=>{let d=i<mb.length-1?drawChartFormatPercentDiff(b.value,mb[i+1].value,grpSubtype=='expense'?1:2):['',''];if(!Array.isArray(d))d=[d,''];return ['●','width:18px;color:'+b.color+';',b.label+(MTFlex.ChartValue=='Year'?'':' '+b.year),'width:105px;',getDollarValue(b.value),'width:100px;text-align:right;font-weight:100;',d[0],'width:65px;text-align:right;font-weight:100;'+d[1]];});MF_DrawToolTip(e,divTooltip,tip);document.body.style.cursor='pointer';}else{divTooltip.style.display='none';document.body.style.cursor='';}};divChart.onmouseleave=()=>{divTooltip.style.display='none';document.body.style.cursor='';};
     }
 
@@ -3494,7 +3496,7 @@ async function MenuReportsTrendsGo() {
     MF_GridOptions(1,['by Group','by Category','by Both']);
     MF_GridOptions(2,['Compare last month','Compare same month','Compare same quarter','This year by month','Last year by month','Last 12 months by month', 'Two years ago by month', 'Three years ago by month', 'All years by year','All years by YTD']);
     MF_GridOptions(4,customGroupInfo());
-    MTFlex.ChartOptions = ['Month','Step','Bar','Quarter','Year'];MTFlex.ChartBarOptions = ['Bar','Quarter','Year'];
+    MTFlex.ChartOptions = ['Line','Step','Month','Quarter','Year'];MTFlex.ChartBarOptions = MTFlex.ChartAverageOptions = ['Month','Quarter','Year'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MTFlex.Title1 = 'Trends Report';
 
@@ -3929,7 +3931,7 @@ async function HistoryDrawer(inP) {
     if(inP[0] == 'section') {
         useGroupId = inId;
         inGroup = 4;
-        sObj.type2 = inId == 'income' ? inType : 'expense';
+        sObj.type2 = inId == 'income' ? 'income' : 'expense';
         sObj.urltext = inDesc;
     } else {
         retGroups = rtnCategoryGroup(inId);
@@ -4909,25 +4911,6 @@ function MM_SearchMerchants(inDiv) {
 }
 
 // Menu Page Functions
-function MenuHistory(OnFocus) {
-    if (glo.pathName.startsWith('/categor')) {
-        if(OnFocus == true) {
-            if(getCookie('MT_Budget',true) == 1) { gde('cashflow-budget-card',true,'hide');}
-        }
-        let div = findButton('Filters');
-        if(div) {
-            cec('button','MTButton',div.parentNode?.parentNode,' Monthly Summary','','','','','HistoryButton');
-            buildCategoryGroups();
-        }
-    }
-}
-
-function MenuCategories(OnFocus) {
-    if(glo.pathName.startsWith('/categories')) {
-       if(OnFocus == false) {cecRemove('HistoryButton');}
-    }
-}
-
 function MenuDashboard(OnFocus) {
     if (glo.pathName.startsWith('/dashboard')) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -5407,11 +5390,6 @@ window.onclick = function(event) {
                 cn = event.target.getAttribute("triggers");
                 if(cn == null) cn = event.target.childNodes[0].getAttribute("triggers");
                 onClickMTFlexArrow(cn); return;
-            case 'MTHistoryButton':
-                MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-                MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step','Bar','Quarter','Year'];MTFlex.ChartBarOptions = ['Bar','Quarter','Year'];
-                cn = glo.pathName.slice(1);cn = cn.replace('/','|');
-                onClickMTFlexArrow(cn); return;
             case 'MTButton1':
             case 'MTButton2':
             case 'MTButton4':
@@ -5500,12 +5478,6 @@ function onClickMTButton() {
         }
         downloadFile('Monarch Money Tweaks Settings',csvContent);
         return;
-    }
-    if(bt == 'HistoryButton') {
-        MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
-        MTFlex.Name = 'MTTrends'; MTFlex.ChartOptions = ['Month','Step','Bar','Quarter','Year'];MTFlex.ChartBarOptions = ['Bar','Quarter','Year'];
-        let cn = glo.pathName.slice(1);cn = cn.replace('/','|');
-        onClickMTFlexArrow(cn); return;
     }
     if(bt == 'ClearAll') {
         let divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
@@ -6440,8 +6412,8 @@ function getCostBasis(inH,inVal) {
 
 function getDollarValue(InValue,ignoreCents) {
     if(InValue == null) {return '';}
-    console
     if(InValue === -0 || isNaN(InValue)) {InValue = 0;}
+    InValue *= CURRENCYDISPLAY;
     if(ignoreCents === true) { InValue = Math.round(InValue);}
     let v = InValue.toLocaleString("en-US", {style: "currency", currency: CURRENCY});
     if(ignoreCents === 3) v = InValue.toLocaleString("en-US", {style: "currency", currency: CURRENCY, maximumFractionDigits: 3});
@@ -6450,7 +6422,7 @@ function getDollarValue(InValue,ignoreCents) {
 }
 function getShortDollarValue(InValue) {
     if(InValue == 0) return '$0 ';
-    let newV = Math.abs(InValue);
+    let newV = Math.abs(InValue * CURRENCYDISPLAY);
     let neg = InValue < 0 ? '-' : '';
     if(newV > 9999999) {newV = newV / 1000000;newV = newV.toFixed(1);return '$' + neg + newV + 'M';}
     if(newV > 999999) {newV = newV / 1000000;newV = newV.toFixed(2);return '$' + neg + newV + 'M';}
@@ -6611,9 +6583,7 @@ function MM_MenuRun(onFocus) {
     MenuLogin(onFocus);
     MenuPlan(onFocus);
     MenuDashboard(onFocus);
-    MenuHistory(onFocus);
     MenuTransactions(onFocus);
-    MenuCategories(onFocus);
     MenuSettings(onFocus);
 }
 // Query functions
