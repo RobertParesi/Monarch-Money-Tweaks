@@ -3,12 +3,9 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.16 (August 13, 2026)**
+ * **Version 5.15 & 5.16 (August 13, 2026)**
  
     - NEW: Reports / Trends side panel Month/Step chart enhanced to Line, Step, Month, Quarter, and Year.
- 
- * **Version 5.15 (Aug 8, 2026)**
- 
     - NEW: Bar charts can now toggle to pie charts.
     - NEW: Tag reports support Include and Exclude filters.
     - NEW: Reports → Net Income now uses pie and donut charts when you press ">" for more insight.
