@@ -3,7 +3,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.16 (Beta)**
+ * **Version 5.16 (August 13, 2026)**
  
     - NEW: Reports / Trends side panel Month/Step chart enhanced to Line, Step, Month, Quarter, and Year.
  
