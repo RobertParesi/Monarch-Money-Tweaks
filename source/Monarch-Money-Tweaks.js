@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.16
+// @version      5.17
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.16';
+const MNAME = 'MM-Tweaks', VERSION = '5.17';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -3243,7 +3243,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     if(MTFlex.Button2 == 3) { if (holding.type != 'fixed_income') continue; }
-                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false;
+                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false,holdingName = holding.name || '';
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding,useHoldingValue);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
@@ -3287,12 +3287,12 @@ async function MenuReportsInvestmentsGo() {
                             useHoldingValue = useNewValue;
                         }
                     }
-                    if(holding.type == 'fixed_income') { bP = getBondPieces(holding.name); }
+                    if(holding.type == 'fixed_income') { bP = getBondPieces(holdingName); }
                     let usePK = InvestmentgetPK(useInst,useAccount, useSubType, useCat, bP[2]);
                     let useGainLoss = useCostBasis != null ? useHoldingValue - useCostBasis : 0;
                     useTicker = holding.ticker;
                     if(useTicker === null) useTicker = currentStockTicker;
-                    if(holding.name.includes('%')) useTicker = '';
+                    if(holdingName.includes('%')) useTicker = '';
                     if (useTicker != null) {
                         useTicker = useTicker.trim();
                         // Allocation
@@ -3306,7 +3306,7 @@ async function MenuReportsInvestmentsGo() {
                         }
                     } else {useTicker = '';}
 
-                    if (holding.name != null) {longTitle = holding.name.trim();}
+                    longTitle = holdingName.trim();
                     if(useTicker == '' && longTitle == '') {
                         longTitle = holding.typeDisplay + ' (' + holding.account.type.display + ' - ' + holding.account.subtype.display + ')';
                         shortTitle = longTitle;
