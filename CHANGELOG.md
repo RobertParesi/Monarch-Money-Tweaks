@@ -5,7 +5,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
  * **Version 5.17 (August 13, 2026)**
  
-    - FIX: Reports / Investments could fail is a holding name was Null.
+    - FIX: Reports / Investments could fail if holding name was Null.
 
  * **Version 5.15 & 5.16 (August 13, 2026)**
  
