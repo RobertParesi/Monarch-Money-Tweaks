@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17.6
+// @version      5.17.8
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -352,6 +352,7 @@ function MF_GridOptions(Num,Options) {
 function MF_GridTargetKeys() {
     if(MTFlex.TargetOptions == undefined) return null;
     let to = MTFlex.TargetOptions[MTFlex.Button1];
+    if(to == undefined) return ['','','',''];
     let x = MTFlex.Button2 === 1 ? 0 : MTFlex.Button2;
     let ao = MTFlex.Button4Options?.[MTFlex.Button4] ?? '?';
     let base = x + to.replace(':','') + '|' + ao.replace(':','') + ':';
@@ -3110,7 +3111,7 @@ async function MenuReportsInvestmentsGo() {
     MTFlex.TriggerEvents = true;
     MTFlex.SortSeq = ['1','2','3','4'];
     MTFlex.ChartOptions = ['1W','1M','3M','6M','YTD','1Y','2Y'];
-    MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account'];
+    MTFlex.TargetOptions = ['','Institution','Account','Account Subtype','Holding Type','Account','Category','Account','Maturity'];
     MTFlex.TargetOptionsRun = [0,1];
 
     MF_SetupDates();
@@ -4331,11 +4332,12 @@ async function InvestmentsDrawer(inP) {
     const edg = portfolioData.portfolio.aggregateHoldings.edges[p0].node;
     const hld = portfolioData.portfolio.aggregateHoldings.edges[p0].node.holdings;
     const thisHld = hld[p1];
+    const holdingName = thisHld.name || edg.security?.name || '';
     const useCurrent = getCookie('MT_InvestmentSkipCurrent',true);
     let bondInfo = [],stockInfo = ['',''];
     let useTicker = thisHld.ticker;if(useTicker == null || useTicker == undefined) useTicker = '';
 
-    sObj.big = thisHld.name;
+    sObj.big = holdingName;
     sObj.small = thisHld.typeDisplay;
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
@@ -4345,7 +4347,7 @@ async function InvestmentsDrawer(inP) {
         let overAct = useTicker ? useTicker : thisHld.id;
         sObj.button = '!Investments' + SS + useTicker + ' - ' + sObj.big + SS + overAct + SS + sObj.small + SS + thisHld.account.displayName;
         if(useTicker != '') {
-            sObj.big = useTicker + ' • ' + thisHld.name;
+            sObj.big = useTicker + ' • ' + holdingName;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
             if(xT > 0) {
                 stockInfo[0] = 'Stock Analysis for ' + useTicker;
@@ -4420,7 +4422,7 @@ async function InvestmentsDrawer(inP) {
     }
     DrawerDrawLine(divTop2,'Price',getDollarValue(thisHld.closingPrice));
     DrawerDrawLine(divTop2,'Current Value',getDollarValue(allValue));
-    DrawerDrawLine(divTop2,'Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + thisHld.name + ')');
+    DrawerDrawLine(divTop2,'Cost Basis',getDollarValue(allCost),'','','','To change Cost Basis, choose Accounts and go to Holdings (' + holdingName + ')');
 
     let useGainLoss = allValue - allCost;
     let useGainLossPct = ((useGainLoss / allCost) * 100);
