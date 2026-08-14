@@ -3,6 +3,10 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.17 (August 13, 2026)**
+ 
+    - FIX: Reports / Investments could fail is a holding name was Null.
+
  * **Version 5.15 & 5.16 (August 13, 2026)**
  
     - NEW: Reports / Trends side panel Month/Step chart enhanced to Line, Step, Month, Quarter, and Year.
