@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17.8
+// @version      5.17.11
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -731,7 +731,7 @@ function MT_GridDrawContainer() {
     cec('span','MTFlexText',div2, MF_GridTip());
     if(MTFlex.WarningMsg) cec('span','MTFlexText',div2, MTFlex.WarningMsg,'',css.red);
     div2 = cec('div','',cht,'','','display:flex;align-items: center;');
-    if(MTFlex.Name == 'MTNet_Income' && MTFlex.Button2 < 3) {let filter={};try {filter=JSON.parse(getCookie('MTAccountsTagFilter',false))||filter;} catch(error) {}const button=createSmall('Tag Filter','Tag Filter','FlexTagFilter','position:relative;padding-top:4px;padding-bottom:4px;font-size:13px;',null,null,null,' MTButton');if(filter.mode>0) cec('span','',button,'','','pointer-events:none;position:absolute;top:-6px;right:-6px;width:12px;height:12px;border-radius:50%;background-color:'+css.accentColor);}
+    if(MTFlex.FilterTags?.includes(MTFlex.Button2)) {const filter=MF_TagFilterGet(),button=createSmall('Tag Filter','Tag Filter','FlexTagFilter','position:relative;padding-top:4px;padding-bottom:4px;font-size:13px;',null,null,null,' MTButton');if(filter.mode>0) cec('span','',button,'','','pointer-events:none;position:absolute;top:-6px;right:-6px;width:12px;height:12px;border-radius:50%;background-color:'+css.accentColor);}
     createSmall('Summary View','Summary View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[0,1,3],' MTButton');
     createSmall('Rebalance View','Rebalance View','FlexRebalance','padding-top: 4px; padding-bottom: 4px; font-size: 13px;',['MTInvestments'], [0],[2,3],' MTButton');
     const favoriteViews = MF_FavoriteViewsGet();
@@ -895,14 +895,14 @@ function MF_FavoriteViewAction(inTarget) {
 async function MF_TagFilterOpen() {
     document.body.style.cursor='wait';const tagData=await dataGetTags();document.body.style.cursor='';
     if(!tagData?.householdTransactionTags) return;
-    let saved={mode:0,tags:[]};try {saved=JSON.parse(getCookie('MTAccountsTagFilter',false)) || saved;} catch(error) {addConsole('Tag Filter',error);}
+    const saved=MF_TagFilterGet();
     MF_ModelWindowOpen({name:'TagFilterClose',title:'Tag Filter',width:620},'',[],'35%','65%');
     const oldRow=document.querySelector('.MTModelWindow .MTRow'),content=oldRow.parentNode;content.style.overflowY='auto';oldRow.remove();
     const row=cec('div','MTRow',content,'','','align-items:flex-start;'),left=cec('div','MTField1',row),right=cec('div','MTField2',row);
     cec('div','MTInputTitle',left,'Filter Type');const tagHead=cec('div','MTRow',right,'','','padding-top:0;');cec('div','MTInputTitle',tagHead,'Transaction Tags','','flex:1;');cec('span','MTButtonSmall',tagHead,'','','','title','Uncheck All','TagFilterNone');cec('span','MTButtonSmall',tagHead,'','','','title','Check All','TagFilterAll');cec('span','MTButtonSmall',tagHead,'','','','title','Sort Tags','TagFilterSort');
     ['No Filter','Only these tags','Exclude these tags'].forEach((name,i) => {const label=cec('label','MTRow',left,'','','align-items:center;','htmlFor','MTTagFilterMode'+i),input=cec('input','MTTagFilterMode MTCheckboxClass',label,'','','','','','MTTagFilterMode'+i);input.type='radio';input.name='MTTagFilterMode';input.value=i;input.checked=saved.mode==i;input.addEventListener('change',()=>MF_TagFilterMode(input));cec('span','',label,name);});
     tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
-    MF_TagFilterSort(document.getElementById('TagFilterSort'),getCookie('MT_NetIncomeTagSort',1));
+    MF_TagFilterSort(document.getElementById('TagFilterSort'),getCookie(MTFlex.Name+'_TagSort',1));
     MF_TagFilterMode(document.querySelector('input[name="MTTagFilterMode"]:checked'));
 }
 
@@ -912,8 +912,8 @@ function MF_TagFilterMode(inTarget) {
 }
 
 function MF_TagFilterSort(inTarget,inAlpha) {
-    const right=inTarget.parentNode.parentNode,alpha=inAlpha==null?1-getCookie('MT_NetIncomeTagSort',1):inAlpha;right.setAttribute('sort',alpha);
-    setCookie('MT_NetIncomeTagSort',alpha);
+    const key=MTFlex.Name+'_TagSort',right=inTarget.parentNode.parentNode,alpha=inAlpha==null?1-getCookie(key,1):inAlpha;right.setAttribute('sort',alpha);
+    setCookie(key,alpha);
     [...right.querySelectorAll('[tagrow]')].sort((a,b)=>alpha?a.getAttribute('tagname').localeCompare(b.getAttribute('tagname')):a.getAttribute('tagrow')-b.getAttribute('tagrow')).forEach(tag=>right.appendChild(tag));
 }
 
@@ -921,11 +921,15 @@ function MF_TagFilterCheck(inCheck) {
     document.querySelectorAll('.MTModelWindow [tag]').forEach(tag=>{tag.checked=inCheck;});
 }
 
+function MF_TagFilterGet() {
+    const value=getCookie(MTFlex.Name+'_TagFilter',false);
+    return value ? JSON.parse(value) : {mode:0,tags:[]};
+}
+
 function MF_TagFilterSave() {
     const mode=Number(document.querySelector('input[name="MTTagFilterMode"]:checked')?.value || 0),tags=[];
     if(mode) document.querySelectorAll('.MTModelWindow [tag]:checked').forEach(tag => tags.push(tag.getAttribute('tag')));
-    let old={mode:0,tags:[]};try {old=JSON.parse(getCookie('MTAccountsTagFilter',false)) || old;} catch(error) {}
-    const changed=old.mode!=mode||old.tags.length!=tags.length||tags.some(tag=>!old.tags.includes(tag));setCookie('MTAccountsTagFilter',JSON.stringify({mode:mode,tags:tags}));removeAllSections('div.MTModelContainer');if(changed&&MTFlex.Name=='MTNet_Income'&&MTFlex.Button2<3) MenuReportsGo();
+    const old=MF_TagFilterGet(),changed=old.mode!=mode||old.tags.length!=tags.length||tags.some(tag=>!old.tags.includes(tag));setCookie(MTFlex.Name+'_TagFilter',JSON.stringify({mode:mode,tags:tags}));removeAllSections('div.MTModelContainer');if(changed&&MTFlex.FilterTags?.includes(MTFlex.Button2)) MenuReportsGo();
 }
 
 function MT_GridDrawCards() {
@@ -2240,7 +2244,7 @@ async function MenuReportsNetIncomeGo() {
     let snapshotData4,snapshotData,rec;
     let TagQueue = [],TagCols = [], hasGoals = [];
     let useID = '',useAmt = 0, ii = 0, useTitle='',useURL = '';
-    let HiddenFilter = false, hasNotes = false,TagFilter={mode:0,tags:[]};
+    let HiddenFilter = false, hasNotes = false;
 
     await MF_GridInit('MTNet_Income', 'Net Income');
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
@@ -2251,7 +2255,8 @@ async function MenuReportsNetIncomeGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (Starts with asterisk)','by Accounts','by Goals', 'by Owner']);
     MF_GridOptions(4,customGroupInfo());
-    if(MTFlex.Button2<3) try {TagFilter=JSON.parse(getCookie('MTAccountsTagFilter',false)) || TagFilter;} catch(error) {addConsole('Tag Filter',error);}
+    MTFlex.FilterTags=[0,1,2];
+    const TagFilter=MTFlex.FilterTags.includes(MTFlex.Button2)?MF_TagFilterGet():{mode:0,tags:[]};
     MTFlex.ChartOptions = ['Month','Step'];
     MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
@@ -5953,7 +5958,7 @@ function onClickMTDropdown() {
     let cActive = event.target.id;
     if(cActive == glo.flexButtonActive) { onClickMTDropdownRelease(); } else {
         onClickMTDropdownRelease();
-        if(document.getElementById("MTDropdown"+cActive).classList.toggle("show") == true) { glo.flexButtonActive = cActive;} else { glo.flexButtonActive = '';}
+        if(document.getElementById("MTDropdown"+cActive).classList.toggle("show") == true) {glo.flexButtonActive = cActive;if(['1','2','4','FlexFavorite'].includes(cActive)) {event.target.style.borderColor='rgb(50,170,240)';}} else {glo.flexButtonActive = '';}
     }
 }
 
@@ -5961,6 +5966,8 @@ function onClickMTDropdownRelease() {
     if(glo.flexButtonActive) {
         let li = document.getElementById("MTDropdown" + glo.flexButtonActive);
         if(li) {li.className = 'MTFlexdown-content';}
+        li = document.getElementById(glo.flexButtonActive);
+        if(li) {li.style.borderColor = '';}
         glo.flexButtonActive = '';
     }
 }
