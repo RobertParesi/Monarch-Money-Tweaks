@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17
+// @version      5.17.6
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3247,7 +3247,7 @@ async function MenuReportsInvestmentsGo() {
                     if(MTFlexAccountFilter.filter.length > 0) {if(!MTFlexAccountFilter.filter.includes(holding.account.id)) continue; }
                     if(MTFlex.Button2 == 2) { if (inList(holding.type,EQTYPES) == 0) continue; }
                     if(MTFlex.Button2 == 3) { if (holding.type != 'fixed_income') continue; }
-                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false,holdingName = holding.name || '';
+                    let useCat = '',useSubType = '',useInst = '', useAccount = '', useTicker = '', shortTitle = '', longTitle = '',skipRec = false,holdingName = holding.name || edge.node.security?.name || '';
                     let useHoldingValue = get2dec(holding.value),useNewValue = 0;
                     let useCostBasis = getCostBasis(holding,useHoldingValue);
                     if(holding.account.institution != null) {useInst = holding.account.institution.name.trim();}
@@ -5438,15 +5438,14 @@ window.onclick = function(event) {
             case 'MTFlexGridDCell':
             case 'MTSideDrawerDetail4':
                 cn = event.target.hash;
-                if(cn.length > 0) {
-                    if(cn.startsWith('#') == true) {
-                        event.stopImmediatePropagation();
-                        event.stopPropagation();
-                        event.preventDefault();
-                        const p = cn.split('|');
-                        MenuReportsSetFilter(p[1],p[2],p[3],p[4]);
-                        window.location.replace('/reports/' + p[1]);
-                    }
+                if(!cn) return;
+                if(cn.startsWith('#') == true) {
+                    event.stopImmediatePropagation();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    const p = cn.split('|');
+                    MenuReportsSetFilter(p[1],p[2],p[3],p[4]);
+                    window.location.replace('/reports/' + p[1]);
                 }
         }
         if(inList(cn,FlexOptions)) {
