@@ -8,8 +8,8 @@ Tampermonkey is free and available for Google Chrome, Firefox, and Apple Safari.
 
 1. Disable the Monarch Money production extension in your browser.
 2. Install the Tampermonkey extension for your browser (Chrome, Firefox, or Safari).
-3. Open the Monarch Money Tweaks repository and navigate to the source folder.
-4. Select the file named Monarch-Money-Tweaks.js (left column) and click “Install” to add the userscript to Tampermonkey.
+3. Open the Monarch Money Tweaks GitHub repository and navigate to the **source** folder.
+4. Click on the file named Monarch-Money-Tweaks.js (left column only) and then click “Install” to add the userscript to Tampermonkey.
 
    
 ## 📢 Latest Source Update
