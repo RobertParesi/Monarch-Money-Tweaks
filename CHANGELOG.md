@@ -3,6 +3,10 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+ * **Version 5.18 (Beta)**
+ 
+    - NEW: Pick a color palette in Display / Settings for a custom look.
+
  * **Version 5.17 (August 13, 2026)**
  
     - FIX: Reports / Investments could fail if holding name was Null.
