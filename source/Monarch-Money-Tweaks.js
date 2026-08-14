@@ -917,7 +917,7 @@ function MF_TagFilterSort(inTarget,inAlpha) {
 }
 
 function MF_TagFilterCheck(inCheck) {
-    document.querySelectorAll('.MTModelWindow [tag]').forEach(tag=>tag.checked=inCheck);
+    document.querySelectorAll('.MTModelWindow [tag]').forEach(tag=>{tag.checked=inCheck;});
 }
 
 function MF_TagFilterSave() {
@@ -1388,31 +1388,33 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     let inRebalance = MTFlex.Subname == 'MTRebalance' ? true : false;
     if(netRow) {
         const row=MTFlexRow.find(row=>row.Num==inP[1]);
-        if(row) for(let i=1;i<MTFlexTitle.length-1;i++) {const value=Number(row[i])||0;targetData.push({percent:'',title:MTFlexTitle[i].Title,value:value,record:row.Num,column:i});sumTotal+=value;}
-    } else for (let i = 0; i < MTFlexRow.length; i++) {
-        const row = MTFlexRow[i];
-        if(row.hide) continue;
-        const secMatch = row.Section == inP[1];
-        if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'All' && secMatch) {
-            if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
-            let uValue = row[un];
-            let usePart = getStringPart(row[0], ' • ', 'left');
-            let sell=0,sellA=0,buy=0,buyA=0;
-            if(MTFlex.Name === 'MTInvestments') {
-                if(inP[4]) {if(inP[4] != row.PK) continue;}
-                sell = targetKeys[2] + row[0];buy = targetKeys[3] + row[0];
-                sellA = getCookie(sell,true);buyA = getCookie(buy,true);
-                if(inP[5] !== undefined) {
-                    if(inP[5] == 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
+        if(row) {for(let i=1;i<MTFlexTitle.length-1;i++) {const value=Number(row[i])||0;targetData.push({percent:'',title:MTFlexTitle[i].Title,value:value,record:row.Num,column:i});sumTotal+=value;}}
+    } else {
+        for (let i = 0; i < MTFlexRow.length; i++) {
+            const row = MTFlexRow[i];
+            if(row.hide) continue;
+            const secMatch = row.Section == inP[1];
+            if (inP[1] == 'odd' ? row.Section % 2 == 1 : inP[0] == 'All' && secMatch) {
+                if(inP[0] == 'All') {useRec=i;} else {useSec=row.Section;}
+                let uValue = row[un];
+                let usePart = getStringPart(row[0], ' • ', 'left');
+                let sell=0,sellA=0,buy=0,buyA=0;
+                if(MTFlex.Name === 'MTInvestments') {
+                    if(inP[4]) {if(inP[4] != row.PK) continue;}
+                    sell = targetKeys[2] + row[0];buy = targetKeys[3] + row[0];
+                    sellA = getCookie(sell,true);buyA = getCookie(buy,true);
+                    if(inP[5] !== undefined) {
+                        if(inP[5] == 1 && includeBuySell) {uValue = uValue + buyA - sellA;}
+                    }
                 }
+                targetData.push({ percent: '', title: usePart, value: uValue, buy: buyA, sell: sellA, incBuySell: includeBuySell, record: inRebalance ? row[0] : useRec, section: inRebalance ? null : useSec });sumTotal += uValue;
+            } else if (secMatch) {
+                pkTotal += row[un];
+                if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
+                    targetData.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal, record: row.PK, section: row.Section});pkTotal = 0;
+                }
+                sumTotal += row[un];
             }
-            targetData.push({ percent: '', title: usePart, value: uValue, buy: buyA, sell: sellA, incBuySell: includeBuySell, record: inRebalance ? row[0] : useRec, section: inRebalance ? null : useSec });sumTotal += uValue;
-        } else if (secMatch) {
-            pkTotal += row[un];
-            if (!MTFlexRow[i+1] || row.Section != MTFlexRow[i+1].Section || row.PK != MTFlexRow[i+1].PK) {
-                targetData.push({ percent: '', title: MT_GetPK(row.PK), value: pkTotal, record: row.PK, section: row.Section});pkTotal = 0;
-            }
-            sumTotal += row[un];
         }
     }
     targetData=targetData.filter(item=>item.value!=0);
@@ -1901,7 +1903,9 @@ function MF_DrawChart(inLocation) {
     }
 
     function MF_DrawVerticalBarChart() {
-        if(glo.tooltipHandle){divChart.removeEventListener('mousemove',glo.tooltipHandle);glo.tooltipHandle=null;}const ctx=divChart.getContext('2d'),left=50,top=20,bottom=42,w=chartWidth-left-8,h=chartHeight-top-bottom,curYear=getDates('n_CurYear'),bars=[],groups=[];if(MTFlex.ChartValue=='Year'){[2,1,0].forEach(s=>groups.push({label:String(curYear-s),vals:[{value:xAxis.slice(s*12,s*12+12).filter(v=>v!=null).reduce((a,b)=>a+b,0),series:s}]}));}else{const cnt=MTFlex.ChartValue=='Quarter'?4:12;for(let g=0;g<cnt;g++){const vals=[];[2,1,0].forEach(s=>{const a=MTFlex.ChartValue=='Quarter'?xAxis.slice(s*12+g*3,s*12+g*3+3):[xAxis[s*12+g]],v=a.filter(x=>x!=null);if(v.length)vals.push({value:v.reduce((a,b)=>a+b,0),series:s});});groups.push({label:MTFlex.ChartValue=='Quarter'?'Q'+(g+1):getMonthName(g,true),vals:vals});}}const values=groups.flatMap(g=>g.vals.map(v=>v.value)),min=Math.min(0,...values),max=Math.max(0,...values),range=max-min||1,zero=top+max/range*h,text=['#333333','#cccccc'][isDarkMode()];ctx.clearRect(0,0,chartWidth,chartHeight);ctx.font='600 12px Helvetica';ctx.fillStyle=text;ctx.textAlign='right';
+        if(glo.tooltipHandle){divChart.removeEventListener('mousemove',glo.tooltipHandle);glo.tooltipHandle=null;}const ctx=divChart.getContext('2d'),left=50,top=20,bottom=42,w=chartWidth-left-8,h=chartHeight-top-bottom,curYear=getDates('n_CurYear'),bars=[],groups=[],isQuarter=MTFlex.ChartValue=='Quarter';
+        if(MTFlex.ChartValue=='Year'){[2,1,0].forEach(s=>groups.push({label:String(curYear-s),vals:[{value:xAxis.slice(s*12,s*12+12).filter(v=>v!=null).reduce((a,b)=>a+b,0),series:s}]}));}else{const cnt=isQuarter?4:12;for(let g=0;g<cnt;g++){const vals=[];for(const s of [2,1,0]){const a=isQuarter?xAxis.slice(s*12+g*3,s*12+g*3+3):[xAxis[s*12+g]],v=a.filter(x=>x!=null);if(v.length)vals.push({value:v.reduce((a,b)=>a+b,0),series:s});}groups.push({label:isQuarter?'Q'+(g+1):getMonthName(g,true),vals:vals});}}
+        const values=groups.flatMap(g=>g.vals.map(v=>v.value)),min=Math.min(0,...values),max=Math.max(0,...values),range=max-min||1,zero=top+max/range*h,text=['#333333','#cccccc'][isDarkMode()];ctx.clearRect(0,0,chartWidth,chartHeight);ctx.font='600 12px Helvetica';ctx.fillStyle=text;ctx.textAlign='right';
         for(let i=0;i<5;i++){const value=max-range*i/4,y=top+h*i/4;ctx.fillText(getShortDollarValue(value),left-4,y+4);ctx.strokeStyle=text;ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(chartWidth,y);ctx.stroke();}
         groups.forEach((group,g)=>{const gw=w/groups.length,bw=Math.min(14,(gw-8)/3),start=left+g*gw+(gw-bw*group.vals.length)/2;group.vals.forEach((item,i)=>{const y=top+(max-item.value)/range*h,x=start+i*bw,bh=Math.abs(zero-y),by=Math.min(y,zero),r=Math.min(3,bh/2);ctx.fillStyle=css.legend[item.series];ctx.beginPath();ctx.roundRect(x,by,bw-2,bh||1,item.value>=0?[r,r,0,0]:[0,0,r,r]);ctx.fill();bars.push({x:x,y:by,w:bw-2,h:bh||1,group:g,label:group.label,year:curYear-item.series,value:item.value,color:css.legend[item.series]});});ctx.fillStyle=text;ctx.font='12px Helvetica';ctx.textAlign='center';ctx.fillText(group.label,left+g*gw+gw/2,chartHeight-14);});
         if(MTFlex.ChartAverageOptions?.includes(MTFlex.ChartValue)){const avgs=MTFlex.ChartValue=='Year'?[values.reduce((a,b)=>a+b,0)/values.length]:groups.map(g=>g.vals.reduce((a,b)=>a+b.value,0)/g.vals.length);ctx.strokeStyle=ctx.fillStyle=text;ctx.lineWidth=1.5;ctx.setLineDash([3,2]);ctx.font='600 11.5px Helvetica';avgs.forEach((avg,g)=>{if(isNaN(avg))return;const y=top+(max-avg)/range*h,gw=w/groups.length,cx=MTFlex.ChartValue=='Year'?left+w/2:left+g*gw+gw/2,sw=MTFlex.ChartValue=='Year'?w-8:Math.min(gw-8,42);ctx.beginPath();ctx.moveTo(cx-sw/2,y);ctx.lineTo(cx+sw/2,y);ctx.stroke();ctx.textAlign=MTFlex.ChartValue=='Year'?'right':'center';ctx.fillText(getShortDollarValue(avg),MTFlex.ChartValue=='Year'?left+w-4:cx,avg>=0?Math.max(top+11,y-4):Math.min(chartHeight-bottom-2,y+13));});ctx.setLineDash([]);}
