@@ -6,6 +6,7 @@ This extension builds upon the current Monarch Money web application. As such, I
  * **Version 5.18 (Beta)**
  
     - NEW: Pick a color palette in Display / Settings for a custom look.
+    - NEW: MM-Tweaks Report settings can now be set by the grid sprocket as well.
 
  * **Version 5.17 (August 13, 2026)**
  
