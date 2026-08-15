@@ -4,7 +4,7 @@
 
 📣 Over 5,000 installs!
 
-Visit the official Extensions area for your browser using the following links: 
+Visit the **official extensions area** for your browser using the following links: 
 
 🦊  [Mozilla Firefox browser](https://addons.mozilla.org/en-US/firefox/addon/monarch-money-tweaks/)  
 
