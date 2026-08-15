@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17.19
+// @version      5.17.20
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5698,7 +5698,7 @@ function onClickOpenWindow(cn) {
 }
 
 function onClickMTFlexConfig() {
-    let sObj = {};sObj.big = 'Report Settings';
+    let sObj = {};sObj.big = MNAME + ' Report Settings';
     let topDiv = MF_SidePanelOpen(sObj);
     MenuSettingsDisplay(topDiv);
     let div = cec('span','MTSideDrawerHeader',topDiv);
