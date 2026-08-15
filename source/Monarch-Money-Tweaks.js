@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17.20
+// @version      5.18
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.17';
+const MNAME = 'MM-Tweaks', VERSION = '5.18';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -4029,7 +4029,7 @@ function HistoryDrawerDraw() {
 
         for (let i = 0; i < 12; i++) {
             if(i > 0 && i == curMonth) {
-                HistoryDrawerTotals('Sub Total',BOLD + 'margin-bottom: 14px');
+                HistoryDrawerTotals('Subtotal',BOLD + 'margin-bottom: 14px');
                 curSubTotal = T[3];
             }
             if(sumQue[i].YR2 == sumQue[i].YR3){
@@ -5863,7 +5863,7 @@ function onClickDumpDebug(inNode) {
         jsonString += JSON.stringify(account, null, 2);
     });
     navigator.clipboard.writeText(jsonString);
-    MF_ModelWindowOpen({title: 'Debug'},'Debug copied to keyboard. (node=' + inNode + ')');
+    MF_ModelWindowOpen({title: 'Debug'},'Debug copied to clipboard. (node=' + inNode + ')');
 }
 
 function onClickCloseDrawer2() {
@@ -6743,7 +6743,7 @@ async function buildAccountBalances() {
 async function buildCategoryGroups() {
   if (accountGroups.length) return;
   const categoryData = await dataGetCategories();
-  if (!categoryData) {MTFlex.ErrorMsg = 'Unable to access the Monarch graphql API.\nSee Console errors for details.';return;}
+  if (!categoryData) {MTFlex.ErrorMsg = 'Unable to access the Monarch GraphQL API.\nSee console errors for details.';return;}
   for (const c of categoryData.categories) {
     const isFixed = getCookie('MTGroupFixed:' + c.group.id, true);
     if (isFixed) glo.accountsHasFixed = true;
