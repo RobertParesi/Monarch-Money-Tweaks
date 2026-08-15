@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.17.11
+// @version      5.17.19
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -45,11 +45,12 @@ function MM_Init() {
 
 function MM_InitTheme(a) {
     const pick = (light, dark) => [light, dark][a];
+    const gridThemes={Original:['#e6e4e0','rgb(68,68,68)','#f9f6f3','rgb(48,48,48)','#ecfbff','#373736'],Blue:['#dceef8','#173b52','#edf7fc','#122d3d','#eef7fc','#162b38'],Maroon:['#f0dfe3','#512532','#faf0f2','#3d1c26','#fbf2f4','#332229'],Purple:['#e9e1f5','#3e2b59','#f6f1fb','#2f2143','#f7f2fc','#2d2437'],Coffee:['#eadfd4','#4b3628','#f7f0e9','#38291f','#faf4ed','#302720'],'Forest Green':['#dceadf','#23472f','#eff7f0','#1b3624','#f1f8f2','#203027'],Pink:['#f5dce8','#54283d','#fcedf4','#40202f','#fff3f8','#351f29']},gridTheme=gridThemes[getCookie('MT_ReportTheme',false)]||gridThemes.Original;
 
     const panelBackground = 'background-color: ' + pick('#FFFFFF;', '#222221;');
     const panelText = 'color: ' + pick('#777573;', '#989691;');
     const standardText = 'color: ' + pick('#22201d;', '#FFFFFF;');
-    const sidepanelBackground = 'background: ' + pick('#ecfbff;', '#373736;');
+    const sidepanelBackground = 'background: ' + pick(gridTheme[4]+';', gridTheme[5]+';');
     const selectBackground = 'background-color: ' + pick('#def7f9;', '#082c36;');
     const selectForeground = 'color: ' + pick('#107d98;', '#4ccce6;');
     const accentColor = '#ff692d;';
@@ -65,10 +66,9 @@ function MM_InitTheme(a) {
     css.bs = bs;
     css.accentColor = accentColor;
 
-    css.header = getCookie('MT_ColorHigh', false) || pick('#e6e4e0', 'rgb(68,68,68)');
-    css.subtotal = getCookie('MT_ColorLow', false) || pick('#f9f6f3', 'rgb(48,48,48)');
-    css.header = 'background-color:' + css.header + ';';
-    css.subtotal = 'background-color:' + css.subtotal + ';';
+    css.header='background-color:'+pick(gridTheme[0],gridTheme[1])+';';
+    css.subtotal='background-color:'+pick(gridTheme[2],gridTheme[3])+';';
+    css.legend=['#00a2c7','#30a46c','#ffc53d'];
 
     css.green = 'color:' + pick('#2a7e3b', '#3dd68c') + ';';
     css.greenRaw = pick('#2a7e3b', '#3dd68c');
@@ -1435,7 +1435,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     const barAreaWidth = chartWidth - leftLabelWidth - rightValueWidth - 20;
     const barHeight = (chartHeight - topPadding - bottomPadding) / maxItems * 0.6;
     const rowHeight = (chartHeight - topPadding - bottomPadding) / maxItems;
-    const colors = ['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
+    const colors = [...css.legend,'#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
 
     MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' - ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
 
@@ -1853,7 +1853,7 @@ function MF_DrawChart(inLocation) {
                 if(xAxis.length > yAxis.length) {
                     useStyle = css.legend[j];useLeg = j;
                 } else if(chartMixed == true) {
-                    useStyle = '#00a2c7';
+                    useStyle = css.legend[0];
                 } else if(chartGroup == 'liability') {
                     useStyle = p > 0 ? css.redRaw : css.greenRaw;
                 } else {
@@ -5119,9 +5119,8 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Hide the Difference amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
     MenuDisplay_Input(MNAME + ' Reports','','spacer');
     MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
-    MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
-    MenuDisplay_Input('Override Report Grid Header background-color','MT_ColorHigh','color','');
-    MenuDisplay_Input('Override Report Grid SubTotal background-color','MT_ColorLow','color','');
+    MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','width:150px;',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
+    MenuDisplay_Input('Report Grid theme','MT_ReportTheme','dropdown','width:150px;',['Original','Blue','Maroon','Purple','Coffee','Forest Green','Pink']);
     MenuDisplay_Input('Reports / Trends Report','','spacer');
     MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
     MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
@@ -5186,12 +5185,13 @@ function MenuSettingsDisplay(inDiv) {
 
     function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
         if(inDiv && inType == 'spacer') {
-            if(inValue.includes(MTFlex.Title1)) {OnOff = true; return;}
-            OnOff = false;
+            OnOff=inValue==MNAME+' Reports'||inValue.includes(MTFlex.Title1);
+            if(inValue.includes(MTFlex.Title1)) {cec('div','MTSpacerClass',qs,'','','margin-top:10px;margin-bottom:12px;');cec('div','MTItemClass',qs,MTFlex.Desc+' Report Settings','','font-size:17px;'+BOLD);}
+            return;
         }
         if(OnOff == false) return;
 
-        let e1 = null,e2=null,e3=null;
+        let e1 = null,e2=null,e3=null,dropID;
 
         switch(inType) {
             case 'button':
@@ -5254,10 +5254,11 @@ function MenuSettingsDisplay(inDiv) {
                     mtObj = optValue[0].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
                     setCookie(inCookie,mtObj[1]);OldValue = mtObj[0];
                 }
-                cec('div','',e1,inValue + ':','','margin-top: 10px;');
+                cec('div','',e1,inValue + ':','','margin-top:10px;'+(inStyle||''));
+                dropID=(inDiv?'Setup':'')+dropDowns;
                 e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
-                e2 = cec('button','MTFlexButton',e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;','','',dropDowns);
-                e3 = cec('div','MTFlexdown-content',e2,'','','','','','MTDropdown'+dropDowns);
+                e2 = cec('button','MTFlexButton',e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;','','',dropID);
+                e3 = cec('div','MTFlexdown-content',e2,'','','','','','MTDropdown'+dropID);
                 for (let i = 0; i < optValue.length; i++) {
                     mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
                     e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
@@ -5697,7 +5698,7 @@ function onClickOpenWindow(cn) {
 }
 
 function onClickMTFlexConfig() {
-    let sObj = {};sObj.big = MTFlex.Title1 + ' Settings';
+    let sObj = {};sObj.big = 'Report Settings';
     let topDiv = MF_SidePanelOpen(sObj);
     MenuSettingsDisplay(topDiv);
     let div = cec('span','MTSideDrawerHeader',topDiv);
@@ -5893,6 +5894,7 @@ function onClickSetupDropdown(et) {
     let cvalue = et.getAttribute('mtsetupvalue');
     if(cvalue) {
         setCookie(cn,cvalue);
+        if(cn=='MT_ReportTheme') css.reload=true;
         const pDiv = et.parentNode.parentNode;
         pDiv.childNodes[0].textContent = et.innerText.trim() + ' ';
     } else {
