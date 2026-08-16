@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.19
+// @version      5.19.42
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5111,7 +5111,7 @@ function MenuSettingsDisplay(inDiv) {
         if(document.querySelector('.MTDisplaySettings')) return;
         qs=cec('div','MTDisplaySettings MTFlexContainerCard',qs.parentNode,'','','margin-top:10px;');
         qs=cec('div','',qs,'','','width:100%;');
-        p=cec('div','MTFlexBig',qs,MNAME+' Settings');
+        p=cec('div','MTFlexBig',qs,MNAME+' Settings');cec('div','MTFlexSmall',qs,'Version '+VERSION);
     } else {
         qs=cec('span','MTSideDrawerHeader',qs);
     }
