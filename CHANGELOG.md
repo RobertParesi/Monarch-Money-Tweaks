@@ -5,7 +5,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
  * **Version 5.19 (beta)**
  
-    - NEW: Separated Accounts dashboard summary to be by itself with enhanced information.
+    - NEW: Separated Accounts dashboard summary with enhanced information.
 
 * **Version 5.18 (August 14, 2026)**
  
