@@ -3,7 +3,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.19 (beta)**
+ * **Version 5.19 (August 16, 2026)**
  
     - NEW: Separated Accounts dashboard summary with enhanced information.
     - NEW: Label all MM-Tweaks areas so user knows it is a MM-Tweaks function rather than Monarch (For support)
