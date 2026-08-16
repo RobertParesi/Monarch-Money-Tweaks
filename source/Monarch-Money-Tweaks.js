@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.18.1
+// @version      5.19.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -16,7 +16,7 @@
 // FROM THE COPYRIGHT HOLDER. UNAUTHORIZED USE WILL BE PURSUED TO THE
 // FULLEST EXTENT OF APPLICABLE LAW.
 
-const MNAME = 'MM-Tweaks', VERSION = '5.18';
+const MNAME = 'MM-Tweaks', VERSION = '5.19';
 const GRAPHQL = 'https://api.monarch.com/graphql';
 const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
@@ -92,7 +92,7 @@ function MM_InitStyles() {
         '.MTField2 {width:35%;}',
         '.MTBub1 {float:right;margin-bottom:10px !important;padding:2px !important;width:150px;text-align:center;}',
         '.MTWait {width:400px;margin:100px auto 0;font-size:15.5px;' + css.font + BOLD + '}',
-        '.MTWait2 {color:' + css.accentColor + panelBackground + ' padding:20px;' + bs + ' 8px;text-align:center;}',
+        '.MTWait2 {color:' + css.accentColor + panelBackground + ' padding:20px;' + bs + 'text-align:center;}',
         '.MTWait2 p {' + standardText + 'font-weight:100;}',
         '.MTPanelLink {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);display: block; text-align: center;}',
         '.MTBudget a {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);}',
@@ -104,7 +104,7 @@ function MM_InitStyles() {
         '.MTModelWindow {position:absolute;top:20%;left:35%;}',
         '.MTModelWindow2 {position:relative;width:480px;height:100%;padding:16px 16px 0 16px;' + panelBackground + bs + '}',
         '.MTRow {display:flex;width:100%;padding-left:2px;padding-right:2px;padding-top:12px;}',
-        '.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + 'font-size:14px;' + BOLD + 'padding:7.5px 12px;' + panelBackground + standardText + 'margin-left:8px;' + bdr + bs + '4px;cursor:pointer;}',
+        '.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + 'font-size:14px;' + BOLD + 'padding:7.5px 12px;' + panelBackground + standardText + 'margin-left:8px;' + bdr + bs + 'border-radius:8px;cursor:pointer;}',
         '.MTButtonSmall {' + css.font + 'margin-left:4px;margin-right:4px;font-size:19px;cursor:pointer;}',
         '.MTButtons {display:flex;padding-right:16px;}',
         '.MTWindowButton {margin-bottom:20px;}',
