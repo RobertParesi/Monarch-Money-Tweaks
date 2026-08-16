@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.19.1
+// @version      5.19.10
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -22,7 +22,7 @@ const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
-let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d'],chartLegend:['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63']};
+let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d'],chartLegend:['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63','#ad7f58','#8f8c8a','#12a594','#a78bfa','#e5484d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let USERTOKEN,portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
@@ -262,9 +262,9 @@ async function MF_GridInit(inName, inDesc) {
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     if(glo.forceRefresh != true) {portfolioData = null; performanceData = null; performanceDataType = null;accountsData = null; transData=null;}
     document.body.style.cursor = "wait";MTFlex.Collapse = 1;
-    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
-    if(divTop) MF_PleaseWait(divTop,' Loading ' + inDesc + ' ...');
     MTFlex.Name = inName;MTFlex.Desc = inDesc;MTFlex.Subname = '';glo.spawnProcess = 0;
+    const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
+    if(divTop) MF_PleaseWait(divTop,' Loading ' + MNAME + ' ' + MTFlex.Desc + ' ...');
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
@@ -5083,11 +5083,14 @@ function MenuSetttingsCategory() {
 
 function MenuSettingsDisplay(inDiv) {
 
-    let qs = inDiv;
+    let qs = inDiv,p;
     if(!qs) {
         qs = gde('settings-card');
         if(!qs || !qs.innerText.startsWith('Display')) {glo.pathName='';return;}
-        qs=cec('div','',qs,'','','margin-left: 25px; margin-right: 25px;');
+        if(document.querySelector('.MTDisplaySettings')) return;
+        qs=cec('div','MTDisplaySettings MTFlexContainerCard',qs.parentNode,'','','margin-top:10px;');
+        qs=cec('div','',qs,'','','width:100%;');
+        p=cec('div','MTFlexBig',qs,MNAME+' Settings');
     } else {
         qs=cec('span','MTSideDrawerHeader',qs);
     }
@@ -5098,7 +5101,7 @@ function MenuSettingsDisplay(inDiv) {
     if(getCookie('MT_InvestmentURLMuni',false) == '') setCookie('MT_InvestmentURLMuni','https://stockanalysis.com/quote/mutf/{ticker}');
     FlexOptions.forEach(opt => { if (getCookie(opt + '_MaxCards', false) === '') setCookie(opt + '_MaxCards', 20);});
     if(getCookie('MT_LowCalendarYear',false) == '') {MenuFirstTimeUser();}
-    const p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text',BOLD + 'font-size: 18px;');
+    if(inDiv) p = MenuDisplay_Input(MNAME + ' for Monarch Money - ' + VERSION,'','text',BOLD + 'font-size: 18px;');
     MenuDisplay_Input('• For ' + MNAME + ' Fixed & Flexible Spending settings, choose Settings / Categories.','','text','font-size: 16px;');
     MenuDisplay_Input(p,'Save Settings', 'button','','id','SaveSettings');
     MenuDisplay_Input(p,'Restore Settings', 'button','','id','RestoreSettings');
