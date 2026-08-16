@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.19.16
+// @version      5.19
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -22,7 +22,7 @@ const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
-let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d'],chartLegend:['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63','#ad7f58','#8f8c8a','#12a594','#a78bfa','#e5484d']};
+let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', br: '', tooltip: '', legend: ['#00a2c7','#30a46c','#ffc53d'],chartLegend:['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63','#ad7f58','#8f8c8a','#12a594','#a78bfa','#e5484d']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let USERTOKEN,portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
@@ -57,13 +57,17 @@ function MM_InitTheme(a) {
     const bdr = 'border: 1px solid ' + pick('#e4e1de;', '#62605D;');
     const bdrb = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#62605D;');
     const bdrb2 = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#363532;');
-    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius:12px;';
+    const br = 'border-radius:12px;';
+    const tp = 'padding:15px;';
+    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;' + br;
+    const font = 'font-family: Oracle, sans-serif, MonarchIcons;';
 
     css.panelBackground = panelBackground;css.sidepanelBackground = sidepanelBackground;
     css.panelText = panelText;css.standardText = standardText;
     css.selectBackground = selectBackground;css.selectForeground = selectForeground;
-    css.bdr = bdr;css.bdrb = bdrb;css.bdrb2 = bdrb2;
+    css.bdr = bdr;css.bdrb = bdrb;css.bdrb2 = bdrb2;css.br = br;
     css.bs = bs;
+    css.tooltip = font + 'font-size:14px;font-weight:normal;text-align:left;' + tp + 'background:#000;color:#fff;' + br + 'line-height:20px;';
     css.accentColor = accentColor;
 
     css.header='background-color:'+pick(gridTheme[0],gridTheme[1])+';';
@@ -76,11 +80,11 @@ function MM_InitTheme(a) {
     css.redRaw = pick('#d8543a', '#f9918e');
     css.gGreen = 'color: #3dd68c;';
     css.gRed = 'color: #f9918e;';
-    css.font = 'font-family: Oracle, sans-serif, MonarchIcons;';
+    css.font = font;
 }
 
 function MM_InitStyles() {
-    const {panelBackground,panelText,standardText,sidepanelBackground,selectBackground,selectForeground,accentColor,bdr,bdrb,bdrb2,bs} = css;
+    const {panelBackground,panelText,standardText,sidepanelBackground,selectBackground,selectForeground,accentColor,bdr,bdrb,bdrb2,br,bs} = css;
 
     if (getCookie('MT_PendingIsRed', true) == 1) addStyle('.bmeuLc {color:' + accentColor + '}');
 
@@ -133,7 +137,7 @@ function MM_InitStyles() {
         '.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px;}',
         '.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}',
         '.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size:15px;height:30px;' + standardText + BOLD + '}',
-        '.MTFlexError{text-align:center;' + BOLD + 'padding:16px;margin:auto;margin-top:20px;margin-bottom:20px;border:0;border-radius:12px;line-height:36px;color:white;background-color:' + accentColor + '}',
+        '.MTFlexError{text-align:center;' + BOLD + 'padding:16px;margin:auto;margin-top:20px;margin-bottom:20px;border:0;' + br + 'line-height:36px;color:white;background-color:' + accentColor + '}',
         '.MTFlexBig{font-size:18px;' + BOLD + 'padding-top:6px;padding-bottom:6px;}',
         '.MTAccountSummaryTitle{font-size:16px;margin:8px 0 5px;' + BOLD + '}.MTAccountSummaryBar{display:flex;gap:2px;height:12px;margin-bottom:5px;}.MTAccountSummaryBar span{height:100%;border-radius:3px;}.MTAccountSummaryDetail{line-height:20px;}.MTAccountSummaryDetail,.MTAccountSummaryDetail span{font-weight:normal!important;}.MTAccountSummaryDetail .MTFlexGridTitleInd{width:8px;height:8px;}',
         '.MTSpacerVertical {margin-left:10px;width:1px;flex-shrink:0;background:rgb(228,225,222);height:35px;margin-top:6px;}',
@@ -146,7 +150,7 @@ function MM_InitStyles() {
         '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
         '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
         '.MTSideDrawerHeader {' + css.font + standardText + 'padding:8px;}',
-        '.MTSideDrawerHeader2 {' + css.font + standardText + 'padding:8px;' + panelBackground + 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius:12px;margin-top:6px;}',
+        '.MTSideDrawerHeader2 {' + css.font + standardText + 'padding:8px;' + panelBackground + bs + 'margin-top:6px;}',
         '.MTSideDrawerHeaderMsg {color:#ffffff; background-color:' + accentColor + BOLD + 'padding-left:12px;padding-top:3px;height:30px;border-radius:6px;' + css.font + '}',
         '.MTSideDrawerItem, .MTSideDrawerMonth {margin-top:5px;place-content:stretch space-between;display:flex;}',
         '.MTSideDrawerItem2 {place-content:stretch space-between;display:flex;}',
@@ -172,9 +176,11 @@ function MM_InitStyles() {
         '.ReportsTooltipRow__Diff-k9pa1b-3 {display:' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}',
         '.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display:' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}',
         '.tooltip {position:relative;display:inline-block;}',
-        '.tooltip .tooltiptext {width:270px;font-size:14px;' + BOLD + 'text-align:left;padding:10px;visibility:hidden;background-color:black;color:#fff;border-radius:6px;position:absolute;z-index:1;bottom:1.5em;margin-left:-260px;}',
-        '.tooltip .tooltiptext::after {position:absolute;top:100%;left:50%;border-width:5px;border-style:solid;border-color:black transparent transparent transparent;}',
+        '.MTTooltip table{border-spacing:0 5px;}',
+        '.MTTooltipHead{border-bottom:1px solid #756d66;padding-bottom:5px;}.MTTooltipDot{margin-right:10px;}',
+        '.tooltip .tooltiptext {' + css.tooltip + 'width:270px;visibility:hidden;position:absolute;z-index:1;bottom:1.5em;margin-left:-260px;}',
         '.tooltip:hover .tooltiptext {visibility:visible;opacity:1;}',
+        '.MTAccountSummaryTip{display:grid;grid-template-columns:130px auto;row-gap:5px;margin-left:0!important;}.MTAccountSummaryTipL{left:0;}.MTAccountSummaryTipR{right:0;}.MTAccountSummaryTipHead{grid-column:1/-1;font-weight:bold;}.MTAccountSummaryTipValue{text-align:right;}',
         'input::placeholder {font-size:12px;}'
     ];
     rules.forEach(addStyle);
@@ -1383,7 +1389,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     }
     divCanvas = cec('div','MTChartContainer',divHead,'','','','','','MTChartCanvas');
     divChart = cec('canvas','MTBarChart',divCanvas,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
-    cec('div','',divCanvas,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
+    MF_ToolTipCreate(divCanvas);
     MF_SetupCanvas(divChart);
 
     // load new targetData
@@ -1498,7 +1504,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
             const barY = yCenter - barHeight / 2;
             const r = Math.min(6, barHeight / 2, barLength / 2);
 
-            ctx.fillStyle = it.color || colors[i % colors.length];
+            it.chartColor=it.color || colors[i % colors.length];ctx.fillStyle=it.chartColor;
             ctx.beginPath();
             ctx.moveTo(barX, barY);
             ctx.lineTo(barX + barLength - r, barY);
@@ -1552,7 +1558,7 @@ function MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors) {
         const end=start+entry.v/sumTotal*Math.PI*2,y=32+i*24;entry.start=start;entry.end=end;entry.it.pieIndex=i;
         hitboxes.push({cx:cx,cy:cy,r:r,inner:inner,start:start,end:end,lx:450,ly:y-11,lw:205,lh:22,item:entry.it});start=end;
     });
-    const draw = active => {ctx.clearRect(0,0,chartWidth,chartHeight);pie.forEach((entry,i) => {const y=32+i*24,rr=r+(i==active?9:0);ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.arc(cx,cy,rr,entry.start-Math.PI/2,entry.end-Math.PI/2);ctx.arc(cx,cy,inner,entry.end-Math.PI/2,entry.start-Math.PI/2,true);ctx.closePath();ctx.fill();ctx.fillRect(455,y-7,12,12);ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.font=(i==active?'600 ':'')+'13px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(entry.it.title.slice(0,18),474,y);ctx.textAlign='right';ctx.fillText(entry.it.percent+'%',650,y);});ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.textAlign='center';ctx.font='600 17px sans-serif';ctx.fillText(getDollarValue(sumTotal,true),cx,cy-8);ctx.font='13px sans-serif';ctx.fillText('Total',cx,cy+14);};
+    const draw = active => {ctx.clearRect(0,0,chartWidth,chartHeight);pie.forEach((entry,i) => {const y=32+i*24,rr=r+(i==active?9:0);entry.it.chartColor=colors[i%colors.length];ctx.fillStyle=entry.it.chartColor;ctx.beginPath();ctx.arc(cx,cy,rr,entry.start-Math.PI/2,entry.end-Math.PI/2);ctx.arc(cx,cy,inner,entry.end-Math.PI/2,entry.start-Math.PI/2,true);ctx.closePath();ctx.fill();ctx.fillRect(455,y-7,12,12);ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.font=(i==active?'600 ':'')+'13px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(entry.it.title.slice(0,18),474,y);ctx.textAlign='right';ctx.fillText(entry.it.percent+'%',650,y);});ctx.fillStyle=['#333333','#cccccc'][isDarkMode()];ctx.textAlign='center';ctx.font='600 17px sans-serif';ctx.fillText(getDollarValue(sumTotal,true),cx,cy-8);ctx.font='13px sans-serif';ctx.fillText('Total',cx,cy+14);};
     draw(-1);ctx.canvas.pieHighlight=draw;ctx.canvas.pieActive=-1;
 }
 
@@ -1574,7 +1580,7 @@ function attachTooltip(canvas, hitboxes, inCol) {
         if (found) {
             glo.barchartRec = found.item.record; glo.barchartSec = found.item.section; glo.barchartCol = found.item.column ?? (found.item.noDetail ? 0 : inCol);
             let tipData = [];
-            tipData.push([found.item.title,'text-align: center; color: yellow;']);
+            const tipHead=[found.item.title,'text-align:left;font-weight:bold;'];tipHead[8]=found.item.chartColor;tipData.push(tipHead);
             tipData.push([(found.item.incBuySell == 1 ? 'Proposed' : 'Current') + ' Amount','',getDollarValue(found.item.value),'width: 110px; text-align: right;']);
             tipData.push([(found.item.incBuySell == 1 ? 'Proposed' : 'Current'),'',found.item.percent + '%','text-align: right;']);
             if(found.item.target) {
@@ -1614,6 +1620,8 @@ function MF_DrawChart(inLocation) {
 
     let xAxis = [], yAxis = [], points = [];
     let divChart, divTooltip, chartGroup = '', chartTip = '',chartMixed = false;
+    const chartRoot=document.getElementById('grouptypes'),titleCell=MTFlex.Name=='MTTrends'?chartRoot?.querySelector('.MTSideDrawerHeader .MTFlexGridDCell'):null;
+    let chartTitle=titleCell?.textContent||'';if(!chartTitle&&MTFlex.Name=='MTTrends') chartTitle=chartRoot?.querySelectorAll(':scope > .MTSideDrawerHeader')[1]?.lastElementChild?.textContent||'';
     MTFlex.ChartValue = getCookie(MTFlex.Name + 'StockSelect', false) || MTFlex.ChartOptions[0];
     if(MTFlex.ChartValue=='Bar') MTFlex.ChartValue='Month';
     MTFlex.ChartIndex = inList(MTFlex.ChartValue,MTFlex.ChartOptions,true) -1;
@@ -1626,7 +1634,7 @@ function MF_DrawChart(inLocation) {
         divTop = div.insertAdjacentElement('afterend', divTop);
         divChart = cec('canvas','',divTop,'','','','','','MTChart');divChart.width = 664; divChart.height = 400;
         MF_SetupCanvas(divChart);
-        divTooltip = cec('div','',divTop,'','',BOLD + 'position: fixed; background: #000000; color: #fff; padding: 5px; border-radius: 6px; pointer-events: none; font-size: 13.5px; display: none;','','','MTChartTip');
+        divTooltip = MF_ToolTipCreate(divTop);
     } else {
         divChart = document.getElementById('MTChart');
         divTooltip = document.getElementById('MTChartTip');
@@ -1915,12 +1923,12 @@ function MF_DrawChart(inLocation) {
         for(let i=0;i<5;i++){const value=max-range*i/4,y=top+h*i/4;ctx.fillText(getShortDollarValue(value),left-4,y+4);ctx.strokeStyle=text;ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(chartWidth,y);ctx.stroke();}
         groups.forEach((group,g)=>{const gw=w/groups.length,bw=Math.min(14,(gw-8)/3),start=left+g*gw+(gw-bw*group.vals.length)/2;group.vals.forEach((item,i)=>{const y=top+(max-item.value)/range*h,x=start+i*bw,bh=Math.abs(zero-y),by=Math.min(y,zero),r=Math.min(3,bh/2);ctx.fillStyle=css.legend[item.series];ctx.beginPath();ctx.roundRect(x,by,bw-2,bh||1,item.value>=0?[r,r,0,0]:[0,0,r,r]);ctx.fill();bars.push({x:x,y:by,w:bw-2,h:bh||1,group:g,label:group.label,year:curYear-item.series,value:item.value,color:css.legend[item.series]});});ctx.fillStyle=text;ctx.font='12px Helvetica';ctx.textAlign='center';ctx.fillText(group.label,left+g*gw+gw/2,chartHeight-14);});
         if(MTFlex.ChartAverageOptions?.includes(MTFlex.ChartValue)){const avgs=MTFlex.ChartValue=='Year'?[values.reduce((a,b)=>a+b,0)/values.length]:groups.map(g=>g.vals.reduce((a,b)=>a+b.value,0)/g.vals.length);ctx.strokeStyle=ctx.fillStyle=text;ctx.lineWidth=1.5;ctx.setLineDash([3,2]);ctx.font='600 11.5px Helvetica';avgs.forEach((avg,g)=>{if(isNaN(avg))return;const y=top+(max-avg)/range*h,gw=w/groups.length,cx=MTFlex.ChartValue=='Year'?left+w/2:left+g*gw+gw/2,sw=MTFlex.ChartValue=='Year'?w-8:Math.min(gw-8,42);ctx.beginPath();ctx.moveTo(cx-sw/2,y);ctx.lineTo(cx+sw/2,y);ctx.stroke();ctx.textAlign=MTFlex.ChartValue=='Year'?'right':'center';ctx.fillText(getShortDollarValue(avg),MTFlex.ChartValue=='Year'?left+w-4:cx,avg>=0?Math.max(top+11,y-4):Math.min(chartHeight-bottom-2,y+13));});ctx.setLineDash([]);}
-        divChart.onmousemove=e=>{const rect=divChart.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,bar=bars.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(bar){const mb=bars.filter(b=>b.group==bar.group).sort((a,b)=>b.year-a.year),tip=mb.map((b,i)=>{let d=i<mb.length-1?drawChartFormatPercentDiff(b.value,mb[i+1].value,grpSubtype=='expense'?1:2):['',''];if(!Array.isArray(d))d=[d,''];return ['●','width:18px;color:'+b.color+';',b.label+(MTFlex.ChartValue=='Year'?'':' '+b.year),'width:105px;',getDollarValue(b.value),'width:100px;text-align:right;font-weight:100;',d[0],'width:65px;text-align:right;font-weight:100;'+d[1]];});MF_DrawToolTip(e,divTooltip,tip);document.body.style.cursor='pointer';}else{divTooltip.style.display='none';document.body.style.cursor='';}};divChart.onmouseleave=()=>{divTooltip.style.display='none';document.body.style.cursor='';};
+        divChart.onmousemove=e=>{const rect=divChart.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,bar=bars.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(bar){const mb=bars.filter(b=>b.group==bar.group).sort((a,b)=>b.year-a.year),tip=mb.map((b,i)=>{let d=i<mb.length-1?drawChartFormatPercentDiff(b.value,mb[i+1].value,grpSubtype=='expense'?1:2):['',''];if(!Array.isArray(d))d=[d,''];return ['●','width:18px;color:'+b.color+';',b.label+(MTFlex.ChartValue=='Year'?'':' '+b.year),'width:105px;',getDollarValue(b.value),'width:100px;text-align:right;',d[0],'width:65px;text-align:right;'+d[1]];});drawChartTipTitle(tip);MF_DrawToolTip(e,divTooltip,tip);document.body.style.cursor='pointer';}else{divTooltip.style.display='none';document.body.style.cursor='';}};divChart.onmouseleave=()=>{divTooltip.style.display='none';document.body.style.cursor='';};
     }
 
     function drawChartFormatPercentDiff(x, y, s) {
         if (isNaN(x) || isNaN(y)) return ['',''];
-        if (x === y) return '0.0%';
+        if (x === y) return ['0.0%',''];
         const c = y === 0 ? 100 : ((x - y) / Math.abs(y)) * 100;
         const v = (c > 0 ? '+' : '') + c.toFixed(1) + '%';
         if (!s || c === 0) return [v,''];
@@ -1929,6 +1937,8 @@ function MF_DrawChart(inLocation) {
         const style = (upIsRed === positive) ? css.gRed : css.gGreen;
         return [v,style];
     }
+
+    function drawChartTipTitle(inTip) {if(chartTitle) {const h=[chartTitle,'font-weight:bold;'];h[9]=4;inTip.unshift(h);}}
 
     function drawChartTips() {
         if(glo.tooltipHandle) { divChart.removeEventListener('mousemove', glo.tooltipHandle); }
@@ -1952,13 +1962,13 @@ function MF_DrawChart(inLocation) {
                             if(Mth == xMth) {
                                 if(k ==0) ptDate = '';
                                 const tt1 = ptDate + pt.date.slice(5) + ' ' + MTFlex.ChartLegend[pt.legend];
-                                tipData.push(['●','width: 18px; color: ' + pt.style,tt1,'width: 105px;',getDollarValue(pt.price),'width: 100px; text-align: right; font-weight: 100;',leg,'']);
+                                tipData.push(['●','width: 18px; color: ' + pt.style,tt1,'width: 105px;',getDollarValue(pt.price),'width: 100px; text-align: right;',leg,'']);
                                 legs[leg] = pt.price;leg++;
                             }
                         }
                         for (let k = 0; k < tipData.length; k++) {
                             const td = drawChartFormatPercentDiff(legs[k],legs[k+1],grpSubtype == 'expense' ? 1 : 2);
-                            tipData[k][6] = td[0];tipData[k][7] = 'width: 65px; text-align: right; font-weight: 100;' + td[1];
+                            tipData[k][6] = td[0];tipData[k][7] = 'width: 65px; text-align: right;' + td[1];
                         }
                     } else {
                         let tt0 = '';
@@ -1976,7 +1986,7 @@ function MF_DrawChart(inLocation) {
                             tipData.push(['Period Change:','vertical-align: top;',getDollarValue(p[0]) + '\n(' + p[1] + '%)','text-align: right;' + p[2]]);
                         }
                     }
-                    MF_DrawToolTip(e,divTooltip,tipData);
+                    drawChartTipTitle(tipData);MF_DrawToolTip(e,divTooltip,tipData);
                     return;
                 }
             }
@@ -1992,9 +2002,11 @@ function MF_DrawToolTip(e, divTooltip, inData) {
     for (const row of inData) {
         const tr = cec('tr', '', divTable);
         const td = cec('td', '', tr, row[0], '', row[1]);
-        if (row[2] !== undefined) {cec('td', '', tr, row[2], '', row[3]);} else {td.setAttribute('colspan','2');}
+        if(row[8]) {td.innerText='';cec('span','MTTooltipDot',td,'●','','color:'+row[8]+';');cec('span','',td,row[0]);}
+        if (row[2] !== undefined) {cec('td', '', tr, row[2], '', row[3]);} else {td.setAttribute('colspan',row[9]||'2');}
         if (row[4] !== undefined) cec('td', '', tr, row[4], '', row[5]);
         if (row[6] !== undefined) cec('td', '', tr, row[6], '', row[7]);
+        if(tr==divTable.firstChild) for(const cell of tr.children) cell.classList.add('MTTooltipHead');
     }
 
     divTooltip.style.display = 'block';
@@ -2006,6 +2018,8 @@ function MF_DrawToolTip(e, divTooltip, inData) {
     divTooltip.style.left = left + 'px';divTooltip.style.top = top + 'px';
 }
 
+function MF_ToolTipCreate(inParent) {return cec('div','MTTooltip MTChartTip',inParent,'','',css.tooltip+'position:fixed;pointer-events:none;display:none;z-index:1;','','','MTChartTip');}
+
 function MF_DrawChartupdateDetail(inE,val1,val2,stl,ttl) {
 
     const csp = document.getElementById(inE);
@@ -2016,7 +2030,7 @@ function MF_DrawChartupdateDetail(inE,val1,val2,stl,ttl) {
         if(ttl) {
             csp.childNodes[1].className = 'MTSideDrawerDetails tooltip';
             let tt = cec('div','tooltip',csp.childNodes[1]);
-            cec('span','tooltiptext',tt,ttl);
+            cec('span','tooltiptext MTTooltip',tt,ttl);
         }
     }
 }
@@ -2393,7 +2407,7 @@ async function MenuReportsNetIncomeGo() {
     MF_GridRollup(1,2,1,'Income','section|income|Income');
     MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending');
     MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
-    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Total Spending');
     MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(totalCol,1, totalCol-1,'Add');
     MF_GridCardAddAll({section: 7, x: 1, y: MTFlexTitle.length-2, xf: 2, total: MTFlexTitle.length-1, isPos: css.red, isNeg: css.green});
@@ -3734,7 +3748,7 @@ async function TrendsDataExtended(TrendIgnoreCurrent) {
     MF_GridRollup(1,2,1,'Income','section|income|Income');
     MF_GridRollup(3,4,3,'Fixed Spending','section|Fixed|Fixed Spending');
     MF_GridRollup(5,6,5,'Flexible Spending','section|Flexible|Flexible Spending');
-    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Total Spending');
     if(getCookie('MT_TrendHide3',true) == 0) MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRowRange(13,1,12,'Add');
 
@@ -3812,7 +3826,7 @@ async function TrendsDataStd() {
     MF_GridRollup(1,2,1,'Income','section|income|Income');
     MF_GridRollup(3,4,1,'Fixed Spending','section|Fixed|Fixed Spending|');
     MF_GridRollup(5,6,1,'Flexible Spending','section|Flexible|Flexible Spending');
-    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add','section|Spending|Total Spending');
     if(getCookie('MT_TrendHide3',true) == 0) MF_GridRollDifference(8,1,7,1,'Savings','Sub');
 
     if(getCookie('MT_TrendCard1',true) == true) {
@@ -4706,19 +4720,25 @@ async function MenuAccountsSummary() {
             cec('span','',divBar,'','','background-color:'+css.chartLegend[i%css.chartLegend.length]+';flex-grow:'+Math.abs(isAsset?items[i].Asset:items[i].Liability)+';flex-basis:0;');
         }
         for (let i=0;i<items.length;i++) {
-            const item=items[i];
+            const item=items[i],groupColor=css.chartLegend[i%css.chartLegend.length];
             const divChild = cec('div', cnClass, inParent);
-            const divLabel = cec('span', '', divChild);
-            cec('span', 'MTFlexGridTitleInd', divLabel, '', '', 'background-color:'+css.chartLegend[i%css.chartLegend.length]+';');
+            const divLabel = cec('span', 'tooltip', divChild);
+            cec('span', 'MTFlexGridTitleInd', divLabel, '', '', 'background-color:'+groupColor+';');
             const tt = isAsset ? item.ToolTipAsset : item.ToolTipLiability;
-            cecTip('span', '', divLabel, item.AccountGroup, tt);
-            cec('span', 'fs-exclude', divChild, isAsset ? getDollarValue(item.Asset) : getDollarValue(item.Liability));
+            cec('span','',divLabel,item.AccountGroup);
+            const divValue=cec('span','fs-exclude tooltip',divChild,isAsset ? getDollarValue(item.Asset) : getDollarValue(item.Liability));
+            MenuAccountSummaryTip(divLabel,tt,'L',item.AccountGroup,groupColor);MenuAccountSummaryTip(divValue,tt,'R',item.AccountGroup,groupColor);
+        }
+        function MenuAccountSummaryTip(inParent,inTip,inSide,inTitle,inColor) {
+            const divTip=cec('span','tooltiptext MTTooltip MTAccountSummaryTip MTAccountSummaryTip'+inSide,inParent);
+            const divHead=cec('div','MTTooltipHead MTAccountSummaryTipHead',divTip);cec('span','MTTooltipDot',divHead,'●','','color:'+inColor+';');cec('span','',divHead,inTitle);
+            for(const row of inTip.split('\n')) {const col=row.split(SS);cec('span','',divTip,col[0]);cec('span','fs-exclude MTAccountSummaryTipValue',divTip,col[1]);}
         }
     }
 
     function MenuAccountSummaryUpdate(inGroup, inA, inBal, inDesc) {
         const amt = Number(inBal) || 0;
-        const ttLit = inDesc + ': \xa0\xa0\xa0' + getDollarValue(amt);
+        const ttLit = inDesc + ':' + SS + getDollarValue(amt);
         const isAsset = inA === true;
         const idx = aSummary.findIndex(x => x.AccountGroup === inGroup);
         if (idx >= 0) {
@@ -6095,7 +6115,7 @@ function cec(e, c, p, it, hr, st, a1, a2, id) {
 function cecTip(e,c,p,it,tip) {
     const div = cec('span',c + ' tooltip',p,it);
     const tt = cec('div','tooltip',div);
-    cec(e,'tooltiptext',tt,tip);
+    return cec(e,'tooltiptext MTTooltip',tt,tip);
 }
 
 function cecText(e,t,title) {
