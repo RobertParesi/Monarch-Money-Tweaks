@@ -3,7 +3,11 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
- * **Version 5.18 (August 14, 2026)**
+ * **Version 5.19 (beta)**
+ 
+    - NEW: Separated Accounts dashboard summary to be by itself with enhanced information.
+
+* **Version 5.18 (August 14, 2026)**
  
     - NEW: Pick a color palette in Display / Settings for a custom look.
     - NEW: MM-Tweaks Report settings can now be set in report grid as well.
