@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.18
+// @version      5.18.1
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -22,7 +22,7 @@ const CURRENCY = 'USD', CURRENCYDISPLAY = 1, CRLF = String.fromCharCode(13,10);
 const EQTYPES = ['equity','mutual_fund','cryptocurrency','etf'];
 const BOLD = 'font-weight: 600;',SS='\\~',chartWidth = 664,chartHeight = 534;
 
-let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d']};
+let css = {headStyle: null, reload: true, green: '', red: '', ignoreNeg: 0, ignorePos: 0, greenRaw: '', redRaw: '', header: '', subtotal: '', legend: ['#00a2c7','#30a46c','#ffc53d'],chartLegend:['#00a2c7','#30a46c','#ffc53d','#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63']};
 let glo = {pathName: '', menu: true, compressTx: false, plan: false, spawnProcess: 8, debug: 0, cecIgnore: false, flexButtonActive: '', tooltipHandle: null, accountsHasFixed: false};
 let accountGroups = [],accountFields = [],accountQueue = [], TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 let USERTOKEN,portfolioData, performanceData, performanceDataType, accountsData, transData, targetData;
@@ -57,7 +57,7 @@ function MM_InitTheme(a) {
     const bdr = 'border: 1px solid ' + pick('#e4e1de;', '#62605D;');
     const bdrb = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#62605D;');
     const bdrb2 = 'border-bottom: 1px solid ' + pick('#e4e1de;', '#363532;');
-    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;';
+    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius:12px;';
 
     css.panelBackground = panelBackground;css.sidepanelBackground = sidepanelBackground;
     css.panelText = panelText;css.standardText = standardText;
@@ -112,9 +112,9 @@ function MM_InitStyles() {
         '.MTSideDrawerSummaryTag:hover, .' + FlexOptions.join(':hover, .') + ':hover {cursor:pointer;}',
         '.MTFlexContainer {display:grid;padding:16px 16px 0 16px;}',
         '.MTFlexContainer2 {margin:0;gap:16px;display:flex;flex-wrap:wrap;}',
-        '.MTFlexContainerPanel {display:flex;flex-flow:column;place-content:stretch flex-start;' + panelBackground + bs + '8px;}',
+        '.MTFlexContainerPanel {display:flex;flex-flow:column;place-content:stretch flex-start;' + panelBackground + bs + '}',
         '.MTFlexContainerHeader {display:flex;justify-content:space-between;padding:16px 24px;}',
-        '.MTFlexContainerCard {display:flex;flex:1 1 0%;justify-content:space-between;padding:16px 24px;align-items:center;' + panelBackground + bs + '8px;}',
+        '.MTFlexContainerCard {display:flex;flex:1 1 0%;justify-content:space-between;padding:16px 24px;align-items:center;' + panelBackground + bs + '}',
         '.MTFlexGrid {' + panelBackground + 'padding:5px 12px 20px 12px;border-spacing:0;}',
         '.MTFlexGrid th,.MTFlexGrid td {padding-right:6px;padding-left:6px;}',
         '.MTFlexTitle2 {display:flex;flex-flow:column;}',
@@ -133,8 +133,9 @@ function MM_InitStyles() {
         '.MTFlexGridDCell, .MTFlexGridD3Cell, .MTSideDrawerSummaryData {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px;}',
         '.MThRefClass2, .MTGeneralCell, .MTSideDrawerDetails {' + css.font + '}',
         '.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {' + css.subtotal + 'font-size:15px;height:30px;' + standardText + BOLD + '}',
-        '.MTFlexError{text-align:center;' + BOLD + 'padding:16px;margin:auto;margin-top:20px;margin-bottom:20px;border:0;border-radius:8px;line-height:36px;color:white;background-color:' + accentColor + '}',
+        '.MTFlexError{text-align:center;' + BOLD + 'padding:16px;margin:auto;margin-top:20px;margin-bottom:20px;border:0;border-radius:12px;line-height:36px;color:white;background-color:' + accentColor + '}',
         '.MTFlexBig{font-size:18px;' + BOLD + 'padding-top:6px;padding-bottom:6px;}',
+        '.MTAccountSummaryTitle{font-size:16px;margin:8px 0 5px;' + BOLD + '}.MTAccountSummaryBar{display:flex;gap:2px;height:12px;margin-bottom:5px;}.MTAccountSummaryBar span{height:100%;border-radius:3px;}.MTAccountSummaryDetail{line-height:20px;}.MTAccountSummaryDetail,.MTAccountSummaryDetail span{font-weight:normal!important;}.MTAccountSummaryDetail .MTFlexGridTitleInd{width:8px;height:8px;}',
         '.MTSpacerVertical {margin-left:10px;width:1px;flex-shrink:0;background:rgb(228,225,222);height:35px;margin-top:6px;}',
         '.MTFlexCardBig{font-size:20px;' + BOLD + 'padding-top:6px;text-align:center;}',
         '.MTFlexText{font-size:14px;' + panelText + BOLD + 'margin-left:12px;}',
@@ -145,7 +146,7 @@ function MM_InitStyles() {
         '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
         '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
         '.MTSideDrawerHeader {' + css.font + standardText + 'padding:8px;}',
-        '.MTSideDrawerHeader2 {' + css.font + standardText + 'padding:8px;' + panelBackground + 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius: 8px;margin-top: 6px;}',
+        '.MTSideDrawerHeader2 {' + css.font + standardText + 'padding:8px;' + panelBackground + 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;border-radius:12px;margin-top:6px;}',
         '.MTSideDrawerHeaderMsg {color:#ffffff; background-color:' + accentColor + BOLD + 'padding-left:12px;padding-top:3px;height:30px;border-radius:6px;' + css.font + '}',
         '.MTSideDrawerItem, .MTSideDrawerMonth {margin-top:5px;place-content:stretch space-between;display:flex;}',
         '.MTSideDrawerItem2 {place-content:stretch space-between;display:flex;}',
@@ -153,13 +154,13 @@ function MM_InitStyles() {
         '.MTSideDrawerDetail2, .MTSideDrawerDetail4 {' + standardText + 'width:24%;text-align:right;font-size:14px;padding-right:5px;}',
         '.MTSideDrawerDetail3 {' + standardText + BOLD + 'width:13px;text-align:center;font-size:13.5px;}',
         '.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {cursor:pointer;color:rgb(50,170,240) !important;}',
-        '.MTSideDrawerSummary {' + bs + '8px;height:200px;margin-top:3px;margin-bottom:10px;' + panelBackground + 'overflow:auto;' + bdr + '}',
+        '.MTSideDrawerSummary {' + bs + 'height:200px;margin-top:3px;margin-bottom:10px;' + panelBackground + 'overflow:auto;' + bdr + '}',
         '.MTSideDrawerSummaryTag {background-color:' + accentColor + BOLD + 'border-right:4px;border-top-left-radius:8px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-right-radius:8px;color:white;}',
         '.MTSideDrawerSummaryTable {text-align:left;width:100%;}',
         '.MTSideDrawerSummaryTableTH {position:sticky;top:0;' + panelBackground + BOLD + '}',
         '.MTFlexdown, .MTdropdown {float:right;position:relative;display:inline-block;font-weight:200;}',
-        '.MTFlexdown-content {' + panelBackground + standardText + ';line-height:18px;display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + '8px;right:0;z-index:1;}',
-        '.MTFlexdown-content2 {' + panelBackground + standardText + ';line-height:18px;display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + '8px;z-index:1;}',
+        '.MTFlexdown-content {' + panelBackground + standardText + ';line-height:18px;display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + 'right:0;z-index:1;}',
+        '.MTFlexdown-content2 {' + panelBackground + standardText + ';line-height:18px;display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + 'z-index:1;}',
         '.MTFlexdown-content div,.MTFlexdown-content2 div {font-size:0;line-height:2px;background-color:#ff7369;}',
         '.MTFlexdown-content a,.MTFlexdown-content2 a {' + css.font + panelBackground + standardText + ';font-size:16px;text-align:left;border-radius:4px;font-weight:200;padding:10px 10px;display:block;}',
         '.trH {height:4px;}',
@@ -1435,7 +1436,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     const barAreaWidth = chartWidth - leftLabelWidth - rightValueWidth - 20;
     const barHeight = (chartHeight - topPadding - bottomPadding) / maxItems * 0.6;
     const rowHeight = (chartHeight - topPadding - bottomPadding) / maxItems;
-    const colors = [...css.legend,'#ff692d','#8e4ec6','#7ce2fe','#d6409f','#3e63dd','#bdee63'];
+    const colors = css.chartLegend;
 
     MF_DrawChartupdateDetail('MTTotal',MTFlex.Button4 > 0 ? (inP[3] + ' - ' + MTFlex.Button4Options[MTFlex.Button4]) : inP[3],getDollarValue(sumTotal));
 
@@ -4672,8 +4673,9 @@ async function MenuAccountsSummary() {
     MF_Tips('MT_AssignGroups');
 
     let aSummary = [];
+    const div = gde('accounts-summary-card');
     const elements = gde('account-summary-card-group', true);
-    if (elements.length <= 1) { glo.spawnProcess = 4; return; }
+    if (!div || !elements.length) { glo.spawnProcess = 4; return; }
 
     const snapshotData = await dataGetAccounts();
     if(!snapshotData) return;
@@ -4687,26 +4689,31 @@ async function MenuAccountsSummary() {
     }
     aSummary.sort((a, b) => (b.Asset - a.Asset) || a.AccountGroup.localeCompare(b.AccountGroup, undefined, { sensitivity: 'base' }));
 
-    MenuAccountSummaryShow(elements[0], true);
-    MenuAccountSummaryShow(elements[1], false);
+    const firstChild = elements[0].childNodes[0];
+    const cnClass = (firstChild && firstChild.className ? firstChild.className : '') + ' MTAccountSummaryDetail';
+    const container = cec('div', 'MTAccountSummary MTFlexContainerCard', div, '', '', 'margin-top:10px;');
+    const content = cec('div', '', container, '', '', 'width:100%;');
+    cec('div','MTFlexBig',content,'Account Group Summary');
+    cec('div','MTFlexSmall',content,MNAME);
+    MenuAccountSummaryShow(content, true, 'Assets');
+    MenuAccountSummaryShow(content, false, 'Liabilities');
 
-    function MenuAccountSummaryShow(inParent, isAsset) {
-        const firstChild = inParent.childNodes[0];
-        const cnClass = (firstChild && firstChild.className ? firstChild.className : '') + ' MTAccountSummaryDetail';
-        let container = document.createElement('div');
-        container.className = 'MTAccountSummary';
-        container = inParent.insertBefore(container, firstChild.nextSibling);
-
-        let divChild = null;
-        for (const item of aSummary) {
-            const hasValue = isAsset ? (item.Asset !== 0) : (item.Liability !== 0);
-            if (!hasValue) continue;
-            divChild = cec('div', cnClass, container, '', '', 'margin-bottom: 5px;font-weight: 100;');
+    function MenuAccountSummaryShow(inParent, isAsset, inTitle) {
+        const items=aSummary.filter(item=>isAsset ? item.Asset !== 0 : item.Liability !== 0);
+        cec('div', 'MTAccountSummaryTitle', inParent, inTitle);
+        const divBar=cec('div','MTAccountSummaryBar',inParent);
+        for(let i=0;i<items.length;i++) {
+            cec('span','',divBar,'','','background-color:'+css.chartLegend[i%css.chartLegend.length]+';flex-grow:'+Math.abs(isAsset?items[i].Asset:items[i].Liability)+';flex-basis:0;');
+        }
+        for (let i=0;i<items.length;i++) {
+            const item=items[i];
+            const divChild = cec('div', cnClass, inParent);
+            const divLabel = cec('span', '', divChild);
+            cec('span', 'MTFlexGridTitleInd', divLabel, '', '', 'background-color:'+css.chartLegend[i%css.chartLegend.length]+';');
             const tt = isAsset ? item.ToolTipAsset : item.ToolTipLiability;
-            cecTip('span', '', divChild, item.AccountGroup, tt);
+            cecTip('span', '', divLabel, item.AccountGroup, tt);
             cec('span', 'fs-exclude', divChild, isAsset ? getDollarValue(item.Asset) : getDollarValue(item.Liability));
         }
-        if (divChild) cec('div', '', container, '', '', 'margin-bottom: 18px;');
     }
 
     function MenuAccountSummaryUpdate(inGroup, inA, inBal, inDesc) {
