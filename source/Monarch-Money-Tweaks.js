@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.19.10
+// @version      5.19.16
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -4770,7 +4770,9 @@ async function MenuPlanRefresh() {
 
     let li = document.querySelector('div.MTBudget');
     if(li) return;
-    div = cec('div','MTBudget',div,'','','margin-top: 20px; font-size: 14px;');
+    div = cec('div','MTBudget'+(glo.pathName.startsWith('/dashboard')?' px-lg':''),div.parentNode,'','','margin-top:10px;font-size:14px;');
+    cec('div','MTFlexBig',div,'Left to Spend');
+    cec('div','MTFlexSmall',div,MNAME,'','margin-bottom:10px;');
 
     let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,ExLit = 'Budget Expenses';
     let noBudget=true;
@@ -4830,7 +4832,6 @@ async function MenuPlanRefresh() {
         writePlan('Left to Spend',getDollarValue(LeftToSpend,true),'',BOLD,LeftToSpendStyle, true);
     }
     if(useSavings == 0 && bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
-
     function writePlan(inDesc,inValue,inHref,inStyle,inStyle2,isSpace) {
         let div2 = cec('div','',div,'','',isSpace == true ? 'margin-top: 10px;' : '');
         cec(inHref != '' ? 'a' : 'span','',div2,inDesc,inHref,inStyle);
