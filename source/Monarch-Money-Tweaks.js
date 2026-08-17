@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.20
+// @version      5.20.28
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -100,7 +100,8 @@ function MM_InitStyles() {
         '.MTWait2 p {' + standardText + 'font-weight:100;}',
         '.MTPanelLink {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);display: block; text-align: center;}',
         '.MTBudget a {' + BOLD + 'background-color:transparent;font-size:14px;cursor:pointer;color:rgb(50,170,240);}',
-        '.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {margin-right:10px;float:inline-start;}',
+        '.MTCheckboxClass {margin-right:10px;float:inline-start;}',
+        '.MTFlexCheckbox {margin-right:10px;flex-shrink:0;}',
         '.MTItemClass {padding-top:6px;padding-bottom:6px;}',
         '.MTInputClass {margin-bottom:12px;padding:6px 12px;border-radius:4px;' + panelBackground + bdr + standardText + '}',
         '.MTInputTitle {' + BOLD + 'font-size:14px;height:30px;}',
@@ -108,7 +109,7 @@ function MM_InitStyles() {
         '.MTModelWindow {position:absolute;top:20%;left:35%;}',
         '.MTModelWindow2 {position:relative;width:480px;height:100%;padding:16px 16px 0 16px;' + panelBackground + bs + '}',
         '.MTRow {display:flex;width:100%;padding-left:2px;padding-right:2px;padding-top:12px;}',
-        '.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton {' + css.font + 'font-size:14px;' + BOLD + 'padding:7.5px 12px;' + panelBackground + standardText + 'margin-left:8px;' + bdr + bs + 'border-radius:8px;cursor:pointer;}',
+        '.MTButton, .MTWindowButton, .MTBub1, .MTFlexButton, .MTInputButton, .MTSidePanelAction, .MTTrendCellArrow {' + css.font + 'font-size:14px;' + BOLD + 'padding:7.5px 12px;' + panelBackground + standardText + 'margin-left:8px;' + bdr + bs + 'border-radius:8px;cursor:pointer;}',
         '.MTButtonSmall {' + css.font + 'margin-left:4px;margin-right:4px;font-size:19px;cursor:pointer;}',
         '.MTButtons {display:flex;padding-right:16px;}',
         '.MTWindowButton {margin-bottom:20px;}',
@@ -145,7 +146,7 @@ function MM_InitStyles() {
         '.MTFlexText{font-size:14px;' + panelText + BOLD + 'margin-left:12px;}',
         '.MTFlexSmall{font-size:12px;' + panelText + BOLD + 'padding-top:2px;padding-bottom:2px;text-transform:uppercase;line-height:150%;letter-spacing:1.2px;}',
         '.MTFlexImage{border-radius:100%;width:23px;height:23px;float:left;margin-right:5px;background-size:cover;background-repeat:no-repeat;box-shadow:rgba(0,0,0,0.1) 0 0 0 1px inset;}',
-        '.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendSideToggle, .MTGeneralCell {' + panelBackground + standardText + 'width:25px;height:25px;font-size:17px;' + css.font + 'padding:0;cursor:pointer;border-radius:100%;border-style:none;}',
+        '.MTFlexCellArrow, .MTGeneralCell {' + panelBackground + standardText + 'width:25px;height:25px;font-size:17px;' + css.font + 'padding:0;cursor:pointer;border-radius:100%;border-style:none;}',
         '.MTFlexCellArrow:hover {border:1px solid ' + sidepanelBackground + ';box-shadow:rgba(8,40,100,0.1) 0 1px 2px;}',
         '.MTSideDrawerRoot {position:absolute;inset:0;display:flex;-moz-box-pack:end;justify-content:flex-end;}',
         '.MTSideDrawerContainer {padding:12px;width:710px;-moz-box-pack:end;' + sidepanelBackground + 'position:relative;overflow:auto;}',
@@ -163,6 +164,7 @@ function MM_InitStyles() {
         '.MTSideDrawerSummaryTable {text-align:left;width:100%;}',
         '.MTSideDrawerSummaryTableTH {position:sticky;top:0;' + panelBackground + BOLD + '}',
         '.MTFlexdown, .MTdropdown {float:right;position:relative;display:inline-block;font-weight:200;}',
+        '.MTFlexCheckboxLabel {display:flex;align-items:center;font-size:14px;' + BOLD + '}',
         '.MTFlexdown-content {' + panelBackground + standardText + ';line-height:18px;display:none;margin-top:12px;padding:12px;position:absolute;min-width:278px;overflow:auto;' + bdr + bs + 'right:0;z-index:1;}',
         '.MTFlexdown-content2 {' + panelBackground + standardText + ';line-height:18px;display:none;margin-bottom:14px;padding:12px;min-width:278px;' + bdr + bs + 'z-index:1;}',
         '.MTFlexdown-content div,.MTFlexdown-content2 div {font-size:0;line-height:2px;background-color:#ff7369;}',
@@ -214,7 +216,7 @@ function MM_MenuFix() {
         let lb = getCookie('MT:LastBackup',false);
         if(lb) {
             const d = new Date(lb);
-            if(daysBetween(d,getDates('d_Today')) > 30) {onClickOpenWindow(['!SaveSettings','MM-Tweaks Backup Data','!SaveSettings',lb]);} else return;
+            if(daysBetween(d,getDates('d_Today')) > 30) {onClickOpenWindow(['!SaveSettings',MNAME + ' Backup Data','!SaveSettings',lb]);} else return;
         }
         setCookie('MT:LastBackup',getDates('s_FullDate'));
     }
@@ -272,7 +274,7 @@ async function MF_GridInit(inName, inDesc) {
     const divTop = document.querySelector('[class*="Scroll__Root-sc"]');
     if(divTop) MF_PleaseWait(divTop,' Loading ' + MNAME + ' ' + MTFlex.Desc + ' ...');
     ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
-    MTFlex.RequiredCols = [];
+    MTFlex.RequiredCols = [];MTFlex.SidePanelTopButton = null;MTFlex.SidePanelBottomCheckbox = null;
     await buildCategoryGroups();
 }
 
@@ -336,10 +338,10 @@ function MF_Tips(inT) {
     setCookie(inT,1);
     switch(inT) {
         case 'MT_TipAssignGroups':
-            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Select Reports / Accounts and then > next to each account to assign Account Groups and other special Account settings.');
+            MF_ModelWindowOpen({title:MNAME + ' Tip!'}, 'Go to Reports / Accounts, select > next to an account, and then select Edit ... to assign an Account Group or change other account settings.');
             break;
         case 'MT_TipRebalance':
-            MF_ModelWindowOpen({ title: 'MM-Tweaks' }, 'Targets can be set under Positions & Allocation.\n\nTo set Targets, use > on Total line and press [...] in upper right.\n\nTo set Sells & Buys, use > on each detail line.');
+            MF_ModelWindowOpen({title:MNAME + ' Tip!'}, 'Targets can be configured under Positions and Allocation.\n\nTo set a target, select > on the Total row and then select the Edit ... button.\n\nTo enter Sells & Buys, select > on the appropriate detail row.');
             break;
         }
 }
@@ -726,10 +728,9 @@ function MT_GridDrawContainer() {
     createDropdown('1',MTFlex.Button1Options,MTFlex.Button1);
     createDropdown('2',MTFlex.Button2Options,MTFlex.Button2);
 
-    div2 = cec('div','MTdropdown',tbs);
-    div2 = cec('label','',div2,'Compress Grid','','margin-top: 6px; font-size: 14px; ' + BOLD + 'display: inline-block;','htmlFor','CompressGrid');
-    div2 = cec('input','MTFlexCheckbox cb',div2,'','','','','','CompressGrid');
-    div2.type = 'checkbox';if(MTFlex.Button3 == 1) {div2.checked = 'true';}
+    div2 = cec('label','MTdropdown MTFlexCheckboxLabel',tbs,'','','margin-top:4px;','htmlFor','CompressGrid');
+    let box = cec('input','MTFlexCheckbox cb',div2,'','','','','','CompressGrid');
+    box.type = 'checkbox';if(MTFlex.Button3 == 1) {box.checked = 'true';}cec('span','',div2,'Compress Grid');
 
     cht = cec('div','MTFlexContainerHeader',MTFlexTable,'','','padding-top: 0px; padding-bottom: 0px;');
     div2 = cec('div','',cht,'','','display:flex; gap:6px;align-items: center;');
@@ -908,7 +909,7 @@ async function MF_TagFilterOpen() {
     const row=cec('div','MTRow',content,'','','align-items:flex-start;'),left=cec('div','MTField1',row),right=cec('div','MTField2',row);
     cec('div','MTInputTitle',left,'Filter Type');const tagHead=cec('div','MTRow',right,'','','padding-top:0;');cec('div','MTInputTitle',tagHead,'Transaction Tags','','flex:1;');cec('span','MTButtonSmall',tagHead,'','','','title','Uncheck All','TagFilterNone');cec('span','MTButtonSmall',tagHead,'','','','title','Check All','TagFilterAll');cec('span','MTButtonSmall',tagHead,'','','','title','Sort Tags','TagFilterSort');
     ['No Filter','Only these tags','Exclude these tags'].forEach((name,i) => {const label=cec('label','MTRow',left,'','','align-items:center;','htmlFor','MTTagFilterMode'+i),input=cec('input','MTTagFilterMode MTCheckboxClass',label,'','','','','','MTTagFilterMode'+i);input.type='radio';input.name='MTTagFilterMode';input.value=i;input.checked=saved.mode==i;input.addEventListener('change',()=>MF_TagFilterMode(input));cec('span','',label,name);});
-    tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
+    tagData.householdTransactionTags.forEach((tag,i) => {const label=cec('label','MTRow',right,'','','align-items:center;','tagrow',i),input=cec('input','MTTagFilterCheckbox MTCheckboxClass cb',label,'','','','tag',tag.id,'MTTagFilterTag'+i);label.setAttribute('tagname',tag.name);input.type='checkbox';input.checked=saved.tags?.includes(tag.id);cec('span','MTFlexGridTitleInd',label,'','',`background-color:${tag.color};`);cec('span','',label,tag.name);});
     MF_TagFilterSort(document.getElementById('TagFilterSort'),getCookie(MTFlex.Name+'_TagSort',1));
     MF_TagFilterMode(document.querySelector('input[name="MTTagFilterMode"]:checked'));
 }
@@ -1120,10 +1121,9 @@ function MT_GetInput(inputs) {
         div3.value = inputs[i].VALUE;
         if(inputs[i].ID) {div3.id = inputs[i].ID;}
         if(i == inputs.length-1) {
-            div2 = cec('div','MTdropdown',div2);
-            div2 = cec('label','',div2,"Always use today's date",'',BOLD + 'margin-top: 10px; font-size: 14px; display: inline-block;','htmlFor','TodayDate');
-            div2 = cec('input','MTDateCheckbox cb',div2,'','','','','','TodayDate');
-            div2.type = 'checkbox';if(getCookie(MTFlex.Name + 'HigherDate',false) == 'd_Today') {div2.checked = true;}
+            div2 = cec('label','MTdropdown MTFlexCheckboxLabel',div2,'','','','htmlFor','TodayDate');
+            const box = cec('input','MTDateCheckbox MTFlexCheckbox cb',div2,'','','','','','TodayDate');
+            box.type = 'checkbox';if(getCookie(MTFlex.Name + 'HigherDate',false) == 'd_Today') {box.checked = true;}cec('span','',div2,"Always use today's date");
         }
 
     }
@@ -1206,7 +1206,7 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName,inTrigger,inAvgCols) {
         MTP.IsHeader = true; MTP.IgnoreShade = true;MTP.Section = inSection;MTP.BasedOn = inBasedOn;
         if(inSection == 0) { MTP.SummaryOnly = true;}
         if(inTrigger) { MTP.SKTriggerEvent = inTrigger;}
-        MF_QueueAddRow(MTP);
+        MF_QueueAddRow(MTP);MTFlexRow[MTFlexCR].hide = SubCount==0;
         if(!inName) inName = useName;
         MF_AddCol(0, inName);
         for (let j = 1; j < MTFlexTitle.length; j++) {MF_AddCol(j,MTFlexTitle[j].Format > 0 ? Subtotals[j] : '');}
@@ -1391,6 +1391,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     divChart = cec('canvas','MTBarChart',divCanvas,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
     MF_ToolTipCreate(divCanvas);
     MF_SetupCanvas(divChart);
+    const drawBottomCheckbox = () => {MF_SidePanelBottomCheckbox(divCanvas,divHead.sidePanelCheckboxObj);};
 
     // load new targetData
     targetData = [];
@@ -1432,7 +1433,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     targetData=targetData.filter(item=>item.value!=0);
     const ctx = divChart.getContext('2d');
     ctx.clearRect(0,0,chartWidth,chartHeight);
-    if(!targetData.length) return;
+    if(!targetData.length) {drawBottomCheckbox();return divCanvas;}
     const values = targetData.map(it => it.value);
     const entries = targetData.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
@@ -1470,7 +1471,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     if(minValue >= 0 && sumTotal > 0) {
         const toggle = cec('div','',divCanvas,'','','text-align:right;');
         cec('button','MTButton',toggle,inPie ? 'Bar View' : 'Pie View','','','','','MTChartToggle');divCanvas.prepend(toggle);
-        if(inPie) {MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors);attachTooltip(divChart,hitboxes,inP[2]);return;}
+        if(inPie) {MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors);attachTooltip(divChart,hitboxes,inP[2]);drawBottomCheckbox();return divCanvas;}
     }
 
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
@@ -1546,6 +1547,8 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     }
     divChart.barHighlight=active=>{ctx.clearRect(0,0,leftLabelWidth-1,chartHeight-bottomPadding);entries.slice(0,20).forEach((entry,i)=>{const it=entry.it,y=topPadding+rowHeight*i+rowHeight/2;ctx.font=(i==active?'600 ':'')+(it.title.length>14?'11.5px':'13.5px')+' sans-serif';ctx.textBaseline='middle';ctx.fillStyle=standardText;ctx.textAlign='right';ctx.fillText(it.title.slice(0,16),leftLabelWidth-5,y-(it.subtitle?7:0));if(it.subtitle){ctx.font='12px sans-serif';ctx.fillText(it.subtitle,leftLabelWidth-5,y+8);}});};
     attachTooltip(divChart, hitboxes, inP[2]);
+    drawBottomCheckbox();
+    return divCanvas;
 }
 
 function MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors) {
@@ -2052,16 +2055,7 @@ function MF_SidePanelOpen(sObj) {
         }
         div = cec('span','MTSideDrawerHeader',div4);
         cec('button','MTTrendCellArrow',div,'','','float:right;');
-        if(sObj.toggle != null) {
-            let useButton = getCookie(MTFlex.Name + '_' + (sObj.container ? sObj.container : 'SidePanel'),true);
-            useButton = sObj.toggle[useButton];
-            let a = cec('button','MTTrendSideToggle',div,useButton,'','float:right;margin-right: 16px;','options',sObj.toggle);
-            a.setAttribute('title',sObj.toggletip);
-        }
-        if(sObj.button != null) {
-            const a = cec('button','MTGeneralCell',div,'','','float:right;margin-right: 16px;','link',sObj.button);
-            a.setAttribute('title','Edit');
-        }
+        MF_SidePanelButton(div,sObj.sidePanelTopButton,sObj,'float:right;');
         cec('div','MTFlexCardBig',div,sObj.big,'','text-align: left;');
         div = cec('span','MTSideDrawerHeader',div4);
         cec('div','MTFlexSmall',div, sObj.small,'','float:right;');
@@ -2075,11 +2069,18 @@ function MF_SidePanelOpen(sObj) {
     }
 }
 
-function MF_SidePanelflipElement(inCookie) {
-    flipCookie(inCookie,1);
-    const cv = getCookie(inCookie,true);
-    hideAllSections('div.MTSideDrawerItem2',cv);
-    return cv;
+function MF_SidePanelButton(inDiv,a,sObj,inStyle) {
+    if(!a) return;
+    const b=cec('button','MTSidePanelAction',inDiv,a.text,'',inStyle);
+    b.setAttribute('link',a.link);
+}
+
+function MF_SidePanelBottomCheckbox(inDiv,sObj) {
+    if(!sObj) return;
+    const panel=sObj.container||'SidePanel',a=MTFlex.SidePanelBottomCheckbox?.[panel];
+    if(!a) return;
+    const id=panel+'Checkbox',div=cec('div','MTSideDrawerItem',inDiv);cec('span','',div);const label=cec('label','MTdropdown MTFlexCheckboxLabel',div,'','','','htmlFor',id),box=cec('input','MTSidePanelCheckbox MTFlexCheckbox cb',label,'','','','','',id);
+    box.type='checkbox';box.checked=Boolean(a.invert?!getCookie(MTFlex.Name+'_'+panel,true):getCookie(MTFlex.Name+'_'+panel,true));cec('span','',label,a.text);
 }
 
 // [ Popup Window ]
@@ -2146,7 +2147,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                     }
                     if(data.type == 'Checkbox') {
                         div3 = cec('label','',div2,data.field1,'','','htmlFor',data.key);
-                        div3 = cec('input','MTCheckboxClass cb',div3,'','','float:left;','','',data.key);
+                        div3 = cec('input','MTModelCheckbox MTCheckboxClass cb',div3,'','','float:left;','','',data.key);
                         div3.type = 'checkbox';
                         div3.setAttribute('col',0);
                         if(getCookie(data.key,true) == true) {div3.checked = 'true';}
@@ -2495,6 +2496,7 @@ async function MenuReportsAccountsDup() {
 async function MenuReportsAccountsGo() {
 
     await MF_GridInit('MTAccounts', 'Accounts');
+    MTFlex.SidePanelTopButton = {text:'Edit ...'};
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     MTFlex.SortSeq = ['1','2','3','4','5','6','7','8','9','10','11'];
     MTFlex.ChartOptions = ['1Y', '2Y','3Y','4Y','5Y'];
@@ -3123,6 +3125,8 @@ function MenuReportsInvestmentsRebalance(redraw) {
 async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
+    MTFlex.SidePanelTopButton = {text:'Edit ...'};
+    MTFlex.SidePanelBottomCheckbox = {SidePanel:{text:'Combine Holdings',refresh:true},SummaryDrawer:{text:'Include Buys/Sells',refresh:true}};
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     css.ignorePos = 1;css.IgnoreNeg = 0;
     MTFlex.CanvasTitle = 'font-size: 13px;';
@@ -3505,6 +3509,7 @@ async function MenuReportsTrendsGo() {
 
     TrendQueue = [];
     await MF_GridInit('MTTrends', 'Trends');
+    MTFlex.SidePanelBottomCheckbox = {SidePanel:{text:'Show Categories',invert:true}};
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
     css.ignoreNeg = getCookie('MT_TrendHideShadeNeg',false);
@@ -3964,7 +3969,6 @@ async function HistoryDrawer(inP) {
         sObj.url = sObj.type2 == 'expense' ? '#|spending|' : '#|income|';
         if(inType == 'category-groups') {
             useGroupId = retGroups.GROUP;
-            sObj.toggle = ['',''];
             sObj.urltext = retGroups.ICON + ' ' + retGroups.GROUPNAME;
             sObj.url = sObj.url + '|' + retGroups.GROUP;
             inGroup = 3;
@@ -3979,7 +3983,6 @@ async function HistoryDrawer(inP) {
     sObj.type = inType;
     sObj.small = sObj.type2;
     sObj.big = useTitle;
-    sObj.toggletip = 'Show/Hide Categories';
     MF_SidePanelOpen(sObj);
 
     TrendQueue2 = []; TrendPending = [0,0];
@@ -4019,6 +4022,7 @@ function HistoryDrawerDraw() {
 
         div = cec('div','MTSideDrawerHeader',divTop);
         MF_DrawChart(div);
+        if(grpType == 'category-groups') MF_SidePanelBottomCheckbox(div,{});
         div = cec('div','MTSideDrawerHeader2',divTop);
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": HistoryDrawerUpdate(i+1,startYear),"YR2": HistoryDrawerUpdate(i+1,startYear + 1),"YR3": HistoryDrawerUpdate(i+1,startYear + 2)});
@@ -4204,9 +4208,9 @@ async function AccountsDrawer(inP) {
         acc = accountsData.accounts[p1];
         accts.push(acc.id);
         let gn = getCookie('MTAccounts:' + acc.id,false);
-        if(!gn) sObj.header = 'Use  button to edit ' + MNAME + ' Account settings and Account group.';
+        if(!gn) sObj.header = 'Use Edit ... to assign a ' + MNAME + ' Account Group and other custom settings.';
         sObj.type = acc.type;sObj.type2=acc.type.display;sObj.big='Account';sObj.small=acc.type.display;sObj.urltext=acc.displayName;sObj.url='/accounts/details/' + acc.id;
-        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.button = '!Accounts' + SS + acc.displayName + SS + acc.id + SS + acc.subtype.display;
+        sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.sidePanelTopButton = {...MTFlex.SidePanelTopButton,link:'!Accounts' + SS + acc.displayName + SS + acc.id + SS + acc.subtype.display};
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
@@ -4313,9 +4317,8 @@ async function SummaryDrawer(inP) {
             to = MTFlex.TargetOptions[MTFlex.Button1];
             if(MTFlex.TargetOptionsRun.includes(MTFlex.Button2)) {
                 if(to) {
-                    sObj.button = '!SummaryDrawerTotal' + SS + MTFlex.Desc + ' by ' + to;
-                    sObj.toggletip = 'Exclude/Include Sells & Buys';
-                    sObj.toggle=['',''];
+                    sObj.sidePanelTopButton = {...MTFlex.SidePanelTopButton,link:'!SummaryDrawerTotal' + SS + MTFlex.Desc + ' by ' + to};
+                    sObj.sidePanelBottomCheckbox = true;
                     inP[5] = 1;
                 }
             }
@@ -4330,6 +4333,7 @@ async function SummaryDrawer(inP) {
         DrawerDrawLine(divTop2,'','0','MTMin');
         DrawerDrawLine(divTop2,'','0','MTItems');
     } else {removeAllSections('div.MTChartContainer');}
+    if(sObj.sidePanelBottomCheckbox) divTop2.sidePanelCheckboxObj=sObj;
     MF_DrawBarChart(divTop2,inP);
     if(!divReload) {
         let r = MT_BarChartEmbed(divTop,divTop2);
@@ -4362,10 +4366,10 @@ async function InvestmentsDrawer(inP) {
     if(thisHld.type == 'fixed_income') {
         bondInfo = getBondPieces(sObj.big);
         sObj.big = bondInfo[0];
-        sObj.button = '!Investments' + SS + sObj.big + SS + thisHld.id + SS + sObj.small + SS + thisHld.account.displayName;
+        sObj.sidePanelTopButton = {...MTFlex.SidePanelTopButton,link:'!Investments' + SS + sObj.big + SS + thisHld.id + SS + sObj.small + SS + thisHld.account.displayName};
     } else {
         let overAct = useTicker ? useTicker : thisHld.id;
-        sObj.button = '!Investments' + SS + useTicker + ' - ' + sObj.big + SS + overAct + SS + sObj.small + SS + thisHld.account.displayName;
+        sObj.sidePanelTopButton = {...MTFlex.SidePanelTopButton,link:'!Investments' + SS + useTicker + ' - ' + sObj.big + SS + overAct + SS + sObj.small + SS + thisHld.account.displayName};
         if(useTicker != '') {
             sObj.big = useTicker + ' • ' + holdingName;
             const xT = inList(thisHld.typeDisplay,['Stock','ETF','Mutual Fund']);
@@ -4380,8 +4384,7 @@ async function InvestmentsDrawer(inP) {
     if(divReload == null) {
         sObj.urltext = stockInfo[0];
         sObj.url = stockInfo[1];
-        sObj.toggletip = 'Split/Combine Holdings';
-        sObj.toggle=['',''];
+        sObj.sidePanelBottomCheckbox = true;
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('span','MTSideDrawerHeader',divTop,'','','','','','SideDrawerHeader');
         let sn = getCookie('MT_InvestmentsStockNote_'+thisHld.ticker,false);
@@ -4413,6 +4416,7 @@ async function InvestmentsDrawer(inP) {
             if(bondInfo[4] == 'Yes') DrawerDrawLine(divTop2,'Subject to AMT',bondInfo[4]);
             if(bondInfo[5] == 'Yes') DrawerDrawLine(divTop2,'Original Issue Discount',bondInfo[5]);
         }
+        MF_SidePanelBottomCheckbox(divTop2,sObj);
     }
 
     let allQty = 0,allCost = 0,allValue=0,curValue = 0;
@@ -4684,7 +4688,7 @@ async function MenuAccountsSummary() {
     const divTop = document.querySelector('div.MTAccountSummary');
     if (divTop) return;
 
-    MF_Tips('MT_AssignGroups');
+    MF_Tips('MT_TipAssignGroups');
 
     let aSummary = [];
     const div = gde('accounts-summary-card');
@@ -5094,9 +5098,9 @@ function MenuSetttingsCategory() {
         isExp = divs[i].parentNode.parentNode.parentNode;
         if(isExp && isExp.innerText.startsWith('Expenses')) {
             div = cec ('div','',divs[i],'','','flex:1;');
-            div = cec('label','',div,'Fixed Expense (' + MNAME + ')','','font-size: 13px;float:right;','htmlFor','MTFixed');
-            div = cec('input','MTFixedCheckbox cb',div,'','','','grp',grp,'MTFixed');
-            div.type = 'checkbox';
+            const label = cec('label','MTFlexCheckboxLabel',div,'','','float:right;','htmlFor','MTFixed');
+            div = cec('input','MTFixedCheckbox MTFlexCheckbox cb',label,'','','','grp',grp,'MTFixed');
+            div.type = 'checkbox';cec('span','',label,'Fixed Expense (' + MNAME + ')');
             if(getCookie('MTGroupFixed:' + grp,true) == true) {div.checked = 'true';}
         }
     }
@@ -5407,9 +5411,10 @@ window.onclick = function(event) {
             case 'MTSideDrawerDetailS':
             case 'MTSideDrawerSummaryTag':
                 onClickExpandSidePanelDetail(event.target);break;
-            case 'MTTrendSideToggle':
-                onClickSideToggle(event.target);
-                return;
+            case 'MTSidePanelAction':
+                onClickMTDropdownRelease();cn=event.target.getAttribute('link').split(SS);if(cn) onClickOpenWindow(cn);return;
+            case 'MTSidePanelCheckbox':
+                onClickSidePanelCheckbox(event.target);return;
             case 'MTPanelLink':
                 cn = event.target.id;
                 if(cn == 'MTSideDrawer') {
@@ -5522,7 +5527,7 @@ function onClickMTButton() {
         return;
     }
     if(bt == 'ClearAll') {
-        let divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
+        let divs = document.querySelectorAll('.MTInputClass, .MTModelCheckbox');
         for (const div of divs) {if(div.type == 'checkbox') {div.checked = false;div.removeAttribute('checked');} else {div.value = '';}}
         return;
     }
@@ -5535,7 +5540,7 @@ function onClickMTButton() {
             case 'TransEdit2':
                 window.open('/transactions/' + windowId, '_blank', 'noopener');return;
             default:
-                divs = document.querySelectorAll('.MTInputClass, .MTCheckboxClass');
+                divs = document.querySelectorAll('.MTInputClass, .MTModelCheckbox');
                 for (const div of divs) {
                     let vt = div.value.trim();
                     if(div.type == 'checkbox') {
@@ -5628,7 +5633,7 @@ function onClickOpenWindow(cn) {
         w=558;usePct=true;
     }
     if(cn[0] == '!SaveSettings') {
-        d.push({field1: 'Please remember to save your MM-Tweaks settings.\n\nLast Backup: ' + cn[3]});
+        d.push({field1: 'Please remember to save your ' + MNAME + ' settings.\n\nLast Backup: ' + cn[3]});
         d.push({field1: 'Skip Save Settings reminder', style1: BOLD, type: 'Checkbox', key: 'MT:LastBackupSkip'});
         b.push({name: 'Save Settings', id: 'SaveSettings'});
     }
@@ -5737,19 +5742,13 @@ function onClickMTFlexConfig() {
     cec('button','MTInputButton',div,'Reload','','float:right;');
 }
 
-function onClickSideToggle(t) {
+function onClickSidePanelCheckbox(t) {
 
-    let ops = t.getAttribute('options').split(','),subPanel = 'SidePanel';
-    if(!ops) return;
-
-    let x = document.querySelector('div.MTSideDrawerContainer');
-    if(x.id) {subPanel = x.id;}
-
-    let bn = ops[MF_SidePanelflipElement(MTFlex.Name + '_' + subPanel)];
-    t.innerText = bn;
-    if(MTFlex.Name =='MTInvestments') {
-        if(subPanel == 'SummaryDrawer') {SummaryDrawer(null);} else {InvestmentsDrawer(null);}
-    }
+    const panel=t.id.replace('Checkbox',''),a=MTFlex.SidePanelBottomCheckbox?.[panel];
+    if(!a) return;
+    const value=a.invert?!t.checked:t.checked;setCookie(MTFlex.Name+'_'+panel,Number(value));
+    if(a.refresh) {if(panel=='SummaryDrawer') SummaryDrawer(null);else InvestmentsDrawer(null);}
+    else hideAllSections('div.MTSideDrawerItem2',value);
 }
 
 function getTags(tags) {
