@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.20.35
+// @version      5.20.46
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -1391,7 +1391,6 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     divChart = cec('canvas','MTBarChart',divCanvas,'','','','','','MTChart');divChart.width = 664; divChart.height = 660;
     MF_ToolTipCreate(divCanvas);
     MF_SetupCanvas(divChart);
-    const drawBottomCheckbox = () => {MF_SidePanelBottomCheckbox(divCanvas,divHead.sidePanelCheckboxObj);};
 
     // load new targetData
     targetData = [];
@@ -1433,7 +1432,7 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     targetData=targetData.filter(item=>item.value!=0);
     const ctx = divChart.getContext('2d');
     ctx.clearRect(0,0,chartWidth,chartHeight);
-    if(!targetData.length) {drawBottomCheckbox();return divCanvas;}
+    if(!targetData.length) return divCanvas;
     const values = targetData.map(it => it.value);
     const entries = targetData.map((it, i) => ({ it, v: values[i] }));
     entries.sort((a, b) => b.v - a.v);
@@ -1469,9 +1468,10 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     MF_DrawChartupdateDetail('MTItems','Total Items',targetData.length);
 
     if(minValue >= 0 && sumTotal > 0) {
-        const toggle = cec('div','',divCanvas,'','','text-align:right;');
+        const toggle = cec('div','',divCanvas,'','','display:flex;align-items:center;justify-content:flex-end;gap:10px;');
+        MF_SidePanelBottomCheckbox(toggle,divHead.sidePanelCheckboxObj);
         cec('button','MTButton',toggle,inPie ? 'Bar View' : 'Pie View','','','','','MTChartToggle');divCanvas.prepend(toggle);
-        if(inPie) {MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors);attachTooltip(divChart,hitboxes,inP[2]);drawBottomCheckbox();return divCanvas;}
+        if(inPie) {MF_DrawPieChart(ctx,entries,sumTotal,hitboxes,colors);attachTooltip(divChart,hitboxes,inP[2]);return divCanvas;}
     }
 
     let sumP=0,sumA=0,sumC=0,skipThis=false,dashes = [];
@@ -1547,7 +1547,6 @@ function MF_DrawBarChart(inLocation,inP,inPie = false) {
     }
     divChart.barHighlight=active=>{ctx.clearRect(0,0,leftLabelWidth-1,chartHeight-bottomPadding);entries.slice(0,20).forEach((entry,i)=>{const it=entry.it,y=topPadding+rowHeight*i+rowHeight/2;ctx.font=(i==active?'600 ':'')+(it.title.length>14?'11.5px':'13.5px')+' sans-serif';ctx.textBaseline='middle';ctx.fillStyle=standardText;ctx.textAlign='right';ctx.fillText(it.title.slice(0,16),leftLabelWidth-5,y-(it.subtitle?7:0));if(it.subtitle){ctx.font='12px sans-serif';ctx.fillText(it.subtitle,leftLabelWidth-5,y+8);}});};
     attachTooltip(divChart, hitboxes, inP[2]);
-    drawBottomCheckbox();
     return divCanvas;
 }
 
@@ -2079,7 +2078,9 @@ function MF_SidePanelBottomCheckbox(inDiv,sObj) {
     if(!sObj) return;
     const panel=sObj.container||'SidePanel',a=MTFlex.SidePanelBottomCheckbox?.[panel];
     if(!a) return;
-    const id=panel+'Checkbox',div=cec('div','MTSideDrawerItem',inDiv);cec('span','',div);const label=cec('label','MTdropdown MTFlexCheckboxLabel',div,'','','','htmlFor',id),box=cec('input','MTSidePanelCheckbox MTFlexCheckbox cb',label,'','','','','',id);
+    const id=panel+'Checkbox',old=document.getElementById(id);
+    if(old) {inDiv.appendChild(old.parentNode.parentNode);return;}
+    const chartToggle=a.placement=='chartToggle',left=a.placement=='left'||chartToggle,div=cec('div','MTSideDrawerItem',inDiv,'','',chartToggle?'display:flex;align-items:center;':'');if(!left) cec('span','',div);const label=cec('label','MTdropdown MTFlexCheckboxLabel',div,'','','','htmlFor',id),box=cec('input','MTSidePanelCheckbox MTFlexCheckbox cb',label,'','','','','',id);if(a.placement=='left') cec('span','',div);
     box.type='checkbox';box.checked=Boolean(a.invert?!getCookie(MTFlex.Name+'_'+panel,true):getCookie(MTFlex.Name+'_'+panel,true));cec('span','',label,a.text);
 }
 
@@ -2125,6 +2126,7 @@ function MF_ModelWindowOpen(t,d,b,f1,f2) {
                         div3.setAttribute('col',0);
                         if(data.refresh == true) div3.setAttribute('refresh','true');
                         if(data.update) div3.setAttribute('update',data.update);
+                        if(data.updateDefault) div3.setAttribute('updateDefault',data.updateDefault);
                         if(data.money) div3.addEventListener('blur', () => { onClickUpdateMoney(event.target);});
                         if(data.placeholder) {div3.setAttribute('placeholder',data.placeholder);}
                         if(ci > -1) {
@@ -3126,7 +3128,7 @@ async function MenuReportsInvestmentsGo() {
 
     await MF_GridInit('MTInvestments', 'Investments');
     MTFlex.SidePanelTopButton = {text:'Edit ...'};
-    MTFlex.SidePanelBottomCheckbox = {SidePanel:{text:'Combine Holdings',refresh:true},SummaryDrawer:{text:'Include Buys/Sells',refresh:true}};
+    MTFlex.SidePanelBottomCheckbox = {SidePanel:{text:'Combine Holdings',refresh:true},SummaryDrawer:{text:'Include Buys/Sells',refresh:true,placement:'chartToggle'}};
     if(MTFlex.ErrorMsg) {glo.spawnProcess = 1;return;}
     css.ignorePos = 1;css.IgnoreNeg = 0;
     MTFlex.CanvasTitle = 'font-size: 13px;';
@@ -4214,9 +4216,9 @@ async function AccountsDrawer(inP) {
         sObj.id = acc.id;sObj.logo=acc.logoUrl;sObj.sidePanelTopButton = {...MTFlex.SidePanelTopButton,link:'!Accounts' + SS + acc.displayName + SS + acc.id + SS + acc.subtype.display};
         divTop = MF_SidePanelOpen(sObj);
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
-        DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
+        DrawerDrawLine(divTop2,'Account Subtype',customSubGroupInfo(acc.id,acc.subtype.display),'MTAccountSubtype');
+        DrawerDrawLine(divTop2,'Account Group',gn,'MTAccountGroup');
         DrawerDrawLine(divTop2,'Current Balance',getDollarValue(acc.displayBalance));
-        DrawerDrawLine(divTop2,'Account Type',acc.subtype.display);
         let cl = acc.dataProviderCreditLimit;
         if(acc.limit != null) cl = acc.limit;
         if(cl) {
@@ -5549,7 +5551,7 @@ function onClickMTButton() {
                             let fr = div.getAttribute('refresh');
                             if(fr == 'true') glo.forceRefresh = true;
                             fr = div.getAttribute('update');
-                            if(fr) MF_DrawChartupdateDetail(fr,'',vt + ' ');
+                            if(fr) MF_DrawChartupdateDetail(fr,'',(vt || div.getAttribute('updateDefault') || '') + ' ');
                         }
                         setCookie(div.id,vt);
                     }
@@ -5646,8 +5648,8 @@ function onClickOpenWindow(cn) {
         }
     }
     if(cn[0] == '!Accounts') {
-        d.push({field1: 'Account Group', style1: BOLD, type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], refresh: true});
-        d.push({field1: 'Subtype override [' + cn[3] + ']', style1: BOLD, type: 'Input', key: 'MTAccountsSub:' + cn[2],refresh: true});
+        d.push({field1: 'Account Group', style1: BOLD, type: 'Input', placeholder: 'Managed, Non-Managed, Tax Deferred, Trust, Business, Short-Term, Kids ...', key: 'MTAccounts:' + cn[2], refresh: true, update: 'MTAccountGroup'});
+        d.push({field1: 'Subtype override [' + cn[3] + ']', style1: BOLD, type: 'Input', key: 'MTAccountsSub:' + cn[2],refresh: true,update: 'MTAccountSubtype',updateDefault: cn[3]});
         d.push({field1: 'Holding Category override for all holdings in account', style1: BOLD, type: 'Input', key: 'MTAccountsCategory:' + cn[2],placeholder: 'Stocks, Bonds, Muni Bonds, ETF, Mutual Fund, Fixed Income, ...', refresh: true});
         d.push({field1: 'Add to Accounts List on Dashboard', style1: BOLD, type: 'Checkbox', key: 'MTAccountDashboard:' + cn[2]});
         if(inList(cn[2],'Checking','Savings','Credit Card') > 0) d.push({field1: 'Ignore in Left to Spend', style1: BOLD, type: 'Checkbox', key: 'MTAccountLeftToSpend:' + cn[2]});
