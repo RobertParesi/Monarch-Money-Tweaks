@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.20.28
+// @version      5.20.35
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -3392,6 +3392,7 @@ async function MenuReportsInvestmentsGo() {
                             const tickerNdx = inList(holding.ticker,tickers);
                             if(tickerNdx > 0) {
                                 MF_QueueAddCard({Col: tickerNdx + 2, Title: secPercent + '%', Subtitle: InvestmentCardDesc(shortTitle), Style: (secPercent == null ? (secPercent = 0) : secPercent) < 0 ? css.red : (secPercent > 0 ? css.green : '')});
+                                tickers[tickerNdx-1] = ''; // Avoid dups
                             }
                         }
                     }
@@ -4215,6 +4216,7 @@ async function AccountsDrawer(inP) {
         divTop2 = cec('div','MTSideDrawerHeader',divTop);
         DrawerDrawLine(divTop2,'Account Group', gn,null,null,null,null,null,acc.id + '-3');
         DrawerDrawLine(divTop2,'Current Balance',getDollarValue(acc.displayBalance));
+        DrawerDrawLine(divTop2,'Account Type',acc.subtype.display);
         let cl = acc.dataProviderCreditLimit;
         if(acc.limit != null) cl = acc.limit;
         if(cl) {
@@ -4674,16 +4676,13 @@ function ExportSummaryDrawer(inType,inFile) {
 }
 
 // [ Dashboard Accounts ]
-function MenuAccountSummaryHide() {
-    if (getCookie('MT_HideAccountsSummary', true) == 1) {
-        const div = gde('accounts-summary-card');
-        if (div) div.style.display = 'none';
-        const grid = document.querySelector('[class*="Grid__GridStyled-"]');
-        if (grid) grid.style.display = 'block';
-    }
-}
-
 async function MenuAccountsSummary() {
+
+    if(getCookie('MT_HideAccountsSummary',true) == 1) {
+        const div = gde('accounts-summary-card');
+        if(!div) {glo.spawnProcess = 4;return;}
+        div.parentNode.style.display = 'none';return;
+    }
 
     const divTop = document.querySelector('div.MTAccountSummary');
     if (divTop) return;
@@ -5037,6 +5036,7 @@ async function MenuDashboardAccounts() {
             cec('span','MTFlexBig',rowDiv,'Accounts');
             cec('span','MTFlexBig',rowDiv,'','','font-size: 14px;margin-left:10px;float:right;','','','MTDashboardL');
             cec('span','MTFlexBig',rowDiv,'','','font-size: 14px;margin-left:10px;float:right;','','','MTDashboardA');
+            cec('div','MTFlexSmall',divTop,MNAME);
             rowDiv = cec('div','',divTop);
             cec('span','MTSpacerClass',rowDiv,'','','display:block; margin: 5px 0px 5px 0px;');
 
@@ -5068,9 +5068,8 @@ function MenuLogin(OnFocus) {
 function MenuAccounts(OnFocus) {
     if (glo.pathName.startsWith('/accounts')) {
         if(OnFocus == true) {
-            MenuAccountSummaryHide();
-            glo.spawnProcess = 4;
             addStyle('.z-toast {display: block;}');
+            MenuAccountsSummary();
         }
         if(OnFocus == false) {
             addStyle('.z-toast {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
