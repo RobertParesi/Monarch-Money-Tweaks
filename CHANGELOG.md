@@ -3,7 +3,7 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
-  * **Version 5.21 (Beta)**
+  * **Version 5.21 (August 19, 2026)**
     - NEW: Better design and refactored checkboxes for consistent look.
     - NEW: Added holdings to Reports / Accounts side panel when expanding Brokerage accounts.
     - NEW: Added ability to turn off new Account Group Summary
