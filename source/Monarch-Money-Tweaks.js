@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.20.69
+// @version      5.20.71
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -175,7 +175,6 @@ function MM_InitStyles() {
         '.MTSideDrawerTickerSelect, .MTSideDrawerTickerSelectA {width:60px;text-align:center;font-size:15px;border-radius:100px;height:32px;padding-top:5px;' + BOLD + ';margin-left:10px;cursor:pointer;}',
         '.MTSideDrawerTickerSelect:hover, .MTSideDrawerTickerSelectA {' + panelBackground + '}',
         '.z-toast {display:' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}',
-        '.ReportsTooltipRow__Diff-k9pa1b-3 {display:' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}',
         '.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display:' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}',
         '.tooltip {position:relative;display:inline-block;}',
         '.MTTooltip table{border-spacing:0 5px;}',
@@ -4859,26 +4858,6 @@ async function MenuPlanRefresh() {
         cec('span','MTBudget2 fs-exclude',div2,inValue,'','float: right;' + inStyle + inStyle2);
     }
 }
-// [ Budget Plan Reorder ]
-function MenuPlanBudgetReorder() {
-    const budgetGrid = gde('plan-sections-container');
-    const separator = gde('plan-section-footer-separator');
-    if(budgetGrid && separator && !budgetGrid.dataset.mtInit === true) {
-        const defaultOrder = [0, 1, 2];
-        let order = getCookie("MT_BudgetOrder");
-        if(!order) {setCookie("MT_BudgetOrder", JSON.stringify(defaultOrder));order = defaultOrder;} else {order = JSON.parse(order);}
-        budgetGrid.style.cssText += "display:flex;flex-direction:column;";
-        const budgetSections = budgetGrid.children;
-        if(budgetSections.length > 1) {
-            Array.from(budgetSections).forEach((el, idx) => { el.id = `budget-section-${idx}`;el.style.cssText += `order:${order.at(idx) ?? 0}`;});
-            budgetGrid.dataset.mtInit = true;
-        }
-        const budgetTotal = separator.nextElementSibling;
-        separator.style.cssText += "order:100;";budgetTotal.style.cssText += "order:101;";
-        budgetGrid.appendChild(separator);budgetGrid.appendChild(budgetTotal);
-    }
-}
-
 // [ Calendar ]
 function MM_FixCalendarYears() {
     const elements = document.querySelectorAll('select[name]');
@@ -5148,8 +5127,6 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
     MenuDisplay_Input('Hide Toaster Pop-ups to Create Rule','MT_HideToaster','checkbox');
     MenuDisplay_Input('Assist & populate when searching merchants rather than starting as blank','MT_MerAssist','checkbox');
-    MenuDisplay_Input('Monarch Money Reports','','spacer');
-    MenuDisplay_Input('Hide the Difference amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
     MenuDisplay_Input(MNAME + ' Reports','','spacer');
     MenuDisplay_Input('Hide Tweak Report Descriptions and Tips','MTHideReportTips','checkbox');
     MenuDisplay_Input('Report Grid font','MT_MonoMT','dropdown','width:150px;',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
@@ -5214,7 +5191,6 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Show Budget Income and Expenses used','MT_PlanShowAll','checkbox','margin-left: 22px;');
-    MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
 
     function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
         if(inDiv && inType == 'spacer') {
@@ -5335,7 +5311,7 @@ function MenuCheckSpawnProcess() {
         switch(sp) {
             case 1:MF_GridDraw(0);break;
             case 2:HistoryDrawerDraw();break;
-            case 3:MenuPlanRefresh();MenuPlanBudgetReorder();break;
+            case 3:MenuPlanRefresh();break;
             case 4:MenuAccountsSummary();break;
             case 5:MM_Init();if(MTFlex.Name) {MenuReportsCustom(true);MenuReportsCustomUpdate();MF_GridDraw(1);} break;
             case 6:if(getCookie('MT_MerAssist',true)) {onClickContainer();}break;
