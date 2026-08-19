@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MM-Tweaks for Monarch Money
-// @version      5.20.71
+// @version      5.20.73
 // @description  MM-Tweaks for Monarch Money
 // @author       Robert Paresi
 // @match        https://app.monarch.com/*
@@ -5186,11 +5186,11 @@ function MenuSettingsDisplay(inDiv) {
     MenuDisplay_Input('Budget','','spacer');
     MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
     MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
-    MenuDisplay_Input('Move Savings up to Total Available','MT_PlanSavings','checkbox');
+    MenuDisplay_Input('Move Savings up to Total Available in “Left to Spend”','MT_PlanSavings','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
     MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
-    MenuDisplay_Input('Show Budget Income and Expenses used','MT_PlanShowAll','checkbox','margin-left: 22px;');
+    MenuDisplay_Input('Show Budget Income and Expenses used in “Left to Spend”','MT_PlanShowAll','checkbox','margin-left: 22px;');
 
     function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue,optValue2) {
         if(inDiv && inType == 'spacer') {
