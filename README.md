@@ -84,7 +84,6 @@ Features include:
 * Apply a compressed and smaller font in the Budget grid to show additional items.
 * Display "Left for Spending" (Checking minus Credit Cards minus Pending) in the Budget Summary and Budget Summary Dashboard.
 * Enable/Disable (hide) specific menu items as needed.
-* Remove the "Difference Amount" tooltip from graphs in reports for a cleaner view.
 * Hide the Create Rule popup when adding or changing transactions to streamline the process. **(Removed - Monarch change)**
 * Correct the Calendar Year dropdown to display only years with available data (instead of starting from 2000).
 * Hide the Accounts Net Worth Graph Panel for a simplified view.
