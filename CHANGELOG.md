@@ -6,9 +6,9 @@ This extension builds upon the current Monarch Money web application. As such, I
   * **Version 5.21 (Beta)**
     - NEW: Better design and refactored checkboxes for consistent look.
     - NEW: Added holdings to Reports / Accounts side panel when expanding Brokerage accounts.
-    - FIX: Avoid duplicate watched tickers.
+    - NEW: Added ability to turn off new Account Group Summary
     - FIX: Vertical scrolling issue with new Account Group Summary
-    - FIX: Added ability to turn off new Account Group Summary
+    - FIX: Avoid duplicate watched tickers.
 
  * **Version 5.19-5.20 (August 16, 2026)**
     - NEW: Added a Separate Accounts dashboard summary with enhanced information.
