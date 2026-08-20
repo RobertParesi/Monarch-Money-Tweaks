@@ -3,6 +3,9 @@ This extension builds upon the current Monarch Money web application. As such, I
 
 # Change Log (Version History)
 
+  * **Version 5.22 (Beta)**
+    - NEW: Reports / Trends added "All Years" to side panel graph for All years reports.
+  
   * **Version 5.21 (August 19, 2026)**
     - NEW: Better design and refactored checkboxes for consistent look.
     - NEW: Added holdings to Reports / Accounts side panel when expanding Brokerage accounts.
