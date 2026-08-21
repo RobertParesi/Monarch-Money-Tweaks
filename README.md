@@ -1,6 +1,4 @@
-## <img src="/documentation/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> MM-Tweaks for Monarch Money - Web Extension 
-
-# Monarch Money Tweaks has moved!
+## <img src="/documentation/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/>Monarch Money Tweaks has moved!
 
 ## We’ve grown—and now have a new website.
 
