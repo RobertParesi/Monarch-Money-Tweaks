@@ -1,4 +1,4 @@
-## <img src="/documentation/images/mt_icon128.png" style="margin-bottom:-3px; width:30px; height: 30px;"/> Monarch Money Tweaks
+## Monarch Money Tweaks
 
 ### 📣 We’ve grown—and now have a new website.
 
