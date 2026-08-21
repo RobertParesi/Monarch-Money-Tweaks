@@ -2,7 +2,7 @@
 
 ### 📣 We’ve grown—and now have a new website.
 
-Monarch Money Tweaks documentation, installation links, release notes, privacy and security information, and support resources are now available in one place:
+Monarch Money Tweaks documentation, installation links, release notes, security information, and support resources are now available in one place:
 
 ### [Visit the Monarch Money Tweaks website →](https://paresi.net/MonarchMoneyTweaks/)
 
