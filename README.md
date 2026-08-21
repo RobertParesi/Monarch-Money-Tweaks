@@ -8,4 +8,4 @@ Monarch Money Tweaks documentation, installation links, release notes, privacy a
 
 Thank you to everyone in the Monarch community who has followed and supported this personal side project.
 
-> Monarch Money Tweaks is an independent browser extension and is not affiliated with Monarch Money.
+
