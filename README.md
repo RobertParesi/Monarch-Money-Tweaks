@@ -6,6 +6,6 @@ Monarch Money Tweaks documentation, installation links, release notes, security 
 
 ### [Visit the Monarch Money Tweaks website →](https://paresi.net/MonarchMoneyTweaks/)
 
-Thank you to everyone in the Monarch community who has followed and supported this personal side project.
+Thank you to everyone in the Monarch community who has followed and supported this project.  It has grown to over 4,000 installs!
 
 
