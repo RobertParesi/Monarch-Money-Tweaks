@@ -8,4 +8,4 @@ Monarch Money Tweaks documentation, installation links, release notes, security 
 
 Thank you to everyone in the Monarch community who has followed and supported this project.  It has grown to over 4,000 installs!
 
-
+#### This GitHub page is used specifically for DISCUSSIONS and SUPPORT only.
