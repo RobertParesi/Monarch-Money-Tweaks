@@ -1,4 +1,4 @@
-# Monarch Money Tweaks has grown and move to its own website!
+# Monarch Money Tweaks has moved to new website!
 
 ### [Visit the Monarch Money Tweaks website →](https://paresi.net/MonarchMoneyTweaks/)
 
